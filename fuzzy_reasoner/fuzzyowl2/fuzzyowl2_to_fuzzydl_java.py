@@ -374,7 +374,7 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
         if range is not None:
             Util.error(
                 (
-                    f"Data min cardinality restriction not supported -- DataMinCardinalityRestriction({cardinality} {p} {c})"
+                    f"Data min cardinality restriction not supported -- DataMinCardinalityRestriction({cardinality} {p} {range})"
                 )
             )
         else:
@@ -391,7 +391,7 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
         if range is not None:
             Util.error(
                 (
-                    f"Data max cardinality restriction not supported -- DataMaxCardinalityRestriction({cardinality} {p} {c})"
+                    f"Data max cardinality restriction not supported -- DataMaxCardinalityRestriction({cardinality} {p} {range})"
                 )
             )
         else:
@@ -408,7 +408,7 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
         if range is not None:
             Util.error(
                 (
-                    f"Data exact cardinality restriction not supported -- DataExactCardinalityRestriction({cardinality} {p} {c})"
+                    f"Data exact cardinality restriction not supported -- DataExactCardinalityRestriction({cardinality} {p} {range})"
                 )
             )
         else:
