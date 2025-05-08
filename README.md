@@ -18,7 +18,10 @@ Features:
 
 # Installation
 
+# Installation
+```python
 pip install fuzzy-reasoner
+```
 
 ⸻
 
@@ -35,6 +38,7 @@ Examples of supported Fuzzy Description Logic Constructs
 # Usage - Reasoning
 
 ## Knowledge base in example.fdl
+```python
 (define-fuzzy-logic lukasiewicz)
 (define-modifier very linear-modifier(0.8))
 (define-fuzzy-concept eq243 crisp(0, 400, 243, 243))
@@ -45,28 +49,32 @@ Examples of supported Fuzzy Description Logic Constructs
 (instance audi (and Car (some speed eq243)) 1)
 
 (min-instance? audi SportCar)
+```
 
 ## Python code
-
+```python
 from fuzzy_reasoner import DLParser
 DLParser.main("./example.fdl") # "Is audi instance of SportCar ? >= 0.92"
-
+```
 ⸻
 
 # Usage - Fuzzy OWL 2
 
 ## From *.fdl to *.owl
+```python
 from fuzzy_reasoner import FuzzydlToOwl2
 
 fdl = FuzzydlToOwl2("./example.fdl", "example.owl")
 fdl.run() # save example.owl in the subdirectory "./results"
+```
 
 ## From *.owl to *.fdl
+```python
 from fuzzy_reasoner import FuzzyOwl2ToFuzzyDL
 
 fdl = FuzzyOwl2ToFuzzyDL("./results/example.owl", "example.fdl")
 fdl.translate_owl2ontology() # save example.fdl in the subdirectory "./results"
-
+```
 ⸻
 
 # Project Structure
