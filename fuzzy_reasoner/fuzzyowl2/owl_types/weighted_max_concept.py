@@ -1,0 +1,15 @@
+from fuzzy_reasoner.fuzzyowl2.owl_types.concept_definition import ConceptDefinition
+from fuzzy_reasoner.fuzzyowl2.util.constants import ConceptType
+
+
+class WeightedMaxConcept(ConceptDefinition):
+
+    def __init__(self, wc: list[ConceptDefinition]) -> None:
+        super().__init__(ConceptType.WEIGHTED_MAX)
+        self._wc: list[ConceptDefinition] = wc
+
+    def get_weighted_concepts(self) -> list[ConceptDefinition]:
+        return self._wc
+
+    def __str__(self) -> str:
+        return f"(w-max {self._wc})"

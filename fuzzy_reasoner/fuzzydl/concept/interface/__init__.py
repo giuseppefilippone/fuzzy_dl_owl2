@@ -1,0 +1,6 @@
+from .has_concept_interface import HasConceptInterface
+from .has_concepts_interface import HasConceptsInterface
+from .has_role_interface import HasRoleInterface
+from .has_role_concept_interface import HasRoleConceptInterface
+from .has_value_interface import HasValueInterface
+from .has_weighted_concepts_interface import HasWeightedConceptsInterface

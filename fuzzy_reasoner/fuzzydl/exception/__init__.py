@@ -1,0 +1,2 @@
+from .fuzzy_ontology_exception import FuzzyOntologyException
+from .inconsistent_ontology_exception import InconsistentOntologyException

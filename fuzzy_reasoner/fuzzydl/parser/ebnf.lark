@@ -1,0 +1,290 @@
+
+identifier          : /[a-zA-Z_][a-zA-Z0-9_\-']*/
+string              : ESCAPED_STRING | identifier
+number              : SIGNED_NUMBER
+
+sub                 : "-"
+sum                 : "+"
+?mul                : /\*/
+?left_par           : "("
+?right_par          : ")"
+?left_square_par    : "["
+?right_square_par   : "]"
+?comma              : ","
+
+# CONSTANTS
+
+GREATER_THAN.3                  : ">="
+LOWER_THAN.3                    : "<="
+EQUAL_TO.2                      : "="
+
+TOP.2                           : "*top*"i
+BOTTOM.2                        : "*bottom*"i
+AND.2                           : "and"i
+G_AND.3                         : "g-and"i
+L_AND.3                         : "l-and"i
+OR.2                            : "or"i
+G_OR.3                          : "g-or"i
+L_OR.3                          : "l-or"i
+NOT.2                           : "not"i
+IMPLIES.2                       : "implies"i
+G_IMPLIES.3                     : "g-implies"i
+L_IMPLIES.3                     : "l-implies"i
+KD_IMPLIES.3                    : "kd-implies"i
+Z_IMPLIES.3                     : "z-implies"i
+ALL.2                           : "all"i
+SOME.2                          : "some"i
+HAS_VALUE.3                     : "b-some"i
+UPPER_APPROXIMATION.2           : "ua"i
+TIGHT_UPPER_APPROXIMATION.3     : "tua"i
+LOOSE_UPPER_APPROXIMATION.3     : "lua"i
+LOWER_APPROXIMATION.2           : "la"i
+TIGHT_LOWER_APPROXIMATION.3     : "tla"i
+LOOSE_LOWER_APPROXIMATION.3     : "lla"i
+SELF.2                          : "self"i
+W_SUM_ZERO.3                    : "w-sum-zero"i
+W_SUM.2                         : "w-sum"i
+W_MAX.2                         : "w-max"i
+W_MIN.2                         : "w-min"i
+OWA.2                           : "owa"i
+QOWA.2                          : "q-owa"i
+CHOQUET_INTEGRAL.2              : "choquet"i
+Q_SUGENO_INTEGRAL.3             : "q-sugeno"i
+SUGENO_INTEGRAL.2               : "sugeno"i
+LINEAR_MODIFIER.2               : "linear-modifier"i
+TRIANGULAR_MODIFIER.2           : "triangular-modifier"i
+CRISP_FN.2                      : "crisp"i
+LEFT_FN.2                       : "left-shoulder"i
+RIGHT_FN.2                      : "right-shoulder"i
+TRIANGULAR_FN.2                 : "triangular"i
+TRAPEZOIDAL_FN.2                : "trapezoidal"i
+LINEAR_FN.2                     : "linear"i
+MODIFIED_FN.2                   : "modified"i
+FEATURE_SUM.2                   : "f+"i
+FEATURE_MUL.2                   : "f*"i
+FEATURE_SUB.2                   : "f-"i
+FEATURE_DIV.2                   : "f/"i
+RANGE.2                         : "range"i
+DOMAIN.2                        : "domain"i
+INTEGER_ROLE.2                  : "*integer*"i
+REAL_ROLE.2                     : "*real*"i
+STRING_ROLE.2                   : "*string*"i
+BOOLEAN_ROLE.2                  : "*boolean*"i
+BINARY_VAR.2                    : "binary"i
+FREE_VAR.2                      : "free"i
+
+DEFINE_FUZZY_LOGIC.2            : "define-fuzzy-logic"i
+DEFINE_MODIFIER.2               : "define-modifier"i
+DEFINE_TRUTH_CONSTANT.2         : "define-truth-constant"i
+DEFINE_FUZZY_CONCEPT.2          : "define-fuzzy-concept"i
+DEFINE_FUZZY_NUMBER_RANGE.3     : "define-fuzzy-number-range"i
+DEFINE_FUZZY_NUMBER.2           : "define-fuzzy-number"i
+DEFINE_FUZZY_SIMILARITY.2       : "define-fuzzy-similarity"i
+DEFINE_FUZZY_EQUIVALENCE.2      : "define-fuzzy-equivalence"i
+DEFINE_ROLE.2                   : "functional"i
+
+SHOW_CONCRETE_FILLERS.2         : "show-concrete-fillers"i
+SHOW_CONCRETE_FILLERS_FOR.3     : "show-concrete-fillers-for"i
+SHOW_CONCRETE_INSTANCE_FOR.2    : "show-concrete-instance-for"i
+SHOW_ABSTRACT_FILLERS.2         : "show-abstract-fillers"i
+SHOW_ABSTRACT_FILLERS_FOR.3     : "show-abstract-fillers-for"i
+SHOW_CONCEPTS.2                 : "show-concepts"i
+SHOW_INSTANCES.2                : "show-instances"i
+SHOW_VARIABLES.2                : "show-variables"i
+SHOW_LANGUAGE.2                 : "show-language"i
+
+CRISP_CONCEPT.2                 : "crisp-concept"i
+CRISP_ROLE.2                    : "crisp-role"i
+
+AXIOM_DEF_CONCEPT.2             : "define-concept"i
+AXIOM_DEF_PRIMITIVE_CONCEPT.2   : "define-primitive-concept"i
+AXIOM_INSTANCE.2                : "instance"i
+AXIOM_RELATED.2                 : "related"i
+AXIOM_IMPLIES.2                 : "implies"i
+AXIOM_G_IMPLIES.2               : "g-implies"i
+AXIOM_L_IMPLIES.2               : "l-implies"i
+AXIOM_KD_IMPLIES.2              : "kd-implies"i
+AXIOM_Z_IMPLIES.2               : "z-implies"i
+AXIOM_IMPLIES_ROLE.2            : "implies-role"i
+AXIOM_EQ_CONCEPTS.2             : "equivalent-concepts"i
+AXIOM_DISJOINT_UNION.3          : "disjoint-union"i
+AXIOM_DISJOINT.2                : "disjoint"i
+AXIOM_INV_FUNCTIONAL_ROLE.2     : "inverse-functional"i
+AXIOM_FUNCTIONAL_ROLE.2         : "functional"i
+AXIOM_TRANSITIVE_ROLE.2         : "transitive"i
+AXIOM_SYMMETRIC_ROLE.2          : "symmetric"i
+AXIOM_REFLEXIVE_ROLE.2          : "reflexive"i
+AXIOM_INV_ROLE.2                : "inverse"i
+
+MAX_INSTANCE_QUERY.2            : "max-instance?"i
+MIN_INSTANCE_QUERY.2            : "min-instance?"i
+ALL_INSTANCES_QUERY.2           : "all-instances?"i
+MAX_RELATED_QUERY.2             : "max-related?"i
+MIN_RELATED_QUERY.2             : "min-related?"i
+MAX_SUBS_QUERY.2                : "max-subs?"i
+MAX_G_SUBS_QUERY.2              : "max-g-subs?"i
+MAX_L_SUBS_QUERY.2              : "max-l-subs?"i
+MAX_KD_SUBS_QUERY.2             : "max-kd-subs?"i
+MIN_SUBS_QUERY.2                : "min-subs?"i
+MIN_G_SUBS_QUERY.2              : "min-g-subs?"i
+MIN_L_SUBS_QUERY.2              : "min-l-subs?"i
+MIN_KD_SUBS_QUERY.2             : "min-kd-subs?"i
+MAX_SAT_QUERY.2                 : "max-sat?"i
+MIN_SAT_QUERY.2                 : "min-sat?"i
+MAX_VAR_QUERY.2                 : "max-var?"i
+MIN_VAR_QUERY.2                 : "min-var?"i
+SAT_QUERY.2                     : "sat?"i
+DEFUZZIFY_LOM_QUERY.2           : "defuzzify-lom?"i
+DEFUZZIFY_SOM_QUERY.2           : "defuzzify-som?"i
+DEFUZZIFY_MOM_QUERY.2           : "defuzzify-mom?"i
+BNP_QUERY.2                     : "bnp?"i
+
+?start              : comment
+                    | fuzzy_logic
+                    | truth_constants
+                    | modifier
+                    | fuzzy_concept
+                    | fuzzy_number_range
+                    | fuzzy_number
+                    | feature
+                    | constraints
+                    | show_statement
+                    | crisp_declarations
+                    | concept
+                    | fuzzy_similarity
+                    | fuzzy_equivalence
+                    | axiom
+                    | query
+
+logic               : "lukasiewicz"i | "zadeh"i | "classical"i
+fuzzy_logic         : left_par DEFINE_FUZZY_LOGIC logic right_par
+comment             : /[#%]/ /[^\n]+/
+binary_op           : AND
+                    | G_AND
+                    | L_AND
+                    | OR
+                    | L_OR
+                    | G_OR
+                    | IMPLIES
+                    | G_IMPLIES
+                    | L_IMPLIES
+                    | KD_IMPLIES
+                    | Z_IMPLIES
+approx_or_restrict  : ALL
+                    | SOME
+                    | UPPER_APPROXIMATION
+                    | TIGHT_UPPER_APPROXIMATION
+                    | LOOSE_UPPER_APPROXIMATION
+                    | LOWER_APPROXIMATION
+                    | TIGHT_LOWER_APPROXIMATION
+                    | LOOSE_LOWER_APPROXIMATION
+weighted_type       : W_SUM_ZERO
+                    | W_SUM
+                    | W_MAX
+                    | W_MIN
+integral_type       : OWA
+                    | CHOQUET_INTEGRAL
+                    | Q_SUGENO_INTEGRAL
+                    | SUGENO_INTEGRAL
+weighted_concept_simple : left_par number concept right_par                     -> weighted_concept_simple
+concept             : TOP
+                    | BOTTOM
+                    | string                                                    -> to_concept
+                    | datatype_restriction
+                    | left_par binary_op concept concept+ right_par           -> binary_concept
+                    | left_par approx_or_restrict string concept right_par      -> binary_concept
+                    | left_par SOME string (string | concept) right_par         -> binary_concept
+                    | left_par HAS_VALUE string string right_par                -> binary_concept
+                    | left_par NOT concept right_par                            -> unary_concept
+                    | left_par SELF string right_par                            -> unary_concept
+                    | left_par string concept right_par                         -> modifier_concept
+                    | left_par left_square_par (GREATER_THAN | LOWER_THAN) (string | number) right_square_par concept right_par -> threshold_concept
+                    | left_par weighted_type (weighted_concept_simple)+ right_par                                               -> weighted_concept
+                    | left_par QOWA string (concept+) right_par                                                                 -> q_owa_concept
+                    | left_par integral_type left_par (number)+ right_par left_par (concept+) right_par right_par               -> owa_integral_concept
+linear_mod          : LINEAR_MODIFIER left_par number right_par                                 
+triangular_mod      : TRIANGULAR_MODIFIER left_par number comma number comma number right_par
+modifier            : left_par DEFINE_MODIFIER string (linear_mod | triangular_mod) right_par
+truth_constants     : left_par DEFINE_TRUTH_CONSTANT string number right_par
+fuzzy_concept       : left_par DEFINE_FUZZY_CONCEPT string (CRISP_FN left_par number ((comma number) ~ 3) right_par
+                        | LEFT_FN left_par number ((comma number) ~ 3) right_par
+                        | RIGHT_FN left_par number ((comma number) ~ 3) right_par
+                        | TRIANGULAR_FN left_par number ((comma number) ~ 4) right_par
+                        | TRAPEZOIDAL_FN left_par number ((comma number) ~ 5) right_par
+                        | LINEAR_FN left_par number ((comma number) ~ 3) right_par
+                        | MODIFIED_FN left_par string comma string right_par) right_par
+fuzzy_number_range  : left_par DEFINE_FUZZY_NUMBER_RANGE number number right_par
+simple_fuzzy_number : string
+                    | number
+                    | left_par number (comma number ~ 2) right_par
+fuzzy_number        : left_par DEFINE_FUZZY_NUMBER string (simple_fuzzy_number
+                    | left_par (FEATURE_SUM | FEATURE_MUL) (fuzzy_number+) right_par
+                    | left_par (FEATURE_SUB | FEATURE_DIV) (fuzzy_number ~ 2) right_par) right_par
+feature             : left_par (DEFINE_ROLE  string
+                    | RANGE string (INTEGER_ROLE | REAL_ROLE) (number ~ 2)
+                    | RANGE string (STRING_ROLE | BOOLEAN_ROLE)) right_par
+datatype_restriction_function   : string                            -> restrictions
+                                | number                            -> restrictions
+                                | number (mul)? string              -> restrictions
+                                | string sub string                 -> restrictions
+                                | (string sum)+ string              -> restrictions
+datatype_restriction.3          : left_par (GREATER_THAN | LOWER_THAN | EQUAL_TO) string (string
+                                | datatype_restriction_function
+                                | fuzzy_number) right_par
+term            : number (mul)? string
+expression      : term (sum term)*
+inequality      : expression (GREATER_THAN | LOWER_THAN | EQUAL_TO) number
+constraints     : left_par (inequality | BINARY_VAR string | FREE_VAR string) right_par
+show_statement  : left_par (SHOW_CONCRETE_FILLERS (string+)
+                | SHOW_CONCRETE_FILLERS_FOR string (string+)
+                | SHOW_CONCRETE_INSTANCE_FOR (string ~ 2) (string+)
+                | SHOW_ABSTRACT_FILLERS (string+)
+                | SHOW_ABSTRACT_FILLERS_FOR string (string+)
+                | SHOW_CONCEPTS (string+)
+                | SHOW_INSTANCES (concept+)
+                | SHOW_VARIABLES (string+)
+                | SHOW_LANGUAGE) right_par
+crisp_declarations  : left_par (CRISP_CONCEPT | CRISP_ROLE) (string)+ right_par
+fuzzy_similarity    : left_par DEFINE_FUZZY_SIMILARITY string right_par
+fuzzy_equivalence   : left_par DEFINE_FUZZY_EQUIVALENCE string right_par
+degree              : number | expression | string
+axiom               : left_par (AXIOM_INSTANCE string concept (degree)?
+                    | AXIOM_RELATED (string ~ 3) (degree)?
+                    | AXIOM_IMPLIES_ROLE (string ~ 2) (number)?
+                    | AXIOM_Z_IMPLIES (concept ~ 2)
+                    | (AXIOM_IMPLIES
+                        | AXIOM_G_IMPLIES
+                        | AXIOM_KD_IMPLIES
+                        | AXIOM_L_IMPLIES) (concept ~ 2) (degree)?
+                    | AXIOM_DEF_CONCEPT string concept
+                    | AXIOM_DEF_PRIMITIVE_CONCEPT string concept
+                    | AXIOM_EQ_CONCEPTS (concept ~ 2)
+                    | (AXIOM_DISJOINT | AXIOM_DISJOINT_UNION) (concept+)
+                    | (RANGE | DOMAIN) string concept
+                    | (AXIOM_INV_FUNCTIONAL_ROLE
+                        | AXIOM_FUNCTIONAL_ROLE
+                        | AXIOM_SYMMETRIC_ROLE
+                        | AXIOM_REFLEXIVE_ROLE
+                        | AXIOM_TRANSITIVE_ROLE) string
+                    | AXIOM_INV_ROLE (string ~ 2)) right_par
+query               : left_par (SAT_QUERY
+                    | (MAX_INSTANCE_QUERY | MIN_INSTANCE_QUERY) string concept
+                    | ALL_INSTANCES_QUERY concept
+                    | (MAX_RELATED_QUERY | MIN_RELATED_QUERY) (string ~ 3)
+                    | (MAX_SUBS_QUERY
+                        | MAX_G_SUBS_QUERY
+                        | MAX_L_SUBS_QUERY
+                        | MAX_KD_SUBS_QUERY
+                        | MIN_SUBS_QUERY
+                        | MIN_G_SUBS_QUERY
+                        | MIN_L_SUBS_QUERY
+                        | MIN_KD_SUBS_QUERY) (concept ~ 2)
+                    | (MAX_SAT_QUERY | MIN_SAT_QUERY) concept (string)?
+                    | (MAX_VAR_QUERY | MIN_VAR_QUERY) expression
+                    | (DEFUZZIFY_LOM_QUERY | DEFUZZIFY_SOM_QUERY | DEFUZZIFY_MOM_QUERY) concept (string ~ 2)
+                    | BNP_QUERY fuzzy_number) right_par
+
+%import common.ESCAPED_STRING
+%import common.SIGNED_NUMBER
+%import common.WS
+%ignore WS
