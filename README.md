@@ -32,6 +32,12 @@ Examples of supported Fuzzy Description Logic Constructs
 
 ⸻
 
+# Directory dl-examples
+
+The directory `dl-examples` contains a few examples of Knowledge Bases written using the Fuzzy Description Logic language.
+
+⸻
+
 # Usage - Reasoning
 
 ## Knowledge base in example.fdl
