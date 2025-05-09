@@ -33,22 +33,22 @@ from fuzzy_reasoner.fuzzyowl2.owl_types.weighted_sum_concept import WeightedSumC
 from fuzzy_reasoner.fuzzyowl2.owl_types.weighted_sum_zero_concept import (
     WeightedSumZeroConcept,
 )
-from pyowl.abstracts.class_expression import OWLClassExpression
-from pyowl.abstracts.data_property_expression import OWLDataPropertyExpression
-from pyowl.abstracts.data_range import OWLDataRange
-from pyowl.abstracts.entity import OWLEntity
-from pyowl.abstracts.individual import OWLIndividual
-from pyowl.abstracts.object_property_expression import OWLObjectPropertyExpression
-from pyowl.base.datatype import OWLDatatype
-from pyowl.base.owl_class import OWLClass
-from pyowl.data_range.data_intersection_of import OWLDataIntersectionOf
-from pyowl.data_range.data_one_of import OWLDataOneOf
-from pyowl.data_range.datatype_restriction import OWLDatatypeRestriction, OWLFacet
-from pyowl.expressions.data_property import OWLDataProperty
-from pyowl.expressions.object_property import OWLObjectProperty
-from pyowl.individual.anonymous_individual import OWLAnonymousIndividual
-from pyowl.literal.literal import OWLLiteral
-from pyowl.utils import utils
+from pyowl2.abstracts.class_expression import OWLClassExpression
+from pyowl2.abstracts.data_property_expression import OWLDataPropertyExpression
+from pyowl2.abstracts.data_range import OWLDataRange
+from pyowl2.abstracts.entity import OWLEntity
+from pyowl2.abstracts.individual import OWLIndividual
+from pyowl2.abstracts.object_property_expression import OWLObjectPropertyExpression
+from pyowl2.base.datatype import OWLDatatype
+from pyowl2.base.owl_class import OWLClass
+from pyowl2.data_range.data_intersection_of import OWLDataIntersectionOf
+from pyowl2.data_range.data_one_of import OWLDataOneOf
+from pyowl2.data_range.datatype_restriction import OWLDatatypeRestriction, OWLFacet
+from pyowl2.expressions.data_property import OWLDataProperty
+from pyowl2.expressions.object_property import OWLObjectProperty
+from pyowl2.individual.anonymous_individual import OWLAnonymousIndividual
+from pyowl2.literal.literal import OWLLiteral
+from pyowl2.utils import utils
 
 
 # @utils.timer_decorator
