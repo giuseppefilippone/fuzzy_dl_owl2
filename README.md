@@ -49,28 +49,32 @@ Examples of supported Fuzzy Description Logic Constructs
 ```
 
 ## Python code
+
 ```python
-from fuzzy_reasoner import DLParser
-DLParser.main("./example.fdl") # "Is audi instance of SportCar ? >= 0.92"
+from fuzzy_dl_owl2 import DLParser
+
+DLParser.main("./example.fdl")  # "Is audi instance of SportCar ? >= 0.92"
 ```
 ⸻
 
 # Usage - Fuzzy OWL 2
 
 ## From *.fdl to *.owl
+
 ```python
-from fuzzy_reasoner import FuzzydlToOwl2
+from fuzzy_dl_owl2 import FuzzydlToOwl2
 
 fdl = FuzzydlToOwl2("./example.fdl", "example.owl")
-fdl.run() # save example.owl in the subdirectory "./results"
+fdl.run()  # save example.owl in the subdirectory "./results"
 ```
 
 ## From *.owl to *.fdl
+
 ```python
-from fuzzy_reasoner import FuzzyOwl2ToFuzzyDL
+from fuzzy_dl_owl2 import FuzzyOwl2ToFuzzyDL
 
 fdl = FuzzyOwl2ToFuzzyDL("./results/example.owl", "example.fdl")
-fdl.translate_owl2ontology() # save example.fdl in the subdirectory "./results"
+fdl.translate_owl2ontology()  # save example.fdl in the subdirectory "./results"
 ```
 ⸻
 
