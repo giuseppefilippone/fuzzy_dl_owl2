@@ -17,7 +17,7 @@ Features:
 # Installation
 
 ```python
-pip install fuzzy-reasoner
+pip install fuzzy-dl-owl2
 ```
 
 ⸻
@@ -81,9 +81,8 @@ fdl.translate_owl2ontology()  # save example.fdl in the subdirectory "./results"
 # Project Structure
 
 ```text
-fuzzy_reasoner
+fuzzy_dl_owl2
 ├── __init__.py
-├── app.py
 ├── fuzzydl
 │   ├── __init__.py
 │   ├── assertion
@@ -156,7 +155,6 @@ fuzzy_reasoner
 │   │   ├── fuzzy_ontology_exception.py
 │   │   └── inconsistent_ontology_exception.py
 │   ├── feature_function.py
-│   ├── fuzzydl_to_owl2_java.py
 │   ├── fuzzydl_to_owl2.py
 │   ├── general_concept_inclusion.py
 │   ├── individual
@@ -232,8 +230,6 @@ fuzzy_reasoner
 │       └── utils.py
 └── fuzzyowl2
     ├── __init__.py
-    ├── fuzzyowl2_java.py
-    ├── fuzzyowl2_to_fuzzydl_java.py
     ├── fuzzyowl2_to_fuzzydl.py
     ├── fuzzyowl2.py
     ├── owl_types
