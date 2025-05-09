@@ -16,7 +16,6 @@ Features:
 
 # Installation
 
-# Installation
 ```python
 pip install fuzzy-reasoner
 ```
