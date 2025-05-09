@@ -26,6 +26,9 @@ __all__ = [
     "print_cumulative_timers",
     "class_timer",
     "singleton",
+    "_TIMERS",
+    "_TIMERS_CACHE",
+    "_CUMULATIVE_TIMERS"
 ]
 
 _TIMERS_CACHE: dict[str, bool] = dict()
