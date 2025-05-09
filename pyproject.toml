@@ -1,10 +1,10 @@
 [tool.poetry]
-name = "fuzzy-reasoner"
+name = "fuzzy_dl_owl2"
 version = "1.0.0"
 description = ""
 license = "CC-BY-SA-4.0"
 readme = "README.md"
-repository = "https://github.com/giuseppefilippone/fuzzy_reasoner"
+repository = "https://github.com/giuseppefilippone/fuzzy_dl_owl2"
 authors = ["Giuseppe Filippone <filipponegiuseppe94@gmail.com>"]
 
 [tool.poetry.dependencies]
