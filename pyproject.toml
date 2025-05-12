@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "fuzzy-dl-owl2"
 version = "1.0.2"
-description = ""
+description = "A python porting of the Fuzzy Description Language (see https://www.umbertostraccia.it/cs/software/fuzzyDL/fuzzyDL.html) and the Fuzzy OWL 2 framework (see https://www.umbertostraccia.it/cs/software/FuzzyOWL/index.html)."
 license = "CC-BY-SA-4.0"
 readme = "README.md"
 repository = "https://github.com/giuseppefilippone/fuzzy_dl_owl2"
