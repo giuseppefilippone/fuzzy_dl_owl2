@@ -15,7 +15,7 @@ class ValueConcept(Concept, HasValueInterface):
         HasValueInterface.__init__(self, role, value)
 
         assert c_type in (
-            ConceptType.AT_LEAST_VALUE,
+            ConceptType.AT_MOST_VALUE,
             ConceptType.AT_LEAST_VALUE,
             ConceptType.EXACT_VALUE,
         )

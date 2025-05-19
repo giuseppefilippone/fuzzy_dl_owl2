@@ -10,10 +10,12 @@ from fuzzy_dl_owl2.fuzzydl.concept.operator_concept import (
     GoedelOr,
     LukasiewiczOr,
     Not,
+    OperatorConcept,
     Or,
 )
 from fuzzy_dl_owl2.fuzzydl.concept.truth_concept import TruthConcept
-from fuzzy_dl_owl2.fuzzydl.util.constants import ConceptType
+from fuzzy_dl_owl2.fuzzydl.util import constants
+from fuzzy_dl_owl2.fuzzydl.util.constants import ConceptType, FuzzyLogic
 from fuzzy_dl_owl2.fuzzydl.util.util import Util
 
 
@@ -26,7 +28,6 @@ class ImpliesConcept(Concept, HasConceptsInterface):
         assert c_type in (
             ConceptType.ZADEH_IMPLIES,
             ConceptType.GOEDEL_IMPLIES,
-            ConceptType,
         )
 
         self.name: str = self.compute_name()
@@ -42,8 +43,8 @@ class ImpliesConcept(Concept, HasConceptsInterface):
             return TruthConcept.get_top()
         if c2.type == ConceptType.BOTTOM:
             return -c1
-        # if constants.KNOWLEDGE_BASE_SEMANTICS == FuzzyLogic.CLASSICAL:
-        #     return Or(-c1, c2)
+        if constants.KNOWLEDGE_BASE_SEMANTICS == FuzzyLogic.CLASSICAL:
+            return Or(-c1, c2)
         return LukasiewiczOr(-c1, c2)
 
     @staticmethod
@@ -52,8 +53,8 @@ class ImpliesConcept(Concept, HasConceptsInterface):
             return c2
         if c2.type == ConceptType.TOP or c1.type == ConceptType.BOTTOM:
             return TruthConcept.get_top()
-        # if constants.KNOWLEDGE_BASE_SEMANTICS == FuzzyLogic.CLASSICAL:
-        #     return Or(-c1, c2)
+        if constants.KNOWLEDGE_BASE_SEMANTICS == FuzzyLogic.CLASSICAL:
+            return Or(-c1, c2)
         return GoedelOr(-c1, c2)
 
     @staticmethod
@@ -62,16 +63,18 @@ class ImpliesConcept(Concept, HasConceptsInterface):
             return c2
         if c2.type == ConceptType.TOP or c1.type == ConceptType.BOTTOM:
             return TruthConcept.get_top()
-        # if constants.KNOWLEDGE_BASE_SEMANTICS == FuzzyLogic.CLASSICAL:
-        #     return Or(-c1, c2)
+        if constants.KNOWLEDGE_BASE_SEMANTICS == FuzzyLogic.CLASSICAL:
+            return Or(-c1, c2)
         if c1.type == ConceptType.GOEDEL_OR:
-            return GoedelAnd([GoedelOr(ci, c2) for ci in c1.concepts])
+            return GoedelAnd(
+                [GoedelOr(ci, c2) for ci in typing.cast(OperatorConcept, c1).concepts]
+            )
         return ImpliesConcept(ConceptType.GOEDEL_IMPLIES, [c1, c2])
 
     @staticmethod
     def zadeh_implies(c1: Concept, c2: Concept) -> Concept:
-        # if constants.KNOWLEDGE_BASE_SEMANTICS == FuzzyLogic.CLASSICAL:
-        #     return Or(-c1, c2)
+        if constants.KNOWLEDGE_BASE_SEMANTICS == FuzzyLogic.CLASSICAL:
+            return Or(-c1, c2)
         return ImpliesConcept(ConceptType.ZADEH_IMPLIES, [c1, c2])
 
     def replace(self, a: Concept, c: Concept) -> Concept:

@@ -1,0 +1,4 @@
+(inverse R invR)
+(related a b R 0.8)
+(instance b (all invR C) 0.7)
+(min-instance? a C)

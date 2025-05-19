@@ -1,0 +1,3 @@
+(define-fuzzy-logic zadeh)
+(instance a (and A B) 0.7)
+(min-instance? a A)

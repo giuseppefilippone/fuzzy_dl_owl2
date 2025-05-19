@@ -1,0 +1,4 @@
+(functional t)
+(range t *integer* 0 15000)
+(instance a (not (>= t 1100)))
+(min-instance? a (not (>= t 1100)))

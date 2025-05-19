@@ -1,0 +1,45 @@
+(functional hasScore)
+(range hasScore *real* -100 100)
+(define-fuzzy-number-range -100 100)
+
+(define-fuzzy-number VeryPoor (0, 0, 2))
+(define-fuzzy-number Poor (1, 2.5, 4))
+(define-fuzzy-number Fair (3, 5, 7))
+(define-fuzzy-number Good  (6, 7.5, 9))
+(define-fuzzy-number VeryGood  (8, 10, 10))
+
+
+% Define weighted concept for Expert 1
+
+(define-concept A11 (some hasScore VeryPoor) )
+(define-concept A12 (some hasScore Fair) )
+(define-concept A13 (some hasScore Good) )
+
+(define-concept A21 (some hasScore Good) )
+(define-concept A22 (some hasScore VeryGood) )
+(define-concept A23 (some hasScore Poor) )
+
+(define-concept A31 (some hasScore Fair) )
+(define-concept A32 (some hasScore Fair) )
+(define-concept A33 (some hasScore Poor) )
+
+
+% Define decision matrix
+
+(define-concept A1 (w-sum (0.3 A11) (0.2 A12)  (0.5 A13)) )
+(define-concept A2 (w-sum (0.3 A21) (0.2 A22)  (0.5 A23)) )
+(define-concept A3 (w-sum (0.3 A31) (0.2 A32)  (0.5 A33)) )
+
+
+%(instance a (>= hasScore 0))
+
+
+% final rank value
+
+%(max-sat? A1)
+%(max-sat? A2)
+%(max-sat? A3)
+
+(defuzzify-mom? A1 a hasScore)
+
+

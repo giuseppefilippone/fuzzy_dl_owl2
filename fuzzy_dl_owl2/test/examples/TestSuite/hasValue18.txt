@@ -1,0 +1,4 @@
+(define-fuzzy-logic classical)
+(functional R)
+(instance a (or (b-some R b)  (b-some R c) (b-some R d) ) )
+(min-related? a b R)

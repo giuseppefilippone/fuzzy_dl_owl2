@@ -41,6 +41,7 @@ class MomDefuzzifyQuery(DefuzzifyQuery):
             if not s.is_consistent_kb():
                 return s
             d: float = s.get_solution()
+            # LOM
             cloned: KnowledgeBase = kb.clone()
             ind: Individual = cloned.individuals.get(str(self.a))
             cloned.set_dynamic_blocking()
@@ -62,24 +63,30 @@ class MomDefuzzifyQuery(DefuzzifyQuery):
             return None
 
         try:
-            self.ob_expr: Expression = Expression(Term(-1.0, q))
-            sol1: Solution = cloned.optimize(self.obj_expr)
+            obj_expr: Expression = Expression(Term(-1.0, q))
+            sol1: Solution = cloned.optimize(obj_expr)
             if sol1.get_solution() < 0.0:
-                sol1 = Solution(-sol1.get_solution())
-            self.obj_expr: Expression = Expression(Term(1.0, q))
-            sol2: Solution = cloned.optimize(self.obj_expr)
+                sol1 = Solution(sol1.get_solution())
+
+            # SOM
+            obj_expr: Expression = Expression(Term(1.0, q))
+            sol2: Solution = cloned.optimize(obj_expr)
             if sol2.get_solution() < 0.0:
-                sol2 = Solution(-sol2.get_solution())
+                sol2 = Solution(sol2.get_solution())
+
+            # MOM
             if sol1.is_consistent_kb() and sol2.is_consistent_kb():
                 value = (sol1.get_solution() + sol2.get_solution()) / 2.0
                 kb.milp.print_instance_of_labels(self.f_name, str(self.a), value)
                 return Solution(value)
+
+            # Returns an inconsistent KB solution
             return sol1
         except FuzzyOntologyException as e:
             traceback.print_exc()
         except InconsistentOntologyException as e:
             traceback.print_exc()
-        return None
+        return Solution(False)
 
     def get_obj_expression(self, variable: Variable) -> Expression:
         return Expression(Term(-1.0, variable))

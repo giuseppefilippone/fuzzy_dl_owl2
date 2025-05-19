@@ -1,0 +1,32 @@
+(define-fuzzy-logic zadeh )
+
+(transitive relates)
+
+(related lexema_b frame4 relates 1.0)
+(related lexema_b frame5 relates 1.0)
+(related lexema_b frame6 relates 1.0)
+
+(related frame4 frame8 relates 0.6762)
+(related frame5 frame9 relates 0.9)
+(related frame6 frame10 relates 0.686)
+
+
+(related frame8 frame2 relates 0.7)
+(related frame9 frame3 relates 0.9)
+(related frame10 frame7 relates 0.7)
+
+(related frame7 frame1 relates 0.672)
+(related frame7 frame2 relates 0.9)
+
+(related frame1 lexema_a relates 1.0)
+(related frame2 lexema_a relates 1.0)
+(related frame3 lexema_a relates 1.0)
+
+
+
+#(min-related? lexema_b lexema_a relates)
+(min-instance? lexema_b (b-some relates lexema_a))
+
+
+
+(show-abstract-fillers relates)

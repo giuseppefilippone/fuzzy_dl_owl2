@@ -1,5 +1,6 @@
 import typing
 
+from fuzzy_dl_owl2.fuzzydl.util import constants
 from fuzzy_dl_owl2.fuzzydl.util.constants import ConcreteFeatureType
 
 
@@ -29,7 +30,9 @@ class ConcreteFeature:
         elif len(args) == 3:
             if isinstance(args[1], int) and isinstance(args[2], int):
                 self.__concrete_feature_init_3(*args)
-            elif isinstance(args[1], float) and isinstance(args[2], float):
+            elif isinstance(args[1], constants.NUMBER) and isinstance(
+                args[2], constants.NUMBER
+            ):
                 self.__concrete_feature_init_4(*args)
             else:
                 raise ValueError
@@ -89,6 +92,9 @@ class ConcreteFeature:
 
     def get_name(self) -> str:
         return self.name
+
+    def __repr__(self) -> str:
+        return str(self)
 
     def __str__(self) -> str:
         return self.get_name()

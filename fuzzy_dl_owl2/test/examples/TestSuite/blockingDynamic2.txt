@@ -1,0 +1,15 @@
+(define-fuzzy-logic zadeh)
+
+(inverse R invR)
+(inverse S invS)
+(transitive RR)
+
+(implies *top* (all invR (all invS (not C))))  % Absorped into range axiom
+
+(implies *top* (some R C))
+(implies *top* (some S C))
+
+(instance a (and C (some S C)))
+
+(min-instance? a A)
+

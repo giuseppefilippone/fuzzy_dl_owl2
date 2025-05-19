@@ -360,16 +360,20 @@ class OperatorConcept(Concept, HasConceptsInterface):
             A | A = A
             """
             if OperatorConcept.is_and(self.type):
-                if ConceptType.BOTTOM in [c.type for c in self.concepts] or any(
-                    -c in self.concepts for c in self.concepts
+                if (
+                    ConceptType.BOTTOM in [c.type for c in self.concepts]
+                    or any(-c in self.concepts for c in self.concepts)
+                    and constants.KNOWLEDGE_BASE_SEMANTICS == FuzzyLogic.CLASSICAL
                 ):
                     return TruthConcept.get_bottom()
                 if self.type in OperatorConcept.ABSORPTION_OPERATORS:
                     self.concepts = sorted(set(self.concepts))
                 self.concepts = [c for c in self.concepts if c.type != ConceptType.TOP]
             elif OperatorConcept.is_or(self.type):
-                if ConceptType.TOP in [c.type for c in self.concepts] or any(
-                    -c in self.concepts for c in self.concepts
+                if (
+                    ConceptType.TOP in [c.type for c in self.concepts]
+                    or any(-c in self.concepts for c in self.concepts)
+                    and constants.KNOWLEDGE_BASE_SEMANTICS == FuzzyLogic.CLASSICAL
                 ):
                     return TruthConcept.get_top()
                 if self.type in OperatorConcept.ABSORPTION_OPERATORS:
@@ -458,8 +462,8 @@ class OperatorConcept(Concept, HasConceptsInterface):
                 if a not in [TruthConcept.get_bottom(), TruthConcept.get_top()]
             ]
         )
-        if len(self.concepts) == 1:
-            return self.concepts[0]
+        # if len(self.concepts) == 1:
+        #     return self.concepts[0]
         return OperatorConcept.__op(self.type, self.concepts)
 
     def reduce_quantifiers(self) -> typing.Self:

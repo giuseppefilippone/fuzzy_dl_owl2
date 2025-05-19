@@ -25,7 +25,9 @@ class Expression:
     def __init__(self, v: typing.Union[list[Variable], set[Variable]]) -> None: ...
 
     def __init__(self, *args) -> None:
-        if len(args) == 1:
+        if len(args) == 0:
+            self.__expression_init_1(0)
+        elif len(args) == 1:
             if isinstance(args[0], constants.NUMBER):
                 self.__expression_init_1(*args)
             elif isinstance(args[0], Expression):
@@ -182,5 +184,5 @@ class Expression:
             elif n == -1.0:
                 parts.append(f"- {term.get_var()}")
             else:
-                parts.append(f"{n} {term.get_var()}")
+                parts.append(f"{'+ ' if n >= 0 else '- '}{n} {term.get_var()}")
         return " ".join(parts)

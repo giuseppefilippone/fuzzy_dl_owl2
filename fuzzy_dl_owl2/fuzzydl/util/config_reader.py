@@ -14,8 +14,6 @@ class ConfigReader:
     NUMBER_DIGITS: int = 2
     OPTIMIZATIONS: int = 1
     RULE_ACYCLIC_TBOXES: bool = True
-    SHOW_VERSION: bool = False
-    AUTHOR: bool = False
 
     @staticmethod
     def load_parameters(config_file: str, args: list[str]) -> None:
@@ -42,13 +40,9 @@ class ConfigReader:
             ConfigReader.NUMBER_DIGITS = int(
                 round(abs(math.log10(ConfigReader.EPSILON) - 1.0))
             )
-            ConfigReader.SHOW_VERSION = config.getboolean("DEFAULT", "showVersion")
 
             if ConfigReader.DEBUG_PRINT:
                 print(f"Debugging mode = {ConfigReader.DEBUG_PRINT}")
-
-            if config.getboolean("DEFAULT", "author"):
-                print("Author of python-fuzzyDL: Giuseppe Filippone")
 
         except FileNotFoundError:
             print(f"Error: File {config_file} not found.")

@@ -1,4 +1,3 @@
-import collections.abc
 import enum
 import os
 import re
@@ -362,12 +361,12 @@ class FuzzyDLKeyword(enum.Enum):
     LUKASIEWICZ = pp.CaselessKeyword("lukasiewicz")
     ZADEH = pp.CaselessKeyword("zadeh")
     CLASSICAL = pp.CaselessKeyword("classical")
-    SUM = pp.CaselessKeyword("+")
-    SUB = pp.CaselessKeyword("-")
-    MUL = pp.CaselessKeyword("*")
-    LESS_THAN_OR_EQUAL_TO = pp.CaselessKeyword("<=")
-    GREATER_THAN_OR_EQUAL_TO = pp.CaselessKeyword(">=")
-    EQUALS = pp.CaselessKeyword("=")
+    SUM = pp.Literal("+")
+    SUB = pp.Literal("-")
+    MUL = pp.Literal("*")
+    LESS_THAN_OR_EQUAL_TO = pp.Literal("<=")
+    GREATER_THAN_OR_EQUAL_TO = pp.Literal(">=")
+    EQUALS = pp.Literal("=")
     STRING = pp.CaselessKeyword("*string*")
     BOOLEAN = pp.CaselessKeyword("*boolean*")
     INTEGER = pp.CaselessKeyword("*integer*")
@@ -376,13 +375,15 @@ class FuzzyDLKeyword(enum.Enum):
     def get_name(self) -> str:
         return re.sub(r"[\"\']+", "", self.value.name.lower())
 
-    def get_value(self) -> pp.CaselessKeyword:
+    def get_value(self) -> typing.Union[pp.CaselessKeyword, pp.Literal]:
         return self.value
 
     def __eq__(self, value: object) -> bool:
         if isinstance(value, str):
             return self.get_name() == value.lower()
         elif isinstance(value, pp.CaselessKeyword):
+            return self.get_name() == value.name.lower()
+        elif isinstance(value, pp.Literal):
             return self.get_name() == value.name.lower()
         elif isinstance(value, FuzzyDLKeyword):
             return self.get_name() == value.get_name()
@@ -419,6 +420,6 @@ class FuzzyLogic(enum.StrEnum):
         return self.value
 
 
-KNOWLEDGE_BASE_SEMANTICS = FuzzyLogic.CLASSICAL
+KNOWLEDGE_BASE_SEMANTICS: FuzzyLogic = FuzzyLogic.CLASSICAL
 MAXVAL: float = 2.147483647e12
 MAXVAL2: float = MAXVAL * 2

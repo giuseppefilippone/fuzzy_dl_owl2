@@ -76,6 +76,9 @@ class Variable:
     def __ne__(self, value: object) -> bool:
         return not (self == value)
 
+    def __hash__(self) -> int:
+        return hash(str(self))
+
     def __repr__(self) -> str:
         return str(self)
 

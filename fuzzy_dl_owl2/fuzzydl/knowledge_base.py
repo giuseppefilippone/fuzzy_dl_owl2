@@ -10,79 +10,84 @@ from sortedcontainers import SortedSet
 
 from fuzzy_dl_owl2.fuzzydl.assertion.assertion import Assertion
 from fuzzy_dl_owl2.fuzzydl.concept.all_some_concept import AllSomeConcept
-from fuzzy_dl_owl2.fuzzydl.concept.approximation_concept import \
-    ApproximationConcept
+from fuzzy_dl_owl2.fuzzydl.concept.approximation_concept import ApproximationConcept
 from fuzzy_dl_owl2.fuzzydl.concept.atomic_concept import AtomicConcept
 from fuzzy_dl_owl2.fuzzydl.concept.choquet_integral import ChoquetIntegral
 from fuzzy_dl_owl2.fuzzydl.concept.concept import Concept
-from fuzzy_dl_owl2.fuzzydl.concept.concrete.crisp_concrete_concept import \
-    CrispConcreteConcept
-from fuzzy_dl_owl2.fuzzydl.concept.concrete.fuzzy_concrete_concept import \
-    FuzzyConcreteConcept
-from fuzzy_dl_owl2.fuzzydl.concept.concrete.fuzzy_number.triangular_fuzzy_number import \
-    TriangularFuzzyNumber
-from fuzzy_dl_owl2.fuzzydl.concept.concrete.left_concrete_concept import \
-    LeftConcreteConcept
-from fuzzy_dl_owl2.fuzzydl.concept.concrete.linear_concrete_concept import \
-    LinearConcreteConcept
-from fuzzy_dl_owl2.fuzzydl.concept.concrete.modified_concrete_concept import \
-    ModifiedConcreteConcept
-from fuzzy_dl_owl2.fuzzydl.concept.concrete.right_concrete_concept import \
-    RightConcreteConcept
-from fuzzy_dl_owl2.fuzzydl.concept.concrete.trapezoidal_concrete_concept import \
-    TrapezoidalConcreteConcept
-from fuzzy_dl_owl2.fuzzydl.concept.concrete.triangular_concrete_concept import \
-    TriangularConcreteConcept
-from fuzzy_dl_owl2.fuzzydl.concept.ext_threshold_concept import \
-    ExtThresholdConcept
+from fuzzy_dl_owl2.fuzzydl.concept.concrete.crisp_concrete_concept import (
+    CrispConcreteConcept,
+)
+from fuzzy_dl_owl2.fuzzydl.concept.concrete.fuzzy_concrete_concept import (
+    FuzzyConcreteConcept,
+)
+from fuzzy_dl_owl2.fuzzydl.concept.concrete.fuzzy_number.triangular_fuzzy_number import (
+    TriangularFuzzyNumber,
+)
+from fuzzy_dl_owl2.fuzzydl.concept.concrete.left_concrete_concept import (
+    LeftConcreteConcept,
+)
+from fuzzy_dl_owl2.fuzzydl.concept.concrete.linear_concrete_concept import (
+    LinearConcreteConcept,
+)
+from fuzzy_dl_owl2.fuzzydl.concept.concrete.modified_concrete_concept import (
+    ModifiedConcreteConcept,
+)
+from fuzzy_dl_owl2.fuzzydl.concept.concrete.right_concrete_concept import (
+    RightConcreteConcept,
+)
+from fuzzy_dl_owl2.fuzzydl.concept.concrete.trapezoidal_concrete_concept import (
+    TrapezoidalConcreteConcept,
+)
+from fuzzy_dl_owl2.fuzzydl.concept.concrete.triangular_concrete_concept import (
+    TriangularConcreteConcept,
+)
+from fuzzy_dl_owl2.fuzzydl.concept.ext_threshold_concept import ExtThresholdConcept
 from fuzzy_dl_owl2.fuzzydl.concept.has_value_concept import HasValueConcept
 from fuzzy_dl_owl2.fuzzydl.concept.implies_concept import ImpliesConcept
-from fuzzy_dl_owl2.fuzzydl.concept.interface.has_concepts_interface import \
-    HasConceptsInterface
-from fuzzy_dl_owl2.fuzzydl.concept.interface.has_role_interface import \
-    HasRoleInterface
-from fuzzy_dl_owl2.fuzzydl.concept.interface.has_value_interface import \
-    HasValueInterface
-from fuzzy_dl_owl2.fuzzydl.concept.modified.modified_concept import \
-    ModifiedConcept
-from fuzzy_dl_owl2.fuzzydl.concept.modified.triangularly_modified_concept import \
-    TriangularlyModifiedConcept
+from fuzzy_dl_owl2.fuzzydl.concept.interface.has_concepts_interface import (
+    HasConceptsInterface,
+)
+from fuzzy_dl_owl2.fuzzydl.concept.interface.has_role_interface import HasRoleInterface
+from fuzzy_dl_owl2.fuzzydl.concept.interface.has_value_interface import (
+    HasValueInterface,
+)
+from fuzzy_dl_owl2.fuzzydl.concept.modified.modified_concept import ModifiedConcept
+from fuzzy_dl_owl2.fuzzydl.concept.modified.triangularly_modified_concept import (
+    TriangularlyModifiedConcept,
+)
 from fuzzy_dl_owl2.fuzzydl.concept.negated_nominal import NegatedNominal
 from fuzzy_dl_owl2.fuzzydl.concept.operator_concept import OperatorConcept
 from fuzzy_dl_owl2.fuzzydl.concept.owa_concept import OwaConcept
 from fuzzy_dl_owl2.fuzzydl.concept.qowa_concept import QowaConcept
-from fuzzy_dl_owl2.fuzzydl.concept.quasi_sugeno_integral import \
-    QsugenoIntegral
+from fuzzy_dl_owl2.fuzzydl.concept.quasi_sugeno_integral import QsugenoIntegral
 from fuzzy_dl_owl2.fuzzydl.concept.self_concept import SelfConcept
 from fuzzy_dl_owl2.fuzzydl.concept.sugeno_integral import SugenoIntegral
 from fuzzy_dl_owl2.fuzzydl.concept.threshold_concept import ThresholdConcept
 from fuzzy_dl_owl2.fuzzydl.concept.truth_concept import TruthConcept
 from fuzzy_dl_owl2.fuzzydl.concept.value_concept import ValueConcept
 from fuzzy_dl_owl2.fuzzydl.concept.weighted_concept import WeightedConcept
-from fuzzy_dl_owl2.fuzzydl.concept.weighted_max_concept import \
-    WeightedMaxConcept
-from fuzzy_dl_owl2.fuzzydl.concept.weighted_min_concept import \
-    WeightedMinConcept
-from fuzzy_dl_owl2.fuzzydl.concept.weighted_sum_concept import \
-    WeightedSumConcept
-from fuzzy_dl_owl2.fuzzydl.concept.weighted_sum_zero_concept import \
-    WeightedSumZeroConcept
+from fuzzy_dl_owl2.fuzzydl.concept.weighted_max_concept import WeightedMaxConcept
+from fuzzy_dl_owl2.fuzzydl.concept.weighted_min_concept import WeightedMinConcept
+from fuzzy_dl_owl2.fuzzydl.concept.weighted_sum_concept import WeightedSumConcept
+from fuzzy_dl_owl2.fuzzydl.concept.weighted_sum_zero_concept import (
+    WeightedSumZeroConcept,
+)
 from fuzzy_dl_owl2.fuzzydl.concept_equivalence import ConceptEquivalence
 from fuzzy_dl_owl2.fuzzydl.concrete_feature import ConcreteFeature
 from fuzzy_dl_owl2.fuzzydl.degree.degree import Degree
 from fuzzy_dl_owl2.fuzzydl.degree.degree_expression import DegreeExpression
 from fuzzy_dl_owl2.fuzzydl.degree.degree_numeric import DegreeNumeric
 from fuzzy_dl_owl2.fuzzydl.degree.degree_variable import DegreeVariable
-from fuzzy_dl_owl2.fuzzydl.exception.inconsistent_ontology_exception import \
-    InconsistentOntologyException
+from fuzzy_dl_owl2.fuzzydl.exception.inconsistent_ontology_exception import (
+    InconsistentOntologyException,
+)
 from fuzzy_dl_owl2.fuzzydl.feature_function import FeatureFunction
-from fuzzy_dl_owl2.fuzzydl.general_concept_inclusion import \
-    GeneralConceptInclusion
-from fuzzy_dl_owl2.fuzzydl.individual.created_individual import \
-    CreatedIndividual
+from fuzzy_dl_owl2.fuzzydl.general_concept_inclusion import GeneralConceptInclusion
+from fuzzy_dl_owl2.fuzzydl.individual.created_individual import CreatedIndividual
 from fuzzy_dl_owl2.fuzzydl.individual.individual import Individual
-from fuzzy_dl_owl2.fuzzydl.individual.representative_individual import \
-    RepresentativeIndividual
+from fuzzy_dl_owl2.fuzzydl.individual.representative_individual import (
+    RepresentativeIndividual,
+)
 from fuzzy_dl_owl2.fuzzydl.milp.expression import Expression
 from fuzzy_dl_owl2.fuzzydl.milp.milp_helper import MILPHelper
 from fuzzy_dl_owl2.fuzzydl.milp.solution import Solution
@@ -90,28 +95,38 @@ from fuzzy_dl_owl2.fuzzydl.milp.term import Term
 from fuzzy_dl_owl2.fuzzydl.milp.variable import Variable
 from fuzzy_dl_owl2.fuzzydl.modifier.linear_modifier import LinearModifier
 from fuzzy_dl_owl2.fuzzydl.modifier.modifier import Modifier
-from fuzzy_dl_owl2.fuzzydl.modifier.triangular_modifier import \
-    TriangularModifier
-from fuzzy_dl_owl2.fuzzydl.primitive_concept_definition import \
-    PrimitiveConceptDefinition
+from fuzzy_dl_owl2.fuzzydl.modifier.triangular_modifier import TriangularModifier
+from fuzzy_dl_owl2.fuzzydl.primitive_concept_definition import (
+    PrimitiveConceptDefinition,
+)
 from fuzzy_dl_owl2.fuzzydl.relation import Relation
-from fuzzy_dl_owl2.fuzzydl.restriction.has_value_restriction import \
-    HasValueRestriction
+from fuzzy_dl_owl2.fuzzydl.restriction.has_value_restriction import HasValueRestriction
 from fuzzy_dl_owl2.fuzzydl.restriction.restriction import Restriction
 from fuzzy_dl_owl2.fuzzydl.util import constants
 from fuzzy_dl_owl2.fuzzydl.util.config_reader import ConfigReader
 from fuzzy_dl_owl2.fuzzydl.util.constants import (
-    BlockingDynamicType, ConceptType, ConcreteFeatureType,
-    CreatedIndividualBlockingType, FeatureFunctionType, FuzzyLogic,
-    InequalityType, KnowledgeBaseRules, LogicOperatorType,
-    RepresentativeIndividualType, RestrictionType, VariableType)
+    BlockingDynamicType,
+    ConceptType,
+    ConcreteFeatureType,
+    CreatedIndividualBlockingType,
+    FeatureFunctionType,
+    FuzzyLogic,
+    InequalityType,
+    KnowledgeBaseRules,
+    LogicOperatorType,
+    RepresentativeIndividualType,
+    RestrictionType,
+    VariableType,
+)
 from fuzzy_dl_owl2.fuzzydl.util.util import Util
+from fuzzy_dl_owl2.fuzzydl.util.utils import class_debugging
 
 
+@class_debugging()
 class KnowledgeBase:
-    VERSION: float = 2.0
 
     def __init__(self) -> None:
+        Variable.VARIABLE_NUMBER = 0
         self.language: str = ""
 
         self.milp: MILPHelper = MILPHelper()
@@ -342,7 +357,9 @@ class KnowledgeBase:
             k: [r.clone() for r in v] for k, v in self.temp_relations_list.items()
         }
         kb.t_G = [gci.clone() for gci in self.t_G]
-        kb.t_inclusions = {k: set([pcd.clone() for pcd in v]) for k, v in self.t_inclusions.items()}
+        kb.t_inclusions = {
+            k: set([pcd.clone() for pcd in v]) for k, v in self.t_inclusions.items()
+        }
         kb.transitive_roles = copy.deepcopy(self.transitive_roles)
         kb.t_synonyms = copy.deepcopy(self.t_synonyms)
         return kb
@@ -746,9 +763,9 @@ class KnowledgeBase:
         return rel
 
     def define_synonym(self, concept_name_1: str, concept_name_2: str) -> None:
-        self.t_synonyms[concept_name_1] = self.t_synonyms.get(concept_name_1, set()) | set(
-            [concept_name_2]
-        )
+        self.t_synonyms[concept_name_1] = self.t_synonyms.get(
+            concept_name_1, set()
+        ) | set([concept_name_2])
         self.get_concept(concept_name_1)
 
     def define_synonyms(self, concept_name_1: str, concept_name_2: str) -> None:
@@ -1262,7 +1279,9 @@ class KnowledgeBase:
 
     def add_simple_inverse_roles(self, role: str, inv_role: str) -> None:
         self.inverse_roles[role] = self.inverse_roles.get(role, set()) | set([inv_role])
-        self.inverse_roles[inv_role] = self.inverse_roles.get(inv_role, set()) | set([role])
+        self.inverse_roles[inv_role] = self.inverse_roles.get(inv_role, set()) | set(
+            [role]
+        )
         if role in self.inverse_functional_roles:
             self.functional_roles.add(inv_role)
         if inv_role in self.inverse_functional_roles:
@@ -1746,7 +1765,7 @@ class KnowledgeBase:
         Util.debug(f"{constants.SEPARATOR}GCI completed{constants.SEPARATOR}")
 
     def solve_reflexive_role(self, role: str) -> None:
-        for ind in self.individuals:
+        for ind in self.individuals.values():
             self.add_relation(ind, role, ind, DegreeNumeric.get_degree(1.0))
 
     @typing.overload
@@ -1789,7 +1808,7 @@ class KnowledgeBase:
     def __get_correct_version_of_individual_1(self, ass: Assertion) -> None:
         ind: Individual = ass.get_individual()
         ind2: Individual = self.individuals.get(str(ind))
-        if ind == ind2:
+        if id(ind) == id(ind2):
             return
         if ind2 is None:
             ind2 = self.get_individual(str(ind))
@@ -1799,7 +1818,7 @@ class KnowledgeBase:
     def __get_correct_version_of_individual_2(self, rel: Relation) -> None:
         ind: Individual = rel.get_object_individual()
         ind2: Individual = self.individuals.get(str(ind))
-        if ind == ind2:
+        if id(ind) == id(ind2):
             return
         if ind2 is None:
             ind2 = self.get_individual(str(ind))
@@ -1880,28 +1899,44 @@ class KnowledgeBase:
                 self.individuals[b_name] = a
 
     def merge(self, a: Individual, b: Individual) -> None:
+        """
+        Merges two individuals.
+        """
+
         if isinstance(a, CreatedIndividual) and not isinstance(b, CreatedIndividual):
+            # Swap b and a, so the created individual is merged into the root individual
             a, b = b, a
 
         a_name, b_name = str(a), str(b)
         Util.debug(f"Merging individual {b_name} into {a_name}")
+        # To do: nominal variables needed only if language contains "B"
+
+        # Unique Name Assumption
         if not isinstance(a, CreatedIndividual) and not isinstance(
             b, CreatedIndividual
         ):
+            # xAisA + xBisB <= 1
             x_a_is_a: Variable = self.milp.get_nominal_variable(a_name)
             x_b_is_b: Variable = self.milp.get_nominal_variable(b_name, b_name)
             self.milp.add_new_constraint(
                 Expression(-1.0, Term(1.0, x_a_is_a), Term(1.0, x_b_is_b)),
                 InequalityType.LESS_THAN,
             )
+            # Add { b } to a
             self.add_labels_with_nodes(b_name, a_name)
 
+        # --------------------------------------------------------------
+        # 1. Move edges leading to b so that they lead to a
+        # --------------------------------------------------------------
         for i in self.individuals.values():
             for array in i.role_relations.values():
                 for r in array:
                     if r.get_object_individual() == b:
                         r.set_object_individual(a)
 
+        # --------------------------------------------------------------------------
+        # 2. Move edges leading from b to a nominal node so that they lead from a
+        # --------------------------------------------------------------------------
         to_remove: set[str] = set()
         for role, b_rels in b.role_relations.items():
             new_rels: list[Relation] = []
@@ -1910,18 +1945,21 @@ class KnowledgeBase:
                 if not r.get_object_individual().is_blockable():
                     r.set_subject_individual(a)
                     a_rels.append(r)
-                    continue
-                new_rels.append(r)
+                else:
+                    new_rels.append(r)
 
             a.role_relations[role] = a_rels
             if len(new_rels) == 0:
                 to_remove.add(role)
-                continue
-            b.role_relations[role] = new_rels
+            else:
+                b.role_relations[role] = new_rels
 
         for role in to_remove:
             del b.role_relations[role]
 
+        # -------------------------------------------------------
+        # 3. Concept assertions using b, now use a
+        # -----------------------------------------------------
         for ass in self.assertions:
             if str(ass.get_individual()) == b_name:
                 ass.set_individual(a)
@@ -1930,8 +1968,15 @@ class KnowledgeBase:
             if str(ass.get_individual()) == b_name:
                 ass.set_individual(a)
 
+        # -----------------------------------------
+        # 4. Variables using b, now use a
+        # -----------------------------------------
         param: bool = isinstance(b, CreatedIndividual)
         self.milp.change_variable_names(b_name, a_name, param)
+
+        # -----------------------------------------
+        # 5. Prune
+        # -----------------------------------------
         b.prune()
 
     def goedel_implies(self, conc1: Concept, conc2: Concept, degree: Degree) -> None:
@@ -2222,9 +2267,11 @@ class KnowledgeBase:
                 role = typing.cast(AllSomeConcept, conc2).role
                 c_range: Concept = typing.cast(AllSomeConcept, conc2).curr_concept
             else:
-                assert isinstance(conc2, HasValueInterface)
-                role = conc2.role
-                c_range: Concept = NegatedNominal(str(conc2.value))
+                assert isinstance(conc2, OperatorConcept)
+                has_value: Concept = conc2.get_atom()
+                assert isinstance(has_value, HasValueInterface)
+                role = has_value.role
+                c_range: Concept = NegatedNominal(str(has_value.value))
             self.role_range(role, c_range)
             self.remove_C_is_a_X(key, tau, atomic)
             Util.debug(f"Absorbed: range {role}, {c_range}")
@@ -2240,8 +2287,14 @@ class KnowledgeBase:
             if (
                 type_c2 == ConceptType.ALL or OperatorConcept.is_not_has_value(conc2)
             ) and degree_is_one:
-                assert isinstance(conc2, HasRoleInterface)
-                role: str = conc2.role
+                if OperatorConcept.is_not_has_value(conc2):
+                    atom: Concept = typing.cast(OperatorConcept, conc2).get_atom()
+                    assert isinstance(atom, HasRoleInterface)
+                    role: str = atom.role
+                else:
+                    assert isinstance(conc2, HasRoleInterface)
+                    role: str = conc2.role
+
                 if self.is_crisp_role(role) and (
                     implication_type != LogicOperatorType.KLEENE_DIENES
                     or constants.KNOWLEDGE_BASE_SEMANTICS == FuzzyLogic.CLASSICAL
@@ -2266,11 +2319,15 @@ class KnowledgeBase:
                             -conc1,
                         )
                     else:
-                        assert isinstance(conc2, HasValueInterface)
                         g_imp_concept: Concept = ImpliesConcept.goedel_implies(
                             HasValueConcept(
                                 role,
-                                str(conc2.value),
+                                str(
+                                    typing.cast(
+                                        HasValueConcept,
+                                        typing.cast(OperatorConcept, conc2).get_atom(),
+                                    ).value
+                                ),
                             ),
                             -conc1,
                         )
@@ -2848,7 +2905,7 @@ class KnowledgeBase:
             Util.debug("No optimization: DOUBLE_BLOCKING + dynamicblocking")
             return
         if len(self.inverse_roles) == 0 or len(self.functional_roles) == 0:
-            if len(self.t_G) == 0 or self.is_tbox_acyclic():
+            if len(self.t_G) == 0 and self.is_tbox_acyclic():
                 self.blocking_type = BlockingDynamicType.NO_BLOCKING
                 Util.debug("NO_BLOCKING")
             else:
@@ -2945,6 +3002,10 @@ class KnowledgeBase:
     def __restrict_range_2(
         self, x_b: Variable, x_f: Variable, k1: float, k2: float
     ) -> None:
+        """
+        Restricts the range of a variable to [k1, k2] if x_f not zero
+        """
+        # x_b \geq k1
         self.milp.add_new_constraint(
             Expression(
                 constants.MAXVAL,
@@ -2954,6 +3015,7 @@ class KnowledgeBase:
             ),
             InequalityType.GREATER_THAN,
         )
+        # x_b \leq k2
         self.milp.add_new_constraint(
             Expression(
                 -constants.MAXVAL,
@@ -3048,8 +3110,6 @@ class KnowledgeBase:
     def solve_kb(self) -> None:
         if constants.KNOWLEDGE_BASE_SEMANTICS is None:
             self.set_logic(FuzzyLogic.LUKASIEWICZ)
-        if ConfigReader.SHOW_VERSION:
-            Util.info(f"Version: {self.get_version()}")
         self.compute_language()
         self.convert_strings_into_integers()
         self.solve_inverse_roles()
@@ -3136,188 +3196,203 @@ class KnowledgeBase:
                     Util.debug(
                         f"{constants.SEPARATOR}Assertion completed{constants.SEPARATOR}"
                     )
+                    continue
+
+                # Use right version of the individual (needed when we clone the KB or merge individuals)
+                self.get_correct_version_of_individual(ass)
+                if ass.get_individual().is_blockable():
+                    Util.debug(
+                        f"Direct Blocking status {typing.cast(CreatedIndividual, ass.get_individual()).directly_blocked}"
+                    )
+                    Util.debug(
+                        f"Indirect Blocking status {typing.cast(CreatedIndividual, ass.get_individual()).indirectly_blocked}"
+                    )
+
+                # If the individual is indirectly blocked we skip the assertion
+                if (
+                    ass.get_individual().is_blockable()
+                    and CreatedIndividualHandler.is_indirectly_blocked(
+                        typing.cast(CreatedIndividual, ass.get_individual()), self
+                    )
+                ):
+                    name: str = str(ass.get_individual())
+                    Util.debug(
+                        "Skipping assertion (it has an indirectly blocked individual)"
+                    )
+                    self.blocked_assertions[name] = self.blocked_assertions.get(
+                        name, []
+                    ) + [ass]
+                    continue
+
+                # Add xAss >= lowerBound
+                self.milp.add_new_constraint(ass)
+                if self.is_assertion_processed(ass):
+                    Util.debug(
+                        f"Assertion (without the degree): {ass} already processed."
+                    )
+                    continue
+
+                ind: Individual = ass.get_individual()
+                ci: Concept = ass.get_concept()
+                self.add_negated_equations(ind, ci)
+                c_type: ConceptType = ass.get_type()
+
+                # Apply reasoning rule according to the type of the assertion
+                if c_type == ConceptType.ATOMIC:
+                    self.rule_atomic(ass)
+                elif ci.is_complemented_atomic():
+                    self.rule_complemented_atomic(ass)
+                elif c_type == ConceptType.AND:
+                    self.rule_and(ass)
+                elif c_type == ConceptType.OR:
+                    self.rule_or(ass)
+                elif c_type in (ConceptType.SOME, ConceptType.HAS_VALUE):
+                    self.exist_assertions.append(ass)
+                    continue
+                elif c_type == ConceptType.ALL:
+                    self.rule_all(ass)
+                elif OperatorConcept.is_not_has_value(ci):
+                    self.rule_complemented_has_value(ass)
+                elif c_type == ConceptType.CONCRETE:
+                    self.rule_concrete(ass)
+                elif OperatorConcept.is_not_concrete(ci):
+                    self.rule_complemented_concrete(ass)
+                elif c_type == ConceptType.FUZZY_NUMBER:
+                    self.rule_fuzzy_number(ass)
+                elif OperatorConcept.is_not_fuzzy_number(ci):
+                    self.rule_complemented_fuzzy_number(ass)
+                elif c_type == ConceptType.MODIFIED:
+                    self.rule_modified(ass)
+                elif OperatorConcept.is_not_modified(ci):
+                    self.rule_complemented_modified(ass)
+                elif c_type == ConceptType.TOP:
+                    self.rule_top(ass)
+                elif c_type == ConceptType.BOTTOM:
+                    self.rule_bottom(ass)
+                elif c_type in (
+                    ConceptType.AT_MOST_VALUE,
+                    ConceptType.AT_LEAST_VALUE,
+                    ConceptType.EXACT_VALUE,
+                ):
+                    self.positive_concrete_value_assertions.append(ass)
+                elif (
+                    OperatorConcept.is_not_at_least_value(ci)
+                    or OperatorConcept.is_not_at_most_value(ci)
+                    or OperatorConcept.is_not_exact_value(ci)
+                ):
+                    self.add_negated_datatype_restriction(ass)
+                elif c_type == ConceptType.SELF:
+                    self.rule_self(ass)
+                elif OperatorConcept.is_not_self(ci):
+                    self.rule_complemented_self(ass)
+                elif c_type == ConceptType.UPPER_APPROX:
+                    self.rule_upper_approximation(ass)
+                elif c_type == ConceptType.TIGHT_UPPER_APPROX:
+                    self.rule_tight_upper_approximation(ass)
+                elif c_type == ConceptType.LOOSE_UPPER_APPROX:
+                    self.rule_loose_upper_approximation(ass)
+                elif c_type == ConceptType.LOWER_APPROX:
+                    self.rule_lower_approximation(ass)
+                elif c_type == ConceptType.TIGHT_LOWER_APPROX:
+                    self.rule_tight_lower_approximation(ass)
+                elif c_type == ConceptType.LOOSE_LOWER_APPROX:
+                    self.rule_loose_lower_approximation(ass)
+                elif c_type == ConceptType.GOEDEL_AND:
+                    self.rule_goedel_and(ass)
+                elif c_type == ConceptType.LUKASIEWICZ_AND:
+                    self.rule_lukasiewicz_and(ass)
+                elif c_type == ConceptType.GOEDEL_OR:
+                    self.rule_goedel_or(ass)
+                elif c_type == ConceptType.LUKASIEWICZ_OR:
+                    self.rule_lukasiewicz_or(ass)
+                elif c_type == ConceptType.GOEDEL_IMPLIES:
+                    self.rule_goedel_implication(ass)
+                elif OperatorConcept.is_not_goedel_implies(ci):
+                    self.rule_complemented_goedel_implication(ass)
+                elif c_type == ConceptType.ZADEH_IMPLIES:
+                    self.rule_zadeh_implication(ass)
+                elif OperatorConcept.is_not_zadeh_implies(ci):
+                    self.rule_complemented_zadeh_implication(ass)
+                elif c_type == ConceptType.W_SUM:
+                    self.rule_weighted_sum(ass)
+                elif OperatorConcept.is_not_weighted_sum(ci):
+                    self.rule_complemented_weighted_sum(ass)
+                elif c_type == ConceptType.W_SUM_ZERO:
+                    self.rule_weighted_sum_zero(ass)
+                elif OperatorConcept.is_not_weighted_sum_zero(ci):
+                    self.rule_complemented_weighted_sum_zero(ass)
+                elif c_type == ConceptType.WEIGHTED:
+                    self.rule_weighted_concept(ass)
+                elif OperatorConcept.is_not_weighted(ci):
+                    self.rule_complemented_weighted_concept(ass)
+                elif c_type == ConceptType.POS_THRESHOLD:
+                    self.rule_positive_threshold(ass)
+                elif OperatorConcept.is_not_pos_threshold(ci):
+                    self.rule_complemented_positive_threshold(ass)
+                elif c_type == ConceptType.NEG_THRESHOLD:
+                    self.rule_negative_threshold(ass)
+                elif OperatorConcept.is_not_neg_threshold(ci):
+                    self.rule_complemented_negative_threshold(ass)
+                elif c_type == ConceptType.EXT_POS_THRESHOLD:
+                    self.rule_extended_positive_threshold(ass)
+                elif OperatorConcept.is_not_ext_pos_threshold(ci):
+                    self.rule_complemented_extended_positive_threshold(ass)
+                elif c_type == ConceptType.EXT_NEG_THRESHOLD:
+                    self.rule_extended_negative_threshold(ass)
+                elif OperatorConcept.is_not_ext_neg_threshold(ci):
+                    self.rule_complemented_extended_negative_threshold(ass)
+                elif c_type == ConceptType.OWA:
+                    self.rule_owa(ass)
+                elif OperatorConcept.is_not_owa(ci):
+                    self.rule_complemented_owa(ass)
+                elif c_type == ConceptType.QUANTIFIED_OWA:
+                    self.rule_quantified_owa(ass)
+                elif OperatorConcept.is_not_qowa(ci):
+                    self.rule_complemented_quantified_owa(ass)
+                elif c_type == ConceptType.CHOQUET_INTEGRAL:
+                    self.rule_choquet(ass)
+                elif OperatorConcept.is_not_choquet(ci):
+                    self.rule_complemented_choquet(ass)
+                elif c_type == ConceptType.SUGENO_INTEGRAL:
+                    self.rule_sugeno(ass)
+                elif OperatorConcept.is_not_sugeno(ci):
+                    self.rule_complemented_sugeno(ass)
+                elif c_type == ConceptType.QUASI_SUGENO_INTEGRAL:
+                    self.rule_quasi_sugeno(ass)
+                elif OperatorConcept.is_not_quasi_sugeno(ci):
+                    self.rule_complemented_quasi_sugeno(ass)
+                elif c_type == ConceptType.W_MIN:
+                    self.rule_weighted_min(ass)
+                elif OperatorConcept.is_not_weighted_min(ci):
+                    self.rule_complemented_weighted_min(ass)
+                elif c_type == ConceptType.W_MAX:
+                    self.rule_weighted_max(ass)
+                elif OperatorConcept.is_not_weighted_max(ci):
+                    self.rule_complemented_weighted_max(ass)
                 else:
-                    self.get_correct_version_of_individual(ass)
-                    if ass.get_individual().is_blockable():
-                        Util.debug(
-                            f"Direct Blocking status {typing.cast(CreatedIndividual, ass.get_individual()).directly_blocked}"
-                        )
-                        Util.debug(
-                            f"Indirect Blocking status {typing.cast(CreatedIndividual, ass.get_individual()).indirectly_blocked}"
-                        )
-                    if (
-                        ass.get_individual().is_blockable()
-                        and CreatedIndividualHandler.is_indirectly_blocked(
-                            typing.cast(CreatedIndividual, ass.get_individual()), self
-                        )
-                    ):
-                        name: str = str(ass.get_individual())
-                        Util.debug(
-                            "Skipping assertion (it has an indirectly blocked individual)"
-                        )
-                        self.blocked_assertions[name] = self.blocked_assertions.get(
-                            name, []
-                        ) + [ass]
-                    else:
-                        self.milp.add_new_constraint(ass)
-                        if self.is_assertion_processed(ass):
-                            Util.debug(
-                                f"Assertion (without the degree): {ass} already processed."
-                            )
-                        else:
-                            ind: Individual = ass.get_individual()
-                            ci: Concept = ass.get_concept()
-                            self.add_negated_equations(ind, ci)
-                            c_type: ConceptType = ass.get_type()
-                            if c_type == ConceptType.ATOMIC:
-                                self.rule_atomic(ass)
-                            elif ci.is_complemented_atomic():
-                                self.rule_complemented_atomic(ass)
-                            elif c_type == ConceptType.AND:
-                                self.rule_and(ass)
-                            elif c_type == ConceptType.OR:
-                                self.rule_or(ass)
-                            elif c_type in (ConceptType.SOME, ConceptType.HAS_VALUE):
-                                self.exist_assertions.append(ass)
-                                continue
-                            elif c_type == ConceptType.ALL:
-                                self.rule_all(ass)
-                            elif OperatorConcept.is_not_has_value(ci):
-                                self.rule_complemented_has_value(ass)
-                            elif c_type == ConceptType.CONCRETE:
-                                self.rule_concrete(ass)
-                            elif OperatorConcept.is_not_concrete(ci):
-                                self.rule_complemented_concrete(ass)
-                            elif c_type == ConceptType.FUZZY_NUMBER:
-                                self.rule_fuzzy_number(ass)
-                            elif OperatorConcept.is_not_fuzzy_number(ci):
-                                self.rule_complemented_fuzzy_number(ass)
-                            elif c_type == ConceptType.MODIFIED:
-                                self.rule_modified(ass)
-                            elif OperatorConcept.is_not_modified(ci):
-                                self.rule_complemented_modified(ass)
-                            elif c_type == ConceptType.TOP:
-                                self.rule_top(ass)
-                            elif c_type == ConceptType.BOTTOM:
-                                self.rule_bottom(ass)
-                            elif c_type in (
-                                ConceptType.AT_MOST_VALUE,
-                                ConceptType.AT_LEAST_VALUE,
-                                ConceptType.EXACT_VALUE,
-                            ):
-                                self.positive_concrete_value_assertions.append(ass)
-                            elif (
-                                OperatorConcept.is_not_at_least_value(ci)
-                                or OperatorConcept.is_not_at_most_value(ci)
-                                or OperatorConcept.is_not_exact_value(ci)
-                            ):
-                                self.add_negated_datatype_restriction(ass)
-                            elif c_type == ConceptType.SELF:
-                                self.rule_self(ass)
-                            elif OperatorConcept.is_not_self(ci):
-                                self.rule_complemented_self(ass)
-                            elif c_type == ConceptType.UPPER_APPROX:
-                                self.rule_upper_approximation(ass)
-                            elif c_type == ConceptType.TIGHT_UPPER_APPROX:
-                                self.rule_tight_upper_approximation(ass)
-                            elif c_type == ConceptType.LOOSE_UPPER_APPROX:
-                                self.rule_loose_upper_approximation(ass)
-                            elif c_type == ConceptType.LOWER_APPROX:
-                                self.rule_lower_approximation(ass)
-                            elif c_type == ConceptType.TIGHT_LOWER_APPROX:
-                                self.rule_tight_lower_approximation(ass)
-                            elif c_type == ConceptType.LOOSE_LOWER_APPROX:
-                                self.rule_loose_lower_approximation(ass)
-                            elif c_type == ConceptType.GOEDEL_AND:
-                                self.rule_goedel_and(ass)
-                            elif c_type == ConceptType.LUKASIEWICZ_AND:
-                                self.rule_lukasiewicz_and(ass)
-                            elif c_type == ConceptType.GOEDEL_OR:
-                                self.rule_goedel_or(ass)
-                            elif c_type == ConceptType.LUKASIEWICZ_OR:
-                                self.rule_lukasiewicz_or(ass)
-                            elif c_type == ConceptType.GOEDEL_IMPLIES:
-                                self.rule_goedel_implication(ass)
-                            elif OperatorConcept.is_not_goedel_implies(ci):
-                                self.rule_complemented_goedel_implication(ass)
-                            elif c_type == ConceptType.ZADEH_IMPLIES:
-                                self.rule_zadeh_implication(ass)
-                            elif OperatorConcept.is_not_zadeh_implies(ci):
-                                self.rule_complemented_zadeh_implication(ass)
-                            elif c_type == ConceptType.W_SUM:
-                                self.rule_weighted_sum(ass)
-                            elif OperatorConcept.is_not_weighted_sum(ci):
-                                self.rule_complemented_weighted_sum(ass)
-                            elif c_type == ConceptType.W_SUM_ZERO:
-                                self.rule_weighted_sum_zero(ass)
-                            elif OperatorConcept.is_not_weighted_sum_zero(ci):
-                                self.rule_complemented_weighted_sum_zero(ass)
-                            elif c_type == ConceptType.WEIGHTED:
-                                self.rule_weighted_concept(ass)
-                            elif OperatorConcept.is_not_weighted(ci):
-                                self.rule_complemented_weighted_concept(ass)
-                            elif c_type == ConceptType.POS_THRESHOLD:
-                                self.rule_positive_threshold(ass)
-                            elif OperatorConcept.is_not_pos_threshold(ci):
-                                self.rule_complemented_positive_threshold(ass)
-                            elif c_type == ConceptType.NEG_THRESHOLD:
-                                self.rule_negative_threshold(ass)
-                            elif OperatorConcept.is_not_neg_threshold(ci):
-                                self.rule_complemented_negative_threshold(ass)
-                            elif c_type == ConceptType.EXT_POS_THRESHOLD:
-                                self.rule_extended_positive_threshold(ass)
-                            elif OperatorConcept.is_not_ext_pos_threshold(ci):
-                                self.rule_complemented_extended_positive_threshold(ass)
-                            elif c_type == ConceptType.EXT_NEG_THRESHOLD:
-                                self.rule_extended_negative_threshold(ass)
-                            elif OperatorConcept.is_not_ext_neg_threshold(ci):
-                                self.rule_complemented_extended_negative_threshold(ass)
-                            elif c_type == ConceptType.OWA:
-                                self.rule_owa(ass)
-                            elif OperatorConcept.is_not_owa(ci):
-                                self.rule_complemented_owa(ass)
-                            elif c_type == ConceptType.QUANTIFIED_OWA:
-                                self.rule_quantified_owa(ass)
-                            elif OperatorConcept.is_not_qowa(ci):
-                                self.rule_complemented_quantified_owa(ass)
-                            elif c_type == ConceptType.CHOQUET_INTEGRAL:
-                                self.rule_choquet(ass)
-                            elif OperatorConcept.is_not_choquet(ci):
-                                self.rule_complemented_choquet(ass)
-                            elif c_type == ConceptType.SUGENO_INTEGRAL:
-                                self.rule_sugeno(ass)
-                            elif OperatorConcept.is_not_sugeno(ci):
-                                self.rule_complemented_sugeno(ass)
-                            elif c_type == ConceptType.QUASI_SUGENO_INTEGRAL:
-                                self.rule_quasi_sugeno(ass)
-                            elif OperatorConcept.is_not_quasi_sugeno(ci):
-                                self.rule_complemented_quasi_sugeno(ass)
-                            elif c_type == ConceptType.W_MIN:
-                                self.rule_weighted_min(ass)
-                            elif OperatorConcept.is_not_weighted_min(ci):
-                                self.rule_complemented_weighted_min(ass)
-                            elif c_type == ConceptType.W_MAX:
-                                self.rule_weighted_max(ass)
-                            elif OperatorConcept.is_not_weighted_max(ci):
-                                self.rule_complemented_weighted_max(ass)
-                            else:
-                                Util.warning(f"Warning: Assertion with type {c_type}")
+                    Util.warning(f"Warning: Assertion with type {c_type}")
 
-                            nodes: set[str] = self.labels_with_nodes.get(str(ind))
-                            if nodes is not None:
-                                for node in nodes:
-                                    self.rule_ass_nom(ind, ci, node)
+                # For each node in labelsWithNodes, apply AssNom rule
+                nodes: set[str] = self.labels_with_nodes.get(str(ind))
+                if nodes is not None:
+                    for node in nodes:
+                        self.rule_ass_nom(ind, ci, node)
 
-                            self.mark_process_assertion(ass)
-                            ind.add_concept(ci)
-                            Util.debug(
-                                f"{constants.SEPARATOR}Assertion completed{constants.SEPARATOR}"
-                            )
+                self.mark_process_assertion(ass)
+                ind.add_concept(ci)
+                Util.debug(
+                    f"{constants.SEPARATOR}Assertion completed{constants.SEPARATOR}"
+                )
             self.assertions.clear()
+
+            # Solve one some rule
             if len(self.assertions) == 0:
                 self.solve_one_exist_assertion()
+
+            # Check if there are more assertions
             if len(self.assertions) == 0 and len(self.exist_assertions) == 0:
                 break
+        # Concrete assertions
         self.solve_concrete_value_assertions()
 
     def solve_concept_assertion(self, ind: Individual, concept: Concept) -> None:
@@ -3355,25 +3430,31 @@ class KnowledgeBase:
     def solve_concept_complemented_assertion(
         self, ind: Individual, lower_limit: Degree, concept: Concept
     ) -> None:
-        if isinstance(concept, ChoquetIntegral):
+        if OperatorConcept.is_not_choquet(concept):
             self.solve_choquet_integral_complemented_assertion(ind, concept)
-        elif isinstance(concept, (SugenoIntegral, QsugenoIntegral)):
+        elif OperatorConcept.is_not_sugeno(
+            concept
+        ) or OperatorConcept.is_not_quasi_sugeno(concept):
             self.solve_sugeno_integral_complemented_assertion(ind, concept)
-        elif isinstance(concept, (OwaConcept, QowaConcept)):
+        elif OperatorConcept.is_not_owa(concept) or OperatorConcept.is_not_qowa(
+            concept
+        ):
             self.solve_owa_complemented_assertion(ind, concept)
-        elif isinstance(concept, WeightedMaxConcept):
+        elif OperatorConcept.is_not_weighted_max(concept):
             self.solve_w_max_complemented_assertion(ind, concept)
-        elif isinstance(concept, WeightedMinConcept):
+        elif OperatorConcept.is_not_weighted_min(concept):
             self.solve_w_min_complemented_assertion(ind, concept)
-        elif isinstance(concept, WeightedSumConcept):
+        elif OperatorConcept.is_not_weighted_sum(concept):
             self.solve_w_sum_complemented_assertion(ind, concept)
-        elif isinstance(concept, WeightedSumZeroConcept):
+        elif OperatorConcept.is_not_weighted_sum_zero(concept):
             self.solve_w_sum_zero_complemented_assertion(ind, concept)
-        elif isinstance(concept, (ModifiedConcept, ModifiedConcreteConcept)):
-            self.solve_modifier_complemented_assertion(
-                ind, concept.curr_concept, lower_limit
-            )
-        elif isinstance(concept, FuzzyConcreteConcept):
+        elif isinstance(concept, OperatorConcept) and isinstance(
+            concept.get_atom(), (ModifiedConcept, ModifiedConcreteConcept)
+        ):
+            self.solve_modifier_complemented_assertion(ind, concept, lower_limit)
+        elif isinstance(concept, OperatorConcept) and isinstance(
+            concept.get_atom(), FuzzyConcreteConcept
+        ):
             self.solve_fuzzy_concrete_concept_complement_assertion(
                 ind, lower_limit, concept
             )
@@ -3417,12 +3498,15 @@ class KnowledgeBase:
         self.milp.add_new_constraint(exp, InequalityType.EQUAL, degree)
 
     def solve_choquet_integral_complemented_assertion(
-        self, ind: Individual, c: ChoquetIntegral
+        self, ind: Individual, c: OperatorConcept
     ) -> None:
-        n: int = len(c.concepts)
+        assert isinstance(c.get_atom(), ChoquetIntegral)
+        ci: ChoquetIntegral = c.get_atom()
+
+        n: int = len(ci.concepts)
         x: list[Variable] = [None] * n
         for i in range(n):
-            not_ci = -c.concepts[i]
+            not_ci = -ci.concepts[i]
             x[i] = self.milp.get_variable(ind, not_ci)
             self.add_assertion(ind, not_ci, DegreeVariable.get_degree(x[i]))
 
@@ -3433,9 +3517,9 @@ class KnowledgeBase:
         y: list[Variable] = self.milp.get_ordered_permutation(x, z)
 
         exp = Expression(1.0)
-        exp.add_term(Term(-c.weights[0], y[0]))
+        exp.add_term(Term(-ci.weights[0], y[0]))
         for k in range(1, n):
-            exp.add_term(Term(c.weights[k - 1] - c.weights[k], y[k]))
+            exp.add_term(Term(ci.weights[k - 1] - ci.weights[k], y[k]))
 
         degree: DegreeVariable = DegreeVariable.get_degree(
             self.milp.get_variable(ind, c)
@@ -3489,8 +3573,11 @@ class KnowledgeBase:
             self.milp.add_new_constraint(exp, InequalityType.EQUAL, degree)
 
     def solve_owa_complemented_assertion(
-        self, ind: Individual, c: typing.Union[OwaConcept, QowaConcept]
+        self, ind: Individual, curr_concept: OperatorConcept
     ) -> None:
+        assert isinstance(curr_concept.get_atom(), (OwaConcept, QowaConcept))
+
+        c: typing.Union[OwaConcept, QowaConcept] = curr_concept.get_atom()
         x_A_in_not_WS: Variable = self.milp.get_variable(ind, c)
         n: int = len(c.concepts)
         x: list[Variable] = []
@@ -3509,7 +3596,7 @@ class KnowledgeBase:
         for j in range(n):
             exp.add_term(Term(-c.weights[j], y[j]))
         self.milp.add_new_constraint(exp, InequalityType.EQUAL)
-        self.rule_complemented(ind, c)
+        self.rule_complemented(ind, curr_concept)
 
     def solve_sugeno_integral_assertion(
         self, ind: Individual, concept: typing.Union[SugenoIntegral, QsugenoIntegral]
@@ -3561,12 +3648,12 @@ class KnowledgeBase:
             self.milp.get_new_variable(VariableType.SEMI_CONTINUOUS) for _ in range(n)
         ]
 
-        if isinstance(concept, SugenoIntegral):
-            for i in range(n):
-                ZadehSolver.and_equation(c[i], y[i], a[i], self.milp)
-        elif isinstance(concept, QsugenoIntegral):
+        if isinstance(concept, QsugenoIntegral):
             for i in range(n):
                 LukasiewiczSolver.and_equation(c[i], y[i], a[i], self.milp)
+        elif isinstance(concept, SugenoIntegral):
+            for i in range(n):
+                ZadehSolver.and_equation(c[i], y[i], a[i], self.milp)
 
         degree: DegreeVariable = DegreeVariable.get_degree(
             self.milp.get_variable(ind, concept)
@@ -3587,8 +3674,11 @@ class KnowledgeBase:
         self.milp.add_new_constraint(exp, InequalityType.EQUAL, n - 1)
 
     def solve_sugeno_integral_complemented_assertion(
-        self, ind: Individual, concept: typing.Union[SugenoIntegral, QsugenoIntegral]
+        self, ind: Individual, curr_concept: OperatorConcept
     ) -> None:
+        assert isinstance(curr_concept.get_atom(), (SugenoIntegral, QsugenoIntegral))
+        concept: typing.Union[SugenoIntegral, QsugenoIntegral] = curr_concept.get_atom()
+
         n: int = len(concept.concepts)
         x: list[Variable] = []
         for i in range(n):
@@ -3638,15 +3728,15 @@ class KnowledgeBase:
             self.milp.get_new_variable(VariableType.SEMI_CONTINUOUS) for _ in range(n)
         ]
 
-        if isinstance(concept, SugenoIntegral):
-            for i in range(n):
-                ZadehSolver.and_equation(c[i], y[i], a[i], self.milp)
-        elif isinstance(concept, QsugenoIntegral):
+        if isinstance(concept, QsugenoIntegral):
             for i in range(n):
                 LukasiewiczSolver.and_equation(c[i], y[i], a[i], self.milp)
+        elif isinstance(concept, SugenoIntegral):
+            for i in range(n):
+                ZadehSolver.and_equation(c[i], y[i], a[i], self.milp)
 
         degree: DegreeVariable = DegreeVariable.get_degree(
-            self.milp.get_variable(ind, concept)
+            self.milp.get_variable(ind, curr_concept)
         )
         b: list[Variable] = [
             self.milp.get_new_variable(VariableType.BINARY) for _ in range(n)
@@ -3662,7 +3752,7 @@ class KnowledgeBase:
         for i in range(n):
             exp.add_term(Term(1.0, b[i]))
         self.milp.add_new_constraint(exp, InequalityType.EQUAL, n - 1)
-        self.rule_complemented(ind, concept)
+        self.rule_complemented(ind, curr_concept)
 
     def solve_w_max_assertion(
         self, ind: Individual, concept: WeightedMaxConcept
@@ -3678,9 +3768,12 @@ class KnowledgeBase:
         ZadehSolver.or_equation(min_vars, x_A_in_WS, self.milp)
 
     def solve_w_max_complemented_assertion(
-        self, ind: Individual, concept: WeightedMaxConcept
+        self, ind: Individual, curr_concept: OperatorConcept
     ) -> None:
-        x_A_in_WS: Variable = self.milp.get_variable(ind, concept)
+        assert isinstance(curr_concept.get_atom(), WeightedMaxConcept)
+        concept: WeightedMaxConcept = curr_concept.get_atom()
+
+        x_A_in_WS: Variable = self.milp.get_variable(ind, curr_concept)
         negmin: list[Variable] = []
         for ci, weight in zip(concept.concepts, concept.weights):
             not_ci: Concept = -ci
@@ -3691,7 +3784,7 @@ class KnowledgeBase:
             ZadehSolver.or_negated_equation(max_var, xi, 1.0 - weight, self.milp)
             negmin.append(max_var)
         ZadehSolver.and_equation(negmin, x_A_in_WS, self.milp)
-        self.rule_complemented(ind, concept)
+        self.rule_complemented(ind, curr_concept)
 
     def solve_w_min_assertion(
         self, ind: Individual, concept: WeightedMinConcept
@@ -3707,9 +3800,12 @@ class KnowledgeBase:
         ZadehSolver.and_equation(max_vars, x_A_in_WS, self.milp)
 
     def solve_w_min_complemented_assertion(
-        self, ind: Individual, concept: WeightedMinConcept
+        self, ind: Individual, curr_concept: OperatorConcept
     ) -> None:
-        x_A_in_WS: Variable = self.milp.get_variable(ind, concept)
+        assert isinstance(curr_concept.get_atom(), WeightedMinConcept)
+        concept: WeightedMinConcept = curr_concept.get_atom()
+
+        x_A_in_WS: Variable = self.milp.get_variable(ind, curr_concept)
         negmax: list[Variable] = []
         for ci, weight in zip(concept.concepts, concept.weights):
             not_ci: Concept = -ci
@@ -3720,7 +3816,7 @@ class KnowledgeBase:
             ZadehSolver.and_negated_equation(max_var, xi, weight, self.milp)
             negmax.append(max_var)
         ZadehSolver.or_equation(negmax, x_A_in_WS, self.milp)
-        self.rule_complemented(ind, concept)
+        self.rule_complemented(ind, curr_concept)
 
     def solve_w_sum_assertion(
         self, ind: Individual, concept: WeightedSumConcept
@@ -3738,9 +3834,12 @@ class KnowledgeBase:
         )
 
     def solve_w_sum_complemented_assertion(
-        self, ind: Individual, concept: WeightedSumConcept
+        self, ind: Individual, curr_concept: OperatorConcept
     ) -> None:
-        x_A_in_not_WS: Variable = self.milp.get_variable(ind, concept)
+        assert isinstance(curr_concept.get_atom(), WeightedSumConcept)
+        concept: WeightedSumConcept = curr_concept.get_atom()
+
+        x_A_in_not_WS: Variable = self.milp.get_variable(ind, curr_concept)
         terms: list[Term] = []
         for ci, weight in zip(concept.concepts, concept.weights):
             not_ci: Concept = -ci
@@ -3753,7 +3852,7 @@ class KnowledgeBase:
             InequalityType.EQUAL,
             DegreeVariable.get_degree(x_A_in_not_WS),
         )
-        self.rule_complemented(ind, concept)
+        self.rule_complemented(ind, curr_concept)
 
     def solve_w_sum_zero_assertion(
         self, ind: Individual, concept: WeightedSumZeroConcept
@@ -3787,11 +3886,14 @@ class KnowledgeBase:
         self.rule_complemented(ind, concept)
 
     def solve_w_sum_zero_complemented_assertion(
-        self, ind: Individual, concept: WeightedSumZeroConcept
+        self, ind: Individual, curr_concept: OperatorConcept
     ) -> None:
+        assert isinstance(curr_concept.get_atom(), WeightedSumZeroConcept)
+        concept: WeightedSumZeroConcept = curr_concept.get_atom()
+
         terms: list[Term] = []
         vx: list[Variable] = []
-        x_A_in_not_ws: Variable = self.milp.get_variable(ind, concept)
+        x_A_in_not_ws: Variable = self.milp.get_variable(ind, curr_concept)
         y: Variable = self.milp.get_new_variable(VariableType.BINARY)
         z: Variable = self.milp.get_new_variable(VariableType.SEMI_CONTINUOUS)
         for ci, weight in zip(concept.concepts, concept.weights):
@@ -3814,7 +3916,7 @@ class KnowledgeBase:
         exp2: Expression = Expression(*terms)
         exp2.add_term(Term(1.0, y))
         self.milp.add_new_constraint(exp2, InequalityType.GREATER_THAN)
-        self.rule_complemented(ind, concept)
+        self.rule_complemented(ind, curr_concept)
 
     def solve_crisp_concrete_concept_assertion(
         self, ind: Individual, concept: CrispConcreteConcept
@@ -3888,10 +3990,11 @@ class KnowledgeBase:
         self,
         ind: CreatedIndividual,
         lower_limit: Degree,
-        concept: FuzzyConcreteConcept,
+        curr_concept: OperatorConcept,
     ) -> None:
         """Solve a complement assertion"""
-        assertion: Assertion = Assertion(ind, -concept, lower_limit)
+        assert isinstance(curr_concept.get_atom(), FuzzyConcreteConcept)
+        assertion: Assertion = Assertion(ind, curr_concept, lower_limit)
         self.rule_complemented_complex_assertion(assertion)
 
     def solve_left_concrete_concept_assertion(
@@ -4264,9 +4367,12 @@ class KnowledgeBase:
         )
 
     def solve_modifier_complemented_assertion(
-        self, ind: Individual, con: Concept, degree: Degree
+        self, ind: Individual, concept: OperatorConcept, degree: Degree
     ) -> None:
-        ass: Assertion = Assertion(ind, -con, degree)
+        assert isinstance(concept, OperatorConcept) and isinstance(
+            concept.get_atom(), (ModifiedConcept, ModifiedConcreteConcept)
+        )
+        ass: Assertion = Assertion(ind, concept, degree)
         self.rule_complemented_complex_assertion(ass)
 
     def solve_linear_modifier_assertion(
@@ -4434,7 +4540,9 @@ class KnowledgeBase:
 
     def add_negated_datatype_restriction(self, ass: Assertion) -> None:
         a: Individual = ass.get_individual()
-        c: Concept = ass.get_concept()
+        op: Concept = ass.get_concept()
+        assert isinstance(op, OperatorConcept) and op.type == ConceptType.COMPLEMENT
+        c: Concept = op.get_atom()
         assert isinstance(c, HasRoleInterface)
         f_name: str = c.role
         a.add_concrete_restriction(f_name, ass)
@@ -5372,7 +5480,7 @@ class KnowledgeBase:
         self.compute_variables_old_calculus(fcc)
         ind: CreatedIndividual = typing.cast(CreatedIndividual, ass.get_individual())
 
-        self.solve_concept_complemented_assertion(ind, ass.get_lower_limit(), fcc)
+        self.solve_concept_complemented_assertion(ind, ass.get_lower_limit(), c)
         # fcc.solve_complement_assertion(ind, ass.get_lower_limit(), self)
 
     def rule_fuzzy_number(self, ass: Assertion) -> None:
@@ -5413,7 +5521,7 @@ class KnowledgeBase:
         #     ass.get_individual(), ass.get_lower_limit(), self
         # )
         self.solve_modifier_complemented_assertion(
-            ass.get_individual(), mod, ass.get_lower_limit()
+            ass.get_individual(), c, ass.get_lower_limit()
         )
 
     def rule_bottom(self, ass: Assertion) -> None:
@@ -5786,7 +5894,7 @@ class KnowledgeBase:
         self.milp.add_new_constraint(
             Expression(Term(1.0, x_a_in_wc), Term(-w, x_a_in_c)), InequalityType.EQUAL
         )
-        self.rule_complemented(i, wc)
+        self.rule_complemented(i, c)
 
     def rule_complemented_complex_assertion(self, ass: Assertion) -> None:
         i: Individual = ass.get_individual()
@@ -5818,12 +5926,13 @@ class KnowledgeBase:
         c: Concept = ass.get_concept()
         assert isinstance(c, OperatorConcept)
         ws: WeightedSumConcept = typing.cast(WeightedSumConcept, c.get_atom())
+
         n: int = len(ws.concepts)
         self.old_01_variables += n
         self.rules_applied[KnowledgeBaseRules.RULE_NOT_W_SUM] += 1
 
         # ws.solve_complemented_assertion(ass.get_individual(), self)
-        self.solve_concept_complemented_assertion(ass.get_individual(), None, ws)
+        self.solve_concept_complemented_assertion(ass.get_individual(), None, c)
 
     def rule_weighted_sum_zero(self, ass: Assertion) -> None:
         n: int = len(typing.cast(WeightedSumZeroConcept, ass.get_concept()).concepts)
@@ -5839,11 +5948,11 @@ class KnowledgeBase:
     def rule_complemented_weighted_sum_zero(self, ass: Assertion) -> None:
         c: Concept = ass.get_concept()
         assert isinstance(c, OperatorConcept)
-        wsz: WeightedSumZeroConcept = typing.cast(WeightedSumZeroConcept, c.get_atom())
+        assert isinstance(c.get_atom(), WeightedSumZeroConcept)
 
         self.rules_applied[KnowledgeBaseRules.RULE_NOT_W_SUM_ZERO] += 1
         # wsz.solve_complemented_assertion(ass.get_individual(), self)
-        self.solve_concept_complemented_assertion(ass.get_individual(), None, wsz)
+        self.solve_concept_complemented_assertion(ass.get_individual(), None, c)
 
     def rule_weighted_min(self, ass: Assertion) -> None:
         self.rules_applied[KnowledgeBaseRules.RULE_W_MIN] += 1
@@ -5857,11 +5966,11 @@ class KnowledgeBase:
     def rule_complemented_weighted_min(self, ass: Assertion) -> None:
         c: Concept = ass.get_concept()
         assert isinstance(c, OperatorConcept)
-        wm: WeightedMinConcept = typing.cast(WeightedMinConcept, c.get_atom())
+        assert isinstance(c.get_atom(), WeightedMinConcept)
 
         self.rules_applied[KnowledgeBaseRules.RULE_NOT_W_MIN] += 1
         # wm.solve_complemented_assertion(ass.get_individual(), self)
-        self.solve_concept_complemented_assertion(ass.get_individual(), None, wm)
+        self.solve_concept_complemented_assertion(ass.get_individual(), None, c)
 
     def rule_weighted_max(self, ass: Assertion) -> None:
         self.rules_applied[KnowledgeBaseRules.RULE_W_MAX] += 1
@@ -5875,11 +5984,11 @@ class KnowledgeBase:
     def rule_complemented_weighted_max(self, ass: Assertion) -> None:
         c: Concept = ass.get_concept()
         assert isinstance(c, OperatorConcept)
-        wm: WeightedMaxConcept = typing.cast(WeightedMaxConcept, c.get_atom())
+        assert isinstance(c.get_atom(), WeightedMaxConcept)
 
         self.rules_applied[KnowledgeBaseRules.RULE_NOT_W_MAX] += 1
         # wm.solve_complemented_assertion(ass.get_individual(), self)
-        self.solve_concept_complemented_assertion(ass.get_individual(), None, wm)
+        self.solve_concept_complemented_assertion(ass.get_individual(), None, c)
 
     def rule_owa(self, ass: Assertion) -> None:
         n: int = len(typing.cast(OwaConcept, ass.get_concept()).concepts)
@@ -5904,7 +6013,7 @@ class KnowledgeBase:
         self.rules_applied[KnowledgeBaseRules.RULE_NOT_OWA] += 1
         # oc.solve_complemented_assertion(ass.get_individual(), self)
 
-        self.solve_concept_complemented_assertion(ass.get_individual(), None, oc)
+        self.solve_concept_complemented_assertion(ass.get_individual(), None, c)
 
     def rule_quantified_owa(self, ass: Assertion) -> None:
         self.rules_applied[KnowledgeBaseRules.RULE_OWA] += 1
@@ -5932,12 +6041,12 @@ class KnowledgeBase:
     def rule_complemented_choquet(self, ass: Assertion) -> None:
         c: Concept = ass.get_concept()
         assert isinstance(c, OperatorConcept)
-        ci: ChoquetIntegral = typing.cast(ChoquetIntegral, c.get_atom())
+        assert isinstance(c.get_atom(), ChoquetIntegral)
 
         self.rules_applied[KnowledgeBaseRules.RULE_NOT_CHOQUET_INTEGRAL] += 1
         # ci.solve_complemented_assertion(ass.get_individual(), self)
 
-        self.solve_concept_complemented_assertion(ass.get_individual(), None, ci)
+        self.solve_concept_complemented_assertion(ass.get_individual(), None, c)
 
     def rule_sugeno(self, ass: Assertion) -> None:
         self.rules_applied[KnowledgeBaseRules.RULE_SUGENO_INTEGRAL] += 1
@@ -5951,11 +6060,11 @@ class KnowledgeBase:
     def rule_complemented_sugeno(self, ass: Assertion) -> None:
         c: Concept = ass.get_concept()
         assert isinstance(c, OperatorConcept)
-        si: SugenoIntegral = typing.cast(SugenoIntegral, c.get_atom())
+        assert isinstance(c.get_atom(), SugenoIntegral)
 
         self.rules_applied[KnowledgeBaseRules.RULE_NOT_SUGENO_INTEGRAL] += 1
         # si.solve_complemented_assertion(ass.get_individual(), self)
-        self.solve_concept_complemented_assertion(ass.get_individual(), None, si)
+        self.solve_concept_complemented_assertion(ass.get_individual(), None, c)
 
     def rule_quasi_sugeno(self, ass: Assertion) -> None:
         self.rules_applied[KnowledgeBaseRules.RULE_QUASI_SUGENO_INTEGRAL] += 1
@@ -5969,11 +6078,11 @@ class KnowledgeBase:
     def rule_complemented_quasi_sugeno(self, ass: Assertion) -> None:
         c: Concept = ass.get_concept()
         assert isinstance(c, OperatorConcept)
-        qsi: QsugenoIntegral = typing.cast(QsugenoIntegral, c.get_atom())
+        assert isinstance(c.get_atom(), QsugenoIntegral)
 
         self.rules_applied[KnowledgeBaseRules.RULE_NOT_QUASI_SUGENO_INTEGRAL] += 1
         # qsi.solve_complemented_assertion(ass.get_individual(), self)
-        self.solve_concept_complemented_assertion(ass.get_individual(), None, qsi)
+        self.solve_concept_complemented_assertion(ass.get_individual(), None, c)
 
     def rule_complemented_at_most_datatype_restriction(
         self, b: CreatedIndividual, ass: Assertion
@@ -6001,9 +6110,6 @@ class KnowledgeBase:
 
     def set_dynamic_blocking(self) -> None:
         self.blocking_dynamic = True
-
-    def get_version(self) -> float:
-        return KnowledgeBase.VERSION
 
     def is_crisp_role(self, role_name: str) -> bool:
         return (
@@ -6216,6 +6322,7 @@ class KnowledgeBase:
         Util.debug(f"{constants.STAR_SEPARATOR * 2}")
 
 
+@class_debugging()
 class DatatypeReasoner:
 
     @staticmethod
@@ -6256,7 +6363,7 @@ class DatatypeReasoner:
                 ind, role, b, DegreeVariable.get_degree(x_f), kb
             )
         x_b: Variable = DatatypeReasoner.get_xb(b, t, kb)
-        if new_variable is not None and k is not None:
+        if new_variable and k is not None:
             kb.restrict_range(x_b, x_f, k[0], k[1])
         return [b, x_b, x_f]
 
@@ -6495,7 +6602,7 @@ class DatatypeReasoner:
                 n, kb, x_b, x_is_c, x_f, k, InequalityType.LESS_THAN
             )
         elif type == InequalityType.GREATER_THAN:
-            if isinstance(n, float):
+            if isinstance(n, constants.NUMBER):
                 kb.milp.add_new_constraint(
                     Expression(
                         constants.MAXVAL,
@@ -6524,7 +6631,7 @@ class DatatypeReasoner:
                     InequalityType.GREATER_THAN,
                 )
         elif type == InequalityType.LESS_THAN:
-            if isinstance(n, float):
+            if isinstance(n, constants.NUMBER):
                 kb.milp.add_new_constraint(
                     Expression(
                         -constants.MAXVAL,
@@ -6564,7 +6671,7 @@ class DatatypeReasoner:
         t: ConcreteFeature = DatatypeReasoner.get_feature(f_name, kb)
         k: typing.Optional[list[float]] = DatatypeReasoner.get_bounds(t)
         return_value: list[typing.Any] = (
-            DatatypeReasoner.get_created_individual_and_variables(a, c.role, t, k, kb)
+            DatatypeReasoner.get_created_individual_and_variables(a, f_name, t, k, kb)
         )
         b: CreatedIndividual = typing.cast(CreatedIndividual, return_value[0])
         x_b: Variable = typing.cast(Variable, return_value[1])
@@ -6647,7 +6754,8 @@ class DatatypeReasoner:
         type: InequalityType,
     ) -> None:
         if type == InequalityType.GREATER_THAN:
-            if isinstance(n, float):
+            if isinstance(n, constants.NUMBER):
+                # x_b <= (n - \epsilon) + (2 k_\infty + \epsilon) (1 - x_f) + (2k_\infty + \epsilon) x_is_c
                 kb.milp.add_new_constraint(
                     Expression(
                         constants.MAXVAL2 + n,
@@ -6658,6 +6766,7 @@ class DatatypeReasoner:
                     InequalityType.GREATER_THAN,
                 )
             elif isinstance(n, Variable):
+                # x_b <= x - \epsilon x_f + 2k_\infty (1 - x_f) + (2k_\infty + \epsilon) x_is_c
                 kb.milp.add_new_constraint(
                     Expression(
                         constants.MAXVAL2,
@@ -6668,16 +6777,19 @@ class DatatypeReasoner:
                     ),
                     InequalityType.GREATER_THAN,
                 )
+                # x \geq -max_val
                 kb.milp.add_new_constraint(
                     Expression(constants.MAXVAL, Term(1.0, n)),
                     InequalityType.GREATER_THAN,
                 )
+                # x \leq max_val
                 kb.milp.add_new_constraint(
                     Expression(constants.MAXVAL, Term(-1.0, n)),
                     InequalityType.GREATER_THAN,
                 )
         elif type == InequalityType.LESS_THAN:
-            if isinstance(n, float):
+            if isinstance(n, constants.NUMBER):
+                # x_b >= (n + \epsilon) - (2 k_\infty + \epsilon) (1 - x_f) - (2k_\infty + \epsilon) x_is_c
                 kb.milp.add_new_constraint(
                     Expression(
                         -constants.MAXVAL2 + n,
@@ -6688,6 +6800,7 @@ class DatatypeReasoner:
                     InequalityType.LESS_THAN,
                 )
             elif isinstance(n, Variable):
+                # x_b >= x + \epsilon x_f - 2k_\infty (1 - x_f) - (2k_\infty + \epsilon) x_is_c
                 kb.milp.add_new_constraint(
                     Expression(
                         -constants.MAXVAL2,
@@ -6698,16 +6811,19 @@ class DatatypeReasoner:
                     ),
                     InequalityType.LESS_THAN,
                 )
+                # x \geq -max_val
                 kb.milp.add_new_constraint(
                     Expression(constants.MAXVAL, Term(1.0, n)),
                     InequalityType.GREATER_THAN,
                 )
+                # x \leq max_val
                 kb.milp.add_new_constraint(
                     Expression(constants.MAXVAL, Term(-1.0, n)),
                     InequalityType.GREATER_THAN,
                 )
         elif type == InequalityType.EQUAL:
-            if isinstance(n, float):
+            if isinstance(n, constants.NUMBER):
+                # x_b <= (n - \epsilon) y + k_\infty (1 - y) + (2 k_\infty + \epsilon) (1 - x_f) + (2k_\infty + \epsilon) x_is_c
                 y: Variable = kb.milp.get_new_variable(VariableType.BINARY)
                 kb.milp.add_new_constraint(
                     Expression(
@@ -6719,6 +6835,7 @@ class DatatypeReasoner:
                     ),
                     InequalityType.GREATER_THAN,
                 )
+                # x_b >= (n + \epsilon) (1 - y) - k_\infty y - (2 k_\infty + \epsilon) (1 - x_f) - (2k_\infty + \epsilon) x_is_c
                 kb.milp.add_new_constraint(
                     Expression(
                         -constants.MAXVAL2 + n,
@@ -6730,10 +6847,11 @@ class DatatypeReasoner:
                     InequalityType.LESS_THAN,
                 )
             elif isinstance(n, Variable):
+                # x_b <= x - \epsilon x_f + (2k_\infty + \epsilon) (1 - y) + 2k_\infty (1 - x_f) + (2k_\infty + \epsilon) x_is_c
                 y: Variable = kb.milp.get_new_variable(VariableType.BINARY)
                 kb.milp.add_new_constraint(
                     Expression(
-                        2 * constants.MAXVAL2 + ConfigReader.EPSILON,
+                        4 * constants.MAXVAL + ConfigReader.EPSILON,
                         Term(constants.MAXVAL + n + ConfigReader.EPSILON, y),
                         Term(-1.0, x_b),
                         Term(1.0, n),
@@ -6742,6 +6860,7 @@ class DatatypeReasoner:
                     ),
                     InequalityType.GREATER_THAN,
                 )
+                # x_b >= x + \epsilon x_f - (2k_\infty + \epsilon) y - 2k_\infty (1 - x_f) - (2k_\infty + \epsilon) x_is_c
                 kb.milp.add_new_constraint(
                     Expression(
                         -constants.MAXVAL2,
@@ -6753,10 +6872,12 @@ class DatatypeReasoner:
                     ),
                     InequalityType.LESS_THAN,
                 )
+                # x \geq -maxval
                 kb.milp.add_new_constraint(
                     Expression(constants.MAXVAL, Term(1.0, n)),
                     InequalityType.GREATER_THAN,
                 )
+                # x \leq maxval
                 kb.milp.add_new_constraint(
                     Expression(constants.MAXVAL, Term(-1.0, n)),
                     InequalityType.GREATER_THAN,
@@ -6920,27 +7041,23 @@ class DatatypeReasoner:
         b: CreatedIndividual, ass: Assertion, kb: KnowledgeBase, type: InequalityType
     ) -> None:
         a: Individual = ass.get_individual()
+        not_c: Concept = ass.get_concept()
+        assert isinstance(not_c, OperatorConcept)
+        c: Concept = not_c.get_atom()
+        assert isinstance(c, HasValueInterface)
 
-        c: Concept = ass.get_concept()
-        assert isinstance(c, OperatorConcept)
-
-        not_c: Concept = c.get_atom()
-        assert isinstance(not_c, HasValueInterface)
-
-        f_name: str = not_c.role
+        f_name: str = c.role
         t: ConcreteFeature = DatatypeReasoner.get_feature(f_name, kb)
         k: typing.Optional[list[float]] = DatatypeReasoner.get_bounds(t)
         return_value: list[typing.Any] = (
-            DatatypeReasoner.get_created_individual_and_variables(
-                a, not_c.role, t, k, kb
-            )
+            DatatypeReasoner.get_created_individual_and_variables(a, f_name, t, k, kb)
         )
         x_f: Variable = typing.cast(Variable, return_value[2])
         x_is_not_c: Variable = kb.milp.get_variable(ass)
         kb.old_binary_variables += 1
         x_f.set_binary_variable()
         x_b: Variable = DatatypeReasoner.get_xb(b, t, kb)
-        c: Concept = -not_c
+        # c: Concept = -not_c
         x_is_c: Variable = kb.milp.get_variable(a, c)
         x_b.set_datatype_filler_variable()
         kb.milp.add_new_constraint(
@@ -6972,6 +7089,7 @@ class DatatypeReasoner:
             x_is_not_c.set_binary_variable()
             x_is_c.set_binary_variable()
             if isinstance(n, FeatureFunction):
+                # If n is a FeatureFunction, check that there exist fillers
                 fun: FeatureFunction = typing.cast(FeatureFunction, n)
                 array: set[str] = fun.get_features()
                 for feature in array:
@@ -7026,6 +7144,7 @@ class DatatypeReasoner:
         DatatypeReasoner.apply_not_rule(b, ass, kb, InequalityType.EQUAL)
 
 
+@class_debugging()
 class LukasiewiczSolver:
     @staticmethod
     def solve_and(ass: Assertion, kb: KnowledgeBase) -> None:
@@ -7352,6 +7471,7 @@ class LukasiewiczSolver:
         milp.add_new_constraint(exp2, InequalityType.LESS_THAN)
 
 
+@class_debugging()
 class ZadehSolver:
 
     @staticmethod
@@ -7849,14 +7969,12 @@ class ZadehSolver:
         else:
             assert isinstance(args[0], Variable)
             assert isinstance(args[1], Variable)
-            assert isinstance(args[2], Variable)
+            assert isinstance(args[2], constants.NUMBER)
             assert isinstance(args[3], MILPHelper)
             ZadehSolver.__or_equation_1(*args)
 
     @staticmethod
-    def __or_equation_1(
-        z: Variable, x1: Variable, x2: Variable, milp: MILPHelper
-    ) -> None:
+    def __or_equation_1(z: Variable, x1: Variable, x2: float, milp: MILPHelper) -> None:
         y: Variable = milp.get_new_variable(VariableType.BINARY)
         milp.add_new_constraint(
             Expression(Term(1.0, z), Term(-1.0, x1)), InequalityType.GREATER_THAN
@@ -7936,6 +8054,7 @@ class ZadehSolver:
         return n1
 
 
+@class_debugging()
 class ClassicalSolver:
     @staticmethod
     def solve_and(ass: Assertion, kb: KnowledgeBase) -> None:
@@ -7954,6 +8073,7 @@ class ClassicalSolver:
         ZadehSolver.solve_all(rel, restrict, kb)
 
 
+@class_debugging()
 class IndividualHandler:
 
     @staticmethod
@@ -8134,6 +8254,7 @@ class IndividualHandler:
                 return
 
 
+@class_debugging()
 class CreatedIndividualHandler:
 
     @staticmethod
@@ -8167,16 +8288,22 @@ class CreatedIndividualHandler:
     def unblock_pairwise(
         current_individual: CreatedIndividual, kb: KnowledgeBase
     ) -> None:
+        """
+        Unblock the individual
+        """
         Util.debug(f"Test of Pair-wise Unblock children of {current_individual.name}")
+        # "current_individual" is a blocking Y node: unblock blocked nodes
         if current_individual.name in kb.directly_blocked_children:
             Util.debug(f"{current_individual.name} is a blocking Y node")
+            # remove Y from the Yprime list
             y_prime: CreatedIndividual = typing.cast(
                 CreatedIndividual,
                 typing.cast(CreatedIndividual, current_individual).parent,
             )
             y_individuals: list[str] = kb.y_prime_individuals.get(str(y_prime), [])
-            del y_individuals[current_individual.name]
+            y_individuals.remove(current_individual.name)
 
+            # update Xprime list
             if len(y_individuals) > 0:
                 kb.y_prime_individuals[str(y_prime)] = y_individuals
             else:
@@ -8184,6 +8311,7 @@ class CreatedIndividualHandler:
 
             for x_name in kb.directly_blocked_children.get(current_individual.name):
                 Util.debug(f"Processing X node {x_name}")
+                # remove Xname from the  Xprime list
                 x: CreatedIndividual = typing.cast(
                     CreatedIndividual, kb.individuals.get(x_name)
                 )
@@ -8191,22 +8319,25 @@ class CreatedIndividualHandler:
                     CreatedIndividual, x.get_parent()
                 )
                 x_individuals: list[str] = kb.x_prime_individuals.get(str(x_prime), [])
-                del x_individuals[current_individual.name]
-
+                x_individuals.remove(x_name)
                 if len(x_individuals) > 0:
                     kb.x_prime_individuals[str(x_prime)] = x_individuals
                 else:
                     del kb.x_prime_individuals[str(x_prime)]
+                # at last, unblock
                 kb.unblock_individual(x_name)
 
+            # now, Y (= current_individual) cannot be a blocking node anymore
             del kb.directly_blocked_children[current_individual.name]
 
+        # if "current_individual" is a Yprime node: unblock blocking Y nodes
         if current_individual.name in kb.y_prime_individuals:
             Util.debug(f"{current_individual.name} is a y_prime node")
             for y_name in kb.y_prime_individuals.get(current_individual.name):
                 Util.debug(f"Processing Y node {y_name}")
                 for x_name in kb.directly_blocked_children.get(y_name):
                     Util.debug(f"Processing X node {x_name}")
+                    # remove X from the  Xprime list
                     x: CreatedIndividual = typing.cast(
                         CreatedIndividual, kb.individuals.get(x_name)
                     )
@@ -8219,17 +8350,19 @@ class CreatedIndividualHandler:
                         x_individuals: list[str] = kb.x_prime_individuals.get(
                             str(x_prime), []
                         )
-                        del x_individuals[current_individual.name]
+                        x_individuals.remove(x_name)
                         if len(x_individuals) > 0:
                             kb.x_prime_individuals[str(x_prime)] = x_individuals
                         else:
                             del kb.x_prime_individuals[str(x_prime)]
-
+                    # unblock X
                     kb.unblock_individual(x_name)
-
+                # now, Yname cannot be a blocking node anymore
                 del kb.directly_blocked_children[y_name]
+            # now, remove Yprime from the Yprime list
             del kb.y_prime_individuals[current_individual.name]
 
+        # if "current_individual" is a Xprime node: unblock blocked X nodes
         if current_individual.name in kb.x_prime_individuals:
             Util.debug(f"{current_individual.name} is a x_prime node")
             x_individuals: list[str] = kb.x_prime_individuals.get(
@@ -8237,6 +8370,7 @@ class CreatedIndividualHandler:
             )
             for x_name in x_individuals:
                 Util.debug(f"Processing X node {x_name}")
+                # remove X from the  directlyBlockedChildren list
                 x: CreatedIndividual = typing.cast(
                     CreatedIndividual, kb.individuals.get(x_name)
                 )
@@ -8246,26 +8380,28 @@ class CreatedIndividualHandler:
                         CreatedIndividual, kb.individuals.get(y_name)
                     )
                     blocked_by_y: list[str] = kb.directly_blocked_children[y_name]
-                    del blocked_by_y[x_name]
+                    blocked_by_y.remove(x_name)
 
                     if len(blocked_by_y) > 0:
                         kb.directly_blocked_children[y_name] = blocked_by_y
                     else:
                         del kb.directly_blocked_children[y_name]
+                        # update Yprime list
                         y_prime: CreatedIndividual = typing.cast(
                             CreatedIndividual, y.get_parent()
                         )
                         y_individuals: list[str] = kb.x_prime_individuals.get(
                             str(y_prime)
                         )
-                        del y_individuals[y_name]
+                        y_individuals.remove(y_name)
 
                         if len(y_individuals) > 0:
                             kb.y_prime_individuals[str(y_prime)] = x_individuals
                         else:
                             del kb.y_prime_individuals[str(y_prime)]
-
+                #  unblock X
                 kb.unblock_individual(x_name)
+            # now, remove Xprime from the Xprime list
             del kb.x_prime_individuals[current_individual.name]
 
     @staticmethod

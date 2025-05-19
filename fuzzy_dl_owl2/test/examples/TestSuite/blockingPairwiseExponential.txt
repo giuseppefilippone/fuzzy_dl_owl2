@@ -1,0 +1,10 @@
+(define-fuzzy-logic zadeh)
+
+(define-primitive-concept A (and A (some P X)))
+(define-primitive-concept B (and B (some S Y)))
+(define-primitive-concept C (and C (some R Z)))
+
+(functional P)
+(inverse invP P)
+
+(min-instance? a D)

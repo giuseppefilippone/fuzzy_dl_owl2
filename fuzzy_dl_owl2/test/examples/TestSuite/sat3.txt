@@ -1,0 +1,2 @@
+(define-fuzzy-logic zadeh)
+(max-sat? (and A (not A)))

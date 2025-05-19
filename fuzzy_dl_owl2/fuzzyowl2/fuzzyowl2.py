@@ -430,7 +430,7 @@ class FuzzyOwl2(object):
         Util.debug(f"Annotation for degree -> {annotation_str}")
         deg: float = FuzzyOwl2Parser.parse_string(annotation_str)[0]
         Util.debug(f"Degree for axiom -> {deg}")
-        if not isinstance(deg, float):
+        if not isinstance(deg, constants.NUMBER):
             raise ValueError
         return deg
 

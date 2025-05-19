@@ -517,7 +517,7 @@ class FuzzydlToOwl2:
         self, value: typing.Union[float, DegreeNumeric]
     ) -> set[OWLAnnotation]:
         """Get annotations for an axiom with degree"""
-        if isinstance(value, float):
+        if isinstance(value, constants.NUMBER):
             n = value
         elif isinstance(value, DegreeNumeric):  # Degree object
             n = value.get_numerical_value()

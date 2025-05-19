@@ -1,0 +1,4 @@
+(implies (some R C) D)
+(related a b R 0.7)
+(instance b C 0.8)
+(min-instance? a D)

@@ -34,6 +34,7 @@ class TriangularFuzzyNumber(TriangularConcreteConcept):
     def __tringular_fn_init_1(self, name: str, a: float, b: float, c: float) -> None:
         super().__init__(name, self.K1, self.K2, a, b, c)
         self.type = ConceptType.FUZZY_NUMBER
+        self.name = name or self.compute_name()
 
     def __tringular_fn_init_2(self, a: float, b: float, c: float) -> None:
         self.__init__(f"({a}, {b}, {c})", a, b, c)
@@ -76,7 +77,7 @@ class TriangularFuzzyNumber(TriangularConcreteConcept):
         return self.a == self.b == self.c
 
     def compute_name(self) -> str:
-        return f"({self.k1}, {self.k2}, {self.a}, {self.b}, {self.c})"
+        return f"({self.k1}, {self.k2}; {self.a}, {self.b}, {self.c})"
 
     def __add__(self, other: typing.Self) -> typing.Self:
         return TriangularFuzzyNumber(

@@ -45,7 +45,7 @@ class TriangularModifier(Modifier):
         self._c = value
 
     def clone(self) -> typing.Self:
-        return TriangularModifier(self.name, self.c)
+        return TriangularModifier(self.name, self.a, self.b, self.c)
 
     def compute_name(self) -> str:
         return f"triangular-modifier({self.a}, {self.b}, {self.c})"

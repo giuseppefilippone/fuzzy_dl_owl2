@@ -1,0 +1,11 @@
+(define-fuzzy-logic zadeh)
+
+(define-fuzzy-concept d triangular(0, 3, 1.5, 2, 2.5) )
+
+(related robot window1 r 0.8)
+(related robot window2 r 0.9)
+(instance window1 Window 0.99)
+(instance window2 Window 0.98)
+
+(min-instance? robot (sigma-count r Window {window1 window2} d) )
+ 

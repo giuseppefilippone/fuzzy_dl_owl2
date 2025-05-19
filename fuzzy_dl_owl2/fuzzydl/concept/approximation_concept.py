@@ -1,5 +1,6 @@
 import typing
 
+from fuzzy_dl_owl2.fuzzydl.concept.all_some_concept import AllSomeConcept
 from fuzzy_dl_owl2.fuzzydl.concept.concept import Concept
 from fuzzy_dl_owl2.fuzzydl.concept.interface.has_role_concept_interface import (
     HasRoleConceptInterface,
@@ -48,28 +49,51 @@ class ApproximationConcept(Concept, HasRoleConceptInterface):
         self.name = self.compute_name()
 
     @staticmethod
-    def lower_approx(role: str, c: Concept) -> Concept:
+    def lower_approx(role: str, c: Concept) -> typing.Self:
         return ApproximationConcept(ConceptType.LOWER_APPROX, role, c)
 
     @staticmethod
-    def loose_lower_approx(role: str, c: Concept) -> Concept:
+    def loose_lower_approx(role: str, c: Concept) -> typing.Self:
         return ApproximationConcept(ConceptType.LOOSE_LOWER_APPROX, role, c)
 
     @staticmethod
-    def tight_lower_approx(role: str, c: Concept) -> Concept:
+    def tight_lower_approx(role: str, c: Concept) -> typing.Self:
         return ApproximationConcept(ConceptType.TIGHT_LOWER_APPROX, role, c)
 
     @staticmethod
-    def upper_approx(role: str, c: Concept) -> Concept:
+    def upper_approx(role: str, c: Concept) -> typing.Self:
         return ApproximationConcept(ConceptType.UPPER_APPROX, role, c)
 
     @staticmethod
-    def loose_upper_approx(role: str, c: Concept) -> Concept:
+    def loose_upper_approx(role: str, c: Concept) -> typing.Self:
         return ApproximationConcept(ConceptType.LOOSE_UPPER_APPROX, role, c)
 
     @staticmethod
-    def tight_upper_approx(role: str, c: Concept) -> Concept:
+    def tight_upper_approx(role: str, c: Concept) -> typing.Self:
         return ApproximationConcept(ConceptType.TIGHT_UPPER_APPROX, role, c)
+
+    def to_all_some_concept(self) -> AllSomeConcept:
+        if self.type == ConceptType.LOWER_APPROX:
+            return AllSomeConcept.all(self.role, self.curr_concept)
+        if self.type == ConceptType.TIGHT_LOWER_APPROX:
+            return AllSomeConcept.all(
+                self.role, AllSomeConcept.all(self.role, self.curr_concept)
+            )
+        if self.type == ConceptType.LOOSE_LOWER_APPROX:
+            return AllSomeConcept.some(
+                self.role, AllSomeConcept.all(self.role, self.curr_concept)
+            )
+        if self.type == ConceptType.UPPER_APPROX:
+            return AllSomeConcept.some(self.role, self.curr_concept)
+        if self.type == ConceptType.TIGHT_UPPER_APPROX:
+            return AllSomeConcept.all(
+                self.role, AllSomeConcept.some(self.role, self.curr_concept)
+            )
+        if self.type == ConceptType.LOOSE_UPPER_APPROX:
+            return AllSomeConcept.some(
+                self.role, AllSomeConcept.some(self.role, self.curr_concept)
+            )
+        raise ValueError
 
     def clone(self) -> typing.Self:
         return ApproximationConcept(self.type, self.role, self.curr_concept)
@@ -111,10 +135,11 @@ class ApproximationConcept(Concept, HasRoleConceptInterface):
             return f"(lla {self.role} {self.curr_concept})"
         elif self.type == ConceptType.UPPER_APPROX:
             return f"(ua {self.role} {self.curr_concept})"
-        elif self.type == ConceptType.LOWER_APPROX:
-            return f"(la {self.role} {self.curr_concept})"
-        elif self.type == ConceptType.LOOSE_UPPER_APPROX:
-            return f"(lua {self.role} {self.curr_concept})"
+        elif self.type == ConceptType.TIGHT_UPPER_APPROX:
+            return f"(tua {self.role} {self.curr_concept})"
+        elif self.type == ConceptType.TIGHT_LOWER_APPROX:
+            return f"(tla {self.role} {self.curr_concept})"
+        raise ValueError
 
     def compute_atomic_concepts(self) -> set[Concept]:
         return self.curr_concept.compute_atomic_concepts()

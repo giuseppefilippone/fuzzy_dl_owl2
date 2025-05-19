@@ -1,0 +1,11 @@
+(functional hasScore)
+(range hasScore *real* 0 10)
+(define-fuzzy-number-range -100 100)
+
+(define-fuzzy-number Poor (1, 2.5, 4))
+
+(instance a (= hasScore Poor))
+(bnp? Poor)
+%(defuzzify-lom? (some hasScore Poor) a hasScore)
+%(defuzzify-som? (some hasScore Poor) a hasScore)
+%(defuzzify-mom? (some hasScore Poor) a hasScore)

@@ -14,6 +14,9 @@ from fuzzy_dl_owl2.fuzzydl.util.constants import FeatureFunctionType
 class FeatureFunction:
 
     @typing.overload
+    def __init__(self, feature: typing.Self) -> None: ...
+
+    @typing.overload
     def __init__(self, feature: str) -> None: ...
 
     @typing.overload
@@ -31,7 +34,9 @@ class FeatureFunction:
     def __init__(self, *args) -> None:
         assert len(args) in [1, 2]
         if len(args) == 1:
-            if isinstance(args[0], str):
+            if isinstance(args[0], FeatureFunction):
+                self.__feature_function_init_6(*args)
+            elif isinstance(args[0], str):
                 self.__feature_function_init_1(*args)
             elif isinstance(args[0], constants.NUMBER):
                 self.__feature_function_init_2(*args)
@@ -87,6 +92,12 @@ class FeatureFunction:
         self.feature: str = ""
         self.n: float = n
 
+    def __feature_function_init_6(self, feature: typing.Self) -> None:
+        self.type: FeatureFunctionType = feature.type
+        self.f: list[FeatureFunction] = feature.f
+        self.feature: str = feature.feature
+        self.n: float = feature.n
+
     def get_type(self) -> FeatureFunctionType:
         return self.type
 
@@ -134,6 +145,9 @@ class FeatureFunction:
             return ex1
         return None
 
+    def __repr__(self) -> str:
+        return str(self)
+
     def __str__(self) -> str:
         if self.type == FeatureFunctionType.ATOMIC:
             return self.feature
@@ -144,5 +158,5 @@ class FeatureFunction:
         elif self.type == FeatureFunctionType.SUBTRACTION:
             return f"({self.f[0]} - {self.f[1]})"
         elif self.type == FeatureFunctionType.SUM:
-            return f"({' + '.join(map(str, self.f))}"
+            return f"({' + '.join(map(str, self.f))})"
         return ""

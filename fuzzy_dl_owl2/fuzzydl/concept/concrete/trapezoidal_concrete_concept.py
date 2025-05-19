@@ -14,6 +14,7 @@ class TrapezoidalConcreteConcept(FuzzyConcreteConcept):
     def __init__(
         self, name: str, k1: float, k2: float, a: float, b: float, c: float, d: float
     ) -> None:
+        super().__init__(name)
         if a > b or b > c or c > d:
             Util.error(f"Error: Trapezoidal functions require {a} <= {b} <= {c} <= {d}")
         if k1 > a:

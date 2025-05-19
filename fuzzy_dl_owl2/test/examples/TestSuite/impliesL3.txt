@@ -1,0 +1,3 @@
+(instance a A 0.8)
+(l-implies A B 0.9)
+(min-instance? a B)

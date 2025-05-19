@@ -492,7 +492,7 @@ class MILPHelper:
         for v1 in to_process:
             name: str = str(v1)
             for old_value, new_value in zip(old_values, new_values):
-                if name not in old_value:
+                if old_value not in name:
                     continue
                 name2: str = name.replace(old_value, new_value, 1)
                 v2: Variable = self.get_variable(name2)
@@ -539,7 +539,8 @@ class MILPHelper:
             return self.__get_ordered_permutation_1(*args)
         elif len(args) == 2:
             assert isinstance(args[1], list) and all(
-                isinstance(a, Variable) for a in args[1]
+                isinstance(a, list) and all(isinstance(ai, Variable) for ai in a)
+                for a in args[1]
             )
             return self.__get_ordered_permutation_2(*args)
         else:

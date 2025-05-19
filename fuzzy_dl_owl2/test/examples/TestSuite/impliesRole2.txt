@@ -1,0 +1,14 @@
+(define-fuzzy-logic zadeh)
+
+(implies Food *top*)
+(implies Fruit Food)
+(implies Vegetable Food)
+(implies (some similarTo Fruit) Fruit)
+
+(transitive similarTo)
+(inverse invSimilarTo similarTo)
+(implies-role  similarTo invSimilarTo)
+(instance apple Fruit)
+
+(related apple tomato similarTo 0.7)
+(min-instance? tomato Fruit)

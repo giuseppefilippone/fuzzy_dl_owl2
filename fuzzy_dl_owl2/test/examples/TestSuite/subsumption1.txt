@@ -1,0 +1,10 @@
+(implies C D)
+(implies D E)
+(min-kd-subs? E C)
+
+
+
+
+
+
+

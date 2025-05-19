@@ -1,0 +1,12 @@
+(functional hasPrice)
+(range hasPrice *real* 0 100000)
+(define-fuzzy-concept AudiTTPrice right-shoulder(0,50000,30500,31500))
+(define-concept AudiTT (and SportsCar (some hasPrice AudiTTPrice)))
+(define-fuzzy-concept BuyerPrice left-shoulder(0,50000,30000,32000))
+(define-concept BuyerQuery (and SportsCar (some hasPrice BuyerPrice)))
+(max-sat? (and BuyerQuery AudiTT))
+(show-concrete-fillers hasPrice)
+
+
+
+

@@ -30,9 +30,9 @@ class MinSubsumesQuery(SubsumptionQuery):
             conc: Concept = OperatorConcept.lukasiewicz_or(-self.c2, self.c1)
         elif self.type == LogicOperatorType.GOEDEL:
             conc: Concept = ImpliesConcept.goedel_implies(self.c2, self.c1)
-        elif self.type == LogicOperatorType.KLEENE_DIENES:
+        elif self.type == LogicOperatorType.ZADEH:
             conc: Concept = ImpliesConcept.zadeh_implies(self.c2, self.c1)
-        else:  # LogicOperatorType.ZADEH
+        else:  # LogicOperatorType.KLEENE_DIENES
             conc: Concept = OperatorConcept.goedel_or(-self.c2, self.c1)
 
         q: Variable = kb.milp.get_new_variable(VariableType.SEMI_CONTINUOUS)
