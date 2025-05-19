@@ -1,0 +1,8 @@
+(define-fuzzy-concept lowTemperature left-shoulder(-100.0, 200.0, -10.0, 0.0) )
+(define-fuzzy-concept veryLowTemperature left-shoulder(-100.0, 200.0, -15.0, -5.0) )
+
+(define-modifier very linear-modifier(0.85) )
+
+(instance a (some hasTemperature ( very lowTemperature) ) 0.8 )
+
+(min-instance? a (some hasTemperature veryLowTemperature) )

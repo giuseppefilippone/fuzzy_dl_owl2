@@ -1,0 +1,5 @@
+(functional R)
+(instance b (not A) )
+(instance a (some R A))
+(instance a (b-some R b))
+(sat?)

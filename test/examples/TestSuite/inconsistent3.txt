@@ -1,0 +1,6 @@
+(define-concept A (some R *top*))
+(instance a A 0.5)
+(instance a (not A) 0.5)
+(instance a (some R *top*) 0.75)
+(instance a (not (some R *top*)) 0.25)
+(sat?)

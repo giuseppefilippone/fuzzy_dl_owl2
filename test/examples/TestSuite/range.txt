@@ -1,0 +1,3 @@
+(range R C)
+(related a b R 0.8)
+(min-instance? b C)

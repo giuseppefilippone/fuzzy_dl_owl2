@@ -1,0 +1,4 @@
+(define-fuzzy-logic zadeh)
+(instance a (some R (all invR C)) 0.8)
+(inverse R invR)
+(min-instance? a C)

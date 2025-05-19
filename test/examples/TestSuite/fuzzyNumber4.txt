@@ -1,0 +1,8 @@
+(functional hasScore)
+(range hasScore *real* -100 100)
+(define-fuzzy-number-range -100 100)
+
+(define-fuzzy-number T11 (f+ 6 5))
+
+(instance a (>= hasScore 0))
+(defuzzify-mom? (some hasScore T11) a hasScore)

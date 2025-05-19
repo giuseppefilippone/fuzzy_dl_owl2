@@ -1,0 +1,10 @@
+(define-fuzzy-logic zadeh)
+(define-modifier very linear-modifier(0.8))
+
+(define-fuzzy-concept leq300 crisp(0,400,0,100))
+(define-fuzzy-concept Slow left-shoulder(0,400,180,250))
+(define-concept SlowCar (and Car (some speed (very Slow)))) 
+
+(instance seat (and Car (some speed leq300)) 1)
+
+(min-instance? seat SlowCar)

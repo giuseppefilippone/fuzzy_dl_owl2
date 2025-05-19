@@ -1,0 +1,3 @@
+(l-implies *top* (not (b-some R a)) )
+
+(max-related? b a R)

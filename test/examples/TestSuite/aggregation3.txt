@@ -1,0 +1,4 @@
+(instance a (sugeno (0.5 1) (C D) ) 0.4)
+(instance a (not D) 0.7)
+(show-concepts a)
+(min-instance? a C)

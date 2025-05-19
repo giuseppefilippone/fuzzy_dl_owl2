@@ -1,0 +1,1 @@
+(max-sat? (and A (not A)))

@@ -1,0 +1,3 @@
+(define-fuzzy-logic zadeh)
+(instance a (and A (not A)))
+(sat?)

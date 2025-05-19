@@ -1,0 +1,4 @@
+(l-implies *top* (not (b-some R a)) )
+
+(related b a R)
+(sat? )

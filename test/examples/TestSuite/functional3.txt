@@ -1,0 +1,5 @@
+(implies *top* (some R (and C (some invR (not C)))))
+(inverse invR R)
+(functional invR)
+(instance a (not C))
+(min-instance? a A)

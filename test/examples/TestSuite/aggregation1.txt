@@ -1,0 +1,2 @@
+(instance a (owa (0.5 0.5) (C D))  0.8)
+(min-instance? a D)
