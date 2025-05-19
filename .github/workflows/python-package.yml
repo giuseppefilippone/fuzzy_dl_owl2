@@ -44,4 +44,4 @@ jobs:
       - name: Run unit tests
         run: |
           python -m pip install tabulate 
-          PYTHONPATH=. python ./test/test_suite.py
+          PYTHONPATH=. python ../test/test_suite.py
