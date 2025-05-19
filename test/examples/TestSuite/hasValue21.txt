@@ -1,3 +1,0 @@
-(inverse invR R)
-(instance a (some R (b-some invR a)))
-(sat?)

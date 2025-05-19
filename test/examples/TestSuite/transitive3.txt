@@ -1,6 +1,0 @@
-(define-fuzzy-logic zadeh)
-(transitive R)
-(instance a (all R C) 0.9)
-(related a b R 0.8)
-(related b c R 0.5)
-(min-instance? c C)

@@ -1,3 +1,0 @@
-(instance a ([>=x] C) 0.4)
-(constraints (x >= 0.2))
-(min-instance? a C)

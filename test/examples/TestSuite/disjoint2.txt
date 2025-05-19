@@ -1,4 +1,0 @@
-(disjoint (some R C) (all R D) )
-(instance a (some R C) 0.8)
-(min-instance? a (some R D) )
-

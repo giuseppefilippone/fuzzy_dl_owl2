@@ -1,6 +1,0 @@
-(implies A (and (some R B) B))
-(implies B (and (some R A) A))
-(instance a A 0.8)
-(instance a B 0.7)
-(min-instance? a A)
-#(min-instance? a (some R (some R A)))

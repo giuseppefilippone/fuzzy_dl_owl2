@@ -1,3 +1,0 @@
-(instance a (w-max (1 C) (0.5 D) ) 0.6)
-(show-concepts a)
-(min-instance? a C)

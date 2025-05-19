@@ -1,3 +1,0 @@
-(disjoint A B C D)
-(instance a D 0.8)
-(min-instance? a (not C) )

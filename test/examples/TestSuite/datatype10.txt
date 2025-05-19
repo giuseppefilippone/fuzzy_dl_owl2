@@ -1,4 +1,0 @@
-(range adaptabilityRate *integer* 0 4 )
-(implies  (>= adaptabilityRate -9) A )
-
-(sat?)

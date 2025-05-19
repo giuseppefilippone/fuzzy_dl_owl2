@@ -1,9 +1,0 @@
-(define-fuzzy-logic zadeh)
-
-(inverse-functional R)
-(inverse R invR)
-(related a b R)
-
-(instance b (some invR C))
-
-(min-instance? a C)

@@ -6,7 +6,7 @@ from parser_interface import ParserInterface
 class TestWeightedSum(unittest.TestCase):
 
     def test_query_1(self):
-        p = ParserInterface("./examples/TestSuite/weightedSum.txt")
+        p = ParserInterface("../examples/TestSuite/weightedSum.txt")
         self.assertEqual(0.8, p.solve(), "TestWeightedSum")
 
 

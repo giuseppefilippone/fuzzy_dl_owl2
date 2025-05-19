@@ -1,5 +1,0 @@
-(implies Chinese (some hasChild Chinese))
-(functional hasParent)
-(inverse hasParent hasChild)
-
-(min-subs? (some hasParent Chinese) Chinese)

@@ -1,4 +1,0 @@
-(functional hasPrice)
-(range t *integer* 0 10)
-(instance a (>= t 3) 0.25)
-(max-instance? a (not (>= t 3)) )

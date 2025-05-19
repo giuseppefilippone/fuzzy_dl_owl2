@@ -1,7 +1,0 @@
-(define-fuzzy-logic classical)
-%(define-fuzzy-logic zadeh)
-%(define-fuzzy-logic lukasiewicz)
-(functional R)
-(instance a (b-some R b))
-(instance a (some R A))
-(sat?)

@@ -1,3 +1,0 @@
-(instance a (not D) 0.5)
-(l-implies (not D)  (and C G )  1 )
-(min-instance? a (and C G ) )

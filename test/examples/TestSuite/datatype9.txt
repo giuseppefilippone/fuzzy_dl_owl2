@@ -1,5 +1,0 @@
-(functional t)
-(range t *integer* 0 15000)
-(free x)
-(instance a (>= t x) 0.7)
-(min-instance? a (>= t x) )

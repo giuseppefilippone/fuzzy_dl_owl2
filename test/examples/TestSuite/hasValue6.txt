@@ -1,3 +1,0 @@
-(functional R)
-(instance a (not (b-some R o)) 0.8)
-(max-related? a o R)

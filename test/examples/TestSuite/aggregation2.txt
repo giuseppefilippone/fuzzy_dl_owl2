@@ -1,3 +1,0 @@
-(define-fuzzy-concept Q right-shoulder(0,1,0.25,0.75))
-(instance a (not (q-owa Q C D)) 0.8)
-(min-instance? a D)
