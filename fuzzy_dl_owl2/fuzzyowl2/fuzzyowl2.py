@@ -191,9 +191,11 @@ class FuzzyOwl2(object):
 
     def process_ontology_annotations(self) -> None:
         for ontology in self.ontologies:
-            annotations: set[OWLAnnotation] = (
+            annotations: typing.Optional[set[OWLAnnotation]] = (
                 ontology.getter.get_owl_ontology_annotations()
             )
+            if annotations is None:
+                continue
             for annotation in annotations:
                 if annotation.annotation_property != self.fuzzy_label:
                     continue
