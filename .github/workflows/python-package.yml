@@ -30,7 +30,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip setuptools wheel
         python -m pip install flake8 pytest
-        python -m pip install rdflib==7.1.4 owlready2==0.47 pyowl==1.0.0 networkx==3.3 pyparsing==3.2.3 gurobipy==12.0.0 sortedcontainers==2.4.0 trycast==1.2.0
+        python -m pip install rdflib==7.1.4 owlready2==0.47 pyowl2==1.0.0 networkx==3.3 pyparsing==3.2.3 gurobipy==12.0.0 sortedcontainers==2.4.0 trycast==1.2.0
         python -c "import os; import subprocess; \
           subprocess.run(['pip', 'install', '-r', 'requirements.txt']) if os.path.isfile('requirements.txt') else None"
     - name: Lint with flake8
