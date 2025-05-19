@@ -48,7 +48,6 @@ from pyowl2.expressions.data_property import OWLDataProperty
 from pyowl2.expressions.object_property import OWLObjectProperty
 from pyowl2.individual.anonymous_individual import OWLAnonymousIndividual
 from pyowl2.literal.literal import OWLLiteral
-from pyowl2.utils import utils
 
 
 # @utils.timer_decorator
@@ -608,7 +607,7 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
         d: float,
     ) -> None:
         self.__write(
-            f"(implies-role {self.get_object_property_name(subproperty)} {self.get_object_property_name(superproperty)} {d})"
+            f"(implies-role {self.get_data_property_name(subproperty)} {self.get_data_property_name(superproperty)} {d})"
         )
 
     def write_sub_property_chain_of_axiom(
@@ -635,9 +634,9 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
         self, class_set: set[OWLDataPropertyExpression]
     ) -> None:
         first: OWLDataPropertyExpression = next(class_set)
-        first_name: str = self.get_object_property_name(first)
+        first_name: str = self.get_data_property_name(first)
         for property in class_set - set([first]):
-            property_name: str = self.get_object_property_name(property)
+            property_name: str = self.get_data_property_name(property)
             self.__write(f"(implies-role {first_name} {property_name})")
             self.__write(f"(implies-role {property_name} {first_name})")
 

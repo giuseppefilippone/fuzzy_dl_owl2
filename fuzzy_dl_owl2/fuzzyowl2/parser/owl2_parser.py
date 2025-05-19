@@ -103,11 +103,9 @@ def _parse_fuzzy_nominal(tokens: pp.ParseResults) -> ConceptDefinition:
 def _parse_weighted_complex_concept(tokens: pp.ParseResults) -> ConceptDefinition:
     Util.debug(f"_parse_weighted_complex_concept -> {tokens}")
     list_tokens: list = tokens.as_list()
-    assert isinstance(list_tokens[1], list) and all(
-        isinstance(a, WeightedConcept) for a in list_tokens[1]
-    )
+    assert all(isinstance(a, WeightedConcept) for a in list_tokens[1:])
     wc: list[WeightedConcept] = [
-        typing.cast(WeightedConcept, w) for w in list_tokens[1]
+        typing.cast(WeightedConcept, w) for w in list_tokens[1:]
     ]
     if list_tokens[0] == FuzzyOWL2Keyword.WEIGHTED_MAXIMUM:
         return WeightedMaxConcept(wc)
@@ -221,7 +219,10 @@ class FuzzyOwl2Parser(object):
         concept = pp.Forward()
 
         modified_role_concept = (
-            FuzzyOWL2Keyword.MODIFIED.get_value().suppress()
+            FuzzyOWL2Keyword.CONCEPT.get_value().suppress()
+            + FuzzyOWL2Keyword.TYPE.get_value().suppress()
+            + FuzzyOWL2Keyword.EQUAL.get_value().suppress()
+            + FuzzyOWL2Keyword.MODIFIED.get_value().suppress()
             + FuzzyOWL2Keyword.MODIFIER.get_value().suppress()
             + FuzzyOWL2Keyword.EQUAL.get_value().suppress()
             + variables
@@ -231,13 +232,18 @@ class FuzzyOwl2Parser(object):
         ).add_parse_action(_parse_modified_concept)
 
         weighted_concept = (
-            FuzzyOWL2Keyword.WEIGHTED.get_value().suppress()
+            open_tag
+            + FuzzyOWL2Keyword.CONCEPT.get_value().suppress()
+            + FuzzyOWL2Keyword.TYPE.get_value().suppress()
+            + FuzzyOWL2Keyword.EQUAL.get_value().suppress()
+            + FuzzyOWL2Keyword.WEIGHTED.get_value().suppress()
             + FuzzyOWL2Keyword.DEGREE_VALUE.get_value().suppress()
             + FuzzyOWL2Keyword.EQUAL.get_value().suppress()
             + numbers
             + FuzzyOWL2Keyword.BASE.get_value().suppress()
             + FuzzyOWL2Keyword.EQUAL.get_value().suppress()
             + variables
+            + single_close_tag
         ).add_parse_action(_parse_weighted_concept)
 
         weights = (
@@ -280,7 +286,6 @@ class FuzzyOwl2Parser(object):
             + close_tag
         )
 
-        weighted_list_concept = close_tag + weights + concepts
         q_owa_concept = (
             FuzzyOWL2Keyword.QUANTIFIER.get_value().suppress()
             + FuzzyOWL2Keyword.EQUAL.get_value().suppress()
@@ -318,7 +323,9 @@ class FuzzyOwl2Parser(object):
                                 | FuzzyOWL2Keyword.SUGENO.get_value()
                                 | FuzzyOWL2Keyword.QUASI_SUGENO.get_value()
                             )
-                            + weighted_list_concept
+                            + close_tag
+                            + weights
+                            + concepts
                         ).add_parse_action(_parse_integral_concept)
                         | FuzzyOWL2Keyword.Q_OWA.get_value().suppress() + q_owa_concept
                     )

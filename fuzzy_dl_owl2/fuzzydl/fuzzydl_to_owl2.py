@@ -5,6 +5,8 @@ import sys
 import typing
 from functools import partial
 
+from rdflib import RDF, XSD, Literal, Namespace, URIRef
+
 from fuzzy_dl_owl2.fuzzydl.assertion.assertion import Assertion
 from fuzzy_dl_owl2.fuzzydl.concept.all_some_concept import AllSomeConcept
 from fuzzy_dl_owl2.fuzzydl.concept.choquet_integral import ChoquetIntegral
@@ -125,7 +127,6 @@ from pyowl2.expressions.object_property import OWLObjectProperty
 from pyowl2.individual.named_individual import OWLNamedIndividual
 from pyowl2.literal.literal import OWLLiteral
 from pyowl2.ontology import OWLOntology
-from rdflib import RDF, XSD, Literal, Namespace, URIRef
 
 
 # @utils.timer_decorator
@@ -346,12 +347,14 @@ class FuzzydlToOwl2:
             return self.__get_class_weighted_min_max_sum(c)
         elif c_type in (
             ConceptType.OWA,
-            ConceptType.QUANTIFIED_OWA,
+            # ConceptType.QUANTIFIED_OWA,
             ConceptType.CHOQUET_INTEGRAL,
             ConceptType.SUGENO_INTEGRAL,
             ConceptType.QUASI_SUGENO_INTEGRAL,
         ):
             return self.__get_class_weighted(c)
+        elif c_type == ConceptType.QUANTIFIED_OWA:
+            return self.__get_class_q_owa(c)
         cls = OWLClass(self.iri(str(c)))
         self.ontology.add_axiom(OWLDeclaration(cls))
         return cls
@@ -392,14 +395,14 @@ class FuzzydlToOwl2:
         """Get the class for OWA, Quantified OWA, Choquet Integral, Sugeno Integral, or Quasi Sugeno Integral"""
         type_dict: dict[ConceptType, str] = {
             ConceptType.OWA: FuzzyOWL2Keyword.OWA.get_str_value(),
-            ConceptType.QUANTIFIED_OWA: FuzzyOWL2Keyword.Q_OWA.get_str_value(),
+            # ConceptType.QUANTIFIED_OWA: FuzzyOWL2Keyword.Q_OWA.get_str_value(),
             ConceptType.CHOQUET_INTEGRAL: FuzzyOWL2Keyword.CHOQUET.get_str_value(),
             ConceptType.SUGENO_INTEGRAL: FuzzyOWL2Keyword.SUGENO.get_str_value(),
             ConceptType.QUASI_SUGENO_INTEGRAL: FuzzyOWL2Keyword.QUASI_SUGENO.get_str_value(),
         }
         type_cast: dict[ConceptType, typing.Callable] = {
             ConceptType.OWA: partial(typing.cast, OwaConcept),
-            ConceptType.QUANTIFIED_OWA: partial(typing.cast, QowaConcept),
+            # ConceptType.QUANTIFIED_OWA: partial(typing.cast, QowaConcept),
             ConceptType.CHOQUET_INTEGRAL: partial(typing.cast, ChoquetIntegral),
             ConceptType.SUGENO_INTEGRAL: partial(typing.cast, SugenoIntegral),
             ConceptType.QUASI_SUGENO_INTEGRAL: partial(typing.cast, QsugenoIntegral),
@@ -416,6 +419,30 @@ class FuzzydlToOwl2:
         for d in curr_concept.weights:
             annotation += f"\t\t\t<{FuzzyOWL2Keyword.WEIGHT.get_tag_name()}>{d}</{FuzzyOWL2Keyword.WEIGHT.get_tag_name()}>\n"
         annotation += f"\t\t</{FuzzyOWL2Keyword.WEIGHTS.get_tag_name()}>\n\t\t<{FuzzyOWL2Keyword.CONCEPT_NAMES.get_tag_name()}>\n"
+        for ci in curr_concept.concepts:
+            c5: OWLClassExpression = self.get_base(ci)
+            annotation += f"\t\t\t<{FuzzyOWL2Keyword.NAME.get_tag_name()}>{c5}</{FuzzyOWL2Keyword.NAME.get_tag_name()}>\n"
+        annotation += f"\t\t</{FuzzyOWL2Keyword.CONCEPT_NAMES.get_tag_name()}>\n\t</{FuzzyOWL2Keyword.CONCEPT.get_tag_name()}>\n</{FuzzyOWL2Keyword.FUZZY_OWL_2.get_str_value()}>"
+        self.add_entity_annotation(annotation, c4)
+        return c4
+
+    def __get_class_q_owa(self, c: Concept) -> OWLClassExpression:
+        """Get the class for OWA, Quantified OWA, Choquet Integral, Sugeno Integral, or Quasi Sugeno Integral"""
+        type_dict: dict[ConceptType, str] = {
+            ConceptType.QUANTIFIED_OWA: FuzzyOWL2Keyword.Q_OWA.get_str_value(),
+        }
+        type_cast: dict[ConceptType, typing.Callable] = {
+            ConceptType.QUANTIFIED_OWA: partial(typing.cast, QowaConcept),
+        }
+        if c.type not in type_dict:
+            return None
+        curr_concept: QowaConcept = type_cast[c.type](c)
+        c4: OWLClassExpression = self.get_new_atomic_class(str(c))
+        annotation: str = (
+            f'<{FuzzyOWL2Keyword.FUZZY_OWL_2.get_str_value()} {FuzzyOWL2Keyword.FUZZY_TYPE.get_str_value()}="{FuzzyOWL2Keyword.CONCEPT.get_str_value()}">\n',
+            f'\t<{FuzzyOWL2Keyword.CONCEPT.get_tag_name()} {FuzzyOWL2Keyword.TYPE.get_str_value()}="{type_dict[c.type]}" {FuzzyOWL2Keyword.QUANTIFIER.get_tag_name()}="{curr_concept.quantifier}">\n',
+            f"\t\t<{FuzzyOWL2Keyword.CONCEPT_NAMES.get_tag_name()}>\n",
+        )
         for ci in curr_concept.concepts:
             c5: OWLClassExpression = self.get_base(ci)
             annotation += f"\t\t\t<{FuzzyOWL2Keyword.NAME.get_tag_name()}>{c5}</{FuzzyOWL2Keyword.NAME.get_tag_name()}>\n"
