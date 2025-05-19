@@ -1,0 +1,6 @@
+(implies A (and (some R B) B))
+(implies B (and (some R A) A))
+(instance a A)
+(instance a B)
+#(min-instance? a C)
+(min-instance? a (some R (some R A)))

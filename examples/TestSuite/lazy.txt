@@ -1,0 +1,4 @@
+(define-concept A C)
+(instance a (not C) 0.8)
+(min-instance? a (not A))
+

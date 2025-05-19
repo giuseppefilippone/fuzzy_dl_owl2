@@ -1,0 +1,10 @@
+(define-fuzzy-logic zadeh)
+
+(implies A (some R A))
+(implies A (some S A))
+(instance a A 0.8)
+
+% if flagged subset blocking, else set blocking
+(functional R)   
+
+(min-instance? a (some R (some R A)))

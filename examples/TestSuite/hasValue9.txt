@@ -1,0 +1,2 @@
+(related a b R 0.8)
+(min-instance? a (not (b-some R o)) )

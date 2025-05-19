@@ -1,0 +1,2 @@
+(instance a (and (self S) (all S C)) 0.8)
+(min-instance? a C)

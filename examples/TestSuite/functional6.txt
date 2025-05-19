@@ -1,0 +1,7 @@
+(define-fuzzy-logic classical)
+%(define-fuzzy-logic zadeh)
+%(define-fuzzy-logic lukasiewicz)
+(functional R)
+(related a b R)
+(related a c R)
+(sat?)

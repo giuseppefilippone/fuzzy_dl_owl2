@@ -1,0 +1,2 @@
+(instance a (or A B))
+(min-instance? a B)

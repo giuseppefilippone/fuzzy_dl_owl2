@@ -1,0 +1,6 @@
+(implies A (some R B) )
+(implies B (some R A) )
+(instance a A 0.8)
+(instance a B 0.7)
+
+(min-instance? a (some R (some R A)))

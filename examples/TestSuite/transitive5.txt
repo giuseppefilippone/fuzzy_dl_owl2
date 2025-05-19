@@ -1,0 +1,6 @@
+(define-fuzzy-logic lukasiewicz)
+
+(transitive R)
+(related a b R 0.8)
+(related b c R 0.8)
+(min-instance? a (b-some R c) )

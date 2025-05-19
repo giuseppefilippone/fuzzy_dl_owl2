@@ -1,0 +1,3 @@
+(instance a (not C) 0.5)
+(instance a C 0.7)
+(sat?)

@@ -1,0 +1,9 @@
+(functional hasScore)
+(range hasScore *real* 0 100)
+(define-fuzzy-number-range -100 100)
+
+(define-fuzzy-number fn1 (1, 2, 3))
+
+(instance a (= hasScore fn1))
+
+(defuzzify-mom? A a hasScore)

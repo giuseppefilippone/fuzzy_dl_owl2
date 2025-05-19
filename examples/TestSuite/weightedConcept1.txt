@@ -1,0 +1,3 @@
+(instance a A 0.3)
+(implies A (0.7 B) 0.9)
+(min-instance? a B)

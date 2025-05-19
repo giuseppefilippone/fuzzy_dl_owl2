@@ -1,0 +1,5 @@
+(define-fuzzy-logic zadeh)
+(functional R)
+(instance a (or (b-some R b)  (b-some R c) ) )
+(instance a (some R A))
+(sat?)
