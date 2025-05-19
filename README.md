@@ -42,7 +42,7 @@ The directory `dl-examples` contains a few examples of Knowledge Bases written u
 
 Since version 1.0.1 uses `Gurobi Optimizer` (see [gurobipy](https://support.gurobi.com/hc/en-us/articles/360044290292-How-do-I-install-Gurobi-for-Python)= for the Fuzzy DL reasoning, please create a GUROBI license to use this library.
 
-For the configuration, create a `CONFIG.ini` file in the same directory used for the execution of the library. 
+For the configuration, create a `CONFIG.ini` file in the same directory used for the execution of the library.
 Example of your execution directory:
 ```text
 your_directory
@@ -57,8 +57,6 @@ debugPrint = False
 relaxMilp = False
 epsilon = 0.001
 maxIndividuals = -1
-showVersion = False
-author = False
 ```
 
 | Configuration Variable | Description                       |
@@ -67,8 +65,6 @@ author = False
 | relaxMilp      | Enable/disable MILP constraint relaxation. Important: The solution may be wrong by enabling this flag |
 | epsilon | Define the precision of the solution. For instance, epsilon = 0.001 means that the solution will be calculated with an accuracy to the third decimal place |
 | maxIndividuals | Define the maximal number of individuals to handle. The value -1 indicate that there is no maximum |
-| showVersion | Enable/disable the version print of the library |
-| author | Enable/disable the author print of the library |
 
 ⸻
 
@@ -305,6 +301,12 @@ fuzzy_dl_owl2
     └── util
         └── constants.py
 ```
+⸻
+
+# Test
+
+The directory `test` contains the `unittest` files. In particular, the file `test_suite.py` contains all the test suite.
+The directory `examples/TestSuite` contains all the knowledge bases used for the tests.
 
 ⸻
 
