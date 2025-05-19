@@ -1,2 +1,0 @@
-(instance a (or A B))
-(min-instance? a (or A B C))

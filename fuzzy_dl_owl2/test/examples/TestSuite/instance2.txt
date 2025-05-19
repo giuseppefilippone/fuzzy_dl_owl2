@@ -1,2 +1,0 @@
-(instance a (not B) 0.7)
-(max-instance? a B)

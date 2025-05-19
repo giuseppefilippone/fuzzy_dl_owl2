@@ -1,4 +1,0 @@
-(define-fuzzy-logic zadeh)
-(related a b R 0.8)
-(instance b (and A B) 0.8)
-(min-instance? a (some R A))

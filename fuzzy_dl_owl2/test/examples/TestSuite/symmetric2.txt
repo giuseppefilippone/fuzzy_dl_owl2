@@ -1,5 +1,0 @@
-(symmetric similarTo)
-(instance apple Fruit)
-(related apple tomato similarTo 0.7)
-(implies (some similarTo Fruit) Fruit)
-(min-instance? tomato Fruit)

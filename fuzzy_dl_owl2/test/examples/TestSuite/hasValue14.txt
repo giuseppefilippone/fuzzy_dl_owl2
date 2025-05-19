@@ -1,4 +1,0 @@
-(functional R)
-(related a b R)
-(related a c R)
-(sat?)

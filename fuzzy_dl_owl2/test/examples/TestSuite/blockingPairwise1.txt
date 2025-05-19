@@ -1,6 +1,0 @@
-(implies  *top* (some R C))
-(inverse invR R)
-(functional invR)
-(instance a (not C) 0.6)
-
-(min-instance? a A)

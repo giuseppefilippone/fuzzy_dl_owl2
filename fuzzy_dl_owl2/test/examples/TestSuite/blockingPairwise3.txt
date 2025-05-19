@@ -1,8 +1,0 @@
-(define-fuzzy-logic zadeh)
-
-(inverse invR R)
-(functional invR)
-
-(implies *top* (some R C))
-
-(min-instance? a (some R (some R (some invR C))))

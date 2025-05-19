@@ -1,4 +1,0 @@
-(implies A B)
-(implies B (not A))
-(instance a A)
-(sat?)

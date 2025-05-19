@@ -1,4 +1,0 @@
-
-(g-implies C (g-implies A D) 0.7)
-(instance a C 0.7)
-(min-instance? a (g-implies A D) )

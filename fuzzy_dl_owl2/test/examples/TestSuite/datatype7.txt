@@ -1,6 +1,0 @@
-
-(functional f)
-(range f *boolean* )
-(instance a (= f true) 0.67)
-
-(min-instance? a (= f true) )

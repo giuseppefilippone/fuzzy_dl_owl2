@@ -1,3 +1,0 @@
-(define-fuzzy-concept FCD triangular(0, 400, 100, 200, 300))
-(instance a (some R FCD))
-(min-instance? a (some R FCD))

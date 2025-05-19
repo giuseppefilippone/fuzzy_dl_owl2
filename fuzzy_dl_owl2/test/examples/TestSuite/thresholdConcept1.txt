@@ -1,5 +1,0 @@
-(instance a A 0.3)
-(instance a (not A) 0.6)
-(l-implies ([<= x] A) B 0.9)
-(constraints (x = 0.7))
-(min-instance? a B)

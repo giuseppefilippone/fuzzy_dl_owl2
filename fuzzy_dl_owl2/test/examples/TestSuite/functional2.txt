@@ -1,5 +1,0 @@
-(define-concept A (some R (and C D)))
-(functional R)
-(instance a (some R C))
-(instance a (some R D))
-(min-instance? a A)

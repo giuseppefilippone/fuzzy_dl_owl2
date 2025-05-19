@@ -1,4 +1,0 @@
-(functional hasPrice)
-(range hasPrice *integer* 0 1500)
-(instance a (>= hasPrice 1300) )
-(min-instance? a (>= hasPrice 1300) )

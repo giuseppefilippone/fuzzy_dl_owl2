@@ -6,7 +6,7 @@ from parser_interface import ParserInterface
 class TestRelated(unittest.TestCase):
 
     def test_query(self):
-        p = ParserInterface("examples/TestSuite/related.txt")
+        p = ParserInterface("./examples/TestSuite/related.txt")
         self.assertEqual(0.5, p.solve(), "TestRelated")
 
 

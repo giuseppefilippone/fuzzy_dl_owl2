@@ -1,5 +1,0 @@
-
-(instance a B 1)
-(instance a (not C) 1)
-
-(min-instance? a (w-sum-zero (0.8 C) (0.2 B) ) )

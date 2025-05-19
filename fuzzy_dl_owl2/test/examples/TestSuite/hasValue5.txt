@@ -1,3 +1,0 @@
-(functional R)
-(instance a (b-some R o) 0.8)
-(min-instance? a (b-some R p) )

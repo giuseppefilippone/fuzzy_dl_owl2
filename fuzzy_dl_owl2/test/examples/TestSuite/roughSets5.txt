@@ -1,3 +1,0 @@
-(define-fuzzy-similarity S)
-(instance a (lla S C))
-(min-instance? a (lla S C))

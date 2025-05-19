@@ -1,9 +1,0 @@
-(instance a (not (or A B)))
-(min-instance? a (not A))
-
-
-
-
-
-
-

@@ -1,3 +1,0 @@
-(reflexive S)
-(instance a (all S C) 0.8)
-(min-instance? a C)

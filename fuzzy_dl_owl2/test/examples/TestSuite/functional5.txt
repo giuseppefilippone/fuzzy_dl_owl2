@@ -1,5 +1,0 @@
-(inverse-functional R)
-(related b a R 0.4)
-(related c a R 0.4)
-(instance b C 0.6)
-(min-instance? c C)

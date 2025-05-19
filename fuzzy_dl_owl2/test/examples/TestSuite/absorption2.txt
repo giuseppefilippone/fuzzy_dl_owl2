@@ -1,6 +1,0 @@
-
-(define-fuzzy-logic lukasiewicz)
-(instance a C 0.9)
-(instance a G 0.8)
-(l-implies (and C G )  (some R D) 1 )
-(min-instance? a (some R D) )

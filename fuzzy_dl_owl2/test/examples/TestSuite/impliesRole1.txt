@@ -1,6 +1,0 @@
-(implies (some op1 *top*) (some op2 *top*) )
-(implies-role op1 op3)
-(implies-role op2 op3)
-(functional op3)
-(related a b op1 0.6)
-(min-related? a b op2)

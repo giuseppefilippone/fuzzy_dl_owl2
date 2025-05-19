@@ -6,19 +6,19 @@ from parser_interface import ParserInterface
 class TestSome(unittest.TestCase):
 
     def test_query1(self):
-        p = ParserInterface("examples/TestSuite/some1.txt")
+        p = ParserInterface("./examples/TestSuite/some1.txt")
         self.assertEqual(0.8, p.solve(), "TestSome")
 
     def test_query2(self):
-        p = ParserInterface("examples/TestSuite/some2.txt")
+        p = ParserInterface("./examples/TestSuite/some2.txt")
         self.assertEqual(0.8, p.solve(), "TestSome")
 
     def test_query3(self):
-        p = ParserInterface("examples/TestSuite/some3.txt")
+        p = ParserInterface("./examples/TestSuite/some3.txt")
         self.assertEqual(0.6, p.solve(), "TestSome")
 
     def test_query4(self):
-        p = ParserInterface("examples/TestSuite/some4.txt")
+        p = ParserInterface("./examples/TestSuite/some4.txt")
         self.assertEqual(0.8, p.solve(), "TestSome")
 
 

@@ -1,3 +1,0 @@
-(define-fuzzy-concept FCD trapezoidal(0, 400, 100, 200, 250, 300))
-(instance a (some R FCD))
-(min-instance? a (some R FCD))

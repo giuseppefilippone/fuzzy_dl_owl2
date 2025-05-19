@@ -1,5 +1,0 @@
-(transitive R)
-(instance a (all R C) 0.9)
-(related a b R 0.6)
-(related b c R)
-(min-instance? c C)

@@ -1,2 +1,0 @@
-(instance a (all R (and A B)))
-(min-instance? a (all R A))
