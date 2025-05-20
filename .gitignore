@@ -60,9 +60,11 @@ Pipfile.lock
 
 # logs
 *.log
+**/logs
+
+# results
 *.fdl
-/logs
-/results
+**/results
 
 # wheel files
 *.whl
