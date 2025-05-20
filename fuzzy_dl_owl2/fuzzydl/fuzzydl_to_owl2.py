@@ -64,6 +64,7 @@ from fuzzy_dl_owl2.fuzzydl.util import constants
 from fuzzy_dl_owl2.fuzzydl.util.constants import ConceptType, ConcreteFeatureType
 from fuzzy_dl_owl2.fuzzydl.util.util import Util
 from fuzzy_dl_owl2.fuzzyowl2.util.constants import FuzzyOWL2Keyword
+from fuzzy_dl_owl2.fuzzyowl2.util.fuzzy_xml import FuzzyXML
 from pyowl2.abstracts.axiom import OWLAxiom
 from pyowl2.abstracts.class_expression import OWLClassExpression
 from pyowl2.abstracts.data_range import OWLDataRange
@@ -276,11 +277,24 @@ class FuzzydlToOwl2:
             c4: OWLClassExpression = self.get_new_atomic_class(str(c))
             c3: OWLClassExpression = self.get_base(c.c1)
             self.concepts[str(c)] = c3
-            annotation: str = (
-                f'<{FuzzyOWL2Keyword.FUZZY_OWL_2.get_str_value()} {FuzzyOWL2Keyword.FUZZY_TYPE.get_str_value()}="{FuzzyOWL2Keyword.CONCEPT.get_str_value()}">\n',
-                f'\t<{FuzzyOWL2Keyword.CONCEPT.get_tag_name()} {FuzzyOWL2Keyword.TYPE.get_str_value()}="{FuzzyOWL2Keyword.MODIFIED.get_str_value()}" {FuzzyOWL2Keyword.MODIFIER.get_str_value()}="{self.modifiers[str(c)]}" {FuzzyOWL2Keyword.BASE.get_str_value()}="{c3}"/>\n',
-                f"</{FuzzyOWL2Keyword.FUZZY_OWL_2.get_str_value()}>",
+
+            main_xml = FuzzyXML.build_main_xml(FuzzyOWL2Keyword.CONCEPT.get_str_value())
+            concept_xml = FuzzyXML.build_concept_xml(
+                FuzzyOWL2Keyword.MODIFIED.get_str_value(),
+                {
+                    FuzzyOWL2Keyword.MODIFIER.get_str_value(): str(
+                        self.modifiers[str(c)]
+                    ),
+                    FuzzyOWL2Keyword.BASE.get_str_value(): str(c3),
+                },
             )
+            main_xml.append(concept_xml)
+            annotation: str = FuzzyXML.to_str(main_xml)
+            # annotation: str = (
+            #     f'<{FuzzyOWL2Keyword.FUZZY_OWL_2.get_str_value()} {FuzzyOWL2Keyword.FUZZY_TYPE.get_str_value()}="{FuzzyOWL2Keyword.CONCEPT.get_str_value()}">\n',
+            #     f'\t<{FuzzyOWL2Keyword.CONCEPT.get_tag_name()} {FuzzyOWL2Keyword.TYPE.get_str_value()}="{FuzzyOWL2Keyword.MODIFIED.get_str_value()}" {FuzzyOWL2Keyword.MODIFIER.get_str_value()}="{self.modifiers[str(c)]}" {FuzzyOWL2Keyword.BASE.get_str_value()}="{c3}"/>\n',
+            #     f"</{FuzzyOWL2Keyword.FUZZY_OWL_2.get_str_value()}>",
+            # )
             self.add_entity_annotation(annotation, c4)
             return c4
         elif c_type == ConceptType.SELF:
@@ -331,11 +345,22 @@ class FuzzydlToOwl2:
             c: WeightedConcept = typing.cast(WeightedConcept, c)
             c4: OWLClassExpression = self.get_new_atomic_class(str(c))
             c3: OWLClassExpression = self.get_base(c.c1)
-            annotation: str = (
-                f'<{FuzzyOWL2Keyword.FUZZY_OWL_2.get_str_value()} {FuzzyOWL2Keyword.FUZZY_TYPE.get_str_value()}="{FuzzyOWL2Keyword.CONCEPT.get_str_value()}">\n',
-                f'\t<{FuzzyOWL2Keyword.CONCEPT.get_tag_name()} {FuzzyOWL2Keyword.TYPE.get_str_value()}="{FuzzyOWL2Keyword.WEIGHTED.get_str_value()}" {FuzzyOWL2Keyword.DEGREE_VALUE.get_str_value()}="{c.weight}" {FuzzyOWL2Keyword.BASE.get_str_value()}="{c3}"/>\n',
-                f"</{FuzzyOWL2Keyword.FUZZY_OWL_2.get_str_value()}>",
+
+            main_xml = FuzzyXML.build_main_xml(FuzzyOWL2Keyword.CONCEPT.get_str_value())
+            concept_xml = FuzzyXML.build_concept_xml(
+                FuzzyOWL2Keyword.WEIGHTED.get_str_value(),
+                {
+                    FuzzyOWL2Keyword.DEGREE_VALUE.get_str_value(): str(c.weight),
+                    FuzzyOWL2Keyword.BASE.get_str_value(): str(c3),
+                },
             )
+            main_xml.append(concept_xml)
+            annotation: str = FuzzyXML.to_str(main_xml)
+            # annotation: str = (
+            #     f'<{FuzzyOWL2Keyword.FUZZY_OWL_2.get_str_value()} {FuzzyOWL2Keyword.FUZZY_TYPE.get_str_value()}="{FuzzyOWL2Keyword.CONCEPT.get_str_value()}">\n',
+            #     f'\t<{FuzzyOWL2Keyword.CONCEPT.get_tag_name()} {FuzzyOWL2Keyword.TYPE.get_str_value()}="{FuzzyOWL2Keyword.WEIGHTED.get_str_value()}" {FuzzyOWL2Keyword.DEGREE_VALUE.get_str_value()}="{c.weight}" {FuzzyOWL2Keyword.BASE.get_str_value()}="{c3}"/>\n',
+            #     f"</{FuzzyOWL2Keyword.FUZZY_OWL_2.get_str_value()}>",
+            # )
             self.add_entity_annotation(annotation, c3)
             return c4
         elif c_type in (
@@ -378,16 +403,33 @@ class FuzzydlToOwl2:
         curr_concept: HasWeightedConceptsInterface = type_cast[c.type](c)
         c3: OWLClassExpression = self.get_new_atomic_class(str(curr_concept))
 
-        annotation: str = (
-            f'<{FuzzyOWL2Keyword.FUZZY_OWL_2.get_str_value()} {FuzzyOWL2Keyword.FUZZY_TYPE.get_str_value()}="{FuzzyOWL2Keyword.CONCEPT.get_str_value()}">\n',
-            f'\t<{FuzzyOWL2Keyword.CONCEPT.get_tag_name()} {FuzzyOWL2Keyword.TYPE.get_str_value()}="{type_dict[c.type]}">\n ',
-        )
+        main_xml = FuzzyXML.build_main_xml(FuzzyOWL2Keyword.CONCEPT.get_str_value())
+        concept_xml = FuzzyXML.build_concept_xml(type_dict[c.type])
         for i in range(len(curr_concept.concepts)):
             c5: OWLClassExpression = self.get_base(curr_concept.concepts[i])
-            annotation += f'\t\t<{FuzzyOWL2Keyword.CONCEPT.get_tag_name()} {FuzzyOWL2Keyword.TYPE.get_str_value()}="{FuzzyOWL2Keyword.WEIGHTED.get_str_value()}" {FuzzyOWL2Keyword.DEGREE_VALUE.get_str_value()}="{curr_concept.weights[i]}" {FuzzyOWL2Keyword.BASE.get_str_value()}="{c5}" />\n'
-        annotation: str = (
-            f"\t</{FuzzyOWL2Keyword.CONCEPT.get_tag_name()} >\n</{FuzzyOWL2Keyword.FUZZY_OWL_2.get_str_value()} >"
-        )
+            sub_concept_xml = FuzzyXML.build_concept_xml(
+                FuzzyOWL2Keyword.WEIGHTED.get_str_value(),
+                {
+                    FuzzyOWL2Keyword.DEGREE_VALUE.get_str_value(): str(
+                        curr_concept.weights[i]
+                    ),
+                    FuzzyOWL2Keyword.BASE.get_str_value(): str(c5),
+                },
+            )
+            concept_xml.append(sub_concept_xml)
+        main_xml.append(concept_xml)
+        annotation: str = FuzzyXML.to_str(main_xml)
+
+        # annotation: str = (
+        #     f'<{FuzzyOWL2Keyword.FUZZY_OWL_2.get_str_value()} {FuzzyOWL2Keyword.FUZZY_TYPE.get_str_value()}="{FuzzyOWL2Keyword.CONCEPT.get_str_value()}">\n',
+        #     f'\t<{FuzzyOWL2Keyword.CONCEPT.get_tag_name()} {FuzzyOWL2Keyword.TYPE.get_str_value()}="{type_dict[c.type]}">\n ',
+        # )
+        # for i in range(len(curr_concept.concepts)):
+        #     c5: OWLClassExpression = self.get_base(curr_concept.concepts[i])
+        #     annotation += f'\t\t<{FuzzyOWL2Keyword.CONCEPT.get_tag_name()} {FuzzyOWL2Keyword.TYPE.get_str_value()}="{FuzzyOWL2Keyword.WEIGHTED.get_str_value()}" {FuzzyOWL2Keyword.DEGREE_VALUE.get_str_value()}="{curr_concept.weights[i]}" {FuzzyOWL2Keyword.BASE.get_str_value()}="{c5}" />\n'
+        # annotation: str = (
+        #     f"\t</{FuzzyOWL2Keyword.CONCEPT.get_tag_name()} >\n</{FuzzyOWL2Keyword.FUZZY_OWL_2.get_str_value()} >"
+        # )
         self.add_entity_annotation(annotation, c3)
         return c3
 
@@ -411,18 +453,31 @@ class FuzzydlToOwl2:
             return None
         curr_concept: HasWeightedConceptsInterface = type_cast[c.type](c)
         c4: OWLClassExpression = self.get_new_atomic_class(str(c))
-        annotation: str = (
-            f'<{FuzzyOWL2Keyword.FUZZY_OWL_2.get_str_value()} {FuzzyOWL2Keyword.FUZZY_TYPE.get_str_value()}="{FuzzyOWL2Keyword.CONCEPT.get_str_value()}">\n',
-            f'\t<{FuzzyOWL2Keyword.CONCEPT.get_tag_name()} {FuzzyOWL2Keyword.TYPE.get_str_value()}="{type_dict[c.type]}">\n',
-            f"\t\t<{FuzzyOWL2Keyword.WEIGHTS.get_tag_name()}>\n",
+
+        main_xml = FuzzyXML.build_main_xml(FuzzyOWL2Keyword.CONCEPT.get_str_value())
+        concept_xml = FuzzyXML.build_concept_xml(type_dict[c.type])
+        weights_xml = FuzzyXML.build_weights_xml(curr_concept.weights)
+        names_xml = FuzzyXML.build_names_xml(
+            [self.get_base(ci) for ci in curr_concept.concepts]
         )
-        for d in curr_concept.weights:
-            annotation += f"\t\t\t<{FuzzyOWL2Keyword.WEIGHT.get_tag_name()}>{d}</{FuzzyOWL2Keyword.WEIGHT.get_tag_name()}>\n"
-        annotation += f"\t\t</{FuzzyOWL2Keyword.WEIGHTS.get_tag_name()}>\n\t\t<{FuzzyOWL2Keyword.CONCEPT_NAMES.get_tag_name()}>\n"
-        for ci in curr_concept.concepts:
-            c5: OWLClassExpression = self.get_base(ci)
-            annotation += f"\t\t\t<{FuzzyOWL2Keyword.NAME.get_tag_name()}>{c5}</{FuzzyOWL2Keyword.NAME.get_tag_name()}>\n"
-        annotation += f"\t\t</{FuzzyOWL2Keyword.CONCEPT_NAMES.get_tag_name()}>\n\t</{FuzzyOWL2Keyword.CONCEPT.get_tag_name()}>\n</{FuzzyOWL2Keyword.FUZZY_OWL_2.get_str_value()}>"
+        concept_xml.append(weights_xml)
+        concept_xml.append(names_xml)
+        main_xml.append(concept_xml)
+        annotation: str = FuzzyXML.to_str(main_xml)
+
+        # annotation: str = (
+        #     f'<{FuzzyOWL2Keyword.FUZZY_OWL_2.get_str_value()} {FuzzyOWL2Keyword.FUZZY_TYPE.get_str_value()}="{FuzzyOWL2Keyword.CONCEPT.get_str_value()}">\n',
+        #     f'\t<{FuzzyOWL2Keyword.CONCEPT.get_tag_name()} {FuzzyOWL2Keyword.TYPE.get_str_value()}="{type_dict[c.type]}">\n',
+        #     f"\t\t<{FuzzyOWL2Keyword.WEIGHTS.get_tag_name()}>\n",
+        # )
+        # for d in curr_concept.weights:
+        #     annotation += f"\t\t\t<{FuzzyOWL2Keyword.WEIGHT.get_tag_name()}>{d}</{FuzzyOWL2Keyword.WEIGHT.get_tag_name()}>\n"
+        # annotation += f"\t\t</{FuzzyOWL2Keyword.WEIGHTS.get_tag_name()}>\n\t\t<{FuzzyOWL2Keyword.CONCEPT_NAMES.get_tag_name()}>\n"
+        # for ci in curr_concept.concepts:
+        #     c5: OWLClassExpression = self.get_base(ci)
+        #     annotation += f"\t\t\t<{FuzzyOWL2Keyword.NAME.get_tag_name()}>{c5}</{FuzzyOWL2Keyword.NAME.get_tag_name()}>\n"
+        # annotation += f"\t\t</{FuzzyOWL2Keyword.CONCEPT_NAMES.get_tag_name()}>\n\t</{FuzzyOWL2Keyword.CONCEPT.get_tag_name()}>\n</{FuzzyOWL2Keyword.FUZZY_OWL_2.get_str_value()}>"
+
         self.add_entity_annotation(annotation, c4)
         return c4
 
@@ -438,15 +493,27 @@ class FuzzydlToOwl2:
             return None
         curr_concept: QowaConcept = type_cast[c.type](c)
         c4: OWLClassExpression = self.get_new_atomic_class(str(c))
-        annotation: str = (
-            f'<{FuzzyOWL2Keyword.FUZZY_OWL_2.get_str_value()} {FuzzyOWL2Keyword.FUZZY_TYPE.get_str_value()}="{FuzzyOWL2Keyword.CONCEPT.get_str_value()}">\n',
-            f'\t<{FuzzyOWL2Keyword.CONCEPT.get_tag_name()} {FuzzyOWL2Keyword.TYPE.get_str_value()}="{type_dict[c.type]}" {FuzzyOWL2Keyword.QUANTIFIER.get_tag_name()}="{curr_concept.quantifier}">\n',
-            f"\t\t<{FuzzyOWL2Keyword.CONCEPT_NAMES.get_tag_name()}>\n",
+
+        main_xml = FuzzyXML.build_main_xml(FuzzyOWL2Keyword.CONCEPT.get_str_value())
+        concept_xml = FuzzyXML.build_concept_xml(
+            type_dict[c.type],
+            {FuzzyOWL2Keyword.QUANTIFIER.get_str_value(): str(curr_concept.quantifier)},
         )
-        for ci in curr_concept.concepts:
-            c5: OWLClassExpression = self.get_base(ci)
-            annotation += f"\t\t\t<{FuzzyOWL2Keyword.NAME.get_tag_name()}>{c5}</{FuzzyOWL2Keyword.NAME.get_tag_name()}>\n"
-        annotation += f"\t\t</{FuzzyOWL2Keyword.CONCEPT_NAMES.get_tag_name()}>\n\t</{FuzzyOWL2Keyword.CONCEPT.get_tag_name()}>\n</{FuzzyOWL2Keyword.FUZZY_OWL_2.get_str_value()}>"
+        names_xml = FuzzyXML.build_names_xml(
+            [self.get_base(ci) for ci in curr_concept.concepts]
+        )
+        concept_xml.append(names_xml)
+        main_xml.append(concept_xml)
+        annotation: str = FuzzyXML.to_str(main_xml)
+        # annotation: str = (
+        #     f'<{FuzzyOWL2Keyword.FUZZY_OWL_2.get_str_value()} {FuzzyOWL2Keyword.FUZZY_TYPE.get_str_value()}="{FuzzyOWL2Keyword.CONCEPT.get_str_value()}">\n',
+        #     f'\t<{FuzzyOWL2Keyword.CONCEPT.get_tag_name()} {FuzzyOWL2Keyword.TYPE.get_str_value()}="{type_dict[c.type]}" {FuzzyOWL2Keyword.QUANTIFIER.get_str_value()}="{curr_concept.quantifier}">\n',
+        #     f"\t\t<{FuzzyOWL2Keyword.CONCEPT_NAMES.get_tag_name()}>\n",
+        # )
+        # for ci in curr_concept.concepts:
+        #     c5: OWLClassExpression = self.get_base(ci)
+        #     annotation += f"\t\t\t<{FuzzyOWL2Keyword.NAME.get_tag_name()}>{c5}</{FuzzyOWL2Keyword.NAME.get_tag_name()}>\n"
+        # annotation += f"\t\t</{FuzzyOWL2Keyword.CONCEPT_NAMES.get_tag_name()}>\n\t</{FuzzyOWL2Keyword.CONCEPT.get_tag_name()}>\n</{FuzzyOWL2Keyword.FUZZY_OWL_2.get_str_value()}>"
         self.add_entity_annotation(annotation, c4)
         return c4
 
@@ -549,11 +616,16 @@ class FuzzydlToOwl2:
         elif isinstance(value, DegreeNumeric):  # Degree object
             n = value.get_numerical_value()
 
-        annotation_text: str = (
-            f'<{FuzzyOWL2Keyword.FUZZY_OWL_2.get_str_value()} {FuzzyOWL2Keyword.FUZZY_TYPE.get_str_value()}="{FuzzyOWL2Keyword.AXIOM.get_str_value()}">\n'
-            f'\t<{FuzzyOWL2Keyword.DEGREE_DEF.get_tag_name()} {FuzzyOWL2Keyword.DEGREE_VALUE.get_str_value()}="{n}"/>\n'
-            f"</{FuzzyOWL2Keyword.FUZZY_OWL_2.get_str_value()}>"
-        )
+        main_xml = FuzzyXML.build_main_xml(FuzzyOWL2Keyword.AXIOM.get_str_value())
+        degree_xml = FuzzyXML.build_degree_xml(n)
+        main_xml.append(degree_xml)
+        annotation_text: str = FuzzyXML.to_str(main_xml)
+
+        # annotation_text: str = (
+        #     f'<{FuzzyOWL2Keyword.FUZZY_OWL_2.get_str_value()} {FuzzyOWL2Keyword.FUZZY_TYPE.get_str_value()}="{FuzzyOWL2Keyword.AXIOM.get_str_value()}">\n'
+        #     f'\t<{FuzzyOWL2Keyword.DEGREE_DEF.get_tag_name()} {FuzzyOWL2Keyword.DEGREE_VALUE.get_str_value()}="{n}"/>\n'
+        #     f"</{FuzzyOWL2Keyword.FUZZY_OWL_2.get_str_value()}>"
+        # )
         annotation: OWLAnnotation = self.to_owl_annotation(annotation_text)
         return set([annotation])
 
@@ -590,11 +662,17 @@ class FuzzydlToOwl2:
         logic = str(constants.KNOWLEDGE_BASE_SEMANTICS)
 
         if logic:
-            annotation: str = (
-                f'<{FuzzyOWL2Keyword.FUZZY_OWL_2.get_str_value()} {FuzzyOWL2Keyword.FUZZY_TYPE.get_str_value()}="{FuzzyOWL2Keyword.ONTOLOGY.get_str_value()}">\n'
-                f'\t<{FuzzyOWL2Keyword.FUZZY_LOGIC.get_tag_name()} {FuzzyOWL2Keyword.LOGIC.get_str_value()}="{logic}" />\n'
-                f"</{FuzzyOWL2Keyword.FUZZY_OWL_2.get_str_value()}>"
+            main_xml = FuzzyXML.build_main_xml(
+                FuzzyOWL2Keyword.ONTOLOGY.get_str_value()
             )
+            logic_xml = FuzzyXML.build_logic_xml(logic)
+            main_xml.append(logic_xml)
+            annotation: str = FuzzyXML.to_str(main_xml)
+            # annotation: str = (
+            #     f'<{FuzzyOWL2Keyword.FUZZY_OWL_2.get_str_value()} {FuzzyOWL2Keyword.FUZZY_TYPE.get_str_value()}="{FuzzyOWL2Keyword.ONTOLOGY.get_str_value()}">\n'
+            #     f'\t<{FuzzyOWL2Keyword.FUZZY_LOGIC.get_tag_name()} {FuzzyOWL2Keyword.LOGIC.get_str_value()}="{logic}" />\n'
+            #     f"</{FuzzyOWL2Keyword.FUZZY_OWL_2.get_str_value()}>"
+            # )
             self.add_ontology_annotation(annotation)
 
         # Process concrete concepts
@@ -813,7 +891,8 @@ class FuzzydlToOwl2:
         current_datatype: OWLDatatype = OWLDatatype(self.iri(c))
         self.datatypes[str(c)] = current_datatype
 
-        specific: str = self._get_concrete_concept_specifics(c)
+        # specific: str = self._get_concrete_concept_specifics(c)
+        specific: tuple[str, dict[str, str]] = self._get_concrete_concept_specifics(c)
 
         int_datatype: OWLDatatype = OWLDatatype(XSD.integer)
         greater_than: OWLDatatypeRestriction = OWLDatatypeRestriction(
@@ -843,44 +922,101 @@ class FuzzydlToOwl2:
         self.ontology.add_axiom(OWLDeclaration(current_datatype))
         self.ontology.add_axiom(definition)
 
-        annotation: str = (
-            f'<{FuzzyOWL2Keyword.FUZZY_OWL_2.get_str_value()} {FuzzyOWL2Keyword.FUZZY_TYPE.get_str_value()}="{FuzzyOWL2Keyword.DATATYPE.get_str_value()}">\n'
-            f'\t<{FuzzyOWL2Keyword.DATATYPE.get_tag_name()} {FuzzyOWL2Keyword.TYPE.get_str_value()}="{specific}"/>\n'
-            f"</{FuzzyOWL2Keyword.FUZZY_OWL_2.get_str_value()}>"
-        )
+        main_xml = FuzzyXML.build_main_xml(FuzzyOWL2Keyword.DATATYPE.get_str_value())
+        datatype_xml = FuzzyXML.build_datatype_xml(specific[0], specific[1])
+        main_xml.append(datatype_xml)
+        annotation: str = FuzzyXML.to_str(main_xml)
+
+        # annotation: str = (
+        #     f'<{FuzzyOWL2Keyword.FUZZY_OWL_2.get_str_value()} {FuzzyOWL2Keyword.FUZZY_TYPE.get_str_value()}="{FuzzyOWL2Keyword.DATATYPE.get_str_value()}">\n'
+        #     f'\t<{FuzzyOWL2Keyword.DATATYPE.get_tag_name()} {FuzzyOWL2Keyword.TYPE.get_str_value()}="{specific}"/>\n'
+        #     f"</{FuzzyOWL2Keyword.FUZZY_OWL_2.get_str_value()}>"
+        # )
         self.add_entity_annotation(annotation, current_datatype)
 
-    def _get_concrete_concept_specifics(self, c: FuzzyConcreteConcept) -> str:
+    def _get_concrete_concept_specifics(
+        self, c: FuzzyConcreteConcept
+    ) -> tuple[str, dict[str, str]]:
         """Get concrete concept specific parameters"""
         if isinstance(c, CrispConcreteConcept):
-            return f'{FuzzyOWL2Keyword.CRISP.get_str_value()}" {FuzzyOWL2Keyword.A.get_str_value()}="{c.a}" {FuzzyOWL2Keyword.B.get_str_value()}="{c.b}'
+            return FuzzyOWL2Keyword.CRISP.get_str_value(), {
+                FuzzyOWL2Keyword.A.get_str_value(): str(c.a),
+                FuzzyOWL2Keyword.B.get_str_value(): str(c.b),
+            }
         elif isinstance(c, LeftConcreteConcept):
-            return f'{FuzzyOWL2Keyword.LEFT_SHOULDER.get_str_value()}" {FuzzyOWL2Keyword.A.get_str_value()}="{c.a}" {FuzzyOWL2Keyword.B.get_str_value()}="{c.b}'
+            return FuzzyOWL2Keyword.LEFT_SHOULDER.get_str_value(), {
+                FuzzyOWL2Keyword.A.get_str_value(): str(c.a),
+                FuzzyOWL2Keyword.B.get_str_value(): str(c.b),
+            }
         elif isinstance(c, RightConcreteConcept):
-            return f'{FuzzyOWL2Keyword.RIGHT_SHOULDER.get_str_value()}" {FuzzyOWL2Keyword.A.get_str_value()}="{c.a}" {FuzzyOWL2Keyword.B.get_str_value()}="{c.b}'
+            return FuzzyOWL2Keyword.RIGHT_SHOULDER.get_str_value(), {
+                FuzzyOWL2Keyword.A.get_str_value(): str(c.a),
+                FuzzyOWL2Keyword.B.get_str_value(): str(c.b),
+            }
         elif isinstance(c, TriangularConcreteConcept):
-            return f'{FuzzyOWL2Keyword.TRIANGULAR.get_str_value()}" {FuzzyOWL2Keyword.A.get_str_value()}="{c.a}" {FuzzyOWL2Keyword.B.get_str_value()}="{c.b}" {FuzzyOWL2Keyword.C.get_str_value()}="{c.c}'
+            return FuzzyOWL2Keyword.TRIANGULAR.get_str_value(), {
+                FuzzyOWL2Keyword.A.get_str_value(): str(c.a),
+                FuzzyOWL2Keyword.B.get_str_value(): str(c.b),
+                FuzzyOWL2Keyword.C.get_str_value(): str(c.c),
+            }
         elif isinstance(c, TrapezoidalConcreteConcept):
-            return f'{FuzzyOWL2Keyword.TRAPEZOIDAL.get_str_value()}" {FuzzyOWL2Keyword.A.get_str_value()}="{c.a}" {FuzzyOWL2Keyword.B.get_str_value()}="{c.b}" {FuzzyOWL2Keyword.C.get_str_value()}="{c.c}" {FuzzyOWL2Keyword.D.get_str_value()}="{c.d}'
-        return ""
+            return FuzzyOWL2Keyword.TRAPEZOIDAL.get_str_value(), {
+                FuzzyOWL2Keyword.A.get_str_value(): str(c.a),
+                FuzzyOWL2Keyword.B.get_str_value(): str(c.b),
+                FuzzyOWL2Keyword.C.get_str_value(): str(c.c),
+                FuzzyOWL2Keyword.D.get_str_value(): str(c.d),
+            }
+        return "", dict()
+
+    # def _get_concrete_concept_specifics(self, c: FuzzyConcreteConcept) -> str:
+    #     """Get concrete concept specific parameters"""
+    #     if isinstance(c, CrispConcreteConcept):
+    #         return f'{FuzzyOWL2Keyword.CRISP.get_str_value()}" {FuzzyOWL2Keyword.A.get_str_value()}="{c.a}" {FuzzyOWL2Keyword.B.get_str_value()}="{c.b}'
+    #     elif isinstance(c, LeftConcreteConcept):
+    #         return f'{FuzzyOWL2Keyword.LEFT_SHOULDER.get_str_value()}" {FuzzyOWL2Keyword.A.get_str_value()}="{c.a}" {FuzzyOWL2Keyword.B.get_str_value()}="{c.b}'
+    #     elif isinstance(c, RightConcreteConcept):
+    #         return f'{FuzzyOWL2Keyword.RIGHT_SHOULDER.get_str_value()}" {FuzzyOWL2Keyword.A.get_str_value()}="{c.a}" {FuzzyOWL2Keyword.B.get_str_value()}="{c.b}'
+    #     elif isinstance(c, TriangularConcreteConcept):
+    #         return f'{FuzzyOWL2Keyword.TRIANGULAR.get_str_value()}" {FuzzyOWL2Keyword.A.get_str_value()}="{c.a}" {FuzzyOWL2Keyword.B.get_str_value()}="{c.b}" {FuzzyOWL2Keyword.C.get_str_value()}="{c.c}'
+    #     elif isinstance(c, TrapezoidalConcreteConcept):
+    #         return f'{FuzzyOWL2Keyword.TRAPEZOIDAL.get_str_value()}" {FuzzyOWL2Keyword.A.get_str_value()}="{c.a}" {FuzzyOWL2Keyword.B.get_str_value()}="{c.b}" {FuzzyOWL2Keyword.C.get_str_value()}="{c.c}" {FuzzyOWL2Keyword.D.get_str_value()}="{c.d}'
+    #     return ""
 
     def _process_modifier(self, mod: Modifier) -> None:
         """Process a modifier"""
         Util.debug(f"Process modifier -> {mod}")
+
+        main_xml = FuzzyXML.build_main_xml(FuzzyOWL2Keyword.MODIFIER.get_str_value())
+
         if isinstance(mod, LinearModifier):
-            annotation: str = (
-                f'<{FuzzyOWL2Keyword.FUZZY_OWL_2.get_str_value()} {FuzzyOWL2Keyword.FUZZY_TYPE.get_str_value()}="{FuzzyOWL2Keyword.MODIFIER.get_str_value()}">\n'
-                f'\t<{FuzzyOWL2Keyword.MODIFIER.get_tag_name()} {FuzzyOWL2Keyword.TYPE.get_str_value()}="{FuzzyOWL2Keyword.LINEAR.get_str_value()}" {FuzzyOWL2Keyword.C.get_str_value()}="{mod.c}"/>\n'
-                f"</{FuzzyOWL2Keyword.FUZZY_OWL_2.get_str_value()}>"
+            modifier_xml = FuzzyXML.build_modifier_xml(
+                FuzzyOWL2Keyword.LINEAR.get_str_value(),
+                {FuzzyOWL2Keyword.C.get_str_value(): str(mod.c)},
             )
+            # annotation: str = (
+            #     f'<{FuzzyOWL2Keyword.FUZZY_OWL_2.get_str_value()} {FuzzyOWL2Keyword.FUZZY_TYPE.get_str_value()}="{FuzzyOWL2Keyword.MODIFIER.get_str_value()}">\n'
+            #     f'\t<{FuzzyOWL2Keyword.MODIFIER.get_tag_name()} {FuzzyOWL2Keyword.TYPE.get_str_value()}="{FuzzyOWL2Keyword.LINEAR.get_str_value()}" {FuzzyOWL2Keyword.C.get_str_value()}="{mod.c}"/>\n'
+            #     f"</{FuzzyOWL2Keyword.FUZZY_OWL_2.get_str_value()}>"
+            # )
         elif isinstance(mod, TriangularModifier):
-            annotation: str = (
-                f'<{FuzzyOWL2Keyword.FUZZY_OWL_2.get_str_value()} {FuzzyOWL2Keyword.FUZZY_TYPE.get_str_value()}="{FuzzyOWL2Keyword.MODIFIER.get_str_value()}">\n'
-                f'\t<{FuzzyOWL2Keyword.MODIFIER.get_tag_name()} {FuzzyOWL2Keyword.TYPE.get_str_value()}="{FuzzyOWL2Keyword.TRIANGULAR.get_str_value()}" {FuzzyOWL2Keyword.A.get_str_value()}="{mod.a}" {FuzzyOWL2Keyword.B.get_str_value()}="{mod.b}" {FuzzyOWL2Keyword.C.get_str_value()}="{mod.c}"/>\n'
-                f"</{FuzzyOWL2Keyword.FUZZY_OWL_2.get_str_value()}>"
+            modifier_xml = FuzzyXML.build_modifier_xml(
+                FuzzyOWL2Keyword.TRIANGULAR.get_str_value(),
+                {
+                    FuzzyOWL2Keyword.A.get_str_value(): str(mod.a),
+                    FuzzyOWL2Keyword.B.get_str_value(): str(mod.b),
+                    FuzzyOWL2Keyword.C.get_str_value(): str(mod.c),
+                },
             )
+            # annotation: str = (
+            #     f'<{FuzzyOWL2Keyword.FUZZY_OWL_2.get_str_value()} {FuzzyOWL2Keyword.FUZZY_TYPE.get_str_value()}="{FuzzyOWL2Keyword.MODIFIER.get_str_value()}">\n'
+            #     f'\t<{FuzzyOWL2Keyword.MODIFIER.get_tag_name()} {FuzzyOWL2Keyword.TYPE.get_str_value()}="{FuzzyOWL2Keyword.TRIANGULAR.get_str_value()}" {FuzzyOWL2Keyword.A.get_str_value()}="{mod.a}" {FuzzyOWL2Keyword.B.get_str_value()}="{mod.b}" {FuzzyOWL2Keyword.C.get_str_value()}="{mod.c}"/>\n'
+            #     f"</{FuzzyOWL2Keyword.FUZZY_OWL_2.get_str_value()}>"
+            # )
         else:
             raise ValueError(f"Unknown modifier type: {type(mod)}")
+
+        main_xml.append(modifier_xml)
+        annotation: str = FuzzyXML.to_str(main_xml)
 
         current_datatype: OWLDatatype = OWLDatatype(self.iri(mod))
         self.modifiers[str(mod)] = current_datatype

@@ -35,7 +35,7 @@ from fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_sum_concept import WeightedSumCo
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_sum_zero_concept import (
     WeightedSumZeroConcept,
 )
-from fuzzy_dl_owl2.fuzzyowl2.parser.owl2_parser import FuzzyOwl2Parser
+from fuzzy_dl_owl2.fuzzyowl2.parser.owl2_xml_parser import FuzzyOwl2XMLParser
 from pyowl2.abstracts.annotation_value import OWLAnnotationValue
 from pyowl2.abstracts.axiom import OWLAxiom
 from pyowl2.abstracts.class_expression import OWLClassExpression
@@ -166,7 +166,7 @@ class FuzzyOwl2(object):
         self.processed_axioms: set[str] = set()
         self.ontologies: set[OWLOntology] = set()
 
-        FuzzyOwl2Parser.load_config()
+        FuzzyOwl2XMLParser.load_config()
 
         self.ontology_path = input_file
         self.ontology_iri = IRI(Namespace(base_iri))
@@ -200,9 +200,13 @@ class FuzzyOwl2(object):
                 if annotation.annotation_property != self.fuzzy_label:
                     continue
                 value: OWLAnnotationValue = annotation.annotation_value
-                annotation_str: str = str(value).replace('"', "")
+                annotation_str: str = str(value)
                 Util.debug(f"Annotation for ontology -> {annotation_str}")
-                self.write_fuzzy_logic(FuzzyOwl2Parser.parse_string(annotation_str)[0])
+                logic: typing.Optional[str] = FuzzyOwl2XMLParser.parse_string(
+                    annotation_str
+                )
+                Util.debug(f"Parsed annotation -> {logic}")
+                self.write_fuzzy_logic(logic)
 
     def __get_facets(self, name: str) -> list[float]:
         facets: list[float] = [float("-inf"), float("inf")]
@@ -282,13 +286,14 @@ class FuzzyOwl2(object):
                         f"Error: There are {len(annotations)} datatype annotations for {datatype}"
                     )
                 annotation: OWLAnnotation = list(annotations)[0].annotation_value
-                annotation_str: str = str(annotation).replace('"', "")
+                annotation_str: str = str(annotation)
                 Util.debug(f"Annotation for {datatype} -> {annotation_str}")
                 datatype_name: str = self.get_short_name(datatype)
                 facets: list[OWLFacet] = self.__get_facets(datatype_name)
                 c: typing.Union[ConceptDefinition, FuzzyModifier] = (
-                    FuzzyOwl2Parser.parse_string(annotation_str)[0]
+                    FuzzyOwl2XMLParser.parse_string(annotation_str)
                 )
+                Util.debug(f"Parsed annotation -> {c}")
                 if isinstance(c, FuzzyDatatype):
                     c.set_min_value(facets[0])
                     c.set_max_value(facets[1])
@@ -330,12 +335,12 @@ class FuzzyOwl2(object):
                         f"Error: There are {len(annotations)} class annotations for {cls}"
                     )
                 annotation: OWLAnnotation = list(annotations)[0].annotation_value
-                annotation_str: str = str(annotation).replace('"', "")
+                annotation_str: str = str(annotation)
                 Util.debug(f"Annotation for concept {cls} -> {annotation_str}")
-                concept: ConceptDefinition = FuzzyOwl2Parser.parse_string(
+                concept: ConceptDefinition = FuzzyOwl2XMLParser.parse_string(
                     annotation_str
-                )[0]
-                Util.debug(f"Concept -> {concept}")
+                )
+                Util.debug(f"Parsed annotation -> {concept}")
                 name: str = self.get_short_name(cls)
                 if isinstance(concept, ModifiedConcept):
                     mod_name: str = concept.get_fuzzy_modifier()
@@ -401,11 +406,12 @@ class FuzzyOwl2(object):
                         f"Error: There are {len(annotations)} property annotations for {property}"
                     )
                 annotation: OWLAnnotation = list(annotations)[0].annotation_value
-                annotation_str: str = str(annotation).replace('"', "")
+                annotation_str: str = str(annotation)
                 Util.debug(f"Annotation for property {property} -> {annotation_str}")
                 prop: typing.Optional[ModifiedProperty] = (
-                    FuzzyOwl2Parser.parse_string(annotation_str)
-                )[0]
+                    FuzzyOwl2XMLParser.parse_string(annotation_str)
+                )
+                Util.debug(f"Parsed annotation -> {prop}")
                 if prop is None:
                     return
                 if not isinstance(prop, ModifiedProperty):
@@ -428,10 +434,10 @@ class FuzzyOwl2(object):
                 f"Error: There are {len(annotations)} annotations for axiom {axiom}."
             )
         annotation: OWLAnnotation = list(annotations)[0].annotation_value
-        annotation_str: str = str(annotation).replace('"', "")
+        annotation_str: str = str(annotation)
         Util.debug(f"Annotation for degree -> {annotation_str}")
-        deg: float = FuzzyOwl2Parser.parse_string(annotation_str)[0]
-        Util.debug(f"Degree for axiom -> {deg}")
+        deg: float = FuzzyOwl2XMLParser.parse_string(annotation_str)
+        Util.debug(f"Parsed annotation -> {deg}")
         if not isinstance(deg, constants.NUMBER):
             raise ValueError
         return deg

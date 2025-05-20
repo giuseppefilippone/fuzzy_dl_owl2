@@ -1,6 +1,6 @@
 (define-fuzzy-concept a111 triangular(0.0, 1.0, 0.6, 0.7, 0.8))
 (define-fuzzy-concept a112 triangular(0.0, 1.0, 0.55, 0.6, 0.7))
-(define-fuzzy-concept a121 triangular(0.0, 1.0, 0.9, 0.95, 1))
+(define-fuzzy-concept a121 triangular(0.0, 1.0, 0.9, 0.95, 1.0))
 (define-fuzzy-concept a122 triangular(0.0, 1.0, 0.4, 0.45, 0.5))
 (define-fuzzy-concept a211 triangular(0.0, 1.0, 0.6, 0.7, 0.8))
 (define-fuzzy-concept a212 triangular(0.0, 1.0, 0.35, 0.4, 0.45))

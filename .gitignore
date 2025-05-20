@@ -20,6 +20,9 @@ venv/
 # Jupyter Notebook checkpoints
 .ipynb_checkpoints/
 
+# Jupyter Notebook
+.ipynb
+
 # VSCode and other IDEs
 .vscode/
 .idea/
@@ -57,6 +60,13 @@ Pipfile.lock
 
 # logs
 *.log
+*.fdl
+/logs
+/results
 
 # wheel files
 *.whl
+
+# owl
+*.owl
+

@@ -6,11 +6,7 @@ import typing
 
 import pyparsing as pp
 
-from fuzzy_dl_owl2.fuzzydl.concept.qowa_concept import QowaConcept
 from fuzzy_dl_owl2.fuzzydl.knowledge_base import KnowledgeBase
-from fuzzy_dl_owl2.fuzzydl.modifier.linear_modifier import LinearModifier
-from fuzzy_dl_owl2.fuzzydl.modifier.modifier import Modifier
-from fuzzy_dl_owl2.fuzzydl.modifier.triangular_modifier import TriangularModifier
 from fuzzy_dl_owl2.fuzzydl.query.query import Query
 from fuzzy_dl_owl2.fuzzydl.util import utils
 from fuzzy_dl_owl2.fuzzydl.util.config_reader import ConfigReader
@@ -18,14 +14,17 @@ from fuzzy_dl_owl2.fuzzydl.util.util import Util
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.choquet_concept import ChoquetConcept
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.concept_definition import ConceptDefinition
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.fuzzy_datatype import FuzzyDatatype
+from fuzzy_dl_owl2.fuzzyowl2.owl_types.fuzzy_modifier import FuzzyModifier
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.fuzzy_nominal_concept import FuzzyNominalConcept
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.left_shoulder_function import (
     LeftShoulderFunction,
 )
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.linear_function import LinearFunction
+from fuzzy_dl_owl2.fuzzyowl2.owl_types.linear_modifier import LinearModifier
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.modified_concept import ModifiedConcept
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.modified_property import ModifiedProperty
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.owa_concept import OwaConcept
+from fuzzy_dl_owl2.fuzzyowl2.owl_types.qowa_concept import QowaConcept
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.quasi_sugeno_concept import QsugenoConcept
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.right_shoulder_function import (
     RightShoulderFunction,
@@ -33,6 +32,7 @@ from fuzzy_dl_owl2.fuzzyowl2.owl_types.right_shoulder_function import (
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.sugeno_concept import SugenoConcept
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.trapezoidal_function import TrapezoidalFunction
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.triangular_function import TriangularFunction
+from fuzzy_dl_owl2.fuzzyowl2.owl_types.triangular_modifer import TriangularModifier
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_concept import WeightedConcept
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_max_concept import WeightedMaxConcept
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_min_concept import WeightedMinConcept
@@ -66,13 +66,13 @@ def _parse_fuzzy_datatype(tokens: pp.ParseResults) -> FuzzyDatatype:
     return tokens
 
 
-def _parse_modifier_function(tokens: pp.ParseResults) -> Modifier:
+def _parse_modifier_function(tokens: pp.ParseResults) -> FuzzyModifier:
     Util.debug(f"_parse_modifier_function -> {tokens}")
     list_tokens: list = tokens.as_list()
     if list_tokens[0] == FuzzyOWL2Keyword.LINEAR:
-        return LinearModifier(None, list_tokens[1])
+        return LinearModifier(list_tokens[1])
     elif list_tokens[0] == FuzzyOWL2Keyword.TRIANGULAR:
-        return TriangularModifier(None, list_tokens[1], list_tokens[2], list_tokens[3])
+        return TriangularModifier(list_tokens[1], list_tokens[2], list_tokens[3])
     return tokens
 
 
