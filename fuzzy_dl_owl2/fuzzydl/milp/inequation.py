@@ -43,6 +43,18 @@ class Inequation:
         assert self.type == InequalityType.GREATER_THAN
         return ">="
 
+    def is_zero(self) -> bool:
+        return all(term.get_coeff() == 0 for term in self.expr.get_terms()) and self.expr.get_constant() == 0
+
+    def __hash__(self) -> int:
+        return hash(str(self))
+
+    def __eq__(self, value: typing.Self) -> bool:
+        return self.expr == value.expr and self.type == value.type
+
+    def __ne__(self, value: typing.Self) -> bool:
+        return not (self == value)
+
     def __repr__(self) -> str:
         return str(self)
 

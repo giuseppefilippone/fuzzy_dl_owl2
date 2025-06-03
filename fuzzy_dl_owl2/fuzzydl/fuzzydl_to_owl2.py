@@ -129,6 +129,8 @@ from pyowl2.individual.named_individual import OWLNamedIndividual
 from pyowl2.literal.literal import OWLLiteral
 from pyowl2.ontology import OWLOntology
 
+from fuzzy_dl_owl2.fuzzydl.util.config_reader import ConfigReader
+
 
 # @utils.timer_decorator
 class FuzzydlToOwl2:
@@ -149,7 +151,7 @@ class FuzzydlToOwl2:
             self.ontology_iri, OWL1_annotations=True
         )
         self.fuzzyLabel: OWLAnnotationProperty = OWLAnnotationProperty(
-            IRI(self.ontology_iri.namespace, "fuzzyLabel")
+            IRI(self.ontology_iri.namespace, ConfigReader.OWL_ANNOTATION_LABEL)
         )
 
         self.ontology.add_axiom(OWLDeclaration(self.fuzzyLabel))

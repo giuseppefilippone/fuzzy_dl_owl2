@@ -122,26 +122,32 @@ class FeatureFunction:
         self, a: Individual, milp: MILPHelper
     ) -> typing.Optional[Expression]:
         if self.type == FeatureFunctionType.ATOMIC:
+            # Get the filler "b" for feature(a)
             rel_set: list[Relation] = a.role_relations.get(self.feature)
+            assert len(rel_set) > 0
             b: CreatedIndividual = typing.cast(
                 CreatedIndividual, rel_set[0].get_object_individual()
             )
+            # Get the variable xB
             x_b: Variable = milp.get_variable(b)
             return Expression(Term(1.0, x_b))
         elif self.type == FeatureFunctionType.NUMBER:
             return Expression(self.n)
         elif self.type == FeatureFunctionType.PRODUCT:
+            assert len(self.f) == 1
             ex: Expression = self.f[0].to_expression(a, milp)
-            return Expression.multiply_constant(ex, self.n)
+            return ex * self.n
         elif self.type == FeatureFunctionType.SUBTRACTION:
+            assert len(self.f) == 2
             ex1: Expression = self.f[0].to_expression(a, milp)
             ex2: Expression = self.f[1].to_expression(a, milp)
-            return Expression.subtract_expressions(ex1, ex2)
+            return ex1 - ex2
         elif self.type == FeatureFunctionType.SUM:
+            assert len(self.f) >= 1
             ex1: Expression = self.f[0].to_expression(a, milp)
             for i in range(1, len(self.f)):
                 ex2: Expression = self.f[i].to_expression(a, milp)
-                ex1: Expression = Expression.add_expressions(ex1, ex2)
+                ex1 = ex1 + ex2
             return ex1
         return None
 

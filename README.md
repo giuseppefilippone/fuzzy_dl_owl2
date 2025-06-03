@@ -54,17 +54,85 @@ The file `CONFIG.ini` is structured as follows:
 ```text
 [DEFAULT]
 debugPrint = False
-relaxMilp = False
 epsilon = 0.001
 maxIndividuals = -1
+owlAnnotationLabel = fuzzyLabel
+milpProvider = mip
 ```
 
 | Configuration Variable | Description                       |
 |----------------------|-----------------------------------|
 | debugPrint        | Enable/disable debugging          |
-| relaxMilp      | Enable/disable MILP constraint relaxation. Important: The solution may be wrong by enabling this flag |
 | epsilon | Define the precision of the solution. For instance, epsilon = 0.001 means that the solution will be calculated with an accuracy to the third decimal place |
 | maxIndividuals | Define the maximal number of individuals to handle. The value -1 indicate that there is no maximum |
+| owlAnnotationLabel | Define the Annotation label used to build the Fuzzy OWL 2 RDF/XML ontology |
+| milpProvider | Define the MILP provider used by the reasoner. The supported providers are listed below. |
+
+Supported MILP Providers:
+| Provider | milpProvider |
+|--------------|----------------------|
+| Gurobi | gurobi |
+| CPLEX | pulp_cplex |
+| CBC | pulp |
+| GLPK | pulp_glpk |
+| HiGHS | pulp_highs |
+| MIP | mip |
+
+⸻
+
+# MILP Provider Usage and Configuration
+
+## GUROBI
+
+- Install [gurobipy](https://pypi.org/project/gurobipy/):
+```python
+pip install gurobipy==12.0.0
+```
+- Download the GUROBI license from their [website](https://www.gurobi.com/solutions/licensing/).
+- Add Gurobi to the PATH
+
+## MIP
+
+- Install python [MIP](https://www.python-mip.com/):
+```python
+pip install mip==1.16rc0
+```
+
+## GLPK
+
+- Install [GLPK](https://www.gnu.org/software/glpk/) v5.0 and [GMP](https://gmplib.org/) v6.3.0
+- Install python [pulp](https://github.com/coin-or/PuLP?tab=readme-ov-file):
+```python
+pip install pulp==3.2.1
+```
+- Add GLPK to the PATH
+
+## CBC
+
+- Install [CBC](https://github.com/coin-or/Cbc)
+- Install python [pulp](https://github.com/coin-or/PuLP?tab=readme-ov-file):
+```python
+pip install pulp==3.2.1
+```
+- Add CBC to the PATH
+
+## CPLEX
+
+- Install [CPLEX](https://www.ibm.com/it-it/products/ilog-cplex-optimization-studio) v22.11
+- Install python [pulp](https://github.com/coin-or/PuLP?tab=readme-ov-file):
+```python
+pip install pulp==3.2.1
+```
+- Add CPLEX to the PATH
+
+## HiGHS
+
+- Install [HiGHS](https://ergo-code.github.io/HiGHS/dev/interfaces/cpp/) v1.10.0
+- Install python [pulp](https://github.com/coin-or/PuLP?tab=readme-ov-file):
+```python
+pip install pulp==3.2.1
+```
+- Add HiGHS to the PATH
 
 ⸻
 

@@ -72,3 +72,8 @@ Pipfile.lock
 # owl
 *.owl
 
+# MILP
+*.mps
+*.sol
+*.lp
+*.HiGHS

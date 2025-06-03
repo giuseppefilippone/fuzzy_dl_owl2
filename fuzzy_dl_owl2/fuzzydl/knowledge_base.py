@@ -6435,6 +6435,7 @@ class DatatypeReasoner:
         k: list[float],
         type: InequalityType,
     ) -> None:
+        # Gets fillers bi from every feature fi
         array: set[str] = fun.get_features()
         new_variable: bool = False
         for feature in array:
@@ -6454,21 +6455,28 @@ class DatatypeReasoner:
                 x_fi: Variable = kb.milp.get_variable(
                     ind, bi, feature, VariableType.BINARY
                 )
+                # (a,bi):Fi >= x_{(a,bi):Fi}
                 IndividualHandler.add_relation(
                     ind, feature, bi, DegreeVariable.get_degree(x_fi), kb
                 )
-            x_bi: Variable = (
-                kb.milp.get_variable(bi, VariableType.INTEGER)
-                if t.get_type() == ConcreteFeatureType.INTEGER
-                else kb.milp.get_variable(bi, VariableType.CONTINUOUS)
+            x_bi: Variable = kb.milp.get_variable(
+                bi,
+                (
+                    VariableType.INTEGER
+                    if t.get_type() == ConcreteFeatureType.INTEGER
+                    else VariableType.CONTINUOUS
+                ),
             )
-            if new_variable is not None and ki is not None:
+            if new_variable and ki is not None:
                 kb.restrict_range(x_bi, x_fi, ki[0], ki[1])
+            # xIsC <= xFi
             kb.milp.add_new_constraint(
                 Expression(Term(1.0, x_is_c), Term(-1.0, x_fi)),
                 InequalityType.LESS_THAN,
             )
+            # xF \in {0,1}
             x_fi.set_binary_variable()
+            # xB is a datatype filler
             x_bi.set_datatype_filler_variable()
         DatatypeReasoner.write_feature_equation(ind, fun, x_b, x_is_c, x_f, k, type, kb)
 

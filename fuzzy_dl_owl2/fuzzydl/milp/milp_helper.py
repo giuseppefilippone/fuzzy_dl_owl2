@@ -2,10 +2,8 @@ from __future__ import annotations
 
 import copy
 import os
+import traceback
 import typing
-
-import gurobipy as gp
-from gurobipy import GRB
 
 from fuzzy_dl_owl2.fuzzydl.assertion.assertion import Assertion
 from fuzzy_dl_owl2.fuzzydl.concept.concept import Concept
@@ -26,7 +24,7 @@ from fuzzy_dl_owl2.fuzzydl.milp.variable import Variable
 from fuzzy_dl_owl2.fuzzydl.relation import Relation
 from fuzzy_dl_owl2.fuzzydl.restriction.restriction import Restriction
 from fuzzy_dl_owl2.fuzzydl.util import constants
-from fuzzy_dl_owl2.fuzzydl.util.config_reader import ConfigReader
+from fuzzy_dl_owl2.fuzzydl.util.config_reader import ConfigReader, MILPProvider
 from fuzzy_dl_owl2.fuzzydl.util.constants import (
     ConceptType,
     InequalityType,
@@ -62,8 +60,25 @@ class MILPHelper:
         milp.variables = [v.clone() for v in self.variables]
         return milp
 
-    def optimize(self, objective: Expression) -> Solution:
-        return self.solve_gurobi(objective)
+    def optimize(self, objective: Expression) -> typing.Optional[Solution]:
+        Util.debug(f"Running MILP solver: {ConfigReader.MILP_PROVIDER.name}")
+        if ConfigReader.MILP_PROVIDER == MILPProvider.GUROBI:
+            return self.solve_gurobi(objective)
+        elif ConfigReader.MILP_PROVIDER == MILPProvider.MIP:
+            return self.solve_mip(objective)
+        elif ConfigReader.MILP_PROVIDER in [
+            MILPProvider.PULP,
+            MILPProvider.PULP_GLPK,
+            MILPProvider.PULP_HIGHS,
+            MILPProvider.PULP_CPLEX,
+        ]:
+            return self.solve_pulp(objective)
+        # elif ConfigReader.MILP_PROVIDER == MILPProvider.SCIPY:
+        #     return self.solve_scipy(objective)
+        else:
+            raise ValueError(
+                f"Unsupported MILP provider: {ConfigReader.MILP_PROVIDER.name}"
+            )
 
     @typing.overload
     def print_instance_of_labels(
@@ -592,8 +607,10 @@ class MILPHelper:
         return y
 
     def solve_gurobi(self, objective: Expression) -> typing.Optional[Solution]:
+        import gurobipy as gp
+        from gurobipy import GRB
+
         try:
-            Util.debug("Running MILP solver: Gurobi")
             Util.debug(f"Objective function -> {objective}")
 
             num_binary_vars: int = 0
@@ -616,37 +633,45 @@ class MILPHelper:
             env.start()
 
             model = gp.Model("model", env=env)
-            vars_gurobi: list[gp.Var] = []
+            vars_gurobi: dict[str, gp.Var] = dict()
             show_variable: list[bool] = [False] * size
 
             my_vars: list[Variable] = self.show_vars.get_variables()
 
-            for i in range(size):
-                v: Variable = self.variables[i]
-                v_type: VariableType = v.get_type()
+            var_types: dict[VariableType, str] = {
+                VariableType.BINARY: GRB.BINARY,
+                VariableType.INTEGER: GRB.INTEGER,
+                VariableType.CONTINUOUS: GRB.CONTINUOUS,
+                VariableType.SEMI_CONTINUOUS: GRB.SEMICONT,
+            }
+            var_name_map: dict[str, str] = {
+                str(v): f"x{i}" for i, v in enumerate(self.variables)
+            }
+            inv_var_name_map: dict[str, str] = {v: k for k, v in var_name_map.items()}
+
+            for i, curr_variable in enumerate(self.variables):
+                v_type: VariableType = curr_variable.get_type()
                 ov: float = objective_value[i]
 
                 Util.debug(
                     (
                         f"Variable -- "
-                        f"[{v.get_lower_bound()}, {v.get_upper_bound()}] - "
+                        f"[{curr_variable.get_lower_bound()}, {curr_variable.get_upper_bound()}] - "
                         f"Obj value = {ov} - "
                         f"Var type = {v_type.name} -- "
-                        f"Var = {v}"
+                        f"Var = {curr_variable}"
                     )
                 )
 
-                vars_gurobi.append(
-                    model.addVar(
-                        lb=v.get_lower_bound(),
-                        ub=v.get_upper_bound(),
-                        obj=ov,
-                        vtype=v_type.name,
-                        name=str(v),
-                    )
+                vars_gurobi[var_name_map[str(curr_variable)]] = model.addVar(
+                    lb=curr_variable.get_lower_bound(),
+                    ub=curr_variable.get_upper_bound(),
+                    obj=ov,
+                    vtype=var_types[v_type],
+                    name=var_name_map[str(curr_variable)],
                 )
 
-                if v in my_vars:
+                if curr_variable in my_vars:
                     show_variable[i] = True
 
                 if v_type == VariableType.BINARY:
@@ -663,11 +688,15 @@ class MILPHelper:
             Util.debug(f"# constraints -> {len(self.constraints)}")
             constraint_name: str = "constraint"
             for i, constraint in enumerate(self.constraints):
+                if constraint in self.constraints[:i]:
+                    continue
+                if constraint.is_zero():
+                    continue
+
                 curr_name: str = f"{constraint_name}_{i + 1}"
                 expr: gp.LinExpr = gp.LinExpr()
                 for term in constraint.get_terms():
-                    index: int = self.variables.index(term.get_var())
-                    v: gp.Var = vars_gurobi[index]
+                    v: gp.Var = vars_gurobi[var_name_map[str(term.get_var())]]
                     c: float = term.get_coeff()
                     if c == 0:
                         continue
@@ -684,26 +713,26 @@ class MILPHelper:
                     gp_constraint: gp.Constr = expr >= constraint.get_constant()
 
                 model.addConstr(gp_constraint, curr_name)
-                Util.debug(f"{curr_name}: {gp_constraint}")
+                Util.debug(f"{curr_name}: {constraint}")
 
             model.update()
             model.optimize()
 
-            model.write(os.path.join(constants.RESULTS_PATH, "model.lp"))
-            model.write(os.path.join(constants.RESULTS_PATH, "solution.json"))
+            model.write(os.path.join(constants.RESULTS_PATH, "gurobi_model.lp"))
+            model.write(os.path.join(constants.RESULTS_PATH, "gurobi_solution.json"))
 
             Util.debug(f"Model:")
             sol: Solution = None
-            if model.Status == GRB.INFEASIBLE and ConfigReader.RELAX_MILP:
-                self.__handle_model_infeasibility(model)
+            # if model.Status == GRB.INFEASIBLE and ConfigReader.RELAX_MILP:
+            #     self.__gurobi_handle_model_infeasibility(model)
 
             if model.Status == GRB.INFEASIBLE:
                 sol = Solution(False)
             else:
                 for i in range(size):
                     if ConfigReader.DEBUG_PRINT or show_variable[i]:
-                        name: str = vars_gurobi[i].VarName
-                        value: float = round(vars_gurobi[i].X, 6)
+                        name: str = self.variables[i].name
+                        value: float = round(vars_gurobi[var_name_map[name]].X, 6)
                         if self.PRINT_VARIABLES:
                             Util.debug(f"{name} = {value}")
                         if self.PRINT_LABELS:
@@ -729,29 +758,640 @@ class MILPHelper:
             Util.error(f"Error code: {e.errno}. {e.message}")
             return None
 
-    def __handle_model_infeasibility(self, model: gp.Model) -> None:
-        model.computeIIS()
-        # Print out the IIS constraints and variables
-        Util.debug("The following constraints and variables are in the IIS:")
-        Util.debug("Constraints:")
-        for c in model.getConstrs():
-            assert isinstance(c, gp.Constr)
-            if c.IISConstr:
-                Util.debug(f"\t\t{c.ConstrName}: {model.getRow(c)} {c.Sense} {c.RHS}")
+    # def __gurobi_handle_model_infeasibility(self, model: typing.Any) -> None:
+    #     import gurobipy as gp
 
-        Util.debug("Variables:")
-        for v in model.getVars():
-            if v.IISLB:
-                Util.debug(f"\t\t{v.VarName} ≥ {v.LB}")
-            if v.IISUB:
-                Util.debug(f"\t\t{v.VarName} ≤ {v.UB}")
+    #     model: gp.Model = typing.cast(gp.Model, model)
+    #     model.computeIIS()
+    #     # Print out the IIS constraints and variables
+    #     Util.debug("The following constraints and variables are in the IIS:")
+    #     Util.debug("Constraints:")
+    #     for c in model.getConstrs():
+    #         assert isinstance(c, gp.Constr)
+    #         if c.IISConstr:
+    #             Util.debug(f"\t\t{c.ConstrName}: {model.getRow(c)} {c.Sense} {c.RHS}")
 
-        Util.debug("Relaxing the variable bounds:")
-        # relaxing only variable bounds
-        model.feasRelaxS(0, False, True, False)
-        # for relaxing variable bounds and constraint bounds use
-        # model.feasRelaxS(0, False, True, True)
-        model.optimize()
+    #     Util.debug("Variables:")
+    #     for v in model.getVars():
+    #         if v.IISLB:
+    #             Util.debug(f"\t\t{v.VarName} ≥ {v.LB}")
+    #         if v.IISUB:
+    #             Util.debug(f"\t\t{v.VarName} ≤ {v.UB}")
+
+    #     Util.debug("Relaxing the variable bounds:")
+    #     # relaxing only variable bounds
+    #     model.feasRelaxS(0, False, True, False)
+    #     # for relaxing variable bounds and constraint bounds use
+    #     # model.feasRelaxS(0, False, True, True)
+    #     model.optimize()
+
+    def solve_mip(self, objective: Expression) -> typing.Optional[Solution]:
+        import mip
+
+        try:
+            Util.debug(f"Objective function -> {objective}")
+
+            num_binary_vars: int = 0
+            num_free_vars: int = 0
+            num_integer_vars: int = 0
+            num_up_vars: int = 0
+            size: int = len(self.variables)
+            objective_value: list[float] = [0.0] * size
+
+            if objective is not None:
+                for term in objective.get_terms():
+                    index = self.variables.index(term.get_var())
+                    objective_value[index] += term.get_coeff()
+
+            model: mip.Model = mip.Model(
+                name="FuzzyDL", sense=mip.MINIMIZE, solver_name=mip.CBC
+            )
+            model.verbose = 0
+            model.infeas_tol = 1e-9
+            model.integer_tol = 1e-9
+            model.max_mip_gap = ConfigReader.EPSILON
+            model.emphasis = mip.SearchEmphasis.OPTIMALITY
+            model.opt_tol = 0
+            model.preprocess = 1
+
+            if ConfigReader.DEBUG_PRINT:
+                model.verbose = 1
+
+            vars_mip: dict[str, mip.Var] = dict()
+            show_variable: list[bool] = [False] * size
+
+            my_vars: list[Variable] = self.show_vars.get_variables()
+            var_types: dict[VariableType, str] = {
+                VariableType.BINARY: mip.BINARY,
+                VariableType.INTEGER: mip.INTEGER,
+                VariableType.CONTINUOUS: mip.CONTINUOUS,
+                VariableType.SEMI_CONTINUOUS: mip.CONTINUOUS,
+            }
+            var_name_map: dict[str, str] = {
+                str(v): f"x{i}" for i, v in enumerate(self.variables)
+            }
+            inv_var_name_map: dict[str, str] = {v: k for k, v in var_name_map.items()}
+
+            for i, curr_variable in enumerate(self.variables):
+                v_type: VariableType = curr_variable.get_type()
+                ov: float = objective_value[i]
+
+                Util.debug(
+                    (
+                        f"Variable -- "
+                        f"[{curr_variable.get_lower_bound()}, {curr_variable.get_upper_bound()}] - "
+                        f"Obj value = {ov} - "
+                        f"Var type = {v_type.name} -- "
+                        f"Var = {curr_variable}"
+                    )
+                )
+
+                vars_mip[var_name_map[str(curr_variable)]] = model.add_var(
+                    name=var_name_map[str(curr_variable)],
+                    var_type=var_types[v_type],
+                    lb=curr_variable.get_lower_bound(),
+                    ub=curr_variable.get_upper_bound(),
+                    obj=ov,
+                )
+
+                if curr_variable in my_vars:
+                    show_variable[i] = True
+
+                if v_type == VariableType.BINARY:
+                    num_binary_vars += 1
+                elif v_type == VariableType.CONTINUOUS:
+                    num_free_vars += 1
+                elif v_type == VariableType.INTEGER:
+                    num_integer_vars += 1
+                elif v_type == VariableType.SEMI_CONTINUOUS:
+                    num_up_vars += 1
+
+            Util.debug(f"# constraints -> {len(self.constraints)}")
+            constraint_name: str = "constraint"
+            for i, constraint in enumerate(self.constraints):
+                if constraint in self.constraints[:i]:
+                    continue
+                if constraint.is_zero():
+                    continue
+                curr_name: str = f"{constraint_name}_{i + 1}"
+                expr: mip.LinExpr = mip.xsum(
+                    term.get_coeff() * vars_mip[var_name_map[str(term.get_var())]]
+                    for term in constraint.get_terms()
+                )
+
+                if constraint.get_type() == InequalityType.EQUAL:
+                    gp_constraint: mip.Constr = expr == constraint.get_constant()
+                elif constraint.get_type() == InequalityType.LESS_THAN:
+                    gp_constraint: mip.Constr = expr <= constraint.get_constant()
+                elif constraint.get_type() == InequalityType.GREATER_THAN:
+                    gp_constraint: mip.Constr = expr >= constraint.get_constant()
+
+                model.add_constr(gp_constraint, curr_name)
+                Util.debug(f"{curr_name}: {constraint}")
+
+            model.objective = mip.xsum(
+                ov * vars_mip[var_name_map[str(self.variables[i])]]
+                for i, ov in enumerate(objective_value)
+                if ov != 0
+            )
+
+            # model.optimize(relax=ConfigReader.RELAX_MILP)
+            model.optimize()
+
+            model.write(os.path.join(constants.RESULTS_PATH, "mip_model.lp"))
+
+            Util.debug(f"Model:")
+            sol: Solution = None
+            if model.status == mip.OptimizationStatus.INFEASIBLE:
+                sol = Solution(False)
+            else:
+                model.write(os.path.join(constants.RESULTS_PATH, "mip_solution.sol"))
+                for i in range(size):
+                    if ConfigReader.DEBUG_PRINT or show_variable[i]:
+                        name: str = self.variables[i].name
+                        value: float = round(vars_mip[var_name_map[name]].x, 6)
+                        if self.PRINT_VARIABLES:
+                            Util.debug(f"{name} = {value}")
+                        if self.PRINT_LABELS:
+                            self.print_instance_of_labels(name, value)
+                result: float = Util.round(abs(model.objective_value))
+                sol = Solution(result)
+
+            Util.debug(
+                f"{constants.STAR_SEPARATOR}Statistics{constants.STAR_SEPARATOR}"
+            )
+            Util.debug("MILP problem:")
+            Util.debug(f"\t\tSemi continuous variables: {num_up_vars}")
+            Util.debug(f"\t\tBinary variables: {num_binary_vars}")
+            Util.debug(f"\t\tContinuous variables: {num_free_vars}")
+            Util.debug(f"\t\tInteger variables: {num_integer_vars}")
+            Util.debug(f"\t\tTotal variables: {len(self.variables)}")
+            Util.debug(f"\t\tConstraints: {len(self.constraints)}")
+            return sol
+        except Exception as e:
+            Util.error(f"Error: {e} {traceback.format_exc()}")
+            return None
+
+    def solve_pulp(self, objective: Expression) -> typing.Optional[Solution]:
+        import pulp
+
+        try:
+            Util.debug(f"Objective function -> {objective}")
+
+            num_binary_vars: int = 0
+            num_free_vars: int = 0
+            num_integer_vars: int = 0
+            num_up_vars: int = 0
+            size: int = len(self.variables)
+            objective_value: list[float] = [0.0] * size
+            show_variable: list[bool] = [False] * size
+            my_vars: list[Variable] = self.show_vars.get_variables()
+
+            if objective is not None:
+                for term in objective.get_terms():
+                    objective_value[
+                        self.variables.index(term.get_var())
+                    ] += term.get_coeff()
+
+            model = pulp.LpProblem(
+                f"FuzzyDL-{ConfigReader.MILP_PROVIDER.upper()}", pulp.LpMinimize
+            )
+
+            var_types: dict[VariableType, str] = {
+                VariableType.BINARY: pulp.LpBinary,
+                VariableType.INTEGER: pulp.LpInteger,
+                VariableType.CONTINUOUS: pulp.LpContinuous,
+                VariableType.SEMI_CONTINUOUS: pulp.LpContinuous,
+            }
+
+            vars_pulp: dict[str, pulp.LpVariable] = dict()
+            var_name_map: dict[str, str] = {
+                str(v): f"x{i}" for i, v in enumerate(self.variables)
+            }
+            semicontinuous_var_counter: int = 1
+            semicontinuous_var_name: str = "semic_z"
+            for i, curr_variable in enumerate(self.variables):
+                v_type: VariableType = curr_variable.get_type()
+                Util.debug(
+                    (
+                        f"Variable -- "
+                        f"[{curr_variable.get_lower_bound()}, {curr_variable.get_upper_bound()}] - "
+                        f"Obj value = {objective_value[i]} - "
+                        f"Var type = {v_type.name} -- "
+                        f"Var = {curr_variable}"
+                    )
+                )
+
+                vars_pulp[var_name_map[str(curr_variable)]] = pulp.LpVariable(
+                    name=var_name_map[str(curr_variable)],
+                    lowBound=(
+                        curr_variable.get_lower_bound()
+                        if curr_variable.get_lower_bound() != float("-inf")
+                        else None
+                    ),
+                    upBound=(
+                        curr_variable.get_upper_bound()
+                        if curr_variable.get_upper_bound() != float("inf")
+                        else None
+                    ),
+                    cat=var_types[v_type],
+                )
+
+                if curr_variable in my_vars:
+                    show_variable[i] = True
+
+                if (
+                    v_type == VariableType.SEMI_CONTINUOUS
+                    and ConfigReader.MILP_PROVIDER
+                    in [
+                        MILPProvider.PULP_GLPK,
+                        MILPProvider.PULP_CPLEX,
+                    ]
+                ):
+                    # Semi Continuous variables are not handled by GLPK and HiGHS
+                    # if x in [L, U] u {0} is semi continuous, then add the following constraints
+                    # L * y <= x <= U * y, where y in {0, 1} is a binary variable
+                    bin_var = pulp.LpVariable(
+                        name=f"{semicontinuous_var_name}{semicontinuous_var_counter}",
+                        cat=pulp.LpBinary,
+                    )
+                    constraint_1 = (
+                        vars_pulp[var_name_map[str(curr_variable)]]
+                        >= bin_var * curr_variable.get_lower_bound()
+                    )
+                    constraint_2 = (
+                        vars_pulp[var_name_map[str(curr_variable)]]
+                        <= bin_var * curr_variable.get_upper_bound()
+                    )
+                    if constraint_1 not in model.constraints.values():
+                        model.addConstraint(
+                            constraint_1, name=f"constraint_{bin_var.name}_1"
+                        )
+                    if constraint_2 not in model.constraints.values():
+                        model.addConstraint(
+                            constraint_2, name=f"constraint_{bin_var.name}_2"
+                        )
+                    semicontinuous_var_counter += 1
+                    Util.debug(
+                        (
+                            f"New Variable -- "
+                            f"[{bin_var.lowBound}, {bin_var.upBound}] - "
+                            f"Var type = {bin_var.cat} -- "
+                            f"Var = {bin_var.name}"
+                        )
+                    )
+                    Util.debug(f"New Constraint 1 -- {constraint_1}")
+                    Util.debug(f"New Constraint 2 -- {constraint_2}")
+
+                if v_type == VariableType.BINARY:
+                    num_binary_vars += 1
+                elif v_type == VariableType.CONTINUOUS:
+                    num_free_vars += 1
+                elif v_type == VariableType.INTEGER:
+                    num_integer_vars += 1
+                elif v_type == VariableType.SEMI_CONTINUOUS:
+                    num_up_vars += 1
+
+            Util.debug(f"# constraints -> {len(self.constraints)}")
+            constraint_name: str = "constraint"
+            pulp_sense: dict[InequalityType, int] = {
+                InequalityType.EQUAL: pulp.LpConstraintEQ,
+                InequalityType.LESS_THAN: pulp.LpConstraintLE,
+                InequalityType.GREATER_THAN: pulp.LpConstraintGE,
+            }
+            for i, constraint in enumerate(self.constraints):
+                if constraint in self.constraints[:i]:
+                    continue
+                # ignore zero constraints
+                if constraint.is_zero():
+                    continue
+
+                curr_name: str = f"{constraint_name}_{i + 1}"
+                pulp_expr: pulp.LpAffineExpression = pulp.lpSum(
+                    term.get_coeff() * vars_pulp[var_name_map[str(term.get_var())]]
+                    for term in constraint.get_terms()
+                )
+                pulp_constraint: pulp.LpConstraint = pulp.LpConstraint(
+                    e=pulp_expr,
+                    sense=pulp_sense[constraint.get_type()],
+                    rhs=constraint.get_constant(),
+                )
+
+                # ignore zero constraints of type a * x - a * x
+                if (
+                    len(pulp_constraint) == 1
+                    and list(pulp_constraint.values())[0] == 0
+                    and pulp_constraint.constant == 0
+                ):
+                    continue
+
+                model.addConstraint(pulp_constraint, name=curr_name)
+                Util.debug(f"{curr_name}: {constraint}")
+
+            if ConfigReader.MILP_PROVIDER == MILPProvider.PULP:
+                solver = pulp.PULP_CBC_CMD(
+                    mip=True,
+                    msg=ConfigReader.DEBUG_PRINT,
+                    gapRel=1e-9,
+                    presolve=True,
+                    keepFiles=False,  # ConfigReader.DEBUG_PRINT,
+                    logPath=(
+                        os.path.join(".", "logs", f"pulp_{pulp.PULP_CBC_CMD.name}.log")
+                        if ConfigReader.DEBUG_PRINT
+                        else None
+                    ),
+                    options=[
+                        "--primalTolerance",  # feasibility tolerance
+                        "1e-9",
+                        "--integerTolerance",  # integer feasibility tolerance
+                        "1e-9",
+                        "--ratioGap",  # relative mip gap
+                        str(ConfigReader.EPSILON),
+                        "--allowableGap",  # optimality gap tolerance
+                        "0",
+                        "--preprocess",  # enable preprocessing
+                        "on",
+                    ],
+                )
+            elif ConfigReader.MILP_PROVIDER == MILPProvider.PULP_GLPK:
+                solver = pulp.GLPK_CMD(
+                    mip=True,
+                    msg=ConfigReader.DEBUG_PRINT,
+                    keepFiles=False,  # ConfigReader.DEBUG_PRINT,
+                    options=[
+                        "--presol",  # use presolver (default; assumes --scale and --adv)
+                        "--exact",  # use simplex method based on exact arithmetic
+                        "--xcheck",  # check final basis using exact arithmetic
+                        "--intopt",  # enforce MIP (Mixed Integer Programming)
+                        "--mipgap",
+                        str(
+                            ConfigReader.EPSILON
+                        ),  # no relative gap between primal & best bound
+                    ]
+                    + (
+                        [
+                            "--log",
+                            os.path.join(".", "logs", f"pulp_{pulp.GLPK_CMD.name}.log"),
+                        ]
+                        if ConfigReader.DEBUG_PRINT
+                        else []
+                    ),
+                )
+            elif ConfigReader.MILP_PROVIDER == MILPProvider.PULP_HIGHS:
+                solver = pulp.HiGHS(
+                    mip=True,
+                    msg=ConfigReader.DEBUG_PRINT,
+                    gapRel=1e-6,
+                    log_file=(
+                        os.path.join(".", "logs", f"pulp_{pulp.HiGHS.name}.log")
+                        if ConfigReader.DEBUG_PRINT
+                        else None
+                    ),
+                    primal_feasibility_tolerance=1e-9,
+                    dual_feasibility_tolerance=1e-9,
+                    mip_feasibility_tolerance=1e-9,
+                    presolve="on",
+                    parallel="on",
+                    write_solution_to_file=True,
+                    write_solution_style=1,
+                    solution_file=os.path.join(
+                        constants.RESULTS_PATH, "highs_solution.sol"
+                    ),
+                    write_model_file=os.path.join(
+                        constants.RESULTS_PATH, "highs_model.lp"
+                    ),
+                )
+            elif ConfigReader.MILP_PROVIDER == MILPProvider.PULP_CPLEX:
+                solver = pulp.CPLEX_CMD(
+                    # path="/Applications/CPLEX_Studio2211/cplex/bin/arm64_osx/cplex",
+                    mip=True,
+                    msg=ConfigReader.DEBUG_PRINT,
+                    gapRel=1e-9,
+                    keepFiles=False,  # ConfigReader.DEBUG_PRINT,
+                    logPath=(
+                        os.path.join(".", "logs", f"pulp_{pulp.CPLEX_CMD.name}.log")
+                        if ConfigReader.DEBUG_PRINT
+                        else None
+                    ),
+                )
+
+            model.objective = pulp.lpSum(
+                ov * vars_pulp[var_name_map[str(self.variables[i])]]
+                for i, ov in enumerate(objective_value)
+                if ov != 0
+            )
+            result = model.solve(solver=solver)
+            if ConfigReader.MILP_PROVIDER == MILPProvider.PULP_CPLEX:
+                for file in os.listdir("./"):
+                    if "clone" in file:
+                        os.remove(file)
+
+            Util.debug(f"Model:")
+            sol: Solution = None
+            if result != pulp.LpStatusOptimal:
+                sol = Solution(False)
+            else:
+                var_dict: dict[str, pulp.LpVariable] = model.variablesDict()
+                for i in range(size):
+                    if ConfigReader.DEBUG_PRINT or show_variable[i]:
+                        name: str = self.variables[i].name
+                        value: float = (
+                            round(var_dict[var_name_map[name]].value(), 6)
+                            if var_name_map[name] in var_dict
+                            else 0.0
+                        )
+                        if self.PRINT_VARIABLES:
+                            Util.debug(f"{name} = {value}")
+                        if self.PRINT_LABELS:
+                            self.print_instance_of_labels(name, value)
+                result: float = Util.round(abs(model.objective.value()))
+                sol = Solution(result)
+
+            Util.debug(
+                f"{constants.STAR_SEPARATOR}Statistics{constants.STAR_SEPARATOR}"
+            )
+            Util.debug("MILP problem:")
+            Util.debug(f"\t\tSemi continuous variables: {num_up_vars}")
+            Util.debug(f"\t\tBinary variables: {num_binary_vars}")
+            Util.debug(f"\t\tContinuous variables: {num_free_vars}")
+            Util.debug(f"\t\tInteger variables: {num_integer_vars}")
+            Util.debug(f"\t\tTotal variables: {len(self.variables)}")
+            Util.debug(f"\t\tConstraints: {len(self.constraints)}")
+            return sol
+        except Exception as e:
+            Util.error(f"Error: {e} {traceback.format_exc()}")
+            return None
+
+    # def solve_scipy(self, objective: Expression) -> typing.Optional[Solution]:
+    #     import numpy as np
+    #     from scipy.optimize import milp, OptimizeResult, LinearConstraint, Bounds, linprog, linprog_verbose_callback, show_options
+
+    #     num_binary_vars: int = 0
+    #     num_free_vars: int = 0
+    #     num_integer_vars: int = 0
+    #     num_up_vars: int = 0
+    #     size: int = len(self.variables)
+    #     objective_value: list[float] = [0.0] * size
+    #     show_variable: list[bool] = [False] * size
+    #     my_vars: list[Variable] = self.show_vars.get_variables()
+
+    #     if objective is not None:
+    #         for term in objective.get_terms():
+    #             index = self.variables.index(term.get_var())
+    #             objective_value[index] += term.get_coeff()
+
+    #     var_types: dict[VariableType, str] = {
+    #         VariableType.BINARY: 1,
+    #         VariableType.CONTINUOUS: 0,
+    #         VariableType.INTEGER: 1,
+    #         VariableType.SEMI_CONTINUOUS: 2,
+    #     }
+
+    #     for i, curr_variable in enumerate(self.variables):
+    #         v_type: VariableType = curr_variable.get_type()
+
+    #         Util.debug(
+    #             (
+    #                 f"Variable -- "
+    #                 f"[{curr_variable.get_lower_bound()}, {curr_variable.get_upper_bound()}] - "
+    #                 f"Obj value = {objective_value[i]} - "
+    #                 f"Var type = {v_type.name} -- "
+    #                 f"Var = {curr_variable}"
+    #             )
+    #         )
+
+    #         if curr_variable in my_vars:
+    #             show_variable[i] = True
+
+    #         if v_type == VariableType.BINARY:
+    #             num_binary_vars += 1
+    #         elif v_type == VariableType.CONTINUOUS:
+    #             num_free_vars += 1
+    #         elif v_type == VariableType.INTEGER:
+    #             num_integer_vars += 1
+    #         elif v_type == VariableType.SEMI_CONTINUOUS:
+    #             num_up_vars += 1
+
+    #     Util.debug(f"# constraints -> {len(self.constraints)}")
+    #     constraint_name: str = "constraint"
+    #     matrix_A = np.zeros((len(self.constraints), len(self.variables)))
+    #     inequality_A = np.zeros((len(self.constraints), len(self.variables)))
+    #     equality_A = np.zeros((len(self.constraints), len(self.variables)))
+    #     lb = np.zeros(len(self.constraints))
+    #     ub = np.zeros(len(self.constraints))
+    #     in_ub = np.zeros(len(self.constraints))
+    #     eq_ub = np.zeros(len(self.constraints))
+    #     for i, constraint in enumerate(self.constraints):
+    #         curr_name: str = f"{constraint_name}_{i + 1}"
+    #         row = np.zeros(len(self.variables))
+    #         for term in constraint.get_terms():
+    #             row[self.variables.index(term.get_var())] = term.get_coeff()
+    #         if np.allclose(row, 0):
+    #             continue
+    #         Util.debug(f"{curr_name}: {constraint}")
+    #         matrix_A[i, :] = row
+    #         if constraint.type == InequalityType.EQUAL:
+    #             equality_A[i, :] = row
+    #             eq_ub[i] = constraint.get_constant()
+
+    #             lb[i] = constraint.get_constant()
+    #             ub[i] = constraint.get_constant()
+    #         elif constraint.type == InequalityType.LESS_THAN:
+    #             inequality_A[i, :] = row
+    #             in_ub[i] = constraint.get_constant()
+
+    #             lb[i] = -np.inf
+    #             ub[i] = constraint.get_constant()
+    #         elif constraint.type == InequalityType.GREATER_THAN:
+    #             inequality_A[i, :] = -row
+    #             in_ub[i] = -constraint.get_constant()
+
+    #             lb[i] = constraint.get_constant()
+    #             ub[i] = np.inf
+
+    #     indices = np.all(matrix_A == 0, axis=1)
+    #     matrix_A = np.delete(matrix_A, indices, axis=0)
+    #     lb = np.delete(lb, indices, axis=0)
+    #     ub = np.delete(ub, indices, axis=0)
+
+    #     indices = np.all(inequality_A == 0, axis=1)
+    #     inequality_A = np.delete(inequality_A, indices, axis=0)
+    #     in_ub = np.delete(in_ub, indices, axis=0)
+
+    #     indices = np.all(equality_A == 0, axis=1)
+    #     equality_A = np.delete(equality_A, indices, axis=0)
+    #     eq_ub = np.delete(eq_ub, indices, axis=0)
+
+    #     bounds = Bounds(
+    #         [var.get_lower_bound() for var in self.variables],
+    #         [var.get_upper_bound() for var in self.variables],
+    #         keep_feasible=True,
+    #     )
+    #     integrality = np.array([var_types[var.get_type()] for var in self.variables])
+    #     constraint = LinearConstraint(
+    #         matrix_A, lb, ub, keep_feasible=True
+    #     )
+
+    #     result: OptimizeResult = milp(
+    #         c=np.array(objective_value),
+    #         integrality=integrality,
+    #         constraints=constraint,
+    #         bounds=bounds,
+    #         options={
+    #             "disp": ConfigReader.DEBUG_PRINT,
+    #             "presolve": True,
+    #             "mip_rel_gap": 1e-6,
+    #         },
+    #     )
+
+    #     result: OptimizeResult = linprog(
+    #         c=np.array(objective_value),
+    #         A_ub=inequality_A,
+    #         b_ub=in_ub,
+    #         A_eq=equality_A,
+    #         b_eq=eq_ub,
+    #         method="highs-ipm",
+    #         integrality=integrality,
+    #         bounds=[(var.get_lower_bound(), var.get_upper_bound()) for var in self.variables],
+    #         options={
+    #             "disp": ConfigReader.DEBUG_PRINT,
+    #             "presolve": False,
+    #             "mip_rel_gap": 1e-3,
+    #             "ipm_optimality_tolerance": 1e-5,
+    #         },
+    #         # callback=linprog_verbose_callback if ConfigReader.DEBUG_PRINT else None
+    #     )
+
+    #     Util.debug(f"Model:\n{result}")
+
+    #     sol: Solution = None
+    #     if not result.success:
+    #         sol = Solution(False)
+    #     else:
+    #         for i in range(size):
+    #             if ConfigReader.DEBUG_PRINT or show_variable[i]:
+    #                 name: str = self.variables[i].name
+    #                 value: float = (
+    #                     round(result.x[i], 6)
+    #                 )
+    #                 if self.PRINT_VARIABLES:
+    #                     Util.debug(f"{name} = {value}")
+    #                 if self.PRINT_LABELS:
+    #                     self.print_instance_of_labels(name, value)
+    #         result: float = Util.round(abs(result.fun))
+    #         sol = Solution(result)
+
+    #     Util.debug(
+    #         f"{constants.STAR_SEPARATOR}Statistics{constants.STAR_SEPARATOR}"
+    #     )
+    #     Util.debug("MILP problem:")
+    #     Util.debug(f"\t\tSemi continuous variables: {num_up_vars}")
+    #     Util.debug(f"\t\tBinary variables: {num_binary_vars}")
+    #     Util.debug(f"\t\tContinuous variables: {num_free_vars}")
+    #     Util.debug(f"\t\tInteger variables: {num_integer_vars}")
+    #     Util.debug(f"\t\tTotal variables: {len(self.variables)}")
+    #     Util.debug(f"\t\tConstraints: {len(self.constraints)}")
+    #     return sol
 
     def add_crisp_concept(self, concept_name: str) -> None:
         self.crisp_concepts.add(concept_name)

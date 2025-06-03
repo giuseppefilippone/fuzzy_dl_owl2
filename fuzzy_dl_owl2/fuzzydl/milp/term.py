@@ -64,10 +64,13 @@ class Term:
     def __eq__(self, term: typing.Self) -> bool:
         if not isinstance(term, Term):
             return False
-        return self.var == term.var
+        return self.var == term.var and self.coeff == term.coeff
 
     def __ne__(self, term: typing.Self) -> bool:
         return not (self == term)
+
+    def __hash__(self) -> int:
+        return hash(str(self))
 
     def __repr__(self) -> str:
         return str(self)

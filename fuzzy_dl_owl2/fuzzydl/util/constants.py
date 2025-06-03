@@ -4,7 +4,6 @@ import re
 import typing
 
 import pyparsing as pp
-from gurobipy import GRB
 
 SEPARATOR: str = "-" * 25
 STAR_SEPARATOR: str = "*" * 25
@@ -239,10 +238,10 @@ class InequalityType(enum.StrEnum):
 
 
 class VariableType(enum.StrEnum):
-    BINARY = GRB.BINARY
-    CONTINUOUS = GRB.CONTINUOUS
-    INTEGER = GRB.INTEGER
-    SEMI_CONTINUOUS = GRB.SEMICONT
+    BINARY = enum.auto()
+    CONTINUOUS = enum.auto()
+    INTEGER = enum.auto()
+    SEMI_CONTINUOUS = enum.auto()
 
     def __repr__(self) -> str:
         return self.name
@@ -421,5 +420,5 @@ class FuzzyLogic(enum.StrEnum):
 
 
 KNOWLEDGE_BASE_SEMANTICS: FuzzyLogic = FuzzyLogic.CLASSICAL
-MAXVAL: float = 2.147483647e12
+MAXVAL: float = ((1 << 31) - 1) * 1000  # 2.147483647e12
 MAXVAL2: float = MAXVAL * 2

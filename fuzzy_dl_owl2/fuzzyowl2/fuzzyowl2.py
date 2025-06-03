@@ -146,6 +146,8 @@ from pyowl2.individual.anonymous_individual import OWLAnonymousIndividual
 from pyowl2.literal.literal import OWLLiteral
 from pyowl2.ontology import OWLOntology
 
+from fuzzy_dl_owl2.fuzzydl.util.config_reader import ConfigReader
+
 
 class FuzzyOwl2(object):
     POS_INFINITY: float = 10000.0
@@ -174,7 +176,7 @@ class FuzzyOwl2(object):
             self.ontology_iri, self.ontology_path, OWL1_annotations=True
         )
         self.fuzzy_label: OWLAnnotationProperty = OWLAnnotationProperty(
-            IRI(self.ontology_iri.namespace, "fuzzyLabel")
+            IRI(self.ontology_iri.namespace, ConfigReader.OWL_ANNOTATION_LABEL)
         )
         self.ontologies.add(self.ontology)
         # self.ontologies.update(self.manager.getImportsClosure(self.ontology))

@@ -98,7 +98,7 @@ class Expression:
 
     def add_term(self, term: Term) -> None:
         for idx, t in enumerate(self.terms):
-            if t == term:
+            if t.get_var() == term.get_var():
                 self.terms[idx] = t + term
                 return
         self.terms.append(term)
@@ -169,6 +169,17 @@ class Expression:
     def __truediv__(self, scalar: typing.Union[int, float]) -> typing.Self:
         return self * (1 / scalar)
 
+    def __hash__(self) -> int:
+        return hash(str(self))
+
+    def __eq__(self, value: typing.Self) -> bool:
+        if not isinstance(value, Expression):
+            return False
+        return len(self.terms) == len(value.terms) and all(term in value.terms for term in self.terms)
+
+    def __ne__(self, value: typing.Self) -> bool:
+        return not (self == value)
+
     def __repr__(self) -> str:
         return str(self)
 
@@ -184,5 +195,5 @@ class Expression:
             elif n == -1.0:
                 parts.append(f"- {term.get_var()}")
             else:
-                parts.append(f"{'+ ' if n >= 0 else '- '}{n} {term.get_var()}")
+                parts.append(f"{'+ ' if n >= 0 else '- '}{abs(n)} {term.get_var()}")
         return " ".join(parts)
