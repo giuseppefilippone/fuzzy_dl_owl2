@@ -224,10 +224,10 @@ feature_range   := (
 |Rule|Meaning|
 |--------------|----------------------|
 |(functional F)                 | Define the feature F|
-|(range F \*integer\* k1 k2)    | The range of F is an integer number in $[k1, k2]$|
-|(range F \*real\* k1 k2)       | The range of F is a rational number in $[k1, k2]$|
-|(range F \*string\*)           | The range of F is a string|
-|(range F \*boolean\*)          | The range of F are booleans|
+|(range F \*integer\* $k_1$ $k_2$)    | The range of $F$ is an integer number in $[k_1, k_2]$|
+|(range F \*real\* $k_1$ $k_2$)       | The range of $F$ is a rational number in $[k_1, k_2]$|
+|(range F \*string\*)           | The range of $F$ is a string|
+|(range F \*boolean\*)          | The range of $F$ are booleans|
 
 ## Datatype/feature restrictions
 ```python
