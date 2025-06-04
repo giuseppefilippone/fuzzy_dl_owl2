@@ -973,7 +973,6 @@ class DLParser(object):
     @staticmethod
     # @pp.trace_parse_action
     def _parse_constraints(tokens: pp.ParseResults) -> pp.ParseResults:
-
         if ConfigReader.DEBUG_PRINT:
             Util.debug(f"\t\t_parse_constraints -> {tokens}")
         list_tokens: list = tokens.as_list()
@@ -1897,13 +1896,15 @@ class DLParser(object):
             (
                 lbrace
                 + FuzzyDLKeyword.CONSTRAINTS.get_value()
-                + lbrace
                 + (
-                    inequation
-                    | FuzzyDLKeyword.BINARY.get_value() + variables
-                    | FuzzyDLKeyword.FREE.get_value() + variables
-                )
-                + rbrace
+                    lbrace
+                    + (
+                        inequation
+                        | FuzzyDLKeyword.BINARY.get_value() + variables
+                        | FuzzyDLKeyword.FREE.get_value() + variables
+                    )
+                    + rbrace
+                )[1, ...]
                 + rbrace
             )
             .set_results_name("constraints", list_all_matches=True)
