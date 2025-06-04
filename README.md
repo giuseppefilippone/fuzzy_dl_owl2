@@ -248,12 +248,12 @@ restriction             := '(' ('>=' | '<=', '=') name (name | restriction_funct
 ### Definitions
 |Rule|Definition|
 |--------------|----------------------|
-|(>= F variable) | $ \mathrm{sup}_{b \in \Delta_D} [F^\mathcal{I} (x, b) \otimes (b \geq \text{variable})] $ |
+|(>= F variable) | $ \mathrm{sup}_{b \in \Delta_D} [F^\mathcal{I} (x, b)] $ |
 
 - In datatype restrictions, the variable **variable** has to be declared **(free variable)** before its use in a datatype
 restriction, using the **constraints** defined below;
-- The value for $b$ has to be in the range $[k1,k2] \subseteq [- k_{\infty}, k_{\infty}] $ of
-the feature $F$, and the values for **variable**, **function($F_1$, $\ldots$, $F_n$)** and the range of **fuzzy_number** have to be in $[- k_{\infty}, k_{\infty}]$, where $k_{\infty}$ is the maximal representable integer (see below for the table);
+- The value for $b$ has to be in the range $[k_1,k_2] \subseteq [- k_{\infty}, k_{\infty}] $ of
+the feature $F$, and the values for **variable**, function($F_1$, $\ldots$, $F_n$) and the range of **fuzzy_number** have to be in $[- k_{\infty}, k_{\infty}]$, where $k_{\infty}$ is the maximal representable integer (see below for the table);
 - In datatype restrictions, the variable **variable** may be replaced with a value, i.e., an integer, a real, a string, or a boolean constant (true, false) depending on the range of the feature $F$.
 
 | MILP Solver | $k_{\infty}$ |
