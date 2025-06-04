@@ -266,7 +266,7 @@ the feature $F$, and the values for **variable**, **function($F_1$, $\ldots$, $F
 
 | MILP Solver | $k_{\infty}$ |
 | --- | --- |
-| Gurobi | ```math 1000 * ((1 \ll 31) - 1)``` |
+| Gurobi | $ 1000 \cdot ((1 \ll 31) - 1) $ |
 | PULP CBC | $ (1 \ll 31) - 1 $ |
 | MIP | $ (1 \ll 31) - 1 $ |
 | PULP GLPK | $ (1 \ll 28) - 1 $ |
