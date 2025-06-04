@@ -249,8 +249,6 @@ restriction             := '(' ('>=' | '<=', '=') name (name | restriction_funct
 |Rule|Definition|
 |--------------|----------------------|
 |(>= F variable) | $ \mathrm{sup}_{b \in \Delta_D} [F^\mathcal{I} (x, b) \otimes (b \geq \text{variable})] $ |
-|(<= F variable) | $ \mathrm{sup}_{b \in \Delta_D} [F^\mathcal{I} (x, b) \otimes (b \leq \text{variable})] $ |
-|(= F variable)  | $ \mathrm{sup}_{b \in \Delta_D} [F^\mathcal{I} (x, b) \otimes (b = \text{variable})] $ |
 
 - In datatype restrictions, the variable **variable** has to be declared **(free variable)** before its use in a datatype
 restriction, using the **constraints** defined below;
