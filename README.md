@@ -40,7 +40,7 @@ The directory `dl-examples` contains a few examples of Knowledge Bases written u
 
 # Configuration of the MILP solver
 
-Since version 1.0.1 uses `Gurobi Optimizer` (see [gurobipy](https://support.gurobi.com/hc/en-us/articles/360044290292-How-do-I-install-Gurobi-for-Python)= for the Fuzzy DL reasoning, please create a GUROBI license to use this library.
+Since version 1.0.1 uses `Gurobi Optimizer` (see [gurobipy](https://support.gurobi.com/hc/en-us/articles/360044290292-How-do-I-install-Gurobi-for-Python) for the Fuzzy DL reasoning, please create a GUROBI license to use this library.
 
 For the configuration, create a `CONFIG.ini` file in the same directory used for the execution of the library.
 Example of your execution directory:
@@ -200,7 +200,7 @@ fuzzy_number            := '(' 'define-fuzzy-number' name fuzzy_number_expressio
 ```
 
 ### Definitions
-|Example | uzzy number | definition|
+|Example | | Definition|
 | --- | --- | --- |
 |(a, b, c) | fuzzy number | (a,b,c)|
 |n | real number | (n,n,n) |
@@ -224,10 +224,10 @@ feature_range   := (
 |Rule|Meaning|
 |--------------|----------------------|
 |(functional F)                 | Define the feature F|
-|(range F \*integer\* $k_1$ $k_2$)    | The range of $F$ is an integer number in $[k_1, k_2]$|
-|(range F \*real\* $k_1$ $k_2$)       | The range of $F$ is a rational number in $[k_1, k_2]$|
-|(range F \*string\*)           | The range of $F$ is a string|
-|(range F \*boolean\*)          | The range of $F$ are booleans|
+|(range F ```*integer*``` $k_1$ $k_2$)    | The range of $F$ is an integer number in $[k_1, k_2]$|
+|(range F ```*real*``` $k_1$ $k_2$)       | The range of $F$ is a rational number in $[k_1, k_2]$|
+|(range F ```*string*```)           | The range of $F$ is a string|
+|(range F ```*boolean*```)          | The range of $F$ are booleans|
 
 ## Datatype/feature restrictions
 ```python
@@ -246,17 +246,17 @@ restriction             := '(' ('>=' | '<=', '=') name (name | restriction_funct
 ```
 
 ### Definitions
-|Rule|Definition|
-|--------------|----------------------|
-|(>= F variable) | $ \mathrm{sup}_{b \in \Delta_{\mathbf{D}}} [F^\mathcal{I} (x, b) \otimes (b \geq \text{variable})] $ |
-|(<= F variable) | $ \mathrm{sup}_{b \in \Delta_{\mathbf{D}}} [F^\mathcal{I} (x, b) \otimes (b \leq \text{variable})] $ |
-|(= F variable)  | $ \mathrm{sup}_{b \in \Delta_{\mathbf{D}}} [F^\mathcal{I} (x, b) \otimes (b = \text{variable})] $ |
-|(>= F fuzzy_number) | $ \mathrm{sup}_{b^\prime, b \in \Delta_{\mathbf{D}}} [F^\mathcal{I} (x, b) \otimes (b \geq b^\prime) \otimes {\text{fuzzy\_number}(b^\prime)}^\mathcal{I}] $|
-|(<= F fuzzy_number) | $ \mathrm{sup}_{b^\prime, b \in \Delta_{\mathbf{D}}} [F^\mathcal{I} (x, b) \otimes (b \leq b^\prime) \otimes {\text{fuzzy\_number}(b^\prime)}^\mathcal{I}] $|
-|(= F fuzzy_number) | $ \mathrm{sup}_{b^\prime, b \in \Delta_{\mathbf{D}}} [F^\mathcal{I} (x, b) \otimes (b = b^\prime) \otimes {\text{fuzzy\_number}(b^\prime)}^\mathcal{I}] $|
-|(>= F function($F_1$, $\ldots$, $F_n$)) | $ \mathrm{sup}_{b \in \Delta_{\mathbf{D}}} [F^\mathcal{I} (x, b) \otimes (b \geq {\mathrm{function}(F_1, \ldots, F_n)}^{\mathcal{I}})] $ |
-|(<= F function($F_1$, $\ldots$, $F_n$)) | $ \mathrm{sup}_{b \in \Delta_{\mathbf{D}}} [F^\mathcal{I} (x, b) \otimes (b \leq {\mathrm{function}(F_1, \ldots, F_n)}^{\mathcal{I}})] $ |
-|(= F function($F_1$, $\ldots$, $F_n$)) | $ \mathrm{sup}_{b \in \Delta_{\mathbf{D}}} [F^\mathcal{I} (x, b) \otimes (b = {\mathrm{function}(F_1, \ldots, F_n)}^{\mathcal{I}})] $ |
+|Restrition|Definition|
+| -- | -- |
+|$$(\mathrm{>=}\ F\ \text{variable})$$| $$\mathrm{sup}_{b \in \Delta_{\mathbf{D}}} [F^\mathcal{I} (x, b) \otimes (b \geq \text{variable})]$$|
+|$$(\mathrm{<=}\ F\ \text{variable}) $$| $$\mathrm{sup}_{b \in \Delta_{\mathbf{D}}} [F^\mathcal{I} (x, b) \otimes (b \leq \text{variable})]$$|
+|$$(=\ F\ \text{variable}) $$| $$\mathrm{sup}_{b \in \Delta_{\mathbf{D}}} [F^\mathcal{I} (x, b) \otimes (b = \text{variable})]$$|
+|$$(\mathrm{>=}\ F\ \text{fuzzy\_number})$$|$$\mathrm{sup}_{b^\prime, b \in \Delta_{\mathbf{D}}} [F^\mathcal{I} (x, b) \otimes (b \geq b^\prime) \otimes {\text{fuzzy\_number}(b^\prime)}^\mathcal{I}]$$|
+|$$(\mathrm{<=}\ F\ \text{fuzzy\_number})$$|$$\mathrm{sup}_{b^\prime, b \in \Delta_{\mathbf{D}}} [F^\mathcal{I} (x, b) \otimes (b \leq b^\prime) \otimes {\text{fuzzy\_number}(b^\prime)}^\mathcal{I}]$$|
+|$$(=\ F\ \text{fuzzy\_number})$$|$$\mathrm{sup}_{b^\prime, b \in \Delta_{\mathbf{D}}} [F^\mathcal{I} (x, b) \otimes (b = b^\prime) \otimes {\text{fuzzy\_number}(b^\prime)}^\mathcal{I}]$$|
+|$$(\mathrm{>=}\ F\ \mathrm{function}(F_1, \ldots, F_n))$$|$$\mathrm{sup}_{b \in \Delta_{\mathbf{D}}} [F^\mathcal{I} (x, b) \otimes (b \geq {\mathrm{function}(F_1, \ldots, F_n)}^{\mathcal{I}})]$$|
+|$$(\mathrm{<=}\ F\ \mathrm{function}(F_1, \ldots, F_n))$$|$$\mathrm{sup}_{b \in \Delta_{\mathbf{D}}} [F^\mathcal{I} (x, b) \otimes (b \leq {\mathrm{function}(F_1, \ldots, F_n)}^{\mathcal{I}})]$$|
+|$$(=\ F\ \mathrm{function}(F_1, \ldots, F_n))$$|$$\mathrm{sup}_{b \in \Delta_{\mathbf{D}}} [F^\mathcal{I} (x, b) \otimes (b = {\mathrm{function}(F_1, \ldots, F_n)}^{\mathcal{I}})]$$|
 
 - In datatype restrictions, the variable **variable** has to be declared **(free variable)** before its use in a datatype
 restriction, using the **constraints** defined below;
