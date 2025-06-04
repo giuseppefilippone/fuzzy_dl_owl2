@@ -64,7 +64,7 @@ milpProvider = mip
 |----------------------|-----------------------------------|
 | debugPrint        | Enable/disable debugging          |
 | epsilon | Define the precision of the solution. For instance, epsilon = 0.001 means that the solution will be calculated with an accuracy to the third decimal place |
-| maxIndividuals | Define the maximal number of individuals to handle. The value -1 indicate that there is no maximum |
+| maxIndividuals | Define the maximal number of individuals to handle. The value $-1$ indicates that there is no maximum |
 | owlAnnotationLabel | Define the Annotation label used to build the Fuzzy OWL 2 RDF/XML ontology |
 | milpProvider | Define the MILP provider used by the reasoner. The supported providers are listed below. |
 
@@ -93,7 +93,7 @@ pip install gurobipy==12.0.0
 
 ## MIP
 
-- Install python [MIP](https://www.python-mip.com/):
+- Install Python [MIP](https://www.python-mip.com/):
 ```python
 pip install mip==1.16rc0
 ```
@@ -101,7 +101,7 @@ pip install mip==1.16rc0
 ## GLPK
 
 - Install [GLPK](https://www.gnu.org/software/glpk/) v5.0 and [GMP](https://gmplib.org/) v6.3.0
-- Install python [pulp](https://github.com/coin-or/PuLP?tab=readme-ov-file):
+- Install Python [pulp](https://github.com/coin-or/PuLP?tab=readme-ov-file):
 ```python
 pip install pulp==3.2.1
 ```
@@ -110,7 +110,7 @@ pip install pulp==3.2.1
 ## CBC
 
 - Install [CBC](https://github.com/coin-or/Cbc)
-- Install python [pulp](https://github.com/coin-or/PuLP?tab=readme-ov-file):
+- Install Python [pulp](https://github.com/coin-or/PuLP?tab=readme-ov-file):
 ```python
 pip install pulp==3.2.1
 ```
@@ -119,7 +119,7 @@ pip install pulp==3.2.1
 ## CPLEX
 
 - Install [CPLEX](https://www.ibm.com/it-it/products/ilog-cplex-optimization-studio) v22.11
-- Install python [pulp](https://github.com/coin-or/PuLP?tab=readme-ov-file):
+- Install Python [pulp](https://github.com/coin-or/PuLP?tab=readme-ov-file):
 ```python
 pip install pulp==3.2.1
 ```
@@ -182,7 +182,7 @@ concept_type    := (
 fuzzy_concept   := '(' 'define-fuzzy-concept' name concept_type ')'
 ```
 
-- Note: the fuzzy concept **modified** is applicable only to modifiers and datatype restrictions. Example: **(define-fuzzy-concept CONCEPT modified(MOD, F))**, where **CONCEPT** is the name of the created concrete fuzzy concept, **MOD** is the name of an already defined modifier, and **F** is the name of an already defined datatype restriction.
+- Note: the fuzzy concept **modified** applies only to modifiers and datatype restrictions. Example: **(define-fuzzy-concept CONCEPT modified(MOD, F))**, where **CONCEPT** is the name of the created concrete fuzzy concept, **MOD** is the name of an already defined modifier, and **F** is the name of an already defined datatype restriction.
 
 ## Define fuzzy numbers
 ```python
@@ -204,10 +204,10 @@ fuzzy_number            := '(' 'define-fuzzy-number' name fuzzy_number_expressio
 | --- | --- | --- |
 |(a, b, c) | fuzzy number | (a,b,c)|
 |n | real number | (n,n,n) |
-|(f+ f1 f2 $\ldots$ fn) | addition | $\left(\sum_{i = 0}^{n} a_i, \sum_{i = 0}^{n} b_i, \sum_{i = 0}^{n} c_i\right)$|
+|(f+ f1 f2 $\ldots$ fn) | addition | $(\sum_{i = 0}^{n} a_i, \sum_{i = 0}^{n} b_i, \sum_{i = 0}^{n} c_i)$|
 |(f- f1 f2) | subtraction | $(a_1−c_2, b_1 − b_2, c_1 − a_2)$ |
-|(f* f1 f2 $\ldots$ fn) | product | $\left(\prod_{i = 0}^{n} a_i, \prod_{i = 0}^{n} b_i, \prod_{i = 0}^{n} c_i\right)$|
-|(f/ f1 f2) | division | $\left(\frac{a_1}{c_2}, \frac{b_1}{b_2}, \frac{c_1}{a_2}\right)$ |
+|(f* f1 f2 $\ldots$ fn) | product | $(\prod_{i = 0}^{n} a_i, \prod_{i = 0}^{n} b_i, \prod_{i = 0}^{n} c_i)$|
+|(f/ f1 f2) | division | $(\frac{a_1}{c_2}, \frac{b_1}{b_2}, \frac{c_1}{a_2})$ |
 
 ## Define Features, i.e., functional datatypes
 ```python
@@ -246,34 +246,33 @@ restriction             := '(' ('>=' | '<=', '=') name (name | restriction_funct
 ```
 
 ### Definitions
-|Restrition|Definition|
+|Restriction|Definition|
 | -- | -- |
-|$$(\mathrm{>=}\ F\ \text{variable})$$| $$\mathrm{sup}_{b \in \Delta_{\mathbf{D}}} [F^\mathcal{I} (x, b) \otimes (b \geq \text{variable})]$$|
-|$$(\mathrm{<=}\ F\ \text{variable}) $$| $$\mathrm{sup}_{b \in \Delta_{\mathbf{D}}} [F^\mathcal{I} (x, b) \otimes (b \leq \text{variable})]$$|
-|$$(=\ F\ \text{variable}) $$| $$\mathrm{sup}_{b \in \Delta_{\mathbf{D}}} [F^\mathcal{I} (x, b) \otimes (b = \text{variable})]$$|
-|$$(\mathrm{>=}\ F\ \text{fuzzy\_number})$$|$$\mathrm{sup}_{b^\prime, b \in \Delta_{\mathbf{D}}} [F^\mathcal{I} (x, b) \otimes (b \geq b^\prime) \otimes {\text{fuzzy\_number}(b^\prime)}^\mathcal{I}]$$|
-|$$(\mathrm{<=}\ F\ \text{fuzzy\_number})$$|$$\mathrm{sup}_{b^\prime, b \in \Delta_{\mathbf{D}}} [F^\mathcal{I} (x, b) \otimes (b \leq b^\prime) \otimes {\text{fuzzy\_number}(b^\prime)}^\mathcal{I}]$$|
-|$$(=\ F\ \text{fuzzy\_number})$$|$$\mathrm{sup}_{b^\prime, b \in \Delta_{\mathbf{D}}} [F^\mathcal{I} (x, b) \otimes (b = b^\prime) \otimes {\text{fuzzy\_number}(b^\prime)}^\mathcal{I}]$$|
-|$$(\mathrm{>=}\ F\ \mathrm{function}(F_1, \ldots, F_n))$$|$$\mathrm{sup}_{b \in \Delta_{\mathbf{D}}} [F^\mathcal{I} (x, b) \otimes (b \geq {\mathrm{function}(F_1, \ldots, F_n)}^{\mathcal{I}})]$$|
-|$$(\mathrm{<=}\ F\ \mathrm{function}(F_1, \ldots, F_n))$$|$$\mathrm{sup}_{b \in \Delta_{\mathbf{D}}} [F^\mathcal{I} (x, b) \otimes (b \leq {\mathrm{function}(F_1, \ldots, F_n)}^{\mathcal{I}})]$$|
-|$$(=\ F\ \mathrm{function}(F_1, \ldots, F_n))$$|$$\mathrm{sup}_{b \in \Delta_{\mathbf{D}}} [F^\mathcal{I} (x, b) \otimes (b = {\mathrm{function}(F_1, \ldots, F_n)}^{\mathcal{I}})]$$|
+|$(\mathrm{>=}\ F\ \text{variable})$| ${\mathrm{sup}}_{b \in {\Delta}_D} \[F^\mathcal{I} (x, b) \otimes (b \geq \text{variable})\]$|
+|$(\mathrm{<=}\ F\ \text{variable})$| $\mathrm{sup}_{b \in \Delta_D} \[F^\mathcal{I} (x, b) \otimes (b \leq \text{variable})\]$|
+|$(=\ F\ \text{variable}) $| $\mathrm{sup}_{b \in \Delta_D} \[F^\mathcal{I} (x, b) \otimes (b = \text{variable})\]$|
+|$(\mathrm{>=}\ F\ \text{fuzzy\_number})$|$\mathrm{sup}_{b^\prime, b \in \Delta_D} \[F^\mathcal{I} (x, b) \otimes (b \geq b^\prime) \otimes {\text{fuzzy\_number}(b^\prime)}^\mathcal{I}\]$|
+|$(\mathrm{<=}\ F\ \text{fuzzy\_number})$|$\mathrm{sup}_{b^\prime, b \in \Delta_D} \[F^\mathcal{I} (x, b) \otimes (b \leq b^\prime) \otimes {\text{fuzzy\_number}(b^\prime)}^\mathcal{I}\]$|
+|$(=\ F\ \text{fuzzy\_number})$|$\mathrm{sup}_{b^\prime, b \in \Delta_D} \[F^\mathcal{I} (x, b) \otimes (b = b^\prime) \otimes {\text{fuzzy\_number}(b^\prime)}^\mathcal{I}\]$|
+|$(\mathrm{>=}\ F\ \mathrm{function}(F_1, \ldots, F_n))$|$\mathrm{sup}_{b \in \Delta_D} \[F^\mathcal{I} (x, b) \otimes (b \geq {\mathrm{function}(F_1, \ldots, F_n)}^{\mathcal{I}})\]$|
+|$(\mathrm{<=}\ F\ \mathrm{function}(F_1, \ldots, F_n))$|$\mathrm{sup}_{b \in \Delta_D} \[F^\mathcal{I} (x, b) \otimes (b \leq {\mathrm{function}(F_1, \ldots, F_n)}^{\mathcal{I}})\]$|
+|$(=\ F\ \mathrm{function}(F_1, \ldots, F_n))$|$\mathrm{sup}_{b \in \Delta_D} \[F^\mathcal{I} (x, b) \otimes (b = {\mathrm{function}(F_1, \ldots, F_n)}^{\mathcal{I}})\]$|
 
 - In datatype restrictions, the variable **variable** has to be declared **(free variable)** before its use in a datatype
 restriction, using the **constraints** defined below;
-- The value for $b$ has to be in the range $[k_1,k_2] \subseteq [- k_{\infty}, k_{\infty}] $ of
-the feature $F$, and the values for **variable**, $\mathbf{function}(F_1, \ldots, F_n)$ and the range of **fuzzy_number** have to be in $[- k_{\infty}, k_{\infty}]$, where $k_{\infty}$ is the maximal representable integer (see below for the table);
-- In datatype restrictions, the variable **variable** may be replaced with a value, i.e., an integer, a real, a string, or a boolean constant (true, false) depending on the range of the feature $F$.
+- The value for $b$ has to be in the range $\[k_1,k_2\]$ subset or equivalent to $\[- k_{\infty}, k_{\infty}\]$ of the feature $F$, and the values for **variable**, $\mathbf{function}(F_1, \ldots, F_n)$ and the range of **fuzzy_number** have to be in $\[- k_{\infty}, k_{\infty}\]$, where $k_{\infty}$ is the maximal representable integer (see below for the table);
+- In datatype restrictions, the variable **variable** may be replaced with a value, i.e., an integer, a real, a string, or a boolean constant (true, false), depending on the range of the feature $F$.
 
 | MILP Solver | $k_{\infty}$ |
 | --- | --- |
-| Gurobi | $ 1000 \cdot ((1 \ll 31) - 1) $ |
-| PULP CBC | $ (1 \ll 31) - 1 $ |
-| MIP | $ (1 \ll 31) - 1 $ |
-| PULP GLPK | $ (1 \ll 28) - 1 $ |
-| PULP HiGHS | $ (1 \ll 28) - 1 $ |
-| PULP CPLEX | $ (1 \ll 28) - 1 $ |
+| Gurobi | $1000 \cdot ((1 \ll 31) - 1)$ |
+| PULP CBC | $(1 \ll 31) - 1$ |
+| MIP | $(1 \ll 31) - 1$ |
+| PULP GLPK | $(1 \ll 28) - 1$ |
+| PULP HiGHS | $(1 \ll 28) - 1$ |
+| PULP CPLEX | $(1 \ll 28) - 1$ |
 
-- Note: The value of $ k_{\infty} $ is different for some MILP solvers for computational issues. In particular, higher values lead to the accumulation of errors that could distort the results. The values currently given give the same results for the test files provided.
+- Note: The value of $k_{\infty}$ is different for some MILP solvers for computational issues. In particular, higher values lead to the accumulation of errors, which can distort the results. The values currently given give the same results for the test files provided.
 
 ## Constraints
 ```python
@@ -374,8 +373,8 @@ concept := (
 ### Definitions
 | Expression | | Definition
 | ---- | --- | --- |
-| \*top\* | top concept | $ \top = 1 $ |
-| \*bottom\* | bottom concept | $ \perp = 0 $ |
+|```*top*``` | top concept | $\top\ =\ 1$ |
+|```*bottom*``` | bottom concept | $\perp\ =\ 0$ |
 | A | atomic concept $A$ | $A^\mathcal{I}(x)$ |
 | CFC | concrete fuzzy concept $CFC$ (e.g., crisp, left-shoulder, and so on) | $\mathrm{CFC}^\mathcal{I}(x)$ |
 | DR | datatype restriction $DR$ | $\mathrm{DR}^\mathcal{I}(x)$ |
@@ -390,41 +389,40 @@ concept := (
 | (g-implies $C_1$ $C_2$) | Goedel implication between $C_1$ and $C_2$ | $C_1^\mathcal{I}(x) \Rightarrow_G C_2^\mathcal{I}(x)$ |
 | (l-implies $C_1$ $C_2$) | Lukasiewicz implication between $C_1$ and $C_2$ | $C_1^\mathcal{I}(x) \Rightarrow_L C_2^\mathcal{I}(x)$ |
 | (kd-implies $C_1$ $C_2$) | Kleene-Dienes implication between $C_1$ and $C_2$ | $C_1^\mathcal{I}(x) \Rightarrow_\mathrm{KD} C_2^\mathcal{I}(x)$ |
-| (all $R$ $C$) | universal role $R$ restriction for concept $C$ | $\mathrm{inf}_{y \in \Delta^\mathcal{I}} \left\{ R^\mathcal{I}(x, y) \Rightarrow C^\mathcal{I}(y) \right\} $ |
-| (some $R$ $C$) | existential role $R$ restriction for concept $C$ | $\mathrm{sup}_{y \in \Delta^\mathcal{I}} \left\{ R^\mathcal{I}(x, y) \otimes C^\mathcal{I}(y) \right\} $ |
+| (all $R$ $C$) | universal role $R$ restriction for concept $C$ | $\mathrm{inf}_{y \in \Delta^\mathcal{I}}\ \\{ R^\mathcal{I}(x, y) \Rightarrow C^\mathcal{I}(y) \\} $ |
+| (some $R$ $C$) | existential role $R$ restriction for concept $C$ | $\mathrm{sup}_{y \in \Delta^\mathcal{I}}\ \\{ R^\mathcal{I}(x, y) \otimes C^\mathcal{I}(y) \\} $ |
 | (some $R$ $a$) | individual value restriction for role $R$ and individual $a$ | $R^\mathcal{I}(x, a) $ |
-| (ua $s$ $C$) | upper approximation for a fuzzy relation $s$ and individual $a$ | $\mathrm{sup}_{y \in \Delta^\mathcal{I}} \left\{ s^\mathcal{I}(x, y) \otimes C^\mathcal{I}(y) \right\} $ |
-| (lua $s$ $C$) | loose upper approximation for a fuzzy relation $s$ and individual $a$ | $\mathrm{sup}_{z \in X} \left\{ s^\mathcal{I}(x, z) \otimes \mathrm{sup}_{y \in \Delta^\mathcal{I}} s^\mathcal{I}(y, z) \otimes C^\mathcal{I}(x) \right\}$ |
-| (tua $s$ $C$) | tight upper approximation for a fuzzy relation $s$ and individual $a$ | $\mathrm{inf}_{z \in X} \left\{ s^\mathcal{I}(x, z) \Rightarrow \mathrm{sup}_{y \in \Delta^\mathcal{I}} s^\mathcal{I}(y, z) \otimes C^\mathcal{I}(x) \right\}$ |
-| (la $s$ $C$) | lower approximation for a fuzzy relation $s$ and individual $a$ | $\mathrm{inf}_{y \in \Delta^\mathcal{I}} s^\mathcal{I}(x, y) \Rightarrow C^\mathcal{I}(y) $ |
-| (lla $s$ $C$) | loose lower approximation for a fuzzy relation $s$ and individual $a$ | $\mathrm{sup}_{z \in X} \left\{ s^\mathcal{I}(x, z) \otimes \mathrm{inf}_{y \in \Delta^\mathcal{I}} s^\mathcal{I}(y, z) \otimes C^\mathcal{I}(x) \right\}$ |
-| (tla $s$ $C$) | tight lower approximation for a fuzzy relation $s$ and individual $a$ | $\mathrm{inf}_{z \in X} \left\{ s^\mathcal{I}(x, z) \Rightarrow \mathrm{inf}_{y \in \Delta^\mathcal{I}} s^\mathcal{I}(y, z) \otimes C^\mathcal{I}(x) \right\}$ |
-| (self C) | local reflexivity concept | $ C^\mathcal{I}(x)(x, x) $ |
-| (MOD C) | modifier MOD applied to concept $C$ | $ f_m(C^\mathcal{I}(x))$, where $f_m$ is the modifier associated to MOD |
+| (ua $s$ $C$) | upper approximation for a fuzzy relation $s$ and individual $a$ | $\mathrm{sup}_{y \in \Delta^\mathcal{I}}\ \\{ s^\mathcal{I}(x, y) \otimes C^\mathcal{I}(y) \\} $ |
+| (lua $s$ $C$) | loose upper approximation for a fuzzy relation $s$ and individual $a$ | $\mathrm{sup}\_{z \in X}\ \\{ s^\mathcal{I}(x, z) \otimes \mathrm{sup}\_{y \in \Delta^\mathcal{I}} s^\mathcal{I}(y, z) \otimes C^\mathcal{I}(x) \\}$ |
+| (tua $s$ $C$) | tight upper approximation for a fuzzy relation $s$ and individual $a$ | $\mathrm{inf}\_{z \in X}\ \\{ s^\mathcal{I}(x, z) \Rightarrow \mathrm{sup}\_{y \in \Delta^\mathcal{I}} s^\mathcal{I}(y, z) \otimes C^\mathcal{I}(x) \\}$ |
+| (la $s$ $C$) | lower approximation for a fuzzy relation $s$ and individual $a$ | $\mathrm{inf}_{y \in \Delta^\mathcal{I}}\ s^\mathcal{I}(x, y) \Rightarrow C^\mathcal{I}(y) $ |
+| (lla $s$ $C$) | loose lower approximation for a fuzzy relation $s$ and individual $a$ | $\mathrm{sup}\_{z \in X}\ \\{ s^\mathcal{I}(x, z) \otimes \mathrm{inf}\_{y \in \Delta^\mathcal{I}} s^\mathcal{I}(y, z) \otimes C^\mathcal{I}(x) \\}$ |
+| (tla $s$ $C$) | tight lower approximation for a fuzzy relation $s$ and individual $a$ | $\mathrm{inf}\_{z \in X}\ \\{ s^\mathcal{I}(x, z) \Rightarrow \mathrm{inf}\_{y \in \Delta^\mathcal{I}} s^\mathcal{I}(y, z) \otimes C^\mathcal{I}(x) \\}$ |
+| (self C) | local reflexivity concept | $C^\mathcal{I}(x)(x, x)$ |
+| (MOD C) | modifier MOD applied to concept $C$ | ${f_m}(C^\mathcal{I}(x))$, where $f_m$ is the modifier associated to MOD |
 | (FN) | fuzzy number FN | $\mathrm{FM}^\mathcal{I}(x)$ |
-| ([>= var ] C) | threshold concept | $\begin{cases} C^\mathcal{I}(x), &\quad \text{if } C^\mathcal{I}(x) \geq \mathrm{var}, \\ 0, &\quad \text{otherwise} \end{cases}$|
-| ([<= var ] C) | threshold concept | $\begin{cases} C^\mathcal{I}(x), &\quad \text{if } C^\mathcal{I}(x) \leq \mathrm{var}, \\ 0, &\quad \text{otherwise} \end{cases}$|
+| ([>= var ] C) | threshold concept | if $C^\mathcal{I}(x) \geq \mathrm{var}$, then $C^\mathcal{I}(x)$; otherwise $0$|
+| ([<= var ] C) | threshold concept | if $C^\mathcal{I}(x) \leq \mathrm{var}$, then $C^\mathcal{I}(x)$; otherwise $0$|
 | (n C) | weighted concept C with weight n | $n C^\mathcal{I}(x)$|
 | (w-sum ($n_1$ $C_1$) $\ldots$ ($n_k$ $C_k$) ) | weighted sum of concepts | $\sum_{i=1}^{k} n_i C_i^\mathcal{I}(x)$ |
-| (w-max ($v_1$ $C_1$) $\ldots$ ($v_k$ $C_k$) ) | weighted max of concepts | $\max_{i=1}^{k} \min \{v_i, x_i\}$|
-| (w-min ($v_1$ $C_1$) $\ldots$ ($v_k$ $C_k$) ) | weighted min of concepts | $\min_{i=1}^{k} \max \{1 - v_i, x_i\}$|
-| (w-sum-zero ($n_1$ $C_1$) $\ldots$ ($n_k$ $C_k$) ) | weighted min of concepts | $\begin{cases} 0, &\quad \text{if } C_i^\mathcal{I}(x) = 0 \text{ for some } i \in \{1, \ldots, k\},\\ \sum_{i=1}^{k} n_i C_i^\mathcal{I}(x), &\quad \text{otherwise}\end{cases}$|
+| (w-max ($v_1$ $C_1$) $\ldots$ ($v_k$ $C_k$) ) | weighted max of concepts | $\max_{i=1}^{k} \min \\{v_i, x_i\\}$|
+| (w-min ($v_1$ $C_1$) $\ldots$ ($v_k$ $C_k$) ) | weighted min of concepts | $\min_{i=1}^{k} \max \\{1 - v_i, x_i\\}$|
+| (w-sum-zero ($n_1$ $C_1$) $\ldots$ ($n_k$ $C_k$) ) | weighted min of concepts | if $C_i^\mathcal{I}(x) = 0$ for some $i \in \\{1, \ldots, k\\}$, then $0$; otherwise $\sum_{i=1}^{k} n_i C_i^\mathcal{I}(x)$|
 |(owa ($w_1$, $\ldots$, $w_n$) ($C_1$, $\ldots$, $C_n$) | OWA aggregation operator | $\sum_{i=1}^n w_i y_i $ |
 |(q-owa $Q$ ($C_1$, $\ldots$, $C_n$) | quantifier-guided OWA with name $Q$, where $Q$ is a right-shoulder or a linear function | $\sum_{i=1}^n w_i y_i $, where $w_i = Q(\frac{i}{n}) - Q(\frac{i - 1}{n})$|
 |(choquet ($w_1$, $\ldots$, $w_n$) ($C_1$, $\ldots$, $C_n$) | Choquet integral | $y_1 w_1 + \sum_{i=2}^n (y_i - y_{i - 1}) w_i $ |
-|(sugeno ($v_1$, $\ldots$, $v_n$) ($C_1$, $\ldots$, $C_n$) | Sugeno integral | $\max_{i=1}^n \min \{y_i, mu_i\}$ |
+|(sugeno ($v_1$, $\ldots$, $v_n$) ($C_1$, $\ldots$, $C_n$) | Sugeno integral | $\max_{i=1}^n \min \\{y_i, mu_i\\}$ |
 |(q-sugeno ($v_1$, $\ldots$, $v_n$) ($C_1$, $\ldots$, $C_n$) | Quasi-Sugeno integral | $\max_{i=1}^n y_i \otimes_L mu_i $|
 
-- $ n_1, \ldots, n_k \in [0, 1] $, with $\sum_{i=1}^k n_i \leq 1$;
-- $ w_1, \ldots, w_n \in [0, 1] $, with $\sum_{i=1}^n w_i = 1$;
-- $ v_1, \ldots, v_n \in [0, 1] $, with $\max_{i=1}^n v_i = 1$;
+- $n_1, \ldots, n_k \in \[0, 1\]$, with $\sum_{i=1}^k\ n_i \leq 1$;
+- $w_1, \ldots, w_n \in \[0, 1\]$, with $\sum_{i=1}^n\ w_i = 1$;
+- $v_1, \ldots, v_n \in \[0, 1\]$, with $\max_{i=1}^n\ v_i = 1$;
 - $y_i$ is the $i$-largest of the $C_i^\mathcal{I}(x)$;
 - $ow_i$ is the weight $v_i$ of the $i$-largest of the $C_i^\mathcal{I}(x)$;
-- $mu_i$ is defined as follows: $mu_1 = ow_1$, and $mu_i = ow_i \oplus mu_{i - 1}$ for $i \in \{2, \ldots, n\}$;
+- $mu_i$ is defined as follows: $mu_1 = ow_1$, and $mu_i = ow_i \oplus mu_{i - 1}$ for $i \in \\{2, \ldots, n\\}$;
 - Fuzzy numbers can only appear in existential, universal and datatype restrictions;
-- In threshold concepts 'var' may be replaced with $ w \in [0, 1] $;
-- Fuzzy relations $s$ should be previously defined as fuzzy similarity relation or a fuzzy equivalence relation
-as **(define-fuzzy-similarity s)** or **(define-fuzzy-equivalence s)**, respectively.
+- In threshold concepts 'var' may be replaced with $ w \in \[0, 1\] $;
+- Fuzzy relations $s$ should be previously defined as fuzzy similarity relation or a fuzzy equivalence relation as **(define-fuzzy-similarity s)** or **(define-fuzzy-equivalence s)**, respectively.
 
 ## Axioms
 ```python
@@ -463,27 +461,27 @@ axioms := (
 | ---- | ---- |
 | (instance a C d) | $C^\mathcal{I}(a^\mathcal{I}) \geq d $ |
 | (related a b R d) | $R^\mathcal{I}(a^\mathcal{I}, b^\mathcal{I}) \geq d $ |
-| (implies $C_1$ $C_2$ d) | $ \mathrm{inf}_{x \in \Delta^\mathcal{I}} C_1^\mathcal{I}(x) \Rightarrow C_2^\mathcal{I}(x) \geq d $ |
-| (g-implies $C_1$ $C_2$ d) | $ \mathrm{inf}_{x \in \Delta^\mathcal{I}} C_1^\mathcal{I}(x) \Rightarrow_G C_2^\mathcal{I}(x) \geq d $ |
-| (kd-implies $C_1$ $C_2$ d) | $ \mathrm{inf}_{x \in \Delta^\mathcal{I}} C_1^\mathcal{I}(x) \Rightarrow_{\mathrm{KD}} C_2^\mathcal{I}(x) \geq d $ |
-| (l-implies $C_1$ $C_2$ d) | $ \mathrm{inf}_{x \in \Delta^\mathcal{I}} C_1^\mathcal{I}(x) \Rightarrow_{L} C_2^\mathcal{I}(x) \geq d $ |
-| (z-implies $C_1$ $C_2$ d) | $ \mathrm{inf}_{x \in \Delta^\mathcal{I}} C_1^\mathcal{I}(x) \Rightarrow_Z C_2^\mathcal{I}(x) \geq d $ |
-| (define-concept A C) | $\forall_{x \in \Delta^\mathcal{I}} A^\mathcal{I}(x) = C^\mathcal{I}(x) $ |
-| (define-primitive-concept A C) | $\mathrm{inf}_{x \in \Delta^\mathcal{I}} A^\mathcal{I}(x) \leq C^\mathcal{I}(x) $ |
-| (equivalent-concepts $C_1$ $C_2$) | $\forall_{x \in \Delta^\mathcal{I}} C_1^\mathcal{I}(x) = C_2^\mathcal{I}(x) $ |
-| (disjoint $C_1$ $\ldots$ $C_k$) | (implies (g-and $C_i$ $C_j$) \*bottom\*), i.e., $\forall_{i, j \in \{1, \ldots, k\}, i < j} (C_i^\mathcal{I}(x) \otimes_G C_j^\mathcal{I}(x)) \Rightarrow \perp $ |
-| (disjoint-union $C_1$ $\ldots$ $C_k$) | $C_1 = \bigoplus_{i=2}^k C_i$ and $\forall_{i, j \in \{1, \ldots, k\}, i < j} (C_i^\mathcal{I}(x) \otimes_G C_j^\mathcal{I}(x)) \Rightarrow \perp $ |
-| (range R $C$) | (implies \*top\* (all R C)), i.e., $ \top \Rightarrow \mathrm{inf}_{y \in \Delta^\mathcal{I}} \left\{ R^\mathcal{I}(x, y) \Rightarrow C^\mathcal{I}(y) \right\} $ |
-| (domain R $C$) | (implies (some R \*top\*) C), i.e., $\mathrm{sup}_{y \in \Delta^\mathcal{I}} \left\{ R^\mathcal{I}(x, y) \otimes \top \right\} \Rightarrow C^\mathcal{I}(x) $ |
+| (implies $C_1$ $C_2$ d) | $\mathrm{inf}\_{x \in \Delta^\mathcal{I}}\ C_1^\mathcal{I}(x) \Rightarrow C_2^\mathcal{I}(x) \geq d$ |
+| (g-implies $C_1$ $C_2$ d) | $\mathrm{inf}\_{x \in \Delta^\mathcal{I}}\ C_1^\mathcal{I}(x) \Rightarrow_G C_2^\mathcal{I}(x) \geq d$ |
+| (kd-implies $C_1$ $C_2$ d) | $\mathrm{inf}\_{x \in \Delta^\mathcal{I}}\ C_1^\mathcal{I}(x) \Rightarrow_{\mathrm{KD}} C_2^\mathcal{I}(x) \geq d$ |
+| (l-implies $C_1$ $C_2$ d) | $\mathrm{inf}\_{x \in \Delta^\mathcal{I}}\ C_1^\mathcal{I}(x) \Rightarrow_{L} C_2^\mathcal{I}(x) \geq d $ |
+| (z-implies $C_1$ $C_2$ d) | $\mathrm{inf}\_{x \in \Delta^\mathcal{I}}\ C_1^\mathcal{I}(x) \Rightarrow_Z C_2^\mathcal{I}(x) \geq d$ |
+| (define-concept A C) | $\forall_{x \in \Delta^\mathcal{I}}\ A^\mathcal{I}(x) = C^\mathcal{I}(x) $ |
+| (define-primitive-concept A C) | $\mathrm{inf}_{x \in \Delta^\mathcal{I}}\ A^\mathcal{I}(x) \leq C^\mathcal{I}(x) $ |
+| (equivalent-concepts $C_1$ $C_2$) | $\forall_{x \in \Delta^\mathcal{I}}\ C_1^\mathcal{I}(x) = C_2^\mathcal{I}(x) $ |
+| (disjoint $C_1$ $\ldots$ $C_k$) | (implies (g-and $C_i$ $C_j$) ```*bottom*```), i.e., $\forall_{i, j \in \\{1, \ldots, k\\}, i < j}\ (C_i^\mathcal{I}(x) \otimes_G C_j^\mathcal{I}(x)) \Rightarrow \perp$ |
+| (disjoint-union $C_1$ $\ldots$ $C_k$) | $C_1 = \bigoplus_{i=2}^k C_i$ and $\forall_{i, j \in \\{1, \ldots, k\\}, i < j}\ (C_i^\mathcal{I}(x) \otimes_G C_j^\mathcal{I}(x)) \Rightarrow \perp$ |
+| (range R $C$) | (implies ```*top*``` (all R C)), i.e., $\top \Rightarrow \mathrm{inf}\_{y \in \Delta^\mathcal{I}}\ \\{ R^\mathcal{I}(x, y) \Rightarrow C^\mathcal{I}(y) \\}$ |
+| (domain R $C$) | (implies (some R ```*top*```) C), i.e., $\mathrm{sup}\_{y \in \Delta^\mathcal{I}}\ \\{ R^\mathcal{I}(x, y) \otimes \top \\} \Rightarrow C^\mathcal{I}(x)$ |
 | (functional R) | $R^\mathcal{I}(a, b) = R^\mathcal{I}(a, c) \rightarrow b = c$ |
 | (inverse-functional R) |  $R^\mathcal{I}(b, a) = R^\mathcal{I}(c, a) \rightarrow b = c$ |
-| (reflexive R) | $ \forall_{a \in \Delta^\mathcal{I}} R^\mathcal{I}(a, a) = 1 $ |
-| (symmetric R) | $ \forall_{a, b \in \Delta^\mathcal{I}} R^\mathcal{I}(a, b) = R^\mathcal{I}(b, a) $ |
-| (transitive R) | $ \forall_{a, b \in \Delta^\mathcal{I}} R^\mathcal{I}(a, b) \geq \mathrm{sup}_{c \in \Delta^\mathcal{I}} R^\mathcal{I}(a, c) \otimes R^\mathcal{I}(c, b) $ |
-| (implies-role $R_1$ $R_2$ d) | $ \mathrm{inf}_{x, y \in \Delta^\mathcal{I}} R_1^\mathcal{I}(x, y) \Rightarrow_L R_2^\mathcal{I}(x, y) \geq d $ |
-| (inverse $R_1$ $R_2$) | $ R_1^\mathcal{I} \equiv {(R_2^\mathcal{I})}^{-1} $ |
+| (reflexive R) | $\forall_{a \in \Delta^\mathcal{I}}\ R^\mathcal{I}(a, a) = 1$ |
+| (symmetric R) | $\forall_{a, b \in \Delta^\mathcal{I}}\ R^\mathcal{I}(a, b) = R^\mathcal{I}(b, a)$ |
+| (transitive R) | $\forall_{a, b \in \Delta^\mathcal{I}}\ R^\mathcal{I}(a, b) \geq \mathrm{sup}_{c \in \Delta^\mathcal{I}} R^\mathcal{I}(a, c) \otimes R^\mathcal{I}(c, b)$ |
+| (implies-role $R_1$ $R_2$ d) | $\mathrm{inf}_{x, y \in \Delta^\mathcal{I}}\ R_1^\mathcal{I}(x, y) \Rightarrow_L R_2^\mathcal{I}(x, y) \geq d$ |
+| (inverse $R_1$ $R_2$) | $R_1^\mathcal{I} \equiv {(R_2^\mathcal{I})}^{-1}$ |
 
-- Transitive roles cannot be functional;
+- Transitive roles cannot be functional.
 - In Zadeh logic, $\Rightarrow$ is Zadeh’s set inclusion.
 
 ## Queries
@@ -507,9 +505,9 @@ queries := (
     | '(' 'min-sat?' concept name? ')'
     | '(' 'max-var?' name ')'
     | '(' 'min-var?' name ')'
-    | '(' 'defuzzify-lom?' concept name name ')'    # Defuzzify using largest of the maxima
-    | '(' 'defuzzify-mom?' concept name name ')'    # Defuzzify using middle of the maxima
-    | '(' 'defuzzify-som?' concept name name ')'    # Defuzzify using smallest of the maxima
+    | '(' 'defuzzify-lom?' concept name name ')'    # Defuzzify using the largest of the maxima
+    | '(' 'defuzzify-mom?' concept name name ')'    # Defuzzify using the middle of the maxima
+    | '(' 'defuzzify-som?' concept name name ')'    # Defuzzify using the smallest of the maxima
     | '(' 'bnp?' name ')'                           # Computes the Best Non-Fuzzy Performance (BNP) of a fuzzy number
 )
 ```
@@ -518,30 +516,29 @@ queries := (
 | Query | Definition |
 | --- | --- |
 | (sat?) | Check if $\mathcal{K}$ is consistent |
-| (max-instance? a C) | $\mathrm{sup}\{ n \mid \mathcal{K} \models \text{(instance a C n)} \}$ |
-| (min-instance? a C)|  $\mathrm{inf}\{ n \mid \mathcal{K} \models \text{(instance a C n)} \}$ |
+| (max-instance? a C) | $\mathrm{sup}\ \\{n \mid \mathcal{K} \models \text{(instance a C n)}\\}$ |
+| (min-instance? a C)|  $\mathrm{inf}\ \\{n \mid \mathcal{K} \models \text{(instance a C n)}\\}$ |
 | (all-instances? C) | (min-instance? a C) for every individual of $\mathcal{K}$ |
-| (max-related? a b R) | $\mathrm{sup}\{ n \mid \mathcal{K} \models \text{(related a b R n)} \}$ |
-| (min-related? a b R) | $\mathrm{inf}\{ n \mid \mathcal{K} \models \text{(related a b R n)} \}$ |
-| (max-subs? C D) | $\mathrm{sup}\{ n \mid \mathcal{K} \models \text{(implies D C n)} \} $|
-| (min-subs? C D) | $\mathrm{inf}\{ n \mid \mathcal{K} \models \text{(implies D C n)} \} $|
-| (max-g-subs? C D) | $\mathrm{sup}\{ n \mid \mathcal{K} \models \text{(g-implies D C n)} \} $ |
-| (min-g-subs? C D) | $\mathrm{inf}\{ n \mid \mathcal{K} \models \text{(g-implies D C n)} \} $ |
-| (max-l-subs? C D) | $\mathrm{sup}\{ n \mid \mathcal{K} \models \text{(l-implies D C n)} \} $ |
-| (min-l-subs? C D) | $\mathrm{inf}\{ n \mid \mathcal{K} \models \text{(l-implies D C n)} \} $|
-| (max-kd-subs? C D) | $\mathrm{sup}\{ n \mid \mathcal{K} \models \text{(kd-implies D C n)} \} $ |
-| (min-kd-subs? C D) | $\mathrm{inf}\{ n \mid \mathcal{K} \models \text{(kd-implies D C n)} \} $ |
-| (max-sat? C a) | $\mathrm{sup}_{\mathcal{I}} \mathrm{sup}_{a \in \Delta^\mathcal{I}} C^\mathcal{I}(a) $|
-| (min-sat? C a) | $\mathrm{inf}_{\mathcal{I}} \mathrm{inf}_{a \in \Delta^\mathcal{I}} C^\mathcal{I}(a) $|
-| (max-var? var) | $\mathrm{sup} \{ \text{var} \mid \mathcal{K} \text{ is consistent} \}$|
-| (min-var? var) | $\mathrm{inf} \{ \text{var} \mid \mathcal{K} \text{ is consistent} \}$|
-| (defuzzify-lom? C a F) | Defuzzify the value of F using largest of the maxima |
-| (defuzzify-mom? C a F) | Defuzzify the value of F using middle of the maxima |
-| (defuzzify-som? C a F) | Defuzzify the value of F using smallest of the maxima |
-| (bnp? f) | Computes the Best Non-Fuzzy Performance (BNP) of a fuzzy number f |
+| (max-related? a b R) | $\mathrm{sup}\ \\{n \mid \mathcal{K} \models \text{(related a b R n)} \\}$ |
+| (min-related? a b R) | $\mathrm{inf}\ \\{n \mid \mathcal{K} \models \text{(related a b R n)} \\}$ |
+| (max-subs? C D) | $\mathrm{sup}\ \\{n \mid \mathcal{K} \models \text{(implies D C n)} \\}$|
+| (min-subs? C D) | $\mathrm{inf}\ \\{n \mid \mathcal{K} \models \text{(implies D C n)} \\}$|
+| (max-g-subs? C D) | $\mathrm{sup}\ \\{n \mid \mathcal{K} \models \text{(g-implies D C n)} \\}$ |
+| (min-g-subs? C D) | $\mathrm{inf}\ \\{n \mid \mathcal{K} \models \text{(g-implies D C n)} \\}$ |
+| (max-l-subs? C D) | $\mathrm{sup}\ \\{n \mid \mathcal{K} \models \text{(l-implies D C n)} \\}$ |
+| (min-l-subs? C D) | $\mathrm{inf}\ \\{n \mid \mathcal{K} \models \text{(l-implies D C n)} \\}$|
+| (max-kd-subs? C D) | $\mathrm{sup}\ \\{n \mid \mathcal{K} \models \text{(kd-implies D C n)} \\}$ |
+| (min-kd-subs? C D) | $\mathrm{inf}\ \\{n \mid \mathcal{K} \models \text{(kd-implies D C n)} \\}$ |
+| (max-sat? C a) | $\mathrm{sup}\_{\mathcal{I}}\ \mathrm{sup}\_{a \in \Delta^\mathcal{I}}\ C^\mathcal{I}(a)$|
+| (min-sat? C a) | $\mathrm{inf}\_{\mathcal{I}}\ \mathrm{inf}\_{a \in \Delta^\mathcal{I}}\ C^\mathcal{I}(a)$|
+| (max-var? var) | $\mathrm{sup}\ \\{\text{var} \mid \mathcal{K} \text{ is consistent}\\}$|
+| (min-var? var) | $\mathrm{inf}\ \\{\text{var} \mid \mathcal{K} \text{ is consistent}\\}$|
+| (defuzzify-lom? C a F) | Defuzzify the value of F using the largest of the maxima |
+| (defuzzify-mom? C a F) | Defuzzify the value of F using the middle of the maxima |
+| (defuzzify-som? C a F) | Defuzzify the value of F using the smallest of the maxima |
+| (bnp? f) | Computes the Best Non-Fuzzy Performance (BNP) of a fuzzy number $f$ |
 
-- In defuzzify queries, the concept $C$ represents several Mamdani/Rules IF-THEN fuzzy rules expressing how to obtain the
-value of concrete feature F.
+- In defuzzify queries, the concept $C$ represents several Mamdani/Rules IF-THEN fuzzy rules expressing how to obtain the value of the concrete feature F.
 
 ⸻
 
