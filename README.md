@@ -248,7 +248,7 @@ restriction             := '(' ('>=' | '<=', '=') name (name | restriction_funct
 ### Definitions
 |Rule|Definition|
 |--------------|----------------------|
-|(>= F variable) | $ \mathrm{sup}_{b \in \Delta_D} [F^\mathcal{I} (x, b) \otimes (b \geq \text{variable})] $ |
+|(>= F variable) | $$ \mathrm{sup}_{b \in \Delta_D} [F^\mathcal{I} (x, b) \otimes (b \geq \text{variable})] $$ |
 |(<= F variable) | $ \mathrm{sup}_{b \in \Delta_D} [F^\mathcal{I} (x, b) \otimes (b \leq \text{variable})] $ |
 |(= F variable)  | $ \mathrm{sup}_{b \in \Delta_D} [F^\mathcal{I} (x, b) \otimes (b = \text{variable})] $ |
 |(>= F fuzzy_number) | $ \mathrm{sup}_{b^\prime, b \in \Delta_D} [F^\mathcal{I} (x, b) \otimes (b \geq b^\prime) \otimes {\text{fuzzy\_number}(b^\prime)}^\mathcal{I}] $|
