@@ -248,12 +248,12 @@ restriction             := '(' ('>=' | '<=', '=') name (name | restriction_funct
 ### Definitions
 |Rule|Definition|
 |--------------|----------------------|
-|(>= F variable) | $ \mathrm{sup}_{b \in \Delta_D} [F^\mathcal{I} (x, b) \otimes (b >= variable)] $ |
-|(<= F variable) | $ \mathrm{sup}_{b \in \Delta_D} [F^\mathcal{I} (x, b) \otimes (b <= variable)] $ |
-|(= F variable)  | $ \mathrm{sup}_{b \in \Delta_D} [F^\mathcal{I} (x, b) \otimes (b = variable)] $ |
-|(>= F fuzzy_number) | $ \mathrm{sup}_{b^{'}, b \in \Delta_D} [F^\mathcal{I} (x, b) \otimes (b >= b^prime) \otimes {fuzzy_number(b^{'})}^\mathcal{I}] $|
-|(<= F fuzzy_number) | $ \mathrm{sup}_{b^{'}, b \in \Delta_D} [F^\mathcal{I} (x, b) \otimes (b <= b^prime) \otimes {fuzzy_number(b^{'})}^\mathcal{I}] $|
-|(= F fuzzy_number) | $ \mathrm{sup}_{b^{'}, b \in \Delta_D} [F^\mathcal{I} (x, b) \otimes (b = b^prime) \otimes {fuzzy_number(b^{'})}^\mathcal{I}] $|
+|(>= F variable) | $ \mathrm{sup}_{b \in \Delta_D} [F^\mathcal{I} (x, b) \otimes (b >= \text{variable})] $ |
+|(<= F variable) | $ \mathrm{sup}_{b \in \Delta_D} [F^\mathcal{I} (x, b) \otimes (b <= \text{variable})] $ |
+|(= F variable)  | $ \mathrm{sup}_{b \in \Delta_D} [F^\mathcal{I} (x, b) \otimes (b = \text{variable})] $ |
+|(>= F fuzzy_number) | $ \mathrm{sup}_{b^{'}, b \in \Delta_D} [F^\mathcal{I} (x, b) \otimes (b >= b^\prime) \otimes {\text{fuzzy\_number}(b^{'})}^\mathcal{I}] $|
+|(<= F fuzzy_number) | $ \mathrm{sup}_{b^{'}, b \in \Delta_D} [F^\mathcal{I} (x, b) \otimes (b <= b^\prime) \otimes {\text{fuzzy\_number}(b^{'})}^\mathcal{I}] $|
+|(= F fuzzy_number) | $ \mathrm{sup}_{b^{'}, b \in \Delta_D} [F^\mathcal{I} (x, b) \otimes (b = b^\prime) \otimes {\text{fuzzy\_number}(b^{'})}^\mathcal{I}] $|
 |(>= F function($F_1$, $\ldots$, $F_n$)) | $ \mathrm{sup}_{b \in \Delta_D} [F^\mathcal{I} (x, b) \otimes (b >= {\mathrm{function}(F_1, \ldots, F_n)}^{\mathcal{I}})] $ |
 |(<= F function($F_1$, $\ldots$, $F_n$)) | $ \mathrm{sup}_{b \in \Delta_D} [F^\mathcal{I} (x, b) \otimes (b <= {\mathrm{function}(F_1, \ldots, F_n)}^{\mathcal{I}})] $ |
 |(= F function($F_1$, $\ldots$, $F_n$)) | $ \mathrm{sup}_{b \in \Delta_D} [F^\mathcal{I} (x, b) \otimes (b = {\mathrm{function}(F_1, \ldots, F_n)}^{\mathcal{I}})] $ |
