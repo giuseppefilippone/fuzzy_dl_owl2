@@ -248,7 +248,7 @@ restriction             := '(' ('>=' | '<=', '=') name (name | restriction_funct
 ### Definitions
 |Rule|Definition|
 |--------------|----------------------|
-|(>= F variable) | $ \text{sup}_{b \in D} [F^\mathcal{I} (x, b)] $ |
+|(>= F variable) | $ F $ |
 
 - In datatype restrictions, the variable **variable** has to be declared **(free variable)** before its use in a datatype
 restriction, using the **constraints** defined below;
