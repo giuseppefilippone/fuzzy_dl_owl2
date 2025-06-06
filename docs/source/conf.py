@@ -45,6 +45,9 @@ mathjax_path = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
 html_theme = "sphinx_rtd_theme"
 html_static_path = ["_static"]
 
+latex_elements = {
+    "printindex": r"\def\twocolumn[#1]{#1}\footnotesize\raggedright\printindex",
+}
 
 def skip_special_members(app, what, name, obj, skip, options):
     if name in [
