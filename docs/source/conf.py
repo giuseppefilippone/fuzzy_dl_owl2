@@ -6,7 +6,7 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = "Fuzzy Description Language Reasonear and Fuzzy OWL 2 ontology handler"
+project = "Fuzzy DL OWL 2"
 copyright = "2025, Giuseppe Filippone"
 author = "Giuseppe Filippone"
 # The short X.Y version
@@ -42,7 +42,7 @@ mathjax_path = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = "alabaster"
+html_theme = "sphinx_rtd_theme"
 html_static_path = ["_static"]
 
 
