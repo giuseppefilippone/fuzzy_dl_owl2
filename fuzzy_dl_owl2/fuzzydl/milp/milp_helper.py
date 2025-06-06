@@ -1093,7 +1093,7 @@ class MILPHelper:
                     )
                 )
 
-                vars_gurobi[var_name_map[str(v)]] = model.addVar(
+                vars_gurobi[var_name_map[str(curr_variable)]] = model.addVar(
                     lb=curr_variable.get_lower_bound(),
                     ub=curr_variable.get_upper_bound(),
                     obj=0,
@@ -1187,7 +1187,7 @@ class MILPHelper:
                     )
                 )
 
-                vars_gurobi[var_name_map[str(v)]] = model.addVar(
+                vars_gurobi[var_name_map[str(curr_variable)]] = model.addVar(
                     lb=curr_variable.get_lower_bound(),
                     ub=curr_variable.get_upper_bound(),
                     obj=ov,
