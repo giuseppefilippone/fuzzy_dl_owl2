@@ -414,7 +414,7 @@ concept := (
 |(choquet ($w_1$, $\ldots$, $w_n$) ($C_1$, $\ldots$, $C_n$) | Choquet integral | $y_1 w_1 + \sum_{i=2}^n (y_i - y_{i - 1}) w_i $ |
 |(sugeno ($v_1$, $\ldots$, $v_n$) ($C_1$, $\ldots$, $C_n$) | Sugeno integral | $\max_{i=1}^n \min \\{y_i, mu_i\\}$ |
 |(q-sugeno ($v_1$, $\ldots$, $v_n$) ($C_1$, $\ldots$, $C_n$) | Quasi-Sugeno integral | $\max_{i=1}^n y_i \otimes_L mu_i $|
-|(sigma-count $R$ $C$ {$a_1$ $\ldots$ $a_k$} $F_C$ | A Sigma-Count concept with role $R$ and associated to the concept $C$, the individuals $a_i$ and the fuzzy concrete concept $F_C$ | |
+|(sigma-count $R$ $C$ $\\{a_1\ \ldots\ a_k\\}$ $F_C$ | A Sigma-Count concept with role $R$ and associated to the concept $C$, the individuals $a_i$ and the fuzzy concrete concept $F_C$ | |
 
 - $n_1, \ldots, n_k \in \[0, 1\]$, with $\sum_{i=1}^k\ n_i \leq 1$;
 - $w_1, \ldots, w_n \in \[0, 1\]$, with $\sum_{i=1}^n\ w_i = 1$;
