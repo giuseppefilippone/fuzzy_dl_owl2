@@ -8,8 +8,12 @@
 
 project = 'Fuzzy Description Language Reasonear and Fuzzy OWL 2 ontology handler'
 copyright = '2025, Giuseppe Filippone'
-author = 'Giuseppe Filippone'
-release = 'v1.0.8'
+author = "Giuseppe Filippone"
+# The short X.Y version
+version = "1.0.8"
+
+# The full version, including alpha/beta/rc tags
+release = '1.0.8'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
