@@ -10,10 +10,10 @@ project = "Fuzzy DL OWL 2"
 copyright = "2025, Giuseppe Filippone"
 author = "Giuseppe Filippone"
 # The short X.Y version
-version = "1.0.8"
+version = "1.0.9"
 
 # The full version, including alpha/beta/rc tags
-release = "1.0.8"
+release = "1.0.9"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -47,7 +47,15 @@ html_static_path = ["_static"]
 
 
 def skip_special_members(app, what, name, obj, skip, options):
-    if name in ["__dict__", "__module__", "__weakref__", "_abc_impl"]:
+    if name in [
+        "__dict__",
+        "__module__",
+        "__weakref__",
+        "_abc_impl",
+        "__slots__",
+        "__annotations__",
+        "__abstractmethods__",
+    ]:
         return True  # Skip __dict__
     return None  # Keep everything else
 
