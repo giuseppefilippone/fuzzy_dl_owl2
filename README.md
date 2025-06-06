@@ -82,6 +82,8 @@ Supported MILP Providers:
 
 # MILP Provider Usage and Configuration
 
+<details><summary>See configurations for each provider</summary>
+
 ## GUROBI
 
 - Install [gurobipy](https://pypi.org/project/gurobipy/):
@@ -134,9 +136,13 @@ pip install pulp==3.2.1
 ```
 - Add HiGHS to the PATH
 
+</details>
+
 ⸻
 
 # Fuzzy Description Logic Grammatics
+
+<details><summary>See all grammatics</summary>
 
 ## String and Numbers
 ```python
@@ -568,6 +574,9 @@ from fuzzy_dl_owl2 import DLParser
 
 DLParser.main("./example.fdl")  # "Is audi instance of SportCar ? >= 0.92"
 ```
+
+</details>
+
 ⸻
 
 # Usage - Fuzzy OWL 2
@@ -593,6 +602,8 @@ fdl.translate_owl2ontology()  # save example.fdl in the subdirectory "./results"
 
 # Project Structure
 
+<details><summary>See project structure</summary>
+    
 ```text
 fuzzy_dl_owl2
 ├── __init__.py
@@ -778,6 +789,8 @@ fuzzy_dl_owl2
     └── util
         └── constants.py
 ```
+
+</details>
 ⸻
 
 # Test
