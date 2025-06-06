@@ -10,6 +10,7 @@ from .exception import *
 from .feature_function import FeatureFunction
 from .general_concept_inclusion import GeneralConceptInclusion
 from .individual import *
+from .classification_node import ClassificationNode
 from .knowledge_base import KnowledgeBase
 from .label import Label
 from .modifier import *

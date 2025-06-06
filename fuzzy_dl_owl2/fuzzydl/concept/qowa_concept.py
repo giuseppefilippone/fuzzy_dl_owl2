@@ -10,6 +10,10 @@ from fuzzy_dl_owl2.fuzzydl.util.constants import ConceptType
 
 
 class QowaConcept(OwaConcept):
+    """
+    Quantified-guided OWA concept.
+    """
+
     def __init__(
         self, quantifier: FuzzyConcreteConcept, concepts: list[Concept]
     ) -> None:

@@ -19,6 +19,9 @@ from fuzzy_dl_owl2.fuzzydl.util.constants import VariableType
 
 
 class MinSatisfiableQuery(SatisfiableQuery):
+    """
+    Minimal satisfiability degree of a fuzzy concept.
+    """
 
     @typing.overload
     def __init__(self, c: Concept) -> None: ...
@@ -36,9 +39,22 @@ class MinSatisfiableQuery(SatisfiableQuery):
             self.__min_sat_query_init_2(*args)
 
     def __min_sat_query_init_1(self, c: Concept) -> None:
+        """
+        Constructor for a general satisfiability query.
+
+        Args:
+            c (Concept): A fuzzy concept for which the satisfiability is to be tested.
+        """
         super().__init__(c)
 
     def __min_sat_query_init_2(self, c: Concept, a: Individual) -> None:
+        """
+        Constructor for a satisfiability query involving a specific individual.
+
+        Args:
+            c (Concept): A fuzzy concept for which the satisfiability is to be tested.
+            a (Individual): An individual used in the satisfiability test.
+        """
         super().__init__(c, a)
 
     def preprocess(self, kb: KnowledgeBase) -> None:
@@ -72,7 +88,7 @@ class MinSatisfiableQuery(SatisfiableQuery):
             return sol
 
         except InconsistentOntologyException:
-            return Solution(False)
+            return Solution(Solution.INCONSISTENT_KB)
 
     def __str__(self) -> str:
         if self.ind is not None:

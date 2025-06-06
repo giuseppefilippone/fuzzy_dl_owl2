@@ -4,14 +4,21 @@ from fuzzy_dl_owl2.fuzzydl.util.constants import VariableType
 
 
 class Variable:
+    # Name of new variables
     VARIABLE_NAME: str = "y"
+    # Number of new variables
     VARIABLE_NUMBER: int = 0
 
     def __init__(self, name: str, v_type: VariableType) -> None:
+        # Lower bound of the variable
         self.lower_bound: float = 0.0
+        # Upper bound of the variable
         self.upper_bound: float = 0.0
+        # Name of the variable
         self.name: str = name
+        # Type of the variable
         self.type: VariableType = None
+        # Variable is filler value of datatype restriction
         self.datatype_filler: bool = False
         self.set_type(v_type)
 

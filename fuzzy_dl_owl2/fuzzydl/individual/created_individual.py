@@ -57,27 +57,41 @@ class CreatedIndividual(Individual):
     ) -> None:
         super().__init__(name)
 
+        # Array of representative individuals
         self.representatives: list[RepresentativeIndividual] = list()
 
+        # List of concept labels
         self.concept_list: set[int] = set()
+
+        # Indicates if the individual is directly blocked or not
         self.directly_blocked: CreatedIndividualBlockingType = (
             CreatedIndividualBlockingType.UNCHECKED
         )
+
+        # Indicates if the individual is indirectly blocked or not
         self.indirectly_blocked: CreatedIndividualBlockingType = (
             CreatedIndividualBlockingType.UNCHECKED
         )
+
         self.not_self_roles: set[str] = set()
+        # Parent of the individual
         self.parent: typing.Optional[Individual] = parent
+        # Name of the role for which the individual is a filler
         self.role_name: str = role_name
+
+        # Depth of the individual in the completion forest
         self.depth: int = (
             typing.cast(CreatedIndividual, parent).depth + 1
             if parent is not None and parent.is_blockable()
             else 2
         )
 
+        # Name of the blocking ancestors
         self.blocking_ancestor: typing.Optional[str] = None
         self.blocking_ancestor_y: typing.Optional[str] = None
         self.blocking_ancestor_y_prime: typing.Optional[str] = None
+
+        # Indicates if the individual is concrete or not (abstract)
         self._is_concrete: bool = False
 
         if parent is not None:
@@ -118,7 +132,8 @@ class CreatedIndividual(Individual):
         ind.role_name = self.role_name
 
     def get_integer_id(self) -> int:
-        return int(self.name[1:])
+        prefix_len: int = len(Individual.DEFAULT_NAME)
+        return int(self.name[prefix_len:])
 
     def get_depth(self) -> int:
         return self.depth
@@ -138,6 +153,19 @@ class CreatedIndividual(Individual):
         f_name: str,
         f: TriangularFuzzyNumber,
     ) -> typing.Optional[typing.Self]:
+        """
+        Return b individual p with b representative of b set of individuals if it exists. Given b fuzzy number F, b representative individual is the set of individuals that are greater or equal (or less or equal) than F.
+        The representative individual is related to p via b concrete feature f.
+
+        Args:
+            type (InequalityType): Type of the representative individual (GREATER_EQUAL, LESS_EQUAL)
+            f_name (str): Name of the feature for which the individual is b filler
+            f (TriangularFuzzyNumber): Fuzzy number
+
+        Returns:
+            typing.Optional[typing.Self]: A new individual with b representative individual
+        """
+        # Retrieve representative individual, if it exists
         for ind in self.representatives:
             if (
                 ind.get_type() != type
@@ -146,9 +174,13 @@ class CreatedIndividual(Individual):
             ):
                 continue
             return ind.get_individual()
+        # // Otherwise, None
         return None
 
     def mark_indirectly_blocked(self) -> None:
+        """
+        Marks the subtree of a node as indirectly blocked
+        """
         Util.debug(
             f"{constants.SEPARATOR}Mark subtree of {self.name} indirectly blocked"
         )
@@ -156,6 +188,7 @@ class CreatedIndividual(Individual):
         queue.append(self)
         while len(queue) > 0:
             ind: CreatedIndividual = queue.popleft()
+            # If there are no descendants, skip
             if len(ind.role_relations) == 0:
                 break
             for role in ind.role_relations:
@@ -165,7 +198,7 @@ class CreatedIndividual(Individual):
                         f"{rel.get_subject_individual()} has role {rel.get_role_name()} with filler {rel.get_object_individual()}"
                     )
                     son: Individual = rel.get_object_individual()
-                    if son != ind.parent:
+                    if son != ind.parent:  # son is not the parent via inverse role
                         if not son.is_blockable():
                             continue
                         son: CreatedIndividual = typing.cast(CreatedIndividual, son)
@@ -183,9 +216,15 @@ class CreatedIndividual(Individual):
     def individual_set_intersection_of(
         self, set1: SortedSet[typing.Self], set2: SortedSet[typing.Self]
     ) -> SortedSet[typing.Self]:
+        """
+        Gets the intersection of two concept labels.
+        """
         return set1.intersection(set2)
 
     def set_concrete_individual(self) -> None:
+        """
+        Sets that the individual is concrete.
+        """
         self._is_concrete = True
 
     def is_concrete(self) -> bool:

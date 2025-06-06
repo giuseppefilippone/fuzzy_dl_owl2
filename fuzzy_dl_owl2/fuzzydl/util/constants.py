@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import enum
 import os
 import re
@@ -14,6 +16,25 @@ if not os.path.exists(RESULTS_PATH):
     os.makedirs(RESULTS_PATH)
 
 
+class MILPProvider(enum.StrEnum):
+    GUROBI = enum.auto()
+    MIP = enum.auto()
+    # SCIPY = enum.auto()
+    PULP = enum.auto()
+    PULP_GLPK = enum.auto()
+    PULP_HIGHS = enum.auto()
+    PULP_CPLEX = enum.auto()
+
+    @staticmethod
+    def from_str(value: str) -> typing.Self:
+        try:
+            return MILPProvider(value.lower())
+        except ValueError:
+            raise ValueError(
+                f"Invalid MILP provider: {value}. Valid options are: {list(MILPProvider)}"
+            )
+
+
 class ConcreteFeatureType(enum.Enum):
     STRING = 0
     INTEGER = 1
@@ -28,10 +49,15 @@ class ConcreteFeatureType(enum.Enum):
 
 
 class FeatureFunctionType(enum.Enum):
+    # Atomic feature
     ATOMIC = 0
+    # Numberic feature
     NUMBER = 1
+    # Sum function
     SUM = 2
+    # Subtraction function
     SUBTRACTION = 3
+    # Product of a number and a feature.
     PRODUCT = 5
 
     def __repr__(self) -> str:
@@ -106,6 +132,8 @@ class KnowledgeBaseRules(enum.Enum):
     RULE_NOT_HAS_VALUE = 45
     RULE_ZADEH_IMPLIES = 46
     RULE_NOT_ZADEH_IMPLIES = 47
+    RULE_SIGMA_COUNT = 48
+    RULE_NOT_SIGMA_COUNT = 49
 
     def __repr__(self) -> str:
         return str(self)
@@ -128,72 +156,142 @@ class LogicOperatorType(enum.Enum):
 
 
 class ConceptType(enum.Enum):
+    # Conjunction
     AND = 0
+    # Goedel conjunction
     GOEDEL_AND = 1
+    # Lukasiewicz conjunction
     LUKASIEWICZ_AND = 2
+    # Disjunction
     OR = 3
+    # Goedel disjunction
     GOEDEL_OR = 4
+    # Lukasiewicz disjunction
     LUKASIEWICZ_OR = 5
+    # Existential restriction
     SOME = 6
+    # Universal restriction
     ALL = 7
+    # Upper fuzzy rough concept
     UPPER_APPROX = 8
+    # Lower fuzzy rough concept
     LOWER_APPROX = 9
+    # Negated fuzzy number
     FUZZY_NUMBER_COMPLEMENT = 10
+    # Tight upper fuzzy rough concept
     TIGHT_UPPER_APPROX = 11
+    # Tight lower fuzzy rough concept
     TIGHT_LOWER_APPROX = 12
+    # Loose upper fuzzy rough concept
     LOOSE_UPPER_APPROX = 13
+    # Loose lower fuzzy rough concept
     LOOSE_LOWER_APPROX = 14
+    # Goedel implication
     GOEDEL_IMPLIES = 15
+    # Negated Goedel implication
     NOT_GOEDEL_IMPLIES = 16
+    # Atomic concept
     ATOMIC = 17
+    # Complement concept
     COMPLEMENT = 18
+    # Top concept
     TOP = 19
+    # Bottom concept
     BOTTOM = 20
+    # At most datatype restriction
     AT_MOST_VALUE = 21
+    # At least datatype restriction
     AT_LEAST_VALUE = 22
+    # Exact datatype restriction
     EXACT_VALUE = 23
+    # Negate at most datatype restriction
     NOT_AT_MOST_VALUE = 24
+    # Negate at least datatype restriction
     NOT_AT_LEAST_VALUE = 25
+    # Negate exact datatype restriction
     NOT_EXACT_VALUE = 26
+    # Weighted concept
     WEIGHTED = 27
+    # NEgated weighted concept
     NOT_WEIGHTED = 28
+    # Weighted sum concept
     W_SUM = 29
+    # Negated weighted sum concept
     NOT_W_SUM = 30
+    # Positive threshold concept
     POS_THRESHOLD = 31
+    # Negated positive threshold concept
     NOT_POS_THRESHOLD = 32
+    # Negative threshold concept
     NEG_THRESHOLD = 33
+    # Negated negative threshold concept
     NOT_NEG_THRESHOLD = 34
+    # Extended positive threshold concept
     EXT_POS_THRESHOLD = 35
+    # Negated extended positive threshold concept
     NOT_EXT_POS_THRESHOLD = 36
+    # Extended negative threshold concept
     EXT_NEG_THRESHOLD = 37
+    # Negated extended negative threshold concept
     NOT_EXT_NEG_THRESHOLD = 38
+    # Concrete concept
     CONCRETE = 39
+    # Negated concrete concept
     CONCRETE_COMPLEMENT = 40
+    # Modified concept
     MODIFIED = 41
+    # Negated modified concept
     MODIFIED_COMPLEMENT = 42
+    # Self reflexivity concept
     SELF = 43
+    # Fuzzy number
     FUZZY_NUMBER = 44
+    # OWA concept
     OWA = 45
+    # Quantified-guided OWA concept
     QUANTIFIED_OWA = 46
+    # Negated OWA concept
     NOT_OWA = 47
+    # Negated quantified-guided OWA concept
     NOT_QUANTIFIED_OWA = 48
+    # Choquet integral concept
     CHOQUET_INTEGRAL = 49
+    # Sugeno integral concept
     SUGENO_INTEGRAL = 50
+    # Quasi-Sugeno integral concept
     QUASI_SUGENO_INTEGRAL = 51
+    # Negated Choquet integral concept
     NOT_CHOQUET_INTEGRAL = 52
+    # Negated Sugeno integral concept
     NOT_SUGENO_INTEGRAL = 53
+    # Negated Quasi-Sugeno integral concept
     NOT_QUASI_SUGENO_INTEGRAL = 54
+    # Weighted maximum concept
     W_MAX = 55
+    # Negated weighted maximum concept
     NOT_W_MAX = 56
+    # Weighted minimum concept
     W_MIN = 57
+    # Negated weighted minimum concept
     NOT_W_MIN = 58
+    # Weighted sum-zero concept
     W_SUM_ZERO = 59
+    # Negated weighted sum-zero concept
     NOT_W_SUM_ZERO = 60
+    # Negated self reflexivity concept
     NOT_SELF = 61
+    # Has value restriction concept
     HAS_VALUE = 62
+    # Negated has value restriction concept
     NOT_HAS_VALUE = 63
+    # Zadeh'set inclusion implication, only used for min-subs queries.
     ZADEH_IMPLIES = 64
+    # Negated Zadeh'set inclusion implication
     NOT_ZADEH_IMPLIES = 65
+    # Sigma-count concept
+    SIGMA_CONCEPT = 66
+    # Negated sigma-count concept
+    NOT_SIGMA_CONCEPT = 67
 
     def __repr__(self) -> str:
         return self.name
@@ -205,6 +303,7 @@ class ConceptType(enum.Enum):
 class CreatedIndividualBlockingType(enum.Enum):
     BLOCKED = 0
     NOT_BLOCKED = 1
+    # Unchecked blocking
     UNCHECKED = 2
 
     def __repr__(self) -> str:
@@ -337,6 +436,7 @@ class FuzzyDLKeyword(enum.Enum):
     FEATURE_SUB = pp.CaselessKeyword("f-")
     FEATURE_MUL = pp.CaselessKeyword("f*")
     FEATURE_DIV = pp.CaselessKeyword("f/")
+    SIGMA_COUNT = pp.CaselessKeyword("sigma-count")
     CRISP = pp.CaselessKeyword("crisp")
     LEFT_SHOULDER = pp.CaselessKeyword("left-shoulder")
     RIGHT_SHOULDER = pp.CaselessKeyword("right-shoulder")

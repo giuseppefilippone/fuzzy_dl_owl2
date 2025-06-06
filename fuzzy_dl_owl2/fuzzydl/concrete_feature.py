@@ -41,7 +41,9 @@ class ConcreteFeature:
 
     def __concrete_feature_init_1(self, name: str) -> None:
         self.name: str = name
+        # Lower bound for the range
         self.k1: typing.Optional[typing.Union[float, int]] = None
+        # Upper bound for the range
         self.k2: typing.Optional[typing.Union[float, int]] = None
         self.type: ConcreteFeatureType = ConcreteFeatureType.STRING
 
@@ -52,13 +54,17 @@ class ConcreteFeature:
 
     def __concrete_feature_init_3(self, name: str, k1: int, k2: int) -> None:
         self.__concrete_feature_init_1(name)
+        # Lower bound for the range
         self.k1: typing.Optional[typing.Union[float, int]] = k1
+        # Upper bound for the range
         self.k2: typing.Optional[typing.Union[float, int]] = k2
         self.type: ConcreteFeatureType = ConcreteFeatureType.INTEGER
 
     def __concrete_feature_init_4(self, name: str, k1: float, k2: float) -> None:
         self.__concrete_feature_init_1(name)
+        # Lower bound for the range
         self.k1: typing.Optional[typing.Union[float, int]] = k1
+        # Upper bound for the range
         self.k2: typing.Optional[typing.Union[float, int]] = k2
         self.type: ConcreteFeatureType = ConcreteFeatureType.REAL
 

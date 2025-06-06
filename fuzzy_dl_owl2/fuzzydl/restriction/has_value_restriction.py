@@ -5,6 +5,8 @@ from fuzzy_dl_owl2.fuzzydl.restriction.restriction import Restriction
 
 
 class HasValueRestriction(Restriction):
+    """Universal restriction formed by a role, a individual and a lower bound degree."""
+
     def __init__(self, role_name: str, individual: str, degree: Degree) -> None:
         super().__init__(role_name, None, degree)
         self.ind_name: str = individual

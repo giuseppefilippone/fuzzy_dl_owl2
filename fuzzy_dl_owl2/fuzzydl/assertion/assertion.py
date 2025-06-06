@@ -16,6 +16,7 @@ class Assertion:
     def __init__(self, ind: Individual, c: Concept, d: Degree) -> None:
         self.individual: Individual = ind
         self.concept: Concept = c
+        # Lower bound degree
         self.degree: Degree = d
 
     def clone(self) -> typing.Self:

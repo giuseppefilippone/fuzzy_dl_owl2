@@ -24,6 +24,7 @@ from fuzzy_dl_owl2.fuzzydl.util.util import Util
 class DefuzzifyQuery(Query):
 
     def __init__(self, c: Concept, ind: Individual, feature_name: str) -> None:
+        super().__init__()
         self.conc: Concept = c
         self.a: Individual = ind
         self.f_name: str = feature_name
@@ -69,7 +70,7 @@ class DefuzzifyQuery(Query):
             Util.warning("Warning: Problem in defuzzification. Answer is 0.")
             return None
         except InconsistentOntologyException:
-            return Solution(False)
+            return Solution(Solution.INCONSISTENT_KB)
 
     @abstractmethod
     def get_obj_expression(self, variable: Variable) -> Expression:

@@ -15,6 +15,10 @@ from fuzzy_dl_owl2.fuzzydl.query.instance_query import InstanceQuery
 
 
 class MaxInstanceQuery(InstanceQuery):
+    """
+    Lowest upper bound of a concept assertion
+    """
+
     def __init__(self, concept: Concept, individual: Individual) -> None:
         super().__init__(concept, individual)
 
@@ -26,6 +30,7 @@ class MaxInstanceQuery(InstanceQuery):
         if "(all " in str(self.conc) or "(not (b-some " in str(self.conc):
             kb.set_dynamic_blocking()
 
+        # a: c >= q
         kb.add_assertion(self.ind, self.conc, DegreeVariable.get_degree(q))
         kb.solve_assertions()
 
@@ -39,7 +44,7 @@ class MaxInstanceQuery(InstanceQuery):
             self.set_total_time()
             return sol
         except InconsistentOntologyException:
-            return Solution(False)
+            return Solution(Solution.INCONSISTENT_KB)
 
     def __str__(self) -> str:
         return f"Is {self.ind} instance of {self.conc} ? <= "

@@ -10,6 +10,10 @@ from fuzzy_dl_owl2.fuzzydl.modifier.modifier import Modifier
 
 
 class ModifiedConcreteConcept(FuzzyConcreteConcept):
+    """
+    Modified concrete concept.
+    """
+    
     def __init__(self, name: str, modifier: Modifier, f: FuzzyConcreteConcept) -> None:
         super().__init__(name)
         self.k1: float = 0.0

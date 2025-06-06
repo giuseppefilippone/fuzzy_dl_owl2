@@ -8,12 +8,13 @@ from fuzzy_dl_owl2.fuzzydl.util import constants
 
 
 class Expression:
+    """Linear expression of the form c + c1 * x1 + c2 * x2 + ... + cN * xN"""
 
     @typing.overload
-    def __init__(self, constant: typing.Union[int, float]) -> None: ...
+    def __init__(self, constant: constants.NUMBER) -> None: ...
 
     @typing.overload
-    def __init__(self, constant: typing.Union[int, float], *terms: Term) -> None: ...
+    def __init__(self, constant: constants.NUMBER, *terms: Term) -> None: ...
 
     @typing.overload
     def __init__(self, *terms: Term) -> None: ...
@@ -48,16 +49,17 @@ class Expression:
             else:
                 raise ValueError
 
-    def __expression_init_1(self, constant: typing.Union[int, float]) -> None:
+    def __expression_init_1(self, constant: constants.NUMBER) -> None:
         assert isinstance(constant, constants.NUMBER)
-        self.constant: typing.Union[int, float] = constant
+        # oefficient c
+        self.constant: constants.NUMBER = constant
+        # Terms c1 * x1 + c2 * x2 + ...
         self.terms: list[Term] = []
 
-    def __expression_init_2(
-        self, constant: typing.Union[int, float], *terms: Term
-    ) -> None:
+    def __expression_init_2(self, constant: constants.NUMBER, *terms: Term) -> None:
         assert len(terms) > 0
         self.__expression_init_1(constant)
+        # Terms c1 * x1 + c2 * x2 + ...
         self.terms: list[Term] = [t for t in terms]
 
     def __expression_init_3(self, *terms: Term) -> None:
@@ -74,10 +76,10 @@ class Expression:
     def get_terms(self) -> list[Term]:
         return self.terms
 
-    def get_constant(self) -> typing.Union[int, float]:
+    def get_constant(self) -> constants.NUMBER:
         return self.constant
 
-    def set_constant(self, constant: typing.Union[int, float]) -> None:
+    def set_constant(self, constant: constants.NUMBER) -> None:
         self.constant = constant
 
     def clone(self) -> typing.Self:
@@ -85,18 +87,20 @@ class Expression:
 
     @staticmethod
     def negate_expression(expr: typing.Self) -> typing.Self:
+        """Changes the sign of all the elements of an expression."""
         return -expr
 
     @staticmethod
-    def add_constant(
-        expr: typing.Self, constant: typing.Union[int, float]
-    ) -> typing.Self:
+    def add_constant(expr: typing.Self, constant: constants.NUMBER) -> typing.Self:
+        """Adds a constant to an expression."""
         return constant + expr
 
     def increment_constant(self) -> None:
+        """Increments the constant in one."""
         self.constant += 1
 
     def add_term(self, term: Term) -> None:
+        """Adds a term to an expression."""
         for idx, t in enumerate(self.terms):
             if t.get_var() == term.get_var():
                 self.terms[idx] = t + term
@@ -106,25 +110,28 @@ class Expression:
 
     @staticmethod
     def add_term_(exp: typing.Self, term: Term) -> typing.Self:
-        curr_expr: Expression = exp
+        """Adds a term to an expression."""
+        curr_expr: Expression = Expression(exp)
         curr_expr.add_term(term)
         return curr_expr
 
     @staticmethod
     def add_expressions(expr1: typing.Self, expr2: typing.Self) -> typing.Self:
+        """Adds two expressions."""
         return expr1 + expr2
 
     @staticmethod
     def subtract_expressions(expr1: typing.Self, expr2: typing.Self) -> typing.Self:
+        """Substracts two expressions."""
         return expr1 - expr2
 
     @staticmethod
-    def multiply_constant(
-        expr: typing.Self, constant: typing.Union[int, float]
-    ) -> typing.Self:
+    def multiply_constant(expr: typing.Self, constant: constants.NUMBER) -> typing.Self:
+        """Multiplies a constant and an expression."""
         return expr * constant
 
-    def get_constant_term(self, var: Variable) -> typing.Union[int, float]:
+    def get_constant_term(self, var: Variable) -> constants.NUMBER:
+        """Given a variable, gets its coefficient in the expression."""
         for term in self.terms:
             if term.get_var() == var:
                 return term.get_coeff()
@@ -148,25 +155,25 @@ class Expression:
         result.constant += value.get_constant()
         return result
 
-    def __radd__(self, scalar: typing.Union[int, float]) -> typing.Self:
+    def __radd__(self, scalar: constants.NUMBER) -> typing.Self:
         return self + scalar
 
     def __sub__(self, expr: typing.Union[int, float, typing.Self, Term]) -> typing.Self:
         return self + (-expr)
 
-    def __rsub__(self, scalar: typing.Union[int, float]) -> typing.Self:
+    def __rsub__(self, scalar: constants.NUMBER) -> typing.Self:
         return -self + scalar
 
-    def __mul__(self, scalar: typing.Union[int, float]) -> typing.Self:
+    def __mul__(self, scalar: constants.NUMBER) -> typing.Self:
         return Expression(
             self.get_constant() * scalar,
             *[t * scalar for t in self.get_terms()],
         )
 
-    def __rmul__(self, scalar: typing.Union[int, float]) -> typing.Self:
+    def __rmul__(self, scalar: constants.NUMBER) -> typing.Self:
         return self * scalar
 
-    def __truediv__(self, scalar: typing.Union[int, float]) -> typing.Self:
+    def __truediv__(self, scalar: constants.NUMBER) -> typing.Self:
         return self * (1 / scalar)
 
     def __hash__(self) -> int:
@@ -175,7 +182,9 @@ class Expression:
     def __eq__(self, value: typing.Self) -> bool:
         if not isinstance(value, Expression):
             return False
-        return len(self.terms) == len(value.terms) and all(term in value.terms for term in self.terms)
+        return len(self.terms) == len(value.terms) and all(
+            term in value.terms for term in self.terms
+        )
 
     def __ne__(self, value: typing.Self) -> bool:
         return not (self == value)
@@ -184,6 +193,7 @@ class Expression:
         return str(self)
 
     def __str__(self) -> str:
+        """Gets a printable name of the expression."""
         parts: list[str] = []
         if self.constant != 0.0:
             parts.append(str(self.constant))

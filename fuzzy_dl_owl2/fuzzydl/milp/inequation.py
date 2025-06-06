@@ -6,9 +6,15 @@ from fuzzy_dl_owl2.fuzzydl.util.constants import InequalityType
 
 
 class Inequation:
+    """
+    Inequality of the form c + c1 * x1 + c2 * x2 + ...  (>= | <= | =) 0.
+    """
+
     def __init__(self, exp: Expression, i_type: InequalityType) -> None:
         assert exp is not None and len(exp.get_terms()) > 0
+        # Type of the inequality
         self.type: InequalityType = i_type
+        # Expression
         self.expr: Expression = exp
 
     @staticmethod
@@ -36,6 +42,7 @@ class Inequation:
         return self.type
 
     def get_string_type(self) -> str:
+        """Gets a string representation of the type."""
         if self.type == InequalityType.EQUAL:
             return self.type.value
         elif self.type == InequalityType.LESS_THAN:
@@ -59,6 +66,7 @@ class Inequation:
         return str(self)
 
     def __str__(self) -> str:
+        """Gets a printable name of the object."""
         return f"{self.expr} {self.get_string_type()} 0"
 
 

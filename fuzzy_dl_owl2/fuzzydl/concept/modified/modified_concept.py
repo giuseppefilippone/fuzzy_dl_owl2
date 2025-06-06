@@ -13,6 +13,9 @@ from fuzzy_dl_owl2.fuzzydl.util.constants import ConceptType
 
 
 class ModifiedConcept(Concept, HasConceptInterface, ABC):
+    """
+    Modified fuzzy concept.
+    """
 
     def __init__(self, c: Concept, mod: Modifier) -> None:
         Concept.__init__(self, ConceptType.MODIFIED)

@@ -10,7 +10,12 @@ from fuzzy_dl_owl2.fuzzydl.util.util import Util
 
 
 class InstanceQuery(Query, ABC):
+    """
+    Instance checking query
+    """
+
     def __init__(self, concept: Concept, individual: Individual) -> None:
+        super().__init__()
         if concept.is_concrete():
             Util.error(f"Error: {concept} cannot be a concrete concept.")
 

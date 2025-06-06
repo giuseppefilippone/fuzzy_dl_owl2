@@ -2,14 +2,19 @@ from __future__ import annotations
 
 import copy
 import os
+import re
+import time
 import traceback
 import typing
+
+import networkx as nx
 
 from fuzzy_dl_owl2.fuzzydl.assertion.assertion import Assertion
 from fuzzy_dl_owl2.fuzzydl.concept.concept import Concept
 from fuzzy_dl_owl2.fuzzydl.concept.interface.has_value_interface import (
     HasValueInterface,
 )
+from fuzzy_dl_owl2.fuzzydl.concept.sigma_count import SigmaCount
 from fuzzy_dl_owl2.fuzzydl.degree.degree import Degree
 from fuzzy_dl_owl2.fuzzydl.degree.degree_numeric import DegreeNumeric
 from fuzzy_dl_owl2.fuzzydl.degree.degree_variable import DegreeVariable
@@ -24,10 +29,11 @@ from fuzzy_dl_owl2.fuzzydl.milp.variable import Variable
 from fuzzy_dl_owl2.fuzzydl.relation import Relation
 from fuzzy_dl_owl2.fuzzydl.restriction.restriction import Restriction
 from fuzzy_dl_owl2.fuzzydl.util import constants
-from fuzzy_dl_owl2.fuzzydl.util.config_reader import ConfigReader, MILPProvider
+from fuzzy_dl_owl2.fuzzydl.util.config_reader import ConfigReader
 from fuzzy_dl_owl2.fuzzydl.util.constants import (
     ConceptType,
     InequalityType,
+    MILPProvider,
     VariableType,
 )
 from fuzzy_dl_owl2.fuzzydl.util.util import Util
@@ -35,10 +41,17 @@ from fuzzy_dl_owl2.fuzzydl.util.util import Util
 
 # @utils.singleton
 class MILPHelper:
+    """MILP problem manager, storing the problem and calling an external solver."""
+
+    PARTITION: bool = False
+    # Indicates whether we want to show the membership degrees to linguistic labels or not.
     PRINT_LABELS: bool = True
+    # Indicates whether we want to show the value of the variables or not.
     PRINT_VARIABLES: bool = True
 
     def __init__(self) -> None:
+        self.nominal_variables: bool = False
+        self.cardinalities: list[SigmaCount] = list()
         self.constraints: list[Inequation] = list()
         self.crisp_concepts: set[str] = set()
         self.crisp_roles: set[str] = set()
@@ -50,6 +63,8 @@ class MILPHelper:
 
     def clone(self) -> typing.Self:
         milp: MILPHelper = MILPHelper()
+        milp.nominal_variables = self.nominal_variables
+        milp.cardinalities = [c.clone() for c in self.cardinalities]
         milp.constraints = [c.clone() for c in self.constraints]
         milp.crisp_concepts = copy.deepcopy(self.crisp_concepts)
         milp.crisp_roles = copy.deepcopy(self.crisp_roles)
@@ -61,6 +76,18 @@ class MILPHelper:
         return milp
 
     def optimize(self, objective: Expression) -> typing.Optional[Solution]:
+        """
+        It optimizes an expression using a solvers from MILPProvider.
+
+        Args:
+            objective (Expression): Expression to be optimized.
+
+        Raises:
+            ValueError: If MILPProvider is not known.
+
+        Returns:
+            typing.Optional[Solution]: An optimal solution of the expression
+        """
         Util.debug(f"Running MILP solver: {ConfigReader.MILP_PROVIDER.name}")
         if ConfigReader.MILP_PROVIDER == MILPProvider.GUROBI:
             return self.solve_gurobi(objective)
@@ -89,6 +116,7 @@ class MILPHelper:
     def print_instance_of_labels(self, name: str, value: float) -> None: ...
 
     def print_instance_of_labels(self, *args) -> None:
+        """Shows the membership degrees to some linguistic labels."""
         assert len(args) in [2, 3]
         assert isinstance(args[0], str)
         if len(args) == 2:
@@ -102,7 +130,15 @@ class MILPHelper:
     def __print_instance_of_labels_1(
         self, f_name: str, ind_name: str, value: float
     ) -> None:
-        name = f"{f_name}({ind_name})"
+        """
+        Shows the membership degrees to some linguistic labels.
+
+        Args:
+            f_name (str): Name of the feature.
+            ind_name (str): Name of the individual.
+            value (float): Value of the feature for the given individual.
+        """
+        name: str = f"{f_name}({ind_name})"
         labels = self.show_vars.get_labels(name)
         for f in labels:
             Util.info(
@@ -110,6 +146,13 @@ class MILPHelper:
             )
 
     def __print_instance_of_labels_2(self, name: str, value: float) -> None:
+        """
+        Shows the membership degrees to some linguistic labels.
+
+        Args:
+            name (str): Name of the feature (individual).
+            value (float): Value of the feature for the given individual.
+        """
         labels = self.show_vars.get_labels(name)
         for f in labels:
             Util.info(
@@ -117,6 +160,7 @@ class MILPHelper:
             )
 
     def get_new_variable(self, v_type: VariableType) -> Variable:
+        """Gets a new variable with the indicated type."""
         while True:
             new_var: Variable = Variable.get_new_variable(v_type)
             var_name = str(new_var)
@@ -225,6 +269,9 @@ class MILPHelper:
             raise ValueError
 
     def __get_variable_1(self, var_name: str) -> Variable:
+        """
+        Gets a variable with the given name, creating a new one of type SEMI_CONTINUOUS in [0, 1] if it does not exist.
+        """
         if var_name in self.number_of_variables:
             for variable in self.variables:
                 if str(variable) == var_name:
@@ -235,26 +282,69 @@ class MILPHelper:
         return var
 
     def __get_variable_2(self, var_name: str, v_type: VariableType) -> Variable:
+        """
+        Gets a variable with the indicated name and bound.
+
+        Only used by DatatypeReasoner.
+        """
         var: Variable = self.get_variable(var_name)
         var.set_type(v_type)
         return var
 
     def __get_variable_3(self, ass: Assertion) -> Variable:
+        """
+        Gets a variable taking the value of a concept assertion, creating a new one of type SEMI_CONTINUOUS in [0, 1] if it does not exist.
+
+        Args:
+            ass (Assertion): A fuzzy concept assertion.
+
+        Returns:
+            Variable: A variable taking the value of the assertion.
+        """
         return self.get_variable(ass.get_individual(), ass.get_concept())
 
     def __get_variable_4(self, rel: Relation) -> Variable:
+        """
+        Gets a variable taking the value of a role assertion, creating a new one of type SEMI_CONTINUOUS in [0, 1] if it does not exist.
+
+        Args:
+            ass (Assertion): A fuzzy role assertion.
+
+        Returns:
+            Variable: A variable taking the value of the assertion.
+        """
         a: Individual = rel.get_subject_individual()
         b: Individual = rel.get_object_individual()
         role: str = rel.get_role_name()
         return self.get_variable(a, b, role)
 
     def __get_variable_5(self, ind: Individual, restrict: Restriction) -> Variable:
+        """
+        Gets a variable taking the value of a universal restriction, creating a new one of type SEMI_CONTINUOUS in [0, 1] if it does not exist.
+
+        Args:
+            ind (Individual): Subject individual of the restrictions.
+            restrict (Restriction): A fuzzy role assertion.
+
+        Returns:
+            Variable: A variable taking the value of the assertion.
+        """
         var: Variable = self.get_variable(f"{ind}:{restrict.get_name_without_degree()}")
         if self.show_vars.show_individuals(str(ind)):
             self.show_vars.add_variable(var, str(var))
         return var
 
     def __get_variable_6(self, ind: Individual, c: Concept) -> Variable:
+        """
+        Gets a variable taking the value of a concept assertion, creating a new one of type SEMI_CONTINUOUS in [0, 1] if it does not exist.
+
+        Args:
+            ind (Individual): An individual.
+            c (Concept): A fuzzy concept.
+
+        Returns:
+            Variable: A variable taking the value of the assertion.
+        """
         if c.type == ConceptType.HAS_VALUE:
             assert isinstance(c, HasValueInterface)
 
@@ -264,6 +354,16 @@ class MILPHelper:
         return self.get_variable(ind, str(c))
 
     def __get_variable_7(self, ind: Individual, concept_name: str) -> Variable:
+        """
+        Gets a variable taking the value of a concept assertion, creating a new one of type SEMI_CONTINUOUS in [0, 1] if it does not exist.
+
+        Args:
+            ind (Individual): An individual.
+            concept_name (str): A fuzzy concept name.
+
+        Returns:
+            Variable: A variable taking the value of the assertion.
+        """
         var: Variable = self.get_variable(f"{ind}:{concept_name}")
         if concept_name in self.crisp_concepts:
             var.set_binary_variable()
@@ -274,11 +374,34 @@ class MILPHelper:
         return var
 
     def __get_variable_8(self, a: Individual, b: Individual, role: str) -> Variable:
+        """
+        Gets a variable taking the value of a role assertion, creating a new one of type SEMI_CONTINUOUS in [0, 1] if it does not exist.
+
+        Args:
+            a (Individual): Object individual.
+            b (Individual): Subject individual.
+            role (str): A role name.
+
+        Returns:
+            Variable: A variable taking the value of the assertion.
+        """
         return self.get_variable(a, b, role, VariableType.SEMI_CONTINUOUS)
 
     def __get_variable_9(
         self, a: Individual, b: Individual, role: str, v_type: VariableType
     ) -> Variable:
+        """
+        Gets a variable taking the value of a role assertion, creating a new one of type SEMI_CONTINUOUS in [0, 1] if it does not exist.
+
+        Args:
+            a (Individual): Object individual.
+            b (Individual): Subject individual.
+            role (str): A role name.
+            v_type (VariableType): Type of the variable.
+
+        Returns:
+            Variable: A variable taking the value of the assertion.
+        """
         return self.get_variable(str(a), str(b), role, v_type)
 
     def __get_variable_10(
@@ -296,9 +419,28 @@ class MILPHelper:
         return var
 
     def __get_variable_11(self, ind: CreatedIndividual) -> Variable:
+        """
+        Gets a variable taking the value of a concrete individual.
+
+        Args:
+            ind (CreatedIndividual): A concrete individual.
+
+        Returns:
+            Variable: A variable taking the value of the assertion.
+        """
         return self.get_variable(ind, VariableType.CONTINUOUS)
 
     def __get_variable_12(self, ind: CreatedIndividual, v_type: VariableType) -> None:
+        """
+        Gets a variable taking the value of a concrete individual.
+
+        Args:
+            ind (CreatedIndividual): A concrete individual.
+            v_type (VariableType): Type of the variable.
+
+        Returns:
+            Variable: A variable taking the value of the assertion.
+        """
         if ind.get_parent() is None:
             parent_name: str = "unknown_parent"
         else:
@@ -319,6 +461,18 @@ class MILPHelper:
             x_c.set_type(v_type)
         return x_c
 
+    def exists_variable(self, a: Individual, b: Individual, role: str) -> bool:
+        """
+        Checks if a variable taking the value of a role assertion exists.
+
+        Args:
+            a (Individual): Object individual.
+            b (Individual): Subject individual.
+            role (str): A role name.
+        """
+        var_name: str = f"({a},{b}):{role}"
+        return var_name in self.number_of_variables
+
     @typing.overload
     def has_variable(self, name: str) -> bool: ...
 
@@ -335,9 +489,11 @@ class MILPHelper:
             raise ValueError
 
     def __has_variable_1(self, name: str) -> bool:
+        """Cheks if there is a variable with the given name."""
         return name in self.number_of_variables
 
     def __has_variable_2(self, ass: Assertion) -> bool:
+        """Cheks if there is a variable for a concept assertion."""
         return self.has_variable(ass.get_name_without_degree())
 
     @typing.overload
@@ -356,22 +512,69 @@ class MILPHelper:
             return self.__get_nominal_variable_2(*args)
 
     def __get_nominal_variable_1(self, i1: str) -> Variable:
+        """
+        Gets a variable taking the value of an individual i1 belonging to the nominal concept {i1}.
+
+        Args:
+            i1 (str): An individual.
+
+        Returns:
+            Variable: A variable taking the value of the assertion i1:{i1}.
+        """
         return self.get_nominal_variable(i1, i1)
 
     def __get_nominal_variable_2(self, i1: str, i2: str) -> Variable:
+        """
+        Gets a variable taking the value of an individual i1 belonging to the nominal concept {i2}.
+
+        Args:
+            i1 (str): An individual that is subject of the assertion.
+            i2 (str): An individual representing the nominal concept.
+
+        Returns:
+            Variable: A variable taking the value of the assertion i1:{i2}.
+        """
         var_name = f"{i1}:{{ {i2} }}"
         v: Variable = self.get_variable(var_name)
         v.set_type(VariableType.BINARY)
         return v
 
+    def is_nominal_variable(self, i: str) -> bool:
+        """Checks if a variable 'i' is a nominal variable."""
+        # s: list[str] = i.split(":{")
+        # if len(s) != 2:
+        #     return False
+        # return s[1] == f"{s[0]}" + "}"
+        pattern = re.compile(r"([^:]+):\{\1\}")
+        return len(pattern.findall(i)) > 0
+
+    def has_nominal_variable(self, terms: list[Term]) -> bool:
+        """Checks if a collection of terms has a nominal variable."""
+        for term in terms:
+            if self.is_nominal_variable(str(term.get_var())):
+                return True
+        return False
+
     def exists_nominal_variable(self, i: str) -> bool:
+        """Checks if there exists a variable taking the value of an individual i belonging to the nominal concept {i}."""
         var_name: str = f"{i}:{{ {i} }}"
         return var_name in list(map(str, self.variables))
 
     def get_negated_nominal_variable(self, i1: str, i2: str) -> Variable:
+        """
+        Gets a variable taking the value of an individual i1 not belonging to the nominal concept {i2}.
+
+        Args:
+            i1 (str): An individual that is subject of the assertion.
+            i2 (str): An individual representing the nominal concept.
+
+        Returns:
+            Variable: A variable taking the value of the assertion i1: not {i2}.
+        """
         var_name: str = f"{i1}: not {{ {i2} }}"
         flag: bool = var_name in list(map(str, self.variables))
         v: Variable = self.get_variable(var_name)
+        # First time the variable is created, x_{a:{o} } = 1 - x_{a: not {o} }
         if not flag:
             v.set_type(VariableType.BINARY)
             not_v: Variable = self.get_nominal_variable(i1, i2)
@@ -448,9 +651,23 @@ class MILPHelper:
     def __add_new_constraint_1(
         self, expr: Expression, constraint_type: InequalityType
     ) -> None:
+        """
+        Adds a new inequality of the form:  expr constraint_type 0.
+
+        Args:
+            expr (Expression): An expression in the left side of the inequality.
+            constraint_type (InequalityType): Type of the constraint (EQ, GR, LE).
+        """
         self.constraints.append(Inequation(expr, constraint_type))
 
     def __add_new_constraint_2(self, x: Variable, n: float) -> None:
+        """
+        Adds a new inequality of the form: x >= n.
+
+        Args:
+            x (Variable): A variable.
+            n (float): A real number.
+        """
         self.add_new_constraint(
             Expression(Term(1.0, x)),
             InequalityType.GREATER_THAN,
@@ -458,14 +675,34 @@ class MILPHelper:
         )
 
     def __add_new_constraint_3(self, ass: Assertion, n: float) -> None:
+        """
+        Given a fuzzy assertion a:C >= L and a number n, adds an inequality of the form: xAss >= n.
+
+        Args:
+            ass (Assertion): A fuzzy assertion.
+            n (float): A real number.
+        """
         self.add_new_constraint(self.get_variable(ass), n)
 
     def __add_new_constraint_4(self, x: Variable, d: Degree) -> None:
+        """
+        Add an inequality of the form: x >= d.
+
+        Args:
+            x (Variable): A variable.
+            d (Degree): A degree.
+        """
         self.add_new_constraint(
             Expression(Term(1.0, x)), InequalityType.GREATER_THAN, d
         )
 
     def __add_new_constraint_5(self, ass: Assertion) -> None:
+        """
+        Adds a new inequality encoded in a fuzzy assertion.
+
+        Args:
+            ass (Assertion): A fuzzy assertion.
+        """
         x_ass: Variable = self.get_variable(ass)
         ass_name: str = str(x_ass)
         deg: Degree = ass.get_lower_limit()
@@ -478,6 +715,14 @@ class MILPHelper:
     def __add_new_constraint_6(
         self, expr: Expression, constraint_type: InequalityType, degree: Degree
     ) -> None:
+        """
+        Adds a new inequality of the form: expr constraint_type degree.
+
+        Args:
+            expr (Expression): An expression in the left side of the inequality.
+            constraint_type (InequalityType): Type of the constraint (EQ, GR, LE).
+            degree (Degree): A degree in the right side of the inequality.
+        """
         self.constraints.append(
             degree.create_inequality_with_degree_rhs(expr, constraint_type)
         )
@@ -485,22 +730,50 @@ class MILPHelper:
     def __add_new_constraint_7(
         self, expr: Expression, constraint_type: InequalityType, n: float
     ) -> None:
+        """
+        Adds a new inequality of the form: expr constraint_type n.
+
+        Args:
+            expr (Expression): An expression in the left side of the inequality.
+            constraint_type (InequalityType): Type of the constraint (EQ, GR, LE).
+            n (float): A real number expression in the right side of the inequality.
+        """
         self.add_new_constraint(expr, constraint_type, DegreeNumeric.get_degree(n))
 
     def add_equality(self, var1: Variable, var2: Variable) -> None:
+        """
+        Add an equality of the form: var1 = var2.
+        """
         self.add_new_constraint(
             Expression(Term(1.0, var1), Term(-1.0, var2)), InequalityType.EQUAL
         )
 
     def add_string_feature(self, role: str) -> None:
+        """Adds a string feature."""
         self.string_features.add(role)
 
     def add_string_value(self, value: str, int_value: int) -> None:
+        """
+        Relates the value of a string feature with an integer value.
+
+        Args:
+            value (str): Value of a string feature.
+            int_value (int): Corresponding integer value.
+        """
         self.string_values[int_value] = value
 
     def change_variable_names(
         self, old_name: str, new_name: str, old_is_created_individual: bool
     ) -> None:
+        """
+        Replaces the name of the variables including an individual name with the name of another individual name.
+
+        Args:
+            old_name (str): Old individual name.
+            new_name (str): New individual name.
+            old_is_created_individual (bool): Indicates whether the old individual is a created individual or not.
+        """
+
         old_values: list[str] = [f"{old_name},", f",{old_name}", f"{old_name}:"]
         new_values: list[str] = [f"{new_name},", f",{new_name}", f"{new_name}:"]
         to_process: list[Variable] = copy.deepcopy(self.variables)
@@ -515,6 +788,7 @@ class MILPHelper:
                     if old_is_created_individual:
                         self.add_equality(v1, v2)
                     else:
+                        # a:{b} => x_{a:C}) \geq  x_{b:C}
                         a_is_b: Variable = self.get_nominal_variable(new_name, old_name)
                         self.add_new_constraint(
                             Expression(
@@ -530,8 +804,10 @@ class MILPHelper:
         begin1: int = name1.index(s1)
         name2: str = str(v2)
         begin2: int = name2.index(s2)
+        # They are not similar because the parts before s1 and s2 have different lengths.
         if begin1 != begin2:
             return False
+        # If the parts before and after s1/s2 coincide, they are similar.
         return (
             name1[:begin1] == name2[:begin2]
             and name1[begin1 + len(s1) :] == name2[begin2 + len(s2) :]
@@ -572,33 +848,48 @@ class MILPHelper:
     def __get_ordered_permutation_2(
         self, x: list[Variable], z: list[list[Variable]]
     ) -> list[Variable]:
+        """
+        Gets an ordered permutation of the variables.
+
+        Args:
+            x (list[Variable]): A vector of input variables.
+            z (list[list[Variable]]): A matrix of intermediate variables.
+
+        Returns:
+            list[Variable]: A permutation of the input variables such that y[0] >= y[1] >= ... >= y[n-1]
+        """
         n: int = len(x)
+        # New n [0,1] variables yi
         y: list[Variable] = [
             self.get_new_variable(VariableType.SEMI_CONTINUOUS) for _ in range(n)
         ]
+        # y1 >= y2 >= ... >= yn
         for i in range(n - 1):
             self.add_new_constraint(
                 Expression(Term(1.0, y[i]), Term(-1.0, y[i + 1])),
                 InequalityType.GREATER_THAN,
             )
+        # for each i,j : yi - kz_{ij} <= xj
         for i in range(n):
             for j in range(n):
                 self.add_new_constraint(
                     Expression(Term(1.0, x[j]), Term(-1.0, y[i]), Term(1.0, z[i][j])),
                     InequalityType.GREATER_THAN,
                 )
+        # for each i,j : xj <= yi + kz_{ij}
         for i in range(n):
             for j in range(n):
                 self.add_new_constraint(
                     Expression(Term(1.0, x[j]), Term(-1.0, y[i]), Term(-1.0, z[i][j])),
                     InequalityType.LESS_THAN,
                 )
+        # for each i : \sum_{j} z_{ij} = n - 1
         for i in range(n):
             exp: Expression = Expression(1.0 - n)
             for j in range(n):
                 exp.add_term(Term(1.0, z[i][j]))
             self.add_new_constraint(exp, InequalityType.EQUAL)
-
+        # for each j : \sum_{i} z_{ij} = n - 1
         for i in range(n):
             exp: Expression = Expression(1.0 - n)
             for j in range(n):
@@ -606,9 +897,377 @@ class MILPHelper:
             self.add_new_constraint(exp, InequalityType.EQUAL)
         return y
 
-    def solve_gurobi(self, objective: Expression) -> typing.Optional[Solution]:
+    def __bfs(self, graph: nx.Graph, solution: dict[int, int]) -> int:
+        # Number of nodes
+        n: int = graph.number_of_nodes()
+
+        # Solution is a mapping: variable -> partition
+        # Initial partition value is 0
+        for i in range(n):
+            solution[i] = 0
+
+        # Number of partition
+        p: int = 1
+
+        # Iterate over not processed nodes
+        queue: list[int] = list()
+        for i in range(n - 1):
+            # Skip node if processed
+            if solution[i] != 0:
+                continue
+            queue = [i]
+            solution[i] = p
+            self.__compute_partition(queue, solution, p, graph)
+
+            # Next partition
+            p += 1
+        return p - 1
+
+    def __compute_partition(
+        self, queue: list[int], solution: dict[int, int], p: int, graph: nx.Graph
+    ) -> None:
+
+        while len(queue) > 0:
+            current: int = queue.pop()
+            neighbors: list[int] = list(graph.neighbors(current))
+            if len(neighbors) == 0:
+                continue
+            for j in neighbors:
+                if solution[j] != 0:
+                    continue
+                solution[j] = p
+                queue.append(j)
+
+    def set_nominal_variables(self, value: bool) -> None:
+        self.nominal_variables = value
+
+    def __remove_nominal_variables(self) -> None:
+        constraints_to_remove: list[int] = []
+        variable_to_remove: list[int] = []
+        for i, constraint in enumerate(self.constraints):
+            terms: list[Term] = constraint.get_terms()
+            if self.has_nominal_variable(terms):
+                constraints_to_remove.append(i)
+        for i, variable in enumerate(self.variables):
+            if self.is_nominal_variable(str(variable)):
+                variable_to_remove.append(i)
+
+        self.constraints = [
+            constraint
+            for i, constraint in enumerate(self.constraints)
+            if i not in constraints_to_remove
+        ]
+        self.variables = [
+            variable
+            for i, variable in enumerate(self.variables)
+            if i not in variable_to_remove
+        ]
+
+    def __get_graph(self) -> nx.Graph:
+        g: nx.Graph = nx.Graph()
+
+        # Create nodes
+        n: int = len(self.variables)
+        for i in range(n):
+            g.add_node(i)
+
+        # Create edges
+        edge: int = 0
+        for constraint in self.constraints:
+            terms: list[Term] = constraint.get_terms()
+            if len(terms) == 0:
+                continue
+            first_var: int = self.variables.index(terms[0].get_var())
+            for term in terms[1:]:
+                other_var: int = self.variables.index(term.get_var())
+                # Edges between first and other
+                edge += 1
+                g.add_edge(first_var, other_var, number=edge)
+
+        return g
+
+    def __common_partition_part(
+        self, objective: Expression
+    ) -> tuple[list[Variable], dict[int, int], int, list[int], int, int]:
+
+        objectives: list[Variable] = list()
+
+        # Partition time
+        init_time: int = time.perf_counter_ns()
+
+        # Graph
+        solution: dict[int, int] = dict()
+        num_partitions: int = self.__bfs(self.__get_graph(), solution)
+
+        # Mapping partition -> number of objective variables in partition
+        num_variables_in_partition: list[int] = [0] * num_partitions
+
+        # Compute objective coefficients
+        for term in objective.get_terms():
+            v: Variable = term.get_var()
+            objectives.append(v)
+            index: int = self.variables.index(v)
+            num_partition: int = solution.get(index) - 1
+            num_variables_in_partition[num_partition] += 1
+
+        # Compute two or more partitions
+        two_or_more: int = 0
+        count: int = 0
+        for i in range(num_partitions):
+            if num_variables_in_partition[i] > 1:
+                two_or_more += 1
+                count += num_variables_in_partition[i]
+
+        end_time: int = time.perf_counter_ns()
+        total_time: float = (end_time - init_time) * 1e-9
+        Util.debug(f"Partition time: {total_time} s")
+        return (
+            objectives,
+            solution,
+            num_partitions,
+            num_variables_in_partition,
+            two_or_more,
+            count,
+        )
+
+    def __solve_gurobi_using_partitions(
+        self, objective: Expression
+    ) -> typing.Optional[Solution]:
         import gurobipy as gp
         from gurobipy import GRB
+
+        (
+            objectives,
+            solution,
+            num_partitions,
+            num_variables_in_partition,
+            two_or_more,
+            count,
+        ) = self.__common_partition_part(objective)
+
+        if two_or_more == 0:
+            MILPHelper.PARTITION = False
+            return self.solve_gurobi(objective)
+
+        # Specific algorithm starts here
+        try:
+            Util.debug(
+                f"There are {two_or_more} partitions with {count} dependent objective variables"
+            )
+
+            # PROBLEMS with 1 or less
+            env = gp.Env(empty=True)
+            if not ConfigReader.DEBUG_PRINT:
+                env.setParam("OutputFlag", 0)
+            env.setParam("IntFeasTol", 1e-9)
+            env.setParam("BarConvTol", 0)
+            env.start()
+
+            model: gp.Model = gp.Model("partition-model-1-or-less", env=env)
+
+            # Create variables
+            vars_gurobi: dict[str, gp.Var] = dict()
+
+            var_types: dict[VariableType, str] = {
+                VariableType.BINARY: GRB.BINARY,
+                VariableType.INTEGER: GRB.INTEGER,
+                VariableType.CONTINUOUS: GRB.CONTINUOUS,
+                VariableType.SEMI_CONTINUOUS: GRB.SEMICONT,
+            }
+            var_name_map: dict[str, str] = {
+                str(v): f"x{i}" for i, v in enumerate(self.variables)
+            }
+            for i, curr_variable in enumerate(self.variables):
+                num_partition: int = solution.get(i) - 1
+                if num_variables_in_partition[num_partition] > 1:
+                    continue  # Next variable
+                v_type: VariableType = curr_variable.get_type()
+
+                Util.debug(
+                    (
+                        f"Variable -- "
+                        f"[{curr_variable.get_lower_bound()}, {curr_variable.get_upper_bound()}] - "
+                        f"Obj value = 0 - "
+                        f"Var type = {v_type.name} -- "
+                        f"Var = {curr_variable}"
+                    )
+                )
+
+                vars_gurobi[var_name_map[str(v)]] = model.addVar(
+                    lb=curr_variable.get_lower_bound(),
+                    ub=curr_variable.get_upper_bound(),
+                    obj=0,
+                    vtype=var_types[v_type],
+                    name=var_name_map[str(curr_variable)],
+                )
+
+            # Integrate new variables
+            model.update()
+
+            constraint_name: str = "constraint"
+            # Add constraints
+            for i, constraint in enumerate(self.constraints):
+                if constraint in self.constraints[:i]:
+                    continue
+                if constraint.is_zero():
+                    continue
+
+                curr_name: str = f"{constraint_name}_{i + 1}"
+                expr: gp.LinExpr = gp.LinExpr()
+                for term in constraint.get_terms():
+                    index: int = self.variables.index(term.get_var())
+                    num_partition: int = solution.get(index) - 1
+                    if num_variables_in_partition[num_partition] > 1:
+                        break  # Exit for term loop
+                    v: gp.Var = vars_gurobi[var_name_map[str(term.get_var())]]
+                    c: float = term.get_coeff()
+                    if c == 0:
+                        continue
+                    expr.add(v, c)
+
+                if expr.size() == 0:
+                    continue
+
+                if constraint.get_type() == InequalityType.EQUAL:
+                    gp_constraint: gp.Constr = expr == constraint.get_constant()
+                elif constraint.get_type() == InequalityType.LESS_THAN:
+                    gp_constraint: gp.Constr = expr <= constraint.get_constant()
+                elif constraint.get_type() == InequalityType.GREATER_THAN:
+                    gp_constraint: gp.Constr = expr >= constraint.get_constant()
+
+                model.addConstr(gp_constraint, curr_name)
+                Util.debug(f"{curr_name}: {constraint}")
+
+            # Integrate new constraints
+            model.update()
+
+            # Optimize model
+            model.optimize()
+            Util.debug(f"Model:")
+
+            # Return solution
+            if model.Status == GRB.INFEASIBLE:
+                return Solution(Solution.INCONSISTENT_KB)
+
+            # One for each partition with two or more variables, plus one for the rest (all partitions with 0 and 1)
+            sol: Solution = Solution(1.0)
+
+            # PROBLEMS with 2 or more
+            for obj_var in objectives:
+                env = gp.Env(empty=True)
+                if not ConfigReader.DEBUG_PRINT:
+                    env.setParam("OutputFlag", 0)
+                env.setParam("IntFeasTol", 1e-9)
+                env.setParam("BarConvTol", 0)
+                env.start()
+
+                model: gp.Model = gp.Model("partition-model-2-or-more", env=env)
+
+                index: int = self.variables.index(obj_var)
+                problem: int = solution.get(index) - 1
+
+                vars_gurobi: dict[str, gp.Var] = dict()
+
+                # Create variables
+                for i, curr_variable in enumerate(self.variables):
+                    num_partition: int = solution.get(i) - 1
+                    if num_partition != problem:
+                        continue
+
+                    v_type: VariableType = curr_variable.get_type()
+                    ov: float = 1.0 if i == self.variables.index(obj_var) else 0.0
+
+                Util.debug(
+                    (
+                        f"Variable -- "
+                        f"[{curr_variable.get_lower_bound()}, {curr_variable.get_upper_bound()}] - "
+                        f"Obj value = {ov} - "
+                        f"Var type = {v_type.name} -- "
+                        f"Var = {curr_variable}"
+                    )
+                )
+
+                vars_gurobi[var_name_map[str(v)]] = model.addVar(
+                    lb=curr_variable.get_lower_bound(),
+                    ub=curr_variable.get_upper_bound(),
+                    obj=ov,
+                    vtype=var_types[v_type],
+                    name=var_name_map[str(curr_variable)],
+                )
+
+                # Integrate new variables
+                model.update()
+
+                constraint_name: str = "constraint"
+                # Add constraints
+                for i, constraint in enumerate(self.constraints):
+                    if constraint in self.constraints[:i]:
+                        continue
+                    if constraint.is_zero():
+                        continue
+
+                    curr_name: str = f"{constraint_name}_{i + 1}"
+                    expr: gp.LinExpr = gp.LinExpr()
+                    for term in constraint.get_terms():
+                        index: int = self.variables.index(term.get_var())
+                        num_partition: int = solution.get(index) - 1
+                        if num_partition != problem:
+                            break  # Exit for term loop
+                        v: gp.Var = vars_gurobi[var_name_map[str(term.get_var())]]
+                        c: float = term.get_coeff()
+                        if c == 0:
+                            continue
+                        expr.add(v, c)
+
+                    if expr.size() == 0:
+                        continue
+
+                    if constraint.get_type() == InequalityType.EQUAL:
+                        gp_constraint: gp.Constr = expr == constraint.get_constant()
+                    elif constraint.get_type() == InequalityType.LESS_THAN:
+                        gp_constraint: gp.Constr = expr <= constraint.get_constant()
+                    elif constraint.get_type() == InequalityType.GREATER_THAN:
+                        gp_constraint: gp.Constr = expr >= constraint.get_constant()
+
+                    model.addConstr(gp_constraint, curr_name)
+                    Util.debug(f"{curr_name}: {constraint}")
+
+                # Integrate new constraints
+                model.update()
+
+                # Optimize model
+                model.optimize()
+
+                # Return solution
+                if model.Status == GRB.INFEASIBLE:
+                    return Solution(Solution.INCONSISTENT_KB)
+                else:
+                    result: float = Util.round(abs(model.ObjVal))
+                    sol = Solution(result)
+                    name: str = str(obj_var)
+                    sol.add_showed_variable(name, result)
+
+                model.printQuality()
+                model.printStats()
+
+            return sol
+        except gp.GurobiError as e:
+            Util.error(f"Error code: {e.errno}. {e.message}")
+            return None
+
+    def solve_gurobi(self, objective: Expression) -> typing.Optional[Solution]:
+        """
+        Solves a MILP problem using Gurobi.
+        """
+
+        import gurobipy as gp
+        from gurobipy import GRB
+
+        if not self.nominal_variables:
+            self.__remove_nominal_variables()
+
+        if MILPHelper.PARTITION:
+            return self.__solve_gurobi_using_partitions(objective)
 
         try:
             Util.debug(f"Objective function -> {objective}")
@@ -622,6 +1281,7 @@ class MILPHelper:
 
             if objective is not None:
                 for term in objective.get_terms():
+                    # Compute objective coefficients
                     index = self.variables.index(term.get_var())
                     objective_value[index] += term.get_coeff()
 
@@ -632,7 +1292,7 @@ class MILPHelper:
             env.setParam("BarConvTol", 0)
             env.start()
 
-            model = gp.Model("model", env=env)
+            model: gp.Model = gp.Model("model", env=env)
             vars_gurobi: dict[str, gp.Var] = dict()
             show_variable: list[bool] = [False] * size
 
@@ -647,8 +1307,8 @@ class MILPHelper:
             var_name_map: dict[str, str] = {
                 str(v): f"x{i}" for i, v in enumerate(self.variables)
             }
-            inv_var_name_map: dict[str, str] = {v: k for k, v in var_name_map.items()}
 
+            # Create variables
             for i, curr_variable in enumerate(self.variables):
                 v_type: VariableType = curr_variable.get_type()
                 ov: float = objective_value[i]
@@ -683,10 +1343,12 @@ class MILPHelper:
                 elif v_type == VariableType.SEMI_CONTINUOUS:
                     num_up_vars += 1
 
+            # Integrate new variables
             model.update()
 
             Util.debug(f"# constraints -> {len(self.constraints)}")
             constraint_name: str = "constraint"
+            # Add constraints
             for i, constraint in enumerate(self.constraints):
                 if constraint in self.constraints[:i]:
                     continue
@@ -715,7 +1377,10 @@ class MILPHelper:
                 model.addConstr(gp_constraint, curr_name)
                 Util.debug(f"{curr_name}: {constraint}")
 
+            # Integrate new constraints
             model.update()
+
+            # Optimize model
             model.optimize()
 
             model.write(os.path.join(constants.RESULTS_PATH, "gurobi_model.lp"))
@@ -726,19 +1391,22 @@ class MILPHelper:
             # if model.Status == GRB.INFEASIBLE and ConfigReader.RELAX_MILP:
             #     self.__gurobi_handle_model_infeasibility(model)
 
+            # Return solution
             if model.Status == GRB.INFEASIBLE:
-                sol = Solution(False)
+                sol = Solution(Solution.INCONSISTENT_KB)
             else:
+                result: float = Util.round(abs(model.ObjVal))
+                sol = Solution(result)
                 for i in range(size):
                     if ConfigReader.DEBUG_PRINT or show_variable[i]:
                         name: str = self.variables[i].name
                         value: float = round(vars_gurobi[var_name_map[name]].X, 6)
-                        if self.PRINT_VARIABLES:
-                            Util.debug(f"{name} = {value}")
+                        if show_variable[i]:
+                            sol.add_showed_variable(name, value)
+                        # if self.PRINT_VARIABLES:
+                        Util.debug(f"{name} = {value}")
                         if self.PRINT_LABELS:
                             self.print_instance_of_labels(name, value)
-                result: float = Util.round(abs(model.ObjVal))
-                sol = Solution(result)
 
             model.printQuality()
             model.printStats()
@@ -747,11 +1415,13 @@ class MILPHelper:
                 f"{constants.STAR_SEPARATOR}Statistics{constants.STAR_SEPARATOR}"
             )
             Util.debug("MILP problem:")
+            # Show number of variables
             Util.debug(f"\t\tSemi continuous variables: {num_up_vars}")
             Util.debug(f"\t\tBinary variables: {num_binary_vars}")
             Util.debug(f"\t\tContinuous variables: {num_free_vars}")
             Util.debug(f"\t\tInteger variables: {num_integer_vars}")
             Util.debug(f"\t\tTotal variables: {len(self.variables)}")
+            # Show number of constraints
             Util.debug(f"\t\tConstraints: {len(self.constraints)}")
             return sol
         except gp.GurobiError as e:
@@ -830,7 +1500,6 @@ class MILPHelper:
             var_name_map: dict[str, str] = {
                 str(v): f"x{i}" for i, v in enumerate(self.variables)
             }
-            inv_var_name_map: dict[str, str] = {v: k for k, v in var_name_map.items()}
 
             for i, curr_variable in enumerate(self.variables):
                 v_type: VariableType = curr_variable.get_type()
@@ -903,19 +1572,21 @@ class MILPHelper:
             Util.debug(f"Model:")
             sol: Solution = None
             if model.status == mip.OptimizationStatus.INFEASIBLE:
-                sol = Solution(False)
+                sol = Solution(Solution.INCONSISTENT_KB)
             else:
                 model.write(os.path.join(constants.RESULTS_PATH, "mip_solution.sol"))
+                result: float = Util.round(abs(model.objective_value))
+                sol = Solution(result)
                 for i in range(size):
                     if ConfigReader.DEBUG_PRINT or show_variable[i]:
                         name: str = self.variables[i].name
                         value: float = round(vars_mip[var_name_map[name]].x, 6)
-                        if self.PRINT_VARIABLES:
-                            Util.debug(f"{name} = {value}")
+                        if show_variable[i]:
+                            sol.add_showed_variable(name, value)
+                        # if self.PRINT_VARIABLES:
+                        Util.debug(f"{name} = {value}")
                         if self.PRINT_LABELS:
                             self.print_instance_of_labels(name, value)
-                result: float = Util.round(abs(model.objective_value))
-                sol = Solution(result)
 
             Util.debug(
                 f"{constants.STAR_SEPARATOR}Statistics{constants.STAR_SEPARATOR}"
@@ -1189,8 +1860,10 @@ class MILPHelper:
             Util.debug(f"Model:")
             sol: Solution = None
             if result != pulp.LpStatusOptimal:
-                sol = Solution(False)
+                sol = Solution(Solution.INCONSISTENT_KB)
             else:
+                result: float = Util.round(abs(model.objective.value()))
+                sol = Solution(result)
                 var_dict: dict[str, pulp.LpVariable] = model.variablesDict()
                 for i in range(size):
                     if ConfigReader.DEBUG_PRINT or show_variable[i]:
@@ -1200,12 +1873,12 @@ class MILPHelper:
                             if var_name_map[name] in var_dict
                             else 0.0
                         )
-                        if self.PRINT_VARIABLES:
-                            Util.debug(f"{name} = {value}")
+                        if show_variable[i]:
+                            sol.add_showed_variable(name, value)
+                        # if self.PRINT_VARIABLES:
+                        Util.debug(f"{name} = {value}")
                         if self.PRINT_LABELS:
                             self.print_instance_of_labels(name, value)
-                result: float = Util.round(abs(model.objective.value()))
-                sol = Solution(result)
 
             Util.debug(
                 f"{constants.STAR_SEPARATOR}Statistics{constants.STAR_SEPARATOR}"
@@ -1366,7 +2039,7 @@ class MILPHelper:
 
     #     sol: Solution = None
     #     if not result.success:
-    #         sol = Solution(False)
+    #         sol = Solution(Solution.INCONSISTENT_KB)
     #     else:
     #         for i in range(size):
     #             if ConfigReader.DEBUG_PRINT or show_variable[i]:
@@ -1394,18 +2067,26 @@ class MILPHelper:
     #     return sol
 
     def add_crisp_concept(self, concept_name: str) -> None:
+        """Defines a concept to be crisp."""
         self.crisp_concepts.add(concept_name)
 
     def add_crisp_role(self, role_name: str) -> None:
+        """Defines a role to be crisp."""
         self.crisp_roles.add(role_name)
 
     def is_crisp_concept(self, concept_name: str) -> bool:
+        """Checks if a concept is crisp or not."""
         return concept_name in self.crisp_concepts
 
     def is_crisp_role(self, role_name: str) -> bool:
+        """Checks if a role is crisp or not."""
         return role_name in self.crisp_roles
 
     def set_binary_variables(self) -> None:
+        """Transforms every [0,1]-variable into a {0,1} variable."""
+        # set all variables binary, except
+        #   - those that hold the value of a datatype filler
+        #   - free variables in constraints
         for v in self.variables:
             if v.get_datatype_filler_type() or v.get_type() in (
                 VariableType.CONTINUOUS,
@@ -1415,14 +2096,31 @@ class MILPHelper:
             v.set_binary_variable()
 
     def get_name_for_integer(self, i: int) -> typing.Optional[str]:
+        """Gets the name of the i-th variable."""
         for name, i2 in self.number_of_variables.items():
             if i == i2:
                 return name
         return None
 
     def get_number_for_assertion(self, ass: Assertion) -> int:
+        """Gets an integer codification of an assertion."""
         return self.number_of_variables.get(str(self.get_variable(ass)))
 
     def add_contradiction(self) -> None:
+        """Add a contradiction to make the fuzzy KB unsatisfiable"""
         self.constraints.clear()
         self.add_new_constraint(Expression(1.0), InequalityType.EQUAL)
+
+    def add_cardinality_list(self, sc: SigmaCount) -> None:
+        """
+        SigmaCount(r,C,O,d)^I(w) = d^I(xSigma)
+
+        Args:
+            sc (SigmaCount):
+                xSigma: Free variable taking the value  \sigma_{i2 \in O} r(i1, i2) \otimes C(i2)
+                i1: Name of an individual, subject of the relation.
+                O: Set of individuals candidates to be the object of the relation.
+                r: Role.
+                C: Concept.
+        """
+        self.cardinalities.append(sc)

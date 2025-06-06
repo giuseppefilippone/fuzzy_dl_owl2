@@ -22,6 +22,9 @@ from fuzzy_dl_owl2.fuzzydl.util.constants import LogicOperatorType
 
 
 class MaxSubsumesQuery(SubsumptionQuery):
+    """
+    Maximize subsumption query.
+    """
 
     def __init__(self, c1: Concept, c2: Concept, type_: LogicOperatorType) -> None:
         super().__init__(c1, c2, type_)
@@ -58,7 +61,7 @@ class MaxSubsumesQuery(SubsumptionQuery):
             self.set_total_time()
             return sol
         except InconsistentOntologyException:
-            return Solution(False)
+            return Solution(Solution.INCONSISTENT_KB)
 
     def __str__(self) -> str:
         return f"{self.c1} subsumes {self.c2} ? <= "

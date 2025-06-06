@@ -11,3 +11,5 @@ from .weighted_max_concept import WeightedMaxConcept
 from .weighted_min_concept import WeightedMinConcept
 from .weighted_sum_concept import WeightedSumConcept
 from .weighted_sum_zero_concept import WeightedSumZeroConcept
+from .sigma_concept import SigmaConcept
+from .sigma_count import SigmaCount

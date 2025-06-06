@@ -18,16 +18,24 @@ from fuzzy_dl_owl2.fuzzydl.util.constants import RepresentativeIndividualType
 
 
 class Individual:
+    # Default prefix for new individual names
     DEFAULT_NAME: str = "i"
 
     def __init__(self, name: str) -> None:
         self.name: str = name
+        # Concrete role restrictions
         self.concrete_role_restrictions: dict[str, list[Assertion]] = dict()
+        # Fillers to show
         self.fillers_to_show: dict[str, set[str]] = dict()
+        # List of concepts such that a concept assertion has been processed
         self.list_of_concepts: set[Concept] = set()
+        # Indicates if the individual is indirectly blocked or not
         self.nominal_list: set[str] = set()
+        # List of roles for which to apply the not self rule
         self.not_self_roles: set[str] = list()
+        # Role relations
         self.role_relations: dict[str, list[Relation]] = dict()
+        # Role restrictions
         self.role_restrictions: dict[str, list[Restriction]] = dict()
 
     def clone(self) -> typing.Self:
@@ -55,6 +63,9 @@ class Individual:
         self.name = name
 
     def add_concrete_restriction(self, f_name: str, ass: Assertion) -> None:
+        """
+        Adds a negated datatype restriction to the individual.
+        """
         self.concrete_role_restrictions[f_name] = self.concrete_role_restrictions.get(
             f_name, []
         ) + [ass]
@@ -91,12 +102,15 @@ class Individual:
     def prune(self) -> None:
         to_prune: list[Individual] = []
         for role in self.role_relations:
+            # We remove all relations
             rels: list[Relation] = self.role_relations.get(role, [])
             for r in rels:
                 obj: Individual = r.get_object_individual()
                 if obj.is_blockable():
                     to_prune.append(obj)
+        # We remove all relations
         self.role_relations = dict()
+        # Prune blockable successors
         for i in to_prune:
             i.prune()
 

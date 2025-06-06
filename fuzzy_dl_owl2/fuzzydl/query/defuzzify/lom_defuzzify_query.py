@@ -9,6 +9,10 @@ from fuzzy_dl_owl2.fuzzydl.query.defuzzify.defuzzify_query import DefuzzifyQuery
 
 
 class LomDefuzzifyQuery(DefuzzifyQuery):
+    """
+    Largest of maxima defuzzification query
+    """
+
     def __init__(self, c: Concept, ind: Individual, feature_name: str) -> None:
         super().__init__(c, ind, feature_name)
 

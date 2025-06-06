@@ -8,6 +8,7 @@ from fuzzy_dl_owl2.fuzzydl.milp.solution import Solution
 
 
 class Query(ABC):
+
     def __init__(self) -> None:
         self.initial_time: int = 0
         self.total_time: int = 0
@@ -24,7 +25,9 @@ class Query(ABC):
 
     @abstractmethod
     def preprocess(self, knowledge_base: KnowledgeBase) -> None:
-        """Preprocess the query with given knowledge base"""
+        """
+        Performs some preprocessing steps of the query over a fuzzy KB.
+        """
         pass
 
     @abstractmethod
@@ -34,5 +37,5 @@ class Query(ABC):
 
     @abstractmethod
     def __str__(self) -> str:
-        """String representation of the query"""
+        """Solves the query over a fuzzy KB"""
         pass

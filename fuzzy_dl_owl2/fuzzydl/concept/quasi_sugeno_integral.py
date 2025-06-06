@@ -10,6 +10,9 @@ from fuzzy_dl_owl2.fuzzydl.util.util import Util
 
 
 class QsugenoIntegral(SugenoIntegral):
+    """
+    Quasi Sugeno integral concept.
+    """
 
     def __init__(self, weights: list[float], concepts: list[Concept]) -> None:
         super().__init__(weights, concepts)

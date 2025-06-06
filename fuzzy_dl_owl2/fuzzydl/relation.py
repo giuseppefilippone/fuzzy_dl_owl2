@@ -8,6 +8,10 @@ if typing.TYPE_CHECKING:
 
 
 class Relation:
+    """
+    Represents a role assertion of the form (object individual, role, lower bound for the degree) with respect to a subject individual.
+    """
+
     def __init__(
         self, role_name: str, ind1: Individual, ind2: Individual, degree: Degree
     ):
@@ -38,6 +42,7 @@ class Relation:
         return self.degree
 
     def get_name_without_degree(self) -> str:
+        """Gets a printable name of the role assertion without the lower bound"""
         return f"({self.ind_a}, {self.ind_b}): {self.role_name}"
 
     def __repr__(self) -> str:

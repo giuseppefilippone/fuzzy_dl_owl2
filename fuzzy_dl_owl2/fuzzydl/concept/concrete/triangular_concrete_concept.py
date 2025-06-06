@@ -12,6 +12,8 @@ from fuzzy_dl_owl2.fuzzydl.exception.fuzzy_ontology_exception import (
 
 
 class TriangularConcreteConcept(FuzzyConcreteConcept):
+    """Fuzzy concrete concept defined with a triangular function."""
+
     def __init__(
         self, name: str, k1: float, k2: float, a: float, b: float, c: float
     ) -> None:

@@ -116,6 +116,9 @@ class Thing(ABC):
     def get_atomic_concepts(self) -> set[typing.Self]:
         return self.compute_atomic_concepts()
 
+    def get_atomic_concepts_names(self) -> set[str]:
+        return set([str(concept) for concept in self.compute_atomic_concepts()])
+
     @abstractmethod
     def get_roles(self) -> set[str]:
         pass
@@ -163,14 +166,19 @@ class Thing(ABC):
 
 
 class Concept(Thing):
+    # Used to create new concepts
     SPECIAL_STRING = "@"
+    # Default prefix for new individual names.
     DEFAULT_NAME = f"Concept{SPECIAL_STRING}"
+    # Number of new concepts
     num_new_concepts = 1
 
     def __init__(
         self, c_type: ConceptType = ConceptType.ATOMIC, name: str = ""
     ) -> None:
+        # Type of the concept
         self._type: ConceptType = c_type
+        # Name of the concept
         self._name: str = name
 
     @property

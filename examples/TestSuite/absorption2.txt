@@ -1,4 +1,3 @@
-
 (define-fuzzy-logic lukasiewicz)
 (instance a C 0.9)
 (instance a G 0.8)

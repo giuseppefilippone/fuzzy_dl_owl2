@@ -10,7 +10,13 @@ from fuzzy_dl_owl2.fuzzydl.query.query import Query
 
 
 class MinQuery(Query):
+    """
+    Minimize expression query.
+    """
+
     def __init__(self, expr: Expression) -> None:
+        super().__init__()
+        # Expression to be minimized.
         self.obj_expr = expr
 
     def preprocess(self, kb: KnowledgeBase) -> None:
@@ -25,7 +31,7 @@ class MinQuery(Query):
             self.set_total_time()
             return sol
         except InconsistentOntologyException:
-            return Solution(False)
+            return Solution(Solution.INCONSISTENT_KB)
 
     def __str__(self) -> str:
         return f"{self.obj_expr} ? >= "

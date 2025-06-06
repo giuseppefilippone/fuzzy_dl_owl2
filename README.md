@@ -329,44 +329,45 @@ fuzzy_equivalence   := '(' 'define-fuzzy-equivalence'  name ')' # fuzzy equivale
 ## Concept expressions
 ```python
 concept := (
-    '*top*'                                             # top concept
-    | '*bottom*'                                        # bottom concept
-    | name                                              # atomic concept or concrete fuzzy concept
-    | restriction                                       # datatype restriction
-    | '(' 'and' concept concept ')'                     # concept conjunction
-    | '(' 'g-and' concept concept ')'                   # Goedel conjunction
-    | '(' 'l-and' concept concept ')'                   # Lukasiewicz conjunction
-    | '(' 'or' concept concept ')'                      # concept disjunction
-    | '(' 'g-or' concept concept ')'                    # Goedel disjunction
-    | '(' 'l-or' concept concept ')'                    # Lukasiewicz disjunction
-    | '(' 'not' concept ')'                             # concept negation
-    | '(' 'implies' concept concept ')'                 # concept implication
-    | '(' 'g-implies' concept concept ')'               # Goedel implication
-    | '(' 'l-implies' concept concept ')'               # Lukasiewicz implication
-    | '(' 'kd-implies' concept concept ')'              # Kleene-Dienes implication
-    | '(' 'all' name concept ')'                        # universal role restriction
-    | '(' 'some' name concept ')'                       # existential role restriction
-    | '(' 'some' name name ')'                          # individual value restriction
-    | '(' 'ua' name concept ')'                         # upper approximation
-    | '(' 'lua' name concept ')'                        # loose upper approximation
-    | '(' 'tua' name concept ')'                        # tight upper approximation
-    | '(' 'la' name concept ')'                         # lower approximation
-    | '(' 'lla' name concept ')'                        # loose lower approximation
-    | '(' 'tla' name concept ')'                        # tight lower approximation
-    | '(' 'self' concept ')'                            # local reflexivity concept
-    | '(' name concept ')'                              # modifier applied to concept
-    | '(' fuzzy_number ')'                              # fuzzy number
-    | '(' '[' ('>=' | '<=') name ']' concept ')'        # threshold concept
-    | '(' numbers concept ')'                           # weighted concept
-    | '(' 'w-sum' ('(' numbers concept ')')+ ')'        # weighted sum concept
-    | '(' 'w-max' ('(' numbers concept ')')+ ')'        # weighted max concept
-    | '(' 'w-min' ('(' numbers concept ')')+ ')'        # weighted min concept
-    | '(' 'w-sum-zero' ('(' numbers concept ')')+ ')'   # weighted sum zero concept
-    | '(' 'owa' numbers+ concept+ ')'                   # OWA aggregation operator
-    | '(' 'q-owa' name concept+ ')'                     # quantifier-guided OWA
-    | '(' 'choquet' numbers+ concept+ ')'               # Choquet integral
-    | '(' 'sugeno' numbers+ concept+ ')'                # Sugeno integral
-    | '(' 'q-sugeno' numbers+ concept+ ')'              # Quasi-Sugeno integral
+    '*top*'                                                     # top concept
+    | '*bottom*'                                                # bottom concept
+    | name                                                      # atomic concept or concrete fuzzy concept
+    | restriction                                               # datatype restriction
+    | '(' 'and' concept concept ')'                             # concept conjunction
+    | '(' 'g-and' concept concept ')'                           # Goedel conjunction
+    | '(' 'l-and' concept concept ')'                           # Lukasiewicz conjunction
+    | '(' 'or' concept concept ')'                              # concept disjunction
+    | '(' 'g-or' concept concept ')'                            # Goedel disjunction
+    | '(' 'l-or' concept concept ')'                            # Lukasiewicz disjunction
+    | '(' 'not' concept ')'                                     # concept negation
+    | '(' 'implies' concept concept ')'                         # concept implication
+    | '(' 'g-implies' concept concept ')'                       # Goedel implication
+    | '(' 'l-implies' concept concept ')'                       # Lukasiewicz implication
+    | '(' 'kd-implies' concept concept ')'                      # Kleene-Dienes implication
+    | '(' 'all' name concept ')'                                # universal role restriction
+    | '(' 'some' name concept ')'                               # existential role restriction
+    | '(' 'some' name name ')'                                  # individual value restriction
+    | '(' 'ua' name concept ')'                                 # upper approximation
+    | '(' 'lua' name concept ')'                                # loose upper approximation
+    | '(' 'tua' name concept ')'                                # tight upper approximation
+    | '(' 'la' name concept ')'                                 # lower approximation
+    | '(' 'lla' name concept ')'                                # loose lower approximation
+    | '(' 'tla' name concept ')'                                # tight lower approximation
+    | '(' 'self' concept ')'                                    # local reflexivity concept
+    | '(' name concept ')'                                      # modifier applied to concept
+    | '(' fuzzy_number ')'                                      # fuzzy number
+    | '(' '[' ('>=' | '<=') name ']' concept ')'                # threshold concept
+    | '(' numbers concept ')'                                   # weighted concept
+    | '(' 'w-sum' ('(' numbers concept ')')+ ')'                # weighted sum concept
+    | '(' 'w-max' ('(' numbers concept ')')+ ')'                # weighted max concept
+    | '(' 'w-min' ('(' numbers concept ')')+ ')'                # weighted min concept
+    | '(' 'w-sum-zero' ('(' numbers concept ')')+ ')'           # weighted sum zero concept
+    | '(' 'owa' numbers+ concept+ ')'                           # OWA aggregation operator
+    | '(' 'q-owa' name concept+ ')'                             # quantifier-guided OWA
+    | '(' 'choquet' numbers+ concept+ ')'                       # Choquet integral
+    | '(' 'sugeno' numbers+ concept+ ')'                        # Sugeno integral
+    | '(' 'q-sugeno' numbers+ concept+ ')'                      # Quasi-Sugeno integral
+    | '(' 'sigma-count' name concept '{' name+ '}' name ')'     # Sigma-count concept
 )
 ```
 
@@ -413,6 +414,7 @@ concept := (
 |(choquet ($w_1$, $\ldots$, $w_n$) ($C_1$, $\ldots$, $C_n$) | Choquet integral | $y_1 w_1 + \sum_{i=2}^n (y_i - y_{i - 1}) w_i $ |
 |(sugeno ($v_1$, $\ldots$, $v_n$) ($C_1$, $\ldots$, $C_n$) | Sugeno integral | $\max_{i=1}^n \min \\{y_i, mu_i\\}$ |
 |(q-sugeno ($v_1$, $\ldots$, $v_n$) ($C_1$, $\ldots$, $C_n$) | Quasi-Sugeno integral | $\max_{i=1}^n y_i \otimes_L mu_i $|
+|(sigma-count $R$ $C$ {$a_1$ $\ldots$ $a_k$} $F_C$ | A Sigma-Count concept with role $R$ and associated to the concept $C$, the individuals $a_i$ and the fuzzy concrete concept $F_C$ | |
 
 - $n_1, \ldots, n_k \in \[0, 1\]$, with $\sum_{i=1}^k\ n_i \leq 1$;
 - $w_1, \ldots, w_n \in \[0, 1\]$, with $\sum_{i=1}^n\ w_i = 1$;
@@ -421,8 +423,9 @@ concept := (
 - $ow_i$ is the weight $v_i$ of the $i$-largest of the $C_i^\mathcal{I}(x)$;
 - $mu_i$ is defined as follows: $mu_1 = ow_1$, and $mu_i = ow_i \oplus mu_{i - 1}$ for $i \in \\{2, \ldots, n\\}$;
 - Fuzzy numbers can only appear in existential, universal and datatype restrictions;
-- In threshold concepts 'var' may be replaced with $ w \in \[0, 1\] $;
-- Fuzzy relations $s$ should be previously defined as fuzzy similarity relation or a fuzzy equivalence relation as **(define-fuzzy-similarity s)** or **(define-fuzzy-equivalence s)**, respectively.
+- In threshold concepts **var** may be replaced with $ w \in \[0, 1\] $;
+- Fuzzy relations $s$ should be previously defined as fuzzy similarity relation or a fuzzy equivalence relation as **(define-fuzzy-similarity s)** or **(define-fuzzy-equivalence s)**, respectively;
+- Fuzzy concrete concept $F_C$ in **sigma-count** concept has to be previously defined as **left-shoulder**, **right-shoulder** or **triangular** concept with **define-fuzzy-concept**.
 
 ## Axioms
 ```python

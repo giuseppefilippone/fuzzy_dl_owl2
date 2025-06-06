@@ -12,6 +12,10 @@ from fuzzy_dl_owl2.fuzzydl.util.constants import ConceptType, FuzzyLogic
 
 
 class OperatorConcept(Concept, HasConceptsInterface):
+    """
+    Defines a logic operator concept defined as AND, OR or NOT of concepts.
+    """
+
     AND_OPERATORS: list[ConceptType] = [
         ConceptType.AND,
         ConceptType.GOEDEL_AND,
@@ -261,6 +265,10 @@ class OperatorConcept(Concept, HasConceptsInterface):
     @staticmethod
     def is_not_zadeh_implies(op: Concept) -> bool:
         return OperatorConcept.is_not_type(op, ConceptType.ZADEH_IMPLIES)
+
+    @staticmethod
+    def is_not_sigma_concept(op: Concept) -> bool:
+        return OperatorConcept.is_not_type(op, ConceptType.SIGMA_CONCEPT)
 
     def is_concrete(self) -> bool:
         if OperatorConcept.is_not_concrete(self) or OperatorConcept.is_not_fuzzy_number(

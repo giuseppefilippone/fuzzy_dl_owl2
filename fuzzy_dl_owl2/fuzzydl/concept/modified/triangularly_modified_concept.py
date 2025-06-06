@@ -9,6 +9,9 @@ from fuzzy_dl_owl2.fuzzydl.modifier.modifier import Modifier
 
 
 class TriangularlyModifiedConcept(ModifiedConcept):
+
+    """Fuzzy concept modified with a triangular modifier."""
+
     def __init__(self, c: Concept, mod: Modifier) -> None:
         super().__init__(c, mod)
 

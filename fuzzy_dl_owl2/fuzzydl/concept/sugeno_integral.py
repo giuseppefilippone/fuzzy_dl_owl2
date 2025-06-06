@@ -14,6 +14,7 @@ from fuzzy_dl_owl2.fuzzydl.util.util import Util
 
 
 class SugenoIntegral(Concept, HasWeightedConceptsInterface):
+    """Sugeno integral concept."""
 
     @typing.overload
     def __init__(self) -> None: ...
@@ -48,6 +49,9 @@ class SugenoIntegral(Concept, HasWeightedConceptsInterface):
                     "Error: The number of weights and the number of concepts should be the same"
                 )
             self.name = self.compute_name()
+        else:
+            self.weights: list[float] = []
+
 
     def clone(self) -> typing.Self:
         return SugenoIntegral(self.weights[:], [c for c in self.concepts])

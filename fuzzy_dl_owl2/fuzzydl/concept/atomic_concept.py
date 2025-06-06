@@ -44,7 +44,7 @@ class AtomicConcept(Concept):
         return AtomicConcept(self.name)
 
     def compute_atomic_concepts(self) -> set[typing.Self]:
-        return [self]
+        return set([self])
 
     def get_roles(self) -> set[str]:
         return set()

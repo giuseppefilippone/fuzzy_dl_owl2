@@ -17,6 +17,9 @@ from fuzzy_dl_owl2.fuzzydl.query.related_query import RelatedQuery
 
 
 class MinRelatedQuery(RelatedQuery):
+    """
+    Greatest lower bound of a role assertion (ind1, ind2, role).
+    """
 
     def __init__(self, a: Individual, b: Individual, role_name: str) -> None:
         self.ind1: Individual = a
@@ -33,6 +36,7 @@ class MinRelatedQuery(RelatedQuery):
         if "(some " in str(conc) or "(b-some " in str(conc):
             kb.set_dynamic_blocking()
 
+        # a: not c >= 1-q
         kb.add_assertion(
             self.ind1,
             -conc,
@@ -51,7 +55,7 @@ class MinRelatedQuery(RelatedQuery):
             self.set_total_time()
             return sol
         except InconsistentOntologyException:
-            return Solution(False)
+            return Solution(Solution.INCONSISTENT_KB)
 
     def __str__(self) -> str:
         return f"Is {self.ind1} related to {self.ind2} through {self.role} ? >= "

@@ -1,5 +1,6 @@
 import unittest
 
+from test_absorption import TestAbsorption
 from test_aggregation import TestAggregation
 from test_all import TestAll
 from test_and import TestAnd
@@ -37,6 +38,7 @@ from test_weighted_sum import TestWeightedSum
 def suite():
     loader = unittest.TestLoader()
     suite = unittest.TestSuite()
+    suite.addTests(loader.loadTestsFromTestCase(TestAbsorption))
     suite.addTests(loader.loadTestsFromTestCase(TestAggregation))
     suite.addTests(loader.loadTestsFromTestCase(TestAll))
     suite.addTests(loader.loadTestsFromTestCase(TestAnd))

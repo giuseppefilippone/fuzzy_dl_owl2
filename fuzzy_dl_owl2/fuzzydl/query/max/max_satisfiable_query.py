@@ -18,6 +18,9 @@ from fuzzy_dl_owl2.fuzzydl.util.config_reader import ConfigReader
 
 
 class MaxSatisfiableQuery(SatisfiableQuery):
+    """
+    Maximal satisfiability degree of a fuzzy concept.
+    """
 
     @typing.overload
     def __init__(self, c: Concept) -> None: ...
@@ -35,9 +38,20 @@ class MaxSatisfiableQuery(SatisfiableQuery):
             self.__max_sat_query_init_2(*args)
 
     def __max_sat_query_init_1(self, c: Concept) -> None:
+        """Constructor for a general satisfiability query
+
+        Args:
+            c (Concept): A fuzzy concept for which the satisfiability is to be tested.
+        """
         super().__init__(c)
 
     def __max_sat_query_init_2(self, c: Concept, a: Individual) -> None:
+        """Constructor for a satisfiability query involving a specific individual
+
+        Args:
+            c (Concept): A fuzzy concept for which the satisfiability is to be tested.
+            a (Individual): An individual used in the satisfiability test.
+        """
         super().__init__(c, a)
 
     def preprocess(self, kb: KnowledgeBase) -> None:
@@ -65,7 +79,7 @@ class MaxSatisfiableQuery(SatisfiableQuery):
             self.set_total_time()
             return sol
         except InconsistentOntologyException:
-            return Solution(False)
+            return Solution(Solution.INCONSISTENT_KB)
 
     def __str__(self) -> str:
         if self.ind is not None:

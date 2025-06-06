@@ -12,6 +12,11 @@ if typing.TYPE_CHECKING:
 
 class RepresentativeIndividual:
 
+    """
+    New concrete individual being a representative of a set of individuals.
+    Given an individual p and a fuzzy number F, a representative individual is the set of individuals that are greater or equal (or less or equal) than F. Then, p is related to the representative individual in some way.
+    """
+
     def __init__(
         self,
         c_type: RepresentativeIndividualType,
@@ -19,9 +24,13 @@ class RepresentativeIndividual:
         f: TriangularFuzzyNumber,
         ind: CreatedIndividual,
     ) -> None:
+        # Name of the feature for which the individual is a filler.
         self.f_name: str = f_name
+        # Type of the individual
         self.type: RepresentativeIndividualType = c_type
+        # Fuzzy number
         self.f: TriangularFuzzyNumber = f
+        # Reference individual
         self.ind: CreatedIndividual = ind
 
     def get_type(self) -> RepresentativeIndividualType:

@@ -6,7 +6,9 @@ from fuzzy_dl_owl2.fuzzydl.degree.degree import Degree
 
 class AtomicAssertion:
     def __init__(self, c: Concept, degree: Degree) -> None:
+        # Atomic concept
         self.c: Concept = c
+        # Lower bound degree
         self.degree: Degree = degree
 
     def get_concept_name(self) -> str:

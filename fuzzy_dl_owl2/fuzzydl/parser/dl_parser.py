@@ -48,6 +48,7 @@ from fuzzy_dl_owl2.fuzzydl.concept.owa_concept import OwaConcept
 from fuzzy_dl_owl2.fuzzydl.concept.qowa_concept import QowaConcept
 from fuzzy_dl_owl2.fuzzydl.concept.quasi_sugeno_integral import QsugenoIntegral
 from fuzzy_dl_owl2.fuzzydl.concept.self_concept import SelfConcept
+from fuzzy_dl_owl2.fuzzydl.concept.sigma_concept import SigmaConcept
 from fuzzy_dl_owl2.fuzzydl.concept.sugeno_integral import SugenoIntegral
 from fuzzy_dl_owl2.fuzzydl.concept.threshold_concept import ThresholdConcept
 from fuzzy_dl_owl2.fuzzydl.concept.truth_concept import TruthConcept
@@ -563,6 +564,32 @@ class DLParser(object):
                 Util.error("Error: The maximum of the weights must be equal to 1.")
             return pp.ParseResults([QsugenoIntegral(weights, concepts)])
         return tokens
+
+    @staticmethod
+    # @pp.trace_parse_action
+    def _parse_sigma_count_concept(tokens: pp.ParseResults) -> pp.ParseResults:
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"\t\t_parse_sigma_count_concept -> {tokens}")
+        list_tokens: list[str] = tokens.as_list()
+        role: str = list_tokens[0]
+        concept: Concept = DLParser._to_concept(list_tokens[1])
+        individuals: list[Individual] = [
+            DLParser.kb.get_individual(token) for token in list_tokens[2:-1]
+        ]
+        concept_name: str = list_tokens[-1]
+        if concept_name not in DLParser.kb.concrete_concepts:
+            Util.error(f"Error: Fuzzy cocnept {concept_name} has not been defined")
+        fuzzy_concept: Concept = DLParser.kb.get_concept(concept_name)
+        if not isinstance(
+            fuzzy_concept,
+            (RightConcreteConcept, LeftConcreteConcept, TriangularConcreteConcept),
+        ):
+            Util.error(
+                f"Error: Fuzzy concept {fuzzy_concept} has to be a left, right or a triangular function."
+            )
+        return pp.ParseResults(
+            [SigmaConcept(concept, role, individuals, fuzzy_concept)]
+        )
 
     @staticmethod
     # @pp.trace_parse_action
@@ -1455,6 +1482,8 @@ class DLParser(object):
 
         lbrace = pp.Literal("(").set_results_name("lbrace").suppress()
         rbrace = pp.Literal(")").set_results_name("rbrace").suppress()
+        lbbrace = pp.Literal("{").set_results_name("lbbrace").suppress()
+        rbbrace = pp.Literal("}").set_results_name("rbbrace").suppress()
         comment = pp.one_of(["#", "%"]).set_results_name("comment").suppress()
         any_not_newline = (
             pp.Regex("[^\n]+").set_results_name("any_not_newline").suppress()
@@ -1736,6 +1765,17 @@ class DLParser(object):
                 )
                 .set_results_name("owa_integrals", list_all_matches=True)
                 .set_parse_action(DLParser._parse_owa_integral_concept)
+                | (
+                    FuzzyDLKeyword.SIGMA_COUNT.get_value().suppress()
+                    + variables  # role
+                    + concept
+                    + lbbrace
+                    + variables[1, ...]  # list of individuals
+                    + rbbrace
+                    + variables  # fuzzy concept name
+                )
+                .set_results_name("sigma_count", list_all_matches=True)
+                .set_parse_action(DLParser._parse_sigma_count_concept)
             )
             + rbrace
         )

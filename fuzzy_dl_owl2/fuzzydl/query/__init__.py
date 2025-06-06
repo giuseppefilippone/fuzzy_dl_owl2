@@ -6,6 +6,7 @@ from .related_query import RelatedQuery
 from .satisfiable_query import SatisfiableQuery
 from .subsumption_query import SubsumptionQuery
 from .all_instances_query import AllInstancesQuery
+from .classification_query import ClassificationQuery
 
 from .max import *
 

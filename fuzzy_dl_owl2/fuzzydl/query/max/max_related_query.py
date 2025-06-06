@@ -16,12 +16,17 @@ from fuzzy_dl_owl2.fuzzydl.query.related_query import RelatedQuery
 
 
 class MaxRelatedQuery(RelatedQuery):
+    """
+    Lowest upper bound of a role assertion (ind1, ind2, role)
+    """
+
     def __init__(self, a: Individual, b: Individual, role_name: str) -> None:
         self.ind1: Individual = a
         self.ind2: Individual = b
         self.role: str = role_name
 
     def preprocess(self, kb: KnowledgeBase) -> None:
+        # glb(ind1 : b-some R ind2)
         conc: Concept = HasValueConcept(self.role, self.ind2)
         q: Variable = kb.milp.get_variable(self.ind1, conc)
         kb.add_assertion(self.ind1, conc, DegreeVariable.get_degree(q))
@@ -39,7 +44,7 @@ class MaxRelatedQuery(RelatedQuery):
             self.set_total_time()
             return sol
         except InconsistentOntologyException:
-            return Solution(False)
+            return Solution(Solution.INCONSISTENT_KB)
 
     def __str__(self) -> str:
         return f"Is {self.ind1} related to {self.ind2} through {self.role} ? <= "

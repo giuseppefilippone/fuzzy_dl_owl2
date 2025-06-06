@@ -12,7 +12,11 @@ from fuzzy_dl_owl2.fuzzydl.util.util import Util
 
 
 class TriangularFuzzyNumber(TriangularConcreteConcept):
+    """Fuzzy number defined with a triangular function."""
+
+    # Lower bound of the range of the fuzzy numbers.
     K1: float = float("-inf")
+    # Upper bound of the range of the fuzzy numbers.
     K2: float = float("inf")
 
     @typing.overload
@@ -41,18 +45,24 @@ class TriangularFuzzyNumber(TriangularConcreteConcept):
 
     @staticmethod
     def add(t1: typing.Self, t2: typing.Self) -> typing.Self:
+        """
+        Adds two triangular fuzzy numbers.
+        """
         return t1 + t2
 
     @staticmethod
     def minus(t1: typing.Self, t2: typing.Self) -> typing.Self:
+        """Subtracts two triangular fuzzy numbers."""
         return t1 - t2
 
     @staticmethod
     def times(t1: typing.Self, t2: typing.Self) -> typing.Self:
+        """Multiplies two triangular fuzzy numbers."""
         return t1 * t2
 
     @staticmethod
     def divided_by(t1: typing.Self, t2: typing.Self) -> typing.Self:
+        """Divides two triangular fuzzy numbers."""
         return t1 / t2
 
     @staticmethod
@@ -62,6 +72,7 @@ class TriangularFuzzyNumber(TriangularConcreteConcept):
 
     @staticmethod
     def has_defined_range() -> bool:
+        """Checks if the range of the fuzzy numbers has been defined."""
         return TriangularFuzzyNumber.K1 != float("-inf")
 
     def clone(self) -> typing.Self:
@@ -71,6 +82,7 @@ class TriangularFuzzyNumber(TriangularConcreteConcept):
         return True
 
     def get_best_non_fuzzy_performance(self) -> float:
+        """Gets the Best Non fuzzy Performance (BNP) of the fuzzy number."""
         return Util.round((self.a + self.b + self.c) / 3.0)
 
     def is_number(self) -> bool:

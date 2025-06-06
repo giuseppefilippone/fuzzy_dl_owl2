@@ -7,6 +7,9 @@ from fuzzy_dl_owl2.fuzzydl.util.constants import LogicOperatorType
 
 
 class PrimitiveConceptDefinition:
+    """
+    General concept inclusion axiom.
+    """
 
     def __init__(
         self,
@@ -15,9 +18,13 @@ class PrimitiveConceptDefinition:
         implication: LogicOperatorType,
         degree: float,
     ) -> None:
+        # Subsumer concept
         self.defined: str = defined
+        # Subsumed concept
         self.definition: Concept = definition
+        # Lower bound degree
         self.degree: float = degree
+        # Axiom type (depends on the fuzzy implication)
         self.implication: LogicOperatorType = implication
 
     def clone(self) -> typing.Self:

@@ -12,6 +12,7 @@ from fuzzy_dl_owl2.fuzzydl.util.constants import FeatureFunctionType
 
 
 class FeatureFunction:
+    """Function involving several features."""
 
     @typing.overload
     def __init__(self, feature: typing.Self) -> None: ...
@@ -105,6 +106,7 @@ class FeatureFunction:
         return self.n
 
     def get_features(self) -> set[str]:
+        """Gets an array of features that take part in the function."""
         features: set[str] = set()
         if self.type == FeatureFunctionType.ATOMIC:
             features.add(self.feature)
@@ -121,6 +123,7 @@ class FeatureFunction:
     def to_expression(
         self, a: Individual, milp: MILPHelper
     ) -> typing.Optional[Expression]:
+        """Gets an array of features that take part in the function."""
         if self.type == FeatureFunctionType.ATOMIC:
             # Get the filler "b" for feature(a)
             rel_set: list[Relation] = a.role_relations.get(self.feature)

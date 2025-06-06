@@ -10,6 +10,9 @@ from fuzzy_dl_owl2.fuzzydl.util.util import Util
 
 
 class LinearConcreteConcept(FuzzyConcreteConcept):
+    """
+    Fuzzy concrete concept defined with a left shoulder function
+    """
 
     def __init__(self, name: str, k1: float, k2: float, a: float, b: float) -> None:
         super().__init__(name)

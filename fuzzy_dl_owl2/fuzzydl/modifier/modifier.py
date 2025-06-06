@@ -7,6 +7,9 @@ from fuzzy_dl_owl2.fuzzydl.concept.concept import Concept
 
 
 class Modifier(ABC):
+    """
+    Fuzzy modifier.
+    """
 
     def __init__(self, name: str) -> None:
         self.name: str = name
@@ -24,10 +27,28 @@ class Modifier(ABC):
 
     @abstractmethod
     def modify(self, concept: Concept) -> Concept:
+        """
+        Modifies a fuzzy concept.
+
+        Args:
+            concept (Concept): A fuzzy concept
+
+        Returns:
+            Concept: Fuzzy concept resulting from the application of the modifier to c.
+        """
         pass
 
     @abstractmethod
     def get_membership_degree(self, value: float) -> float:
+        """
+        Gets the image in [0,1] of a real number to the modifier.
+
+        Args:
+            value (float): A real number in the range of values of the modifier function.
+
+        Returns:
+            float: Image in [0,1] of x to the explicit modifier function.
+        """
         pass
 
     def __repr__(self) -> str:

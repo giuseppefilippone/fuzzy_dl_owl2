@@ -12,6 +12,7 @@ from fuzzy_dl_owl2.fuzzydl.util.util import Util
 
 
 class FuzzyConcreteConcept(Concept, ABC):
+    """Fuzzy concrete concept defined with an explicit membership function."""
 
     def __init__(self, name: str) -> None:
         super().__init__(ConceptType.CONCRETE, name)

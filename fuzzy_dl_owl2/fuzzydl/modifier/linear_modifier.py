@@ -11,6 +11,9 @@ from fuzzy_dl_owl2.fuzzydl.modifier.modifier import Modifier
 
 
 class LinearModifier(Modifier):
+    """
+    Linear modifier with parameter c
+    """
 
     def __init__(self, name: str, c: float) -> None:
         super().__init__(name)

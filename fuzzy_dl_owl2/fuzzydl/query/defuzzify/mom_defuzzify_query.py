@@ -25,6 +25,9 @@ from fuzzy_dl_owl2.fuzzydl.util.util import Util
 
 
 class MomDefuzzifyQuery(DefuzzifyQuery):
+    """
+    Middle of maxima defuzzification query.
+    """
 
     def __init__(self, c: Concept, ind: Individual, feature_name: str) -> None:
         super().__init__(c, ind, feature_name)
@@ -51,7 +54,7 @@ class MomDefuzzifyQuery(DefuzzifyQuery):
                 Util.warning("Warning: Problem in defuzzification. Answer is 0.")
                 return None
         except InconsistentOntologyException:
-            return Solution(False)
+            return Solution(Solution.INCONSISTENT_KB)
 
         rel_set: list[Relation] = ind.role_relations.get(self.f_name)
         b: CreatedIndividual = typing.cast(
@@ -86,9 +89,10 @@ class MomDefuzzifyQuery(DefuzzifyQuery):
             traceback.print_exc()
         except InconsistentOntologyException as e:
             traceback.print_exc()
-        return Solution(False)
+        return Solution(Solution.INCONSISTENT_KB)
 
     def get_obj_expression(self, variable: Variable) -> Expression:
+        # Put anything here, we do not use this method
         return Expression(Term(-1.0, variable))
 
     def __str__(self) -> str:

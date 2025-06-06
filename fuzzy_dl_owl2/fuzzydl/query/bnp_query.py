@@ -9,7 +9,9 @@ from fuzzy_dl_owl2.fuzzydl.query.query import Query
 
 
 class BnpQuery(Query):
+
     def __init__(self, c: TriangularFuzzyNumber) -> None:
+        super().__init__()
         self.c: TriangularFuzzyNumber = c
 
     def preprocess(self, kb: KnowledgeBase) -> None:

@@ -16,6 +16,10 @@ from fuzzy_dl_owl2.fuzzydl.util.constants import VariableType
 
 
 class MinInstanceQuery(InstanceQuery):
+    """
+    Greatest lower bound of a concept assertion.
+    """
+
     def __init__(self, concept: Concept, individual: Individual) -> None:
         super().__init__(concept, individual)
 
@@ -27,6 +31,7 @@ class MinInstanceQuery(InstanceQuery):
         if "(some " in str(self.conc) or "(b-some " in str(self.conc):
             kb.set_dynamic_blocking()
 
+        # a: not c >= 1-q
         kb.add_assertion(
             self.ind,
             -self.conc,
@@ -44,7 +49,7 @@ class MinInstanceQuery(InstanceQuery):
             self.set_total_time()
             return sol
         except InconsistentOntologyException:
-            return Solution(False)
+            return Solution(Solution.INCONSISTENT_KB)
 
     def __str__(self) -> str:
         return f"Is {self.ind} instance of {self.conc} ? >= "

@@ -12,6 +12,10 @@ from fuzzy_dl_owl2.fuzzydl.util.util import Util
 
 
 class ChoquetIntegral(Concept, HasWeightedConceptsInterface):
+    """
+    Choquet integral concept.
+    """
+
     def __init__(self, weights: list[float], concepts: list[Concept]) -> None:
         Concept.__init__(self, ConceptType.CHOQUET_INTEGRAL)
         HasWeightedConceptsInterface.__init__(self, weights, concepts)
@@ -22,6 +26,8 @@ class ChoquetIntegral(Concept, HasWeightedConceptsInterface):
                     "Error: The number of weights and the number of concepts should be the same"
                 )
             self.name: str = str(self)
+        else:
+            self.weights = list()
 
     def clone(self) -> typing.Self:
         return ChoquetIntegral(self.weights[:], [c for c in self.concepts])

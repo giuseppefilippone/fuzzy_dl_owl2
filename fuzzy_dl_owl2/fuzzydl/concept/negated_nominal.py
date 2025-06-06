@@ -9,6 +9,9 @@ from fuzzy_dl_owl2.fuzzydl.util.constants import ConceptType
 
 
 class NegatedNominal(Concept):
+    """
+    Negated nominal concept. Only used in range restrictions for the moment.
+    """
 
     def __init__(self, ind_name: str) -> None:
         super().__init__(ConceptType.ATOMIC)

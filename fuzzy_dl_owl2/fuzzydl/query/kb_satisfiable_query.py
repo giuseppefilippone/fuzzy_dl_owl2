@@ -9,15 +9,25 @@ from fuzzy_dl_owl2.fuzzydl.query.query import Query
 
 
 class KbSatisfiableQuery(Query):
+    """
+    Knowledge base satisfiability degree
+    """
+
+    def __init__(self) -> None:
+        super().__init__()
 
     def preprocess(self, kb: KnowledgeBase) -> None:
         pass
 
     def solve(self, kb: KnowledgeBase) -> Solution:
         try:
-            return Solution(1.0) if self.is_consistent_kb(kb) else Solution(False)
+            return (
+                Solution(1.0)
+                if self.is_consistent_kb(kb)
+                else Solution(Solution.INCONSISTENT_KB)
+            )
         except InconsistentOntologyException:
-            return Solution(False)
+            return Solution(Solution.INCONSISTENT_KB)
 
     def is_consistent_kb(self, kb: KnowledgeBase) -> bool:
         kb.solve_abox()
