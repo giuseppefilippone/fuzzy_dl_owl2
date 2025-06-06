@@ -21,7 +21,7 @@ extensions = [
     "sphinx.ext.viewcode",
 ]
 
-templates_path = ['_templates']
+templates_path = ['source/_templates']
 exclude_patterns = []
 
 # Optional: if you use numpy-style or Google-style docstrings
@@ -36,4 +36,4 @@ mathjax_path = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_theme = 'alabaster'
-html_static_path = ['_static']
+html_static_path = ["source/_static"]
