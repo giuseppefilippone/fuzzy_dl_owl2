@@ -10139,7 +10139,7 @@ class CreatedIndividualHandler:
     ) -> bool:
         """
         Gets if the individual is indirectly blocked with respect to a fuzzy KB.
-            Case SUBSET or SET blocking.
+        Case SUBSET or SET blocking.
         A node v is indirectly blocked iff one of its ancestors are blocked.
         """
         # Don't test if not deep enough in completion forest
@@ -10353,11 +10353,7 @@ class CreatedIndividualHandler:
     ) -> bool:
         """
         Gets if the individual is directly blocked with respect to a fuzzy KB.
-
-        A node v is directly blocked iff none of its ancestors are blocked
-        and there exists an ancestor w such that
-                                    L(v) = L(w),
-        where L(*) is the set of Concept's labels for a node.
+        A node v is directly blocked iff none of its ancestors are blocked and there exists an ancestor w such that L(v) = L(w), where L(*) is the set of Concept's labels for a node.
         In this case we say that w directly blocks v.
         """
         type: BlockingDynamicType = kb.blocking_type
