@@ -19,15 +19,19 @@ release = "1.0.8"
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
+    "myst_parser",
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",  # for summary tables
     "sphinx.ext.mathjax",
     "sphinx.ext.napoleon",  # if you use Google/NumPy-style docstrings
     "sphinx.ext.viewcode",  # optional: adds links to source code
+    "sphinx_toolbox.tweaks.latex_toc",
 ]
 
 templates_path = ["_templates"]
 exclude_patterns = []
+add_module_names = False
+python_maximum_signature_line_length = 128
 
 # Optional: if you use numpy-style or Google-style docstrings
 napoleon_google_docstring = True
@@ -45,9 +49,37 @@ mathjax_path = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
 html_theme = "sphinx_rtd_theme"
 html_static_path = ["_static"]
 
+
+# A dictionary that contains LaTeX snippets overriding those Sphinx usually puts into the generated .tex files.
 latex_elements = {
-    "printindex": r"\def\twocolumn[#1]{#1}\footnotesize\raggedright\printindex",
+    # "printindex": r"\def\twocolumn[#1]{#1}\sloppy\small\raggedright\printindex",
+    "printindex": r"\sloppy\small\raggedright\printindex",
+    "papersize": "a4paper",
+    "fncychap": r"\usepackage[Bjarne]{fncychap}",
+    "extraclassoptions": "openany",
+    "preamble": r"""
+        \hypersetup{unicode=true}
+
+        % Redefine sphinxtheindex environment to use one column and smaller font
+        \usepackage{etoolbox}
+        \makeatletter
+        \renewenvironment{sphinxtheindex}
+            {\clearpage\footnotesize\begin{theindex}}
+            {\end{theindex}\normalsize\clearpage}
+        \makeatother
+
+        \usepackage{fvextra}
+        \DefineVerbatimEnvironment{Verbatim}{Verbatim}{breaklines,commandchars=\\\{\}}
+        \usepackage[htt]{hyphenat}
+        \sloppy
+     """,
+    "passoptionstopackages": r"\PassOptionsToPackage{hyphens}{url}",
+    "sphinxsetup": r"verbatimwithframe=true, verbatimwrapslines=true, verbatimforcewraps=true, inlineliteralwraps=true",
 }
+
+# A dictionary mapping 'howto' and 'manual' to names of real document classes that will be used as the base for the two Sphinx classes.
+latex_docclass = {"howto": "book", "manual": "report"}
+
 
 def skip_special_members(app, what, name, obj, skip, options):
     if name in [

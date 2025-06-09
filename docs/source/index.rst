@@ -12,6 +12,10 @@ Welcome to fuzzy_dl_owl2's documentation!
    :maxdepth: 5
    :caption: Contents:
 
+   main
+   install_and_config
+   grammar
+   usage
    modules
 
 .. automodule:: fuzzy_dl_owl2
