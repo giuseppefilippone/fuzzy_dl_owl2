@@ -13,3 +13,5 @@ sortedcontainers==2.4.0
 trycast==1.2.1
 sphinx
 sphinx-rtd-theme
+myst_parser
+sphinx-toolbox
