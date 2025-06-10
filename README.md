@@ -606,6 +606,7 @@ from fuzzy_dl_owl2 import FuzzyOwl2ToFuzzyDL
 fdl = FuzzyOwl2ToFuzzyDL("./results/example.owl", "example.fdl")
 fdl.translate_owl2ontology()  # save example.fdl in the subdirectory "./results"
 ```
+
 ---
 
 # Project Structure
@@ -806,6 +807,7 @@ fuzzy_dl_owl2
 ```
 
 </details>
+
 ---
 
 # Test
