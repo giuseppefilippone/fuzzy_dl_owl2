@@ -15,6 +15,7 @@ Welcome to fuzzy_dl_owl2's documentation!
    main
    install_and_config
    grammar
+   concepts
    usage
    api/index
 
