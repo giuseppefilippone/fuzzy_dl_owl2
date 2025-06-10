@@ -1,5 +1,7 @@
 # Installation and Configuration
 
+Check the [repository](https://github.com/giuseppefilippone/fuzzy_dl_owl2/).
+
 ```python
 pip install fuzzy-dl-owl2
 ```
