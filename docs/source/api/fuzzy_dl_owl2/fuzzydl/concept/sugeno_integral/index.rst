@@ -1,0 +1,53 @@
+fuzzy_dl_owl2.fuzzydl.concept.sugeno_integral
+=============================================
+
+.. py:module:: fuzzy_dl_owl2.fuzzydl.concept.sugeno_integral
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   fuzzy_dl_owl2.fuzzydl.concept.sugeno_integral.SugenoIntegral
+
+
+Module Contents
+---------------
+
+.. py:class:: SugenoIntegral
+              SugenoIntegral(weights: Optional[list[float]], concepts: list[fuzzy_dl_owl2.fuzzydl.concept.concept.Concept])
+
+   Bases: :py:obj:`fuzzy_dl_owl2.fuzzydl.concept.concept.Concept`, :py:obj:`fuzzy_dl_owl2.fuzzydl.concept.interface.has_weighted_concepts_interface.HasWeightedConceptsInterface`
+
+
+   Sugeno integral concept.
+
+
+   .. py:method:: __and__(value: Self) -> Self
+
+
+   .. py:method:: __hash__() -> int
+
+
+   .. py:method:: __neg__() -> fuzzy_dl_owl2.fuzzydl.concept.concept.Concept
+
+
+   .. py:method:: __or__(value: Self) -> Self
+
+
+   .. py:method:: clone() -> Self
+
+
+   .. py:method:: compute_atomic_concepts() -> set[fuzzy_dl_owl2.fuzzydl.concept.concept.Concept]
+
+
+   .. py:method:: compute_name() -> str
+
+
+   .. py:method:: get_roles() -> set[str]
+
+
+   .. py:method:: replace(a: fuzzy_dl_owl2.fuzzydl.concept.concept.Concept, c: fuzzy_dl_owl2.fuzzydl.concept.concept.Concept) -> fuzzy_dl_owl2.fuzzydl.concept.concept.Concept
+
+

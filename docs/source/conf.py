@@ -5,6 +5,10 @@
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
+import os
+import sys
+sys.path.insert(0, os.path.abspath("../../"))
+
 
 project = "Fuzzy DL OWL 2"
 copyright = "2025, Giuseppe Filippone"
@@ -21,9 +25,9 @@ release = "1.0.8"
 extensions = [
     "myst_parser",
     "sphinx.ext.autodoc",
-    "sphinx.ext.autosummary",  # for summary tables
     "sphinx.ext.mathjax",
     "sphinx.ext.napoleon",  # if you use Google/NumPy-style docstrings
+    "autoapi.extension",
     "sphinx.ext.viewcode",  # optional: adds links to source code
     "sphinx_toolbox.tweaks.latex_toc",
 ]
@@ -32,6 +36,28 @@ templates_path = ["_templates"]
 exclude_patterns = []
 add_module_names = False
 python_maximum_signature_line_length = 128
+
+# Tell AutoAPI where your package lives:
+autoapi_dirs = ["../../fuzzy_dl_owl2"]
+
+# Optional customizations:
+autoapi_options = [
+    "members",
+    "undoc-members",
+    "show-inheritance",
+    "show-module-summary",
+    "special-members",
+]
+
+autoapi_keep_files = True  # keep intermediate .rst files for tweaking
+autoapi_template_dir = "_templates/autoapi"  # if you want to customize layout
+autoapi_root = "api"  # directory name in your docs where API appears
+autoapi_member_order = "groupwise"
+suppress_warnings = [
+    "misc.highlighting_failure",
+    "autoapi.python_import_resolution",
+    "docutils",
+]
 
 # Optional: if you use numpy-style or Google-style docstrings
 napoleon_google_docstring = True

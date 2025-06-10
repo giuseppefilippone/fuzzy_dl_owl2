@@ -11,7 +11,8 @@ rdflib==7.1.4
 setuptools==80.8.0
 sortedcontainers==2.4.0
 trycast==1.2.1
+sphinx-autoapi
 sphinx
-sphinx-rtd-theme
 myst_parser
+sphinx-rtd-theme
 sphinx-toolbox

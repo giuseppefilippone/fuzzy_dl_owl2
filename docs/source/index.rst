@@ -16,7 +16,7 @@ Welcome to fuzzy_dl_owl2's documentation!
    install_and_config
    grammar
    usage
-   modules
+   api/index
 
 .. automodule:: fuzzy_dl_owl2
    :members:
