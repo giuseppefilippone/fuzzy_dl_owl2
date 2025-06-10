@@ -1,3 +1,11 @@
+![Docs](https://img.shields.io/badge/docs-passing-brightgreen.svg)
+![Tests](https://img.shields.io/badge/tests-passing-brightgreen.svg)
+[![Documentation](https://img.shields.io/badge/Read%20the%20Docs-8CA1AF?logo=readthedocs&logoColor=white)](https://fuzzy-dl-owl2.readthedocs.io/en/latest)
+[![PyPI](https://img.shields.io/pypi/v/fuzzy-dl-owl2.svg)](https://pypi.org/project/fuzzy-dl-owl2/)
+![Python Versions](https://img.shields.io/pypi/pyversions/fuzzy-dl-owl2.svg)
+![Code Style](https://img.shields.io/badge/code%20style-python-green)
+
+
 # Fuzzy DL OWL 2
 A python porting of the [Fuzzy Description Language](https://www.umbertostraccia.it/cs/software/fuzzyDL/fuzzyDL.html) and the [Fuzzy OWL 2](https://www.umbertostraccia.it/cs/software/FuzzyOWL/index.html) framework.
 
