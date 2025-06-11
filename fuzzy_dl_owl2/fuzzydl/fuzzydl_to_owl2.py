@@ -4,8 +4,9 @@ import os
 import sys
 import typing
 from functools import partial
+import urllib.parse
 
-from rdflib import RDF, XSD, Literal, Namespace, URIRef
+from rdflib import RDF, RDFS, XSD, Literal, Namespace, URIRef
 
 from fuzzy_dl_owl2.fuzzydl.assertion.assertion import Assertion
 from fuzzy_dl_owl2.fuzzydl.concept.all_some_concept import AllSomeConcept
@@ -61,6 +62,7 @@ from fuzzy_dl_owl2.fuzzydl.primitive_concept_definition import (
     PrimitiveConceptDefinition,
 )
 from fuzzy_dl_owl2.fuzzydl.util import constants
+from fuzzy_dl_owl2.fuzzydl.util.config_reader import ConfigReader
 from fuzzy_dl_owl2.fuzzydl.util.constants import ConceptType, ConcreteFeatureType
 from fuzzy_dl_owl2.fuzzydl.util.util import Util
 from fuzzy_dl_owl2.fuzzyowl2.util.constants import FuzzyOWL2Keyword
@@ -128,8 +130,7 @@ from pyowl2.expressions.object_property import OWLObjectProperty
 from pyowl2.individual.named_individual import OWLNamedIndividual
 from pyowl2.literal.literal import OWLLiteral
 from pyowl2.ontology import OWLOntology
-
-from fuzzy_dl_owl2.fuzzydl.util.config_reader import ConfigReader
+import urllib
 
 
 # @utils.timer_decorator
@@ -143,10 +144,12 @@ class FuzzydlToOwl2:
         # base_iri: str = "http://www.semanticweb.org/ontologies/fuzzydl_ontology.owl",
         base_iri: str = "http://www.semanticweb.org/ontologies/fuzzydl_ontology#",
     ) -> None:
+        base_iri = urllib.parse.urlparse(base_iri).geturl().rstrip("/").rstrip("#")
+        
         self.num_classes: int = 0
         self.kb, _ = DLParser.get_kb(input_file)
-        self.ontology_path: str = base_iri
-        self.ontology_iri: IRI = IRI(Namespace(URIRef(base_iri)))
+        self.ontology_path: str = f"{base_iri}#"
+        self.ontology_iri: IRI = IRI(Namespace(URIRef(self.ontology_path)))
         self.ontology: OWLOntology = OWLOntology(
             self.ontology_iri, OWL1_annotations=True
         )
@@ -154,7 +157,19 @@ class FuzzydlToOwl2:
             IRI(self.ontology_iri.namespace, ConfigReader.OWL_ANNOTATION_LABEL)
         )
 
-        self.ontology.add_axiom(OWLDeclaration(self.fuzzyLabel))
+        self.ontology.add_axiom(
+            OWLDeclaration(
+                self.fuzzyLabel,
+                [
+                    OWLAnnotation(
+                        OWLAnnotationProperty(URIRef(RDFS.label)),
+                        OWLLiteral(
+                            Literal(ConfigReader.OWL_ANNOTATION_LABEL, lang="en")
+                        ),
+                    )
+                ],
+            )
+        )
 
         self.concepts: dict[str, OWLClassExpression] = dict()
         self.datatypes: dict[str, OWLDatatype] = dict()
@@ -162,9 +177,46 @@ class FuzzydlToOwl2:
         self.input_FDL: str = input_file
         self.output_FOWL: str = os.path.join(constants.RESULTS_PATH, output_file)
 
-    def iri(self, o: object) -> IRI:
+    def iri(self, o: object, iri_type: type = OWLClass) -> IRI:
         """Convert object to IRI string"""
-        return IRI(self.ontology_iri.namespace, str(o))
+        namespace: URIRef = self.ontology_iri.namespace
+        if iri_type == OWLClass:
+            namespace = Namespace(f"{self.ontology_path[:-1]}/class#")
+        elif iri_type == OWLDataProperty:
+            namespace = Namespace(f"{self.ontology_path[:-1]}/data-property#")
+        elif iri_type == OWLObjectProperty:
+            namespace = Namespace(f"{self.ontology_path[:-1]}/object-property#")
+        elif iri_type == OWLNamedIndividual:
+            namespace = Namespace(f"{self.ontology_path[:-1]}/individual#")
+        elif iri_type == OWLDatatype:
+            namespace = Namespace(f"{self.ontology_path[:-1]}/datatype#")
+        elif iri_type == OWLAnnotationProperty:
+            namespace = Namespace(f"{self.ontology_path[:-1]}/annotation-property#")
+        return IRI(namespace, str(o))
+
+    def individual_iri(self, o: object) -> IRI:
+        """Convert individual object to IRI string"""
+        return self.iri(o, OWLNamedIndividual)
+
+    def class_iri(self, o: object) -> IRI:
+        """Convert class to IRI string"""
+        return self.iri(o, OWLClass)
+
+    def data_property_iri(self, o: object) -> IRI:
+        """Convert data property to IRI string"""
+        return self.iri(o, OWLDataProperty)
+
+    def object_property_iri(self, o: object) -> IRI:
+        """Convert object property to IRI string"""
+        return self.iri(o, OWLObjectProperty)
+
+    def datatype_iri(self, o: object) -> IRI:
+        """Convert datatype to IRI string"""
+        return self.iri(o, OWLDatatype)
+
+    def annotation_property_iri(self, o: object) -> IRI:
+        """Convert datatype to IRI string"""
+        return self.iri(o, OWLAnnotationProperty)
 
     def get_base(self, c: Concept) -> OWLClassExpression:
         """Get the base class for a concept"""
@@ -189,8 +241,18 @@ class FuzzydlToOwl2:
 
     def __get_class_1(self, name: str) -> OWLClassExpression:
         """Get or create an OWL class by name"""
-        cls = OWLClass(self.iri(name))
-        self.ontology.add_axiom(OWLDeclaration(cls))
+        cls = OWLClass(self.class_iri(name))
+        self.ontology.add_axiom(
+            OWLDeclaration(
+                cls,
+                [
+                    OWLAnnotation(
+                        OWLAnnotationProperty(URIRef(RDFS.label)),
+                        OWLLiteral(Literal(name, lang="en")),
+                    )
+                ],
+            )
+        )
         return cls
 
     def __get_class_2(self, c: Concept) -> OWLClassExpression:
@@ -199,7 +261,17 @@ class FuzzydlToOwl2:
         c_type: ConceptType = c.type
         if c_type in (ConceptType.ATOMIC, ConceptType.CONCRETE):
             cls = self.get_class(str(c))
-            self.ontology.add_axiom(OWLDeclaration(cls))
+            self.ontology.add_axiom(
+                OWLDeclaration(
+                    cls,
+                    [
+                        OWLAnnotation(
+                            OWLAnnotationProperty(URIRef(RDFS.label)),
+                            OWLLiteral(Literal(str(c), lang="en")),
+                        )
+                    ],
+                )
+            )
             return cls
         elif c_type == ConceptType.TOP:
             return OWLClass.thing()
@@ -382,8 +454,18 @@ class FuzzydlToOwl2:
             return self.__get_class_weighted(c)
         elif c_type == ConceptType.QUANTIFIED_OWA:
             return self.__get_class_q_owa(c)
-        cls = OWLClass(self.iri(str(c)))
-        self.ontology.add_axiom(OWLDeclaration(cls))
+        cls = OWLClass(self.class_iri(str(c)))
+        self.ontology.add_axiom(
+            OWLDeclaration(
+                cls,
+                [
+                    OWLAnnotation(
+                        OWLAnnotationProperty(URIRef(RDFS.label)),
+                        OWLLiteral(Literal(str(c), lang="en")),
+                    )
+                ],
+            )
+        )
         return cls
 
     def __get_class_weighted_min_max_sum(self, c: Concept) -> OWLClassExpression:
@@ -528,14 +610,24 @@ class FuzzydlToOwl2:
 
         self.num_classes += 1
         Util.debug(f"Creating new atomic concept -> {name}")
-        c2: OWLClass = OWLClass(self.iri(f"class__{self.num_classes}"))
+        c2: OWLClass = OWLClass(self.class_iri(f"class__{self.num_classes}"))
         self.concepts[name] = c2
-        self.ontology.add_axiom(OWLDeclaration(c2))
+        self.ontology.add_axiom(
+            OWLDeclaration(
+                c2,
+                [
+                    OWLAnnotation(
+                        OWLAnnotationProperty(URIRef(RDFS.label)),
+                        OWLLiteral(Literal(name, lang="en")),
+                    )
+                ],
+            )
+        )
         return c2
 
     def exist_object_property(self, role: str) -> bool:
         """Check if an object property exists"""
-        iri: IRI = self.iri(role)
+        iri: IRI = self.object_property_iri(role)
         return self.ontology.getter.exists_object_property(iri.to_uriref())
         # return any(
         #     typing.cast(OWLObjectProperty, typing.cast(OWLDeclaration, prop).entity).iri
@@ -545,7 +637,7 @@ class FuzzydlToOwl2:
 
     def exist_data_property(self, role: str) -> bool:
         """Check if a data property exists"""
-        iri: IRI = self.iri(role)
+        iri: IRI = self.data_property_iri(role)
         return self.ontology.getter.exists_data_property(iri.to_uriref())
         # return any(
         #     typing.cast(OWLDataProperty, typing.cast(OWLDeclaration, prop).entity).iri
@@ -560,8 +652,18 @@ class FuzzydlToOwl2:
         Util.debug(f"Getting object property -> {role}")
         if self.exist_data_property(role):
             return self.get_data_property(role)
-        obj = OWLObjectProperty(self.iri(role))
-        self.ontology.add_axiom(OWLDeclaration(obj))
+        obj = OWLObjectProperty(self.object_property_iri(role))
+        self.ontology.add_axiom(
+            OWLDeclaration(
+                obj,
+                [
+                    OWLAnnotation(
+                        OWLAnnotationProperty(URIRef(RDFS.label)),
+                        OWLLiteral(Literal(role, lang="en")),
+                    )
+                ],
+            )
+        )
         return obj
 
     def get_data_property(
@@ -571,15 +673,35 @@ class FuzzydlToOwl2:
         Util.debug(f"Getting data property -> {role}")
         if self.exist_object_property(role):
             return self.get_object_property(role)
-        data = OWLDataProperty(self.iri(role))
-        self.ontology.add_axiom(OWLDeclaration(data))
+        data = OWLDataProperty(self.data_property_iri(role))
+        self.ontology.add_axiom(
+            OWLDeclaration(
+                data,
+                [
+                    OWLAnnotation(
+                        OWLAnnotationProperty(URIRef(RDFS.label)),
+                        OWLLiteral(Literal(role, lang="en")),
+                    )
+                ],
+            )
+        )
         return data
 
     def get_individual(self, name: str) -> OWLNamedIndividual:
         """Get or create a named individual"""
         Util.debug(f"Getting individual -> {name}")
-        ind = OWLNamedIndividual(self.iri(f"{name}_Individual"))
-        self.ontology.add_axiom(OWLDeclaration(ind))
+        ind = OWLNamedIndividual(self.individual_iri(f"{name}"))
+        self.ontology.add_axiom(
+            OWLDeclaration(
+                ind,
+                [
+                    OWLAnnotation(
+                        OWLAnnotationProperty(URIRef(RDFS.label)),
+                        OWLLiteral(Literal(name, lang="en")),
+                    )
+                ],
+            )
+        )
         return ind
 
     def to_owl_annotation(self, annotation: str) -> OWLAnnotation:
@@ -890,7 +1012,7 @@ class FuzzydlToOwl2:
     def _process_concrete_concept(self, c: FuzzyConcreteConcept) -> None:
         """Process a concrete concept"""
         Util.debug(f"Process concrete concept -> {c}")
-        current_datatype: OWLDatatype = OWLDatatype(self.iri(c))
+        current_datatype: OWLDatatype = OWLDatatype(self.datatype_iri(c))
         self.datatypes[str(c)] = current_datatype
 
         # specific: str = self._get_concrete_concept_specifics(c)
@@ -921,7 +1043,17 @@ class FuzzydlToOwl2:
         definition: OWLDatatypeDefinition = OWLDatatypeDefinition(
             current_datatype, unit_interval
         )
-        self.ontology.add_axiom(OWLDeclaration(current_datatype))
+        self.ontology.add_axiom(
+            OWLDeclaration(
+                current_datatype,
+                [
+                    OWLAnnotation(
+                        OWLAnnotationProperty(URIRef(RDFS.label)),
+                        OWLLiteral(Literal(str(c), lang="en")),
+                    )
+                ],
+            )
+        )
         self.ontology.add_axiom(definition)
 
         main_xml = FuzzyXML.build_main_xml(FuzzyOWL2Keyword.DATATYPE.get_str_value())
@@ -1020,9 +1152,19 @@ class FuzzydlToOwl2:
         main_xml.append(modifier_xml)
         annotation: str = FuzzyXML.to_str(main_xml)
 
-        current_datatype: OWLDatatype = OWLDatatype(self.iri(mod))
+        current_datatype: OWLDatatype = OWLDatatype(self.datatype_iri(mod))
         self.modifiers[str(mod)] = current_datatype
-        self.ontology.add_axiom(OWLDeclaration(current_datatype))
+        self.ontology.add_axiom(
+            OWLDeclaration(
+                current_datatype,
+                [
+                    OWLAnnotation(
+                        OWLAnnotationProperty(URIRef(RDFS.label)),
+                        OWLLiteral(Literal(str(mod), lang="en")),
+                    )
+                ],
+            )
+        )
         self.add_entity_annotation(annotation, current_datatype)
 
     def _process_assertion(self, ass: Assertion) -> None:
