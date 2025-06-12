@@ -265,9 +265,9 @@ restriction             := '(' ('>=' | '<=', '=') name (name | restriction_funct
 |$(\mathrm{>=}\ F\ \text{variable})$| ${\mathrm{sup}}_{b \in {\Delta}_D} \[F^\mathcal{I} (x, b) \otimes (b \geq \text{variable})\]$|
 |$(\mathrm{<=}\ F\ \text{variable})$| $\mathrm{sup}_{b \in \Delta_D} \[F^\mathcal{I} (x, b) \otimes (b \leq \text{variable})\]$|
 |$(=\ F\ \text{variable}) $| $\mathrm{sup}_{b \in \Delta_D} \[F^\mathcal{I} (x, b) \otimes (b = \text{variable})\]$|
-|$(\mathrm{>=}\ F\ \text{fuzzy\_number})$|$\mathrm{sup}_{b^\prime, b \in \Delta_D} \[F^\mathcal{I} (x, b) \otimes (b \geq b^\prime) \otimes {\text{fuzzy\_number}(b^\prime)}^\mathcal{I}\]$|
-|$(\mathrm{<=}\ F\ \text{fuzzy\_number})$|$\mathrm{sup}_{b^\prime, b \in \Delta_D} \[F^\mathcal{I} (x, b) \otimes (b \leq b^\prime) \otimes {\text{fuzzy\_number}(b^\prime)}^\mathcal{I}\]$|
-|$(=\ F\ \text{fuzzy\_number})$|$\mathrm{sup}_{b^\prime, b \in \Delta_D} \[F^\mathcal{I} (x, b) \otimes (b = b^\prime) \otimes {\text{fuzzy\_number}(b^\prime)}^\mathcal{I}\]$|
+|$(\mathrm{>=}\ F\ \text{fuzzy\\_number})$|$\mathrm{sup}_{b^\prime, b \in \Delta_D} \[F^\mathcal{I} (x, b) \otimes (b \geq b^\prime) \otimes {\text{fuzzy\\_number}(b^\prime)}^\mathcal{I}\]$|
+|$(\mathrm{<=}\ F\ \text{fuzzy\\_number})$|$\mathrm{sup}_{b^\prime, b \in \Delta_D} \[F^\mathcal{I} (x, b) \otimes (b \leq b^\prime) \otimes {\text{fuzzy\\_number}(b^\prime)}^\mathcal{I}\]$|
+|$(=\ F\ \text{fuzzy\\_number})$|$\mathrm{sup}_{b^\prime, b \in \Delta_D} \[F^\mathcal{I} (x, b) \otimes (b = b^\prime) \otimes {\text{fuzzy\\_number}(b^\prime)}^\mathcal{I}\]$|
 |$(\mathrm{>=}\ F\ \mathrm{function}(F_1, \ldots, F_n))$|$\mathrm{sup}_{b \in \Delta_D} \[F^\mathcal{I} (x, b) \otimes (b \geq {\mathrm{function}(F_1, \ldots, F_n)}^{\mathcal{I}})\]$|
 |$(\mathrm{<=}\ F\ \mathrm{function}(F_1, \ldots, F_n))$|$\mathrm{sup}_{b \in \Delta_D} \[F^\mathcal{I} (x, b) \otimes (b \leq {\mathrm{function}(F_1, \ldots, F_n)}^{\mathcal{I}})\]$|
 |$(=\ F\ \mathrm{function}(F_1, \ldots, F_n))$|$\mathrm{sup}_{b \in \Delta_D} \[F^\mathcal{I} (x, b) \otimes (b = {\mathrm{function}(F_1, \ldots, F_n)}^{\mathcal{I}})\]$|
