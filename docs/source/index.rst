@@ -17,6 +17,7 @@ Welcome to fuzzy_dl_owl2's documentation!
    grammar
    concepts
    usage
+   funding
    api/index
 
 .. automodule:: fuzzy_dl_owl2
