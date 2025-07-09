@@ -52,6 +52,30 @@ Module Contents
 
 
 
+   .. py:method:: annotation_property_iri(o: object) -> pyowl2.base.iri.IRI
+
+      Convert datatype to IRI string
+
+
+
+   .. py:method:: class_iri(o: object) -> pyowl2.base.iri.IRI
+
+      Convert class to IRI string
+
+
+
+   .. py:method:: data_property_iri(o: object) -> pyowl2.base.iri.IRI
+
+      Convert data property to IRI string
+
+
+
+   .. py:method:: datatype_iri(o: object) -> pyowl2.base.iri.IRI
+
+      Convert datatype to IRI string
+
+
+
    .. py:method:: exist_data_property(role: str) -> bool
 
       Check if a data property exists
@@ -107,9 +131,21 @@ Module Contents
 
 
 
-   .. py:method:: iri(o: object) -> pyowl2.base.iri.IRI
+   .. py:method:: individual_iri(o: object) -> pyowl2.base.iri.IRI
+
+      Convert individual object to IRI string
+
+
+
+   .. py:method:: iri(o: object, iri_type: type = OWLClass) -> pyowl2.base.iri.IRI
 
       Convert object to IRI string
+
+
+
+   .. py:method:: object_property_iri(o: object) -> pyowl2.base.iri.IRI
+
+      Convert object property to IRI string
 
 
 
@@ -161,7 +197,7 @@ Module Contents
 
    .. py:attribute:: ontology_path
       :type:  str
-      :value: 'http://www.semanticweb.org/ontologies/fuzzydl_ontology#'
+      :value: 'Uninferable#'
 
 
 

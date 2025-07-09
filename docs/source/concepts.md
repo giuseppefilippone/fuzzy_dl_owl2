@@ -6,8 +6,8 @@ The fuzzy concept currently implemented are as follows.
 | --- | --- |
 | Concept | Defines a base class of any concept |
 | AtomicConcept | Defines an atomic concept |
-| TruthConcept | Defines the top $\top$ and bottom $\bottom$ concepts |
-| OperatorConcept | It is the class to handle a logic (Zadeh, ${\'}L$ukasiewicz, and product) connectives (and, or, not) between fuzzy concepts |
+| TruthConcept | Defines the top $\top$ and bottom $\perp$ concepts |
+| OperatorConcept | It is the class to handle a logic (Zadeh, Lukasiewicz, and product) connectives (and, or, not) between fuzzy concepts |
 | AllSomeConcept | Defines a universal (all) and existential (some) restrictions on fuzzy concepts |
 | ChoquetIntegral | Defines a Choquet integral of fuzzy concept |
 | SugenoIntegral | Defines a Sugeno integral of fuzzy concept |

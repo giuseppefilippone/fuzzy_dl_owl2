@@ -13,11 +13,11 @@ Welcome to fuzzy_dl_owl2's documentation!
    :caption: Contents:
 
    main
-   install_and_config
-   grammar
-   concepts
-   usage
    funding
+   install_and_config
+   new_grammar
+   new_concepts
+   usage
    api/index
 
 .. automodule:: fuzzy_dl_owl2

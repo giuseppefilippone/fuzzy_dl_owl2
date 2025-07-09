@@ -7,6 +7,7 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 import os
 import sys
+
 sys.path.insert(0, os.path.abspath("../../"))
 
 
@@ -24,12 +25,18 @@ release = "1.0.9"
 
 extensions = [
     "myst_parser",
+    # "sphinx_markdown_tables",
     "sphinx.ext.autodoc",
     "sphinx.ext.mathjax",
     "sphinx.ext.napoleon",  # if you use Google/NumPy-style docstrings
     "autoapi.extension",
     "sphinx.ext.viewcode",  # optional: adds links to source code
     "sphinx_toolbox.tweaks.latex_toc",
+]
+
+myst_enable_extensions = [
+    "amsmath",
+    "dollarmath",
 ]
 
 templates_path = ["_templates"]
@@ -85,6 +92,7 @@ latex_elements = {
     "extraclassoptions": "openany",
     "preamble": r"""
         \hypersetup{unicode=true}
+        \DeclareUnicodeCharacter{2212}{\ensuremath{-}}
 
         % Redefine sphinxtheindex environment to use one column and smaller font
         \usepackage{etoolbox}
