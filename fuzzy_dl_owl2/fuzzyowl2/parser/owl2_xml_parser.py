@@ -140,7 +140,7 @@ class FuzzyOwl2XMLParser(object):
             elif concept_type == FuzzyOWL2Keyword.NOMINAL:
                 return FuzzyNominalConcept(
                     float(
-                        child.attrib.get(FuzzyOWL2Keyword.DEGREE_DEF.get_str_value())
+                        child.attrib.get(FuzzyOWL2Keyword.DEGREE_VALUE.get_str_value())
                     ),
                     child.attrib.get(FuzzyOWL2Keyword.INDIVIDUAL.get_str_value()),
                 )

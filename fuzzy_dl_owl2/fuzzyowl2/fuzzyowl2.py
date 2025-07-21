@@ -4,6 +4,7 @@ import typing
 from rdflib import Namespace
 
 from fuzzy_dl_owl2.fuzzydl.util import constants
+from fuzzy_dl_owl2.fuzzydl.util.config_reader import ConfigReader
 from fuzzy_dl_owl2.fuzzydl.util.util import Util
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.choquet_concept import ChoquetConcept
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.concept_definition import ConceptDefinition
@@ -145,8 +146,6 @@ from pyowl2.getter.rdf_xml_getter import AxiomsType
 from pyowl2.individual.anonymous_individual import OWLAnonymousIndividual
 from pyowl2.literal.literal import OWLLiteral
 from pyowl2.ontology import OWLOntology
-
-from fuzzy_dl_owl2.fuzzydl.util.config_reader import ConfigReader
 
 
 class FuzzyOwl2(object):
