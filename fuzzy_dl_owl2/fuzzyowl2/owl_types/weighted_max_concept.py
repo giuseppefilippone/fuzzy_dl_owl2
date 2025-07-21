@@ -12,4 +12,4 @@ class WeightedMaxConcept(ConceptDefinition):
         return self._wc
 
     def __str__(self) -> str:
-        return f"(w-max {self._wc})"
+        return f"(w-max {' '.join(map(str, self._wc))})"

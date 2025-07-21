@@ -12,4 +12,4 @@ class WeightedMinConcept(ConceptDefinition):
         return self._wc
 
     def __str__(self) -> str:
-        return f"(w-min {self._wc})"
+        return f"(w-min {' '.join(map(str, self._wc))})"

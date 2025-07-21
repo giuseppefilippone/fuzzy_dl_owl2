@@ -12,4 +12,4 @@ class WeightedSumZeroConcept(ConceptDefinition):
         return self._wc
 
     def __str__(self) -> str:
-        return f"(w-sum-zero {self._wc})"
+        return f"(w-sum-zero {' '.join(map(str, self._wc))})"
