@@ -3,8 +3,9 @@ from __future__ import annotations
 import os
 import sys
 import typing
-from functools import partial
+import urllib
 import urllib.parse
+from functools import partial
 
 from rdflib import RDF, RDFS, XSD, Literal, Namespace, URIRef
 
@@ -130,7 +131,6 @@ from pyowl2.expressions.object_property import OWLObjectProperty
 from pyowl2.individual.named_individual import OWLNamedIndividual
 from pyowl2.literal.literal import OWLLiteral
 from pyowl2.ontology import OWLOntology
-import urllib
 
 
 # @utils.timer_decorator
@@ -145,7 +145,7 @@ class FuzzydlToOwl2:
         base_iri: str = "http://www.semanticweb.org/ontologies/fuzzydl_ontology#",
     ) -> None:
         base_iri = urllib.parse.urlparse(base_iri).geturl().rstrip("/").rstrip("#")
-        
+
         self.num_classes: int = 0
         self.kb, _ = DLParser.get_kb(input_file)
         self.ontology_path: str = f"{base_iri}#"
@@ -349,17 +349,16 @@ class FuzzydlToOwl2:
             if str(c) in self.concepts:
                 return self.concepts.get(str(c))
             c4: OWLClassExpression = self.get_new_atomic_class(str(c))
-            c3: OWLClassExpression = self.get_base(c.c1)
+            c3: OWLClassExpression = self.get_base(c.curr_concept)
             self.concepts[str(c)] = c3
-
             main_xml = FuzzyXML.build_main_xml(FuzzyOWL2Keyword.CONCEPT.get_str_value())
             concept_xml = FuzzyXML.build_concept_xml(
                 FuzzyOWL2Keyword.MODIFIED.get_str_value(),
                 {
                     FuzzyOWL2Keyword.MODIFIER.get_str_value(): str(
-                        self.modifiers[str(c)]
+                        self.modifiers[str(c.modifier)].iri.value
                     ),
-                    FuzzyOWL2Keyword.BASE.get_str_value(): str(c3),
+                    FuzzyOWL2Keyword.BASE.get_str_value(): str(c3.iri.value),
                 },
             )
             main_xml.append(concept_xml)
@@ -418,14 +417,14 @@ class FuzzydlToOwl2:
         elif c_type == ConceptType.WEIGHTED:
             c: WeightedConcept = typing.cast(WeightedConcept, c)
             c4: OWLClassExpression = self.get_new_atomic_class(str(c))
-            c3: OWLClassExpression = self.get_base(c.c1)
+            c3: OWLClassExpression = self.get_base(c.curr_concept)
 
             main_xml = FuzzyXML.build_main_xml(FuzzyOWL2Keyword.CONCEPT.get_str_value())
             concept_xml = FuzzyXML.build_concept_xml(
                 FuzzyOWL2Keyword.WEIGHTED.get_str_value(),
                 {
                     FuzzyOWL2Keyword.DEGREE_VALUE.get_str_value(): str(c.weight),
-                    FuzzyOWL2Keyword.BASE.get_str_value(): str(c3),
+                    FuzzyOWL2Keyword.BASE.get_str_value(): str(c3.iri.value),
                 },
             )
             main_xml.append(concept_xml)
@@ -497,7 +496,7 @@ class FuzzydlToOwl2:
                     FuzzyOWL2Keyword.DEGREE_VALUE.get_str_value(): str(
                         curr_concept.weights[i]
                     ),
-                    FuzzyOWL2Keyword.BASE.get_str_value(): str(c5),
+                    FuzzyOWL2Keyword.BASE.get_str_value(): str(c5.iri.value),
                 },
             )
             concept_xml.append(sub_concept_xml)

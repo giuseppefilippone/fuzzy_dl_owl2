@@ -18,4 +18,4 @@ class ModifiedProperty(FuzzyProperty):
         return str(self)
 
     def __str__(self) -> str:
-        return f"({self.get_fuzzy_modifier()}, {self.get_property()})"
+        return f"({self.get_fuzzy_modifier()} {self.get_property()})"

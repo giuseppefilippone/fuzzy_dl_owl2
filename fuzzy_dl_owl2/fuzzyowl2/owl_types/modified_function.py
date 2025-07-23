@@ -14,4 +14,4 @@ class ModifiedFunction(FuzzyDatatype):
         return self._d
 
     def __str__(self) -> str:
-        return f"({self._mod}, {self._d})"
+        return f"({self._mod} {self._d})"

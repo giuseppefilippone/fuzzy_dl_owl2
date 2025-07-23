@@ -16,4 +16,4 @@ class FuzzyNominalConcept(ConceptDefinition):
         return self._i
 
     def __str__(self) -> str:
-        return f"({self.get_degree()}, {self.get_individual()})"
+        return f"({self.get_degree()} {self.get_individual()})"

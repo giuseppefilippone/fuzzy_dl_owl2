@@ -16,4 +16,4 @@ class ModifiedConcept(ConceptDefinition):
         return self._c
 
     def __str__(self) -> str:
-        return f"({self._mod}, {self._c})"
+        return f"({self._mod} {self._c})"
