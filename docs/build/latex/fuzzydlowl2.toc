@@ -1,0 +1,712 @@
+\babel@toc {english}{}\relax 
+\contentsline {part}{I\hspace {1em}Contents:}{2}{part.1}%
+\contentsline {chapter}{\numberline {1}Fuzzy DL OWL 2}{3}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Directory dl\sphinxhyphen {}examples}{3}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Project Structure}{3}{section.1.2}%
+\contentsline {section}{\numberline {1.3}Test}{7}{section.1.3}%
+\contentsline {section}{\numberline {1.4}License}{7}{section.1.4}%
+\contentsline {chapter}{\numberline {2}Funding}{8}{chapter.2}%
+\contentsline {chapter}{\numberline {3}Installation and Configuration}{9}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Configuration of the MILP solver}{9}{section.3.1}%
+\contentsline {section}{\numberline {3.2}MILP Provider Usage and Configuration}{10}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}GUROBI}{10}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}MIP}{10}{subsection.3.2.2}%
+\contentsline {subsection}{\numberline {3.2.3}GLPK}{10}{subsection.3.2.3}%
+\contentsline {subsection}{\numberline {3.2.4}CBC}{10}{subsection.3.2.4}%
+\contentsline {subsection}{\numberline {3.2.5}CPLEX}{10}{subsection.3.2.5}%
+\contentsline {subsection}{\numberline {3.2.6}HiGHS}{11}{subsection.3.2.6}%
+\contentsline {chapter}{\numberline {4}Fuzzy Description Logic Grammatics}{12}{chapter.4}%
+\contentsline {section}{\numberline {4.1}String and Numbers}{12}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Define the semantics of the knowledge base}{12}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Define truth constants}{12}{section.4.3}%
+\contentsline {section}{\numberline {4.4}Define modifiers}{12}{section.4.4}%
+\contentsline {section}{\numberline {4.5}Define concrete fuzzy concepts}{12}{section.4.5}%
+\contentsline {section}{\numberline {4.6}Define fuzzy numbers}{13}{section.4.6}%
+\contentsline {subsection}{\numberline {4.6.1}Fuzzy Number Operations}{13}{subsection.4.6.1}%
+\contentsline {subsection}{\numberline {4.6.2}Basic Fuzzy Number Representation}{13}{subsection.4.6.2}%
+\contentsline {subsection}{\numberline {4.6.3}Real Number Conversion}{13}{subsection.4.6.3}%
+\contentsline {subsection}{\numberline {4.6.4}Addition of Fuzzy Numbers}{13}{subsection.4.6.4}%
+\contentsline {subsection}{\numberline {4.6.5}Subtraction of Fuzzy Numbers}{13}{subsection.4.6.5}%
+\contentsline {subsection}{\numberline {4.6.6}Product of Fuzzy Numbers}{14}{subsection.4.6.6}%
+\contentsline {subsection}{\numberline {4.6.7}Division of Fuzzy Numbers}{14}{subsection.4.6.7}%
+\contentsline {section}{\numberline {4.7}Define Features, i.e., functional datatypes}{14}{section.4.7}%
+\contentsline {subsection}{\numberline {4.7.1}Feature Range Specifications}{14}{subsection.4.7.1}%
+\contentsline {subsection}{\numberline {4.7.2}Feature Definition}{14}{subsection.4.7.2}%
+\contentsline {subsection}{\numberline {4.7.3}Integer Range Features}{14}{subsection.4.7.3}%
+\contentsline {subsection}{\numberline {4.7.4}Real Number Range Features}{14}{subsection.4.7.4}%
+\contentsline {subsection}{\numberline {4.7.5}String Features}{14}{subsection.4.7.5}%
+\contentsline {subsection}{\numberline {4.7.6}Boolean Features}{14}{subsection.4.7.6}%
+\contentsline {section}{\numberline {4.8}Datatype/feature restrictions}{14}{section.4.8}%
+\contentsline {subsection}{\numberline {4.8.1}Datatype Restriction Operations}{15}{subsection.4.8.1}%
+\contentsline {subsection}{\numberline {4.8.2}Greater Than or Equal Restrictions with Variables}{15}{subsection.4.8.2}%
+\contentsline {subsection}{\numberline {4.8.3}Less Than or Equal Restrictions with Variables}{15}{subsection.4.8.3}%
+\contentsline {subsection}{\numberline {4.8.4}Equality Restrictions with Variables}{15}{subsection.4.8.4}%
+\contentsline {subsection}{\numberline {4.8.5}Greater Than or Equal Restrictions with Fuzzy Numbers}{15}{subsection.4.8.5}%
+\contentsline {subsection}{\numberline {4.8.6}Less Than or Equal Restrictions with Fuzzy Numbers}{15}{subsection.4.8.6}%
+\contentsline {subsection}{\numberline {4.8.7}Equality Restrictions with Fuzzy Numbers}{15}{subsection.4.8.7}%
+\contentsline {subsection}{\numberline {4.8.8}Function\sphinxhyphen {}Based Restrictions}{15}{subsection.4.8.8}%
+\contentsline {subsection}{\numberline {4.8.9}Variable and Value Constraints}{15}{subsection.4.8.9}%
+\contentsline {subsection}{\numberline {4.8.10}MILP Solver Constraints}{16}{subsection.4.8.10}%
+\contentsline {section}{\numberline {4.9}Constraints}{16}{section.4.9}%
+\contentsline {section}{\numberline {4.10}Show statements}{16}{section.4.10}%
+\contentsline {subsection}{\numberline {4.10.1}Show Statement Operations}{17}{subsection.4.10.1}%
+\contentsline {subsection}{\numberline {4.10.2}Concrete Filler Display}{17}{subsection.4.10.2}%
+\contentsline {subsection}{\numberline {4.10.3}Individual\sphinxhyphen {}Specific Concrete Fillers}{17}{subsection.4.10.3}%
+\contentsline {subsection}{\numberline {4.10.4}Concept Instance Degrees}{17}{subsection.4.10.4}%
+\contentsline {subsection}{\numberline {4.10.5}Abstract Filler Analysis}{17}{subsection.4.10.5}%
+\contentsline {subsection}{\numberline {4.10.6}Individual Abstract Fillers}{17}{subsection.4.10.6}%
+\contentsline {subsection}{\numberline {4.10.7}Concept Membership Display}{17}{subsection.4.10.7}%
+\contentsline {subsection}{\numberline {4.10.8}Concept Instance Values}{17}{subsection.4.10.8}%
+\contentsline {subsection}{\numberline {4.10.9}Variable Value Display}{17}{subsection.4.10.9}%
+\contentsline {subsection}{\numberline {4.10.10}Knowledge Base Language Display}{17}{subsection.4.10.10}%
+\contentsline {section}{\numberline {4.11}Crisp declarations}{17}{section.4.11}%
+\contentsline {section}{\numberline {4.12}Fuzzy relations}{18}{section.4.12}%
+\contentsline {section}{\numberline {4.13}Concept expressions}{18}{section.4.13}%
+\contentsline {subsection}{\numberline {4.13.1}Basic Concept Expressions}{19}{subsection.4.13.1}%
+\contentsline {subsection}{\numberline {4.13.2}Top Concept}{19}{subsection.4.13.2}%
+\contentsline {subsection}{\numberline {4.13.3}Bottom Concept}{19}{subsection.4.13.3}%
+\contentsline {subsection}{\numberline {4.13.4}Atomic Concepts}{19}{subsection.4.13.4}%
+\contentsline {subsection}{\numberline {4.13.5}Concrete Fuzzy Concepts}{19}{subsection.4.13.5}%
+\contentsline {subsection}{\numberline {4.13.6}Datatype Restrictions}{19}{subsection.4.13.6}%
+\contentsline {subsection}{\numberline {4.13.7}Logical Connectives}{19}{subsection.4.13.7}%
+\contentsline {subsection}{\numberline {4.13.8}Standard Conjunction}{19}{subsection.4.13.8}%
+\contentsline {subsection}{\numberline {4.13.9}Goedel Conjunction}{19}{subsection.4.13.9}%
+\contentsline {subsection}{\numberline {4.13.10}Lukasiewicz Conjunction}{19}{subsection.4.13.10}%
+\contentsline {subsection}{\numberline {4.13.11}Standard Disjunction}{20}{subsection.4.13.11}%
+\contentsline {subsection}{\numberline {4.13.12}Goedel Disjunction}{20}{subsection.4.13.12}%
+\contentsline {subsection}{\numberline {4.13.13}Lukasiewicz Disjunction}{20}{subsection.4.13.13}%
+\contentsline {subsection}{\numberline {4.13.14}Negation}{20}{subsection.4.13.14}%
+\contentsline {subsection}{\numberline {4.13.15}Implication Operations}{20}{subsection.4.13.15}%
+\contentsline {subsection}{\numberline {4.13.16}Standard Implication}{20}{subsection.4.13.16}%
+\contentsline {subsection}{\numberline {4.13.17}Goedel Implication}{20}{subsection.4.13.17}%
+\contentsline {subsection}{\numberline {4.13.18}Lukasiewicz Implication}{20}{subsection.4.13.18}%
+\contentsline {subsection}{\numberline {4.13.19}Kleene\sphinxhyphen {}Dienes Implication}{20}{subsection.4.13.19}%
+\contentsline {subsection}{\numberline {4.13.20}Role Restrictions}{20}{subsection.4.13.20}%
+\contentsline {subsection}{\numberline {4.13.21}Universal Role Restriction}{20}{subsection.4.13.21}%
+\contentsline {subsection}{\numberline {4.13.22}Existential Role Restriction}{20}{subsection.4.13.22}%
+\contentsline {subsection}{\numberline {4.13.23}Individual Value Restriction}{20}{subsection.4.13.23}%
+\contentsline {subsection}{\numberline {4.13.24}Approximation Concepts}{20}{subsection.4.13.24}%
+\contentsline {subsection}{\numberline {4.13.25}Upper Approximation}{21}{subsection.4.13.25}%
+\contentsline {subsection}{\numberline {4.13.26}Loose Upper Approximation}{21}{subsection.4.13.26}%
+\contentsline {subsection}{\numberline {4.13.27}Tight Upper Approximation}{21}{subsection.4.13.27}%
+\contentsline {subsection}{\numberline {4.13.28}Lower Approximation}{21}{subsection.4.13.28}%
+\contentsline {subsection}{\numberline {4.13.29}Loose Lower Approximation}{21}{subsection.4.13.29}%
+\contentsline {subsection}{\numberline {4.13.30}Tight Lower Approximation}{21}{subsection.4.13.30}%
+\contentsline {subsection}{\numberline {4.13.31}Special Concept Constructs}{21}{subsection.4.13.31}%
+\contentsline {subsection}{\numberline {4.13.32}Self Reflexivity}{21}{subsection.4.13.32}%
+\contentsline {subsection}{\numberline {4.13.33}Modified Concepts}{21}{subsection.4.13.33}%
+\contentsline {subsection}{\numberline {4.13.34}Fuzzy Numbers in Concepts}{21}{subsection.4.13.34}%
+\contentsline {subsection}{\numberline {4.13.35}Threshold Concepts}{21}{subsection.4.13.35}%
+\contentsline {subsection}{\numberline {4.13.36}Weighted Concepts}{21}{subsection.4.13.36}%
+\contentsline {subsection}{\numberline {4.13.37}Basic Weighted Concept}{22}{subsection.4.13.37}%
+\contentsline {subsection}{\numberline {4.13.38}Weighted Sum}{22}{subsection.4.13.38}%
+\contentsline {subsection}{\numberline {4.13.39}Weighted Maximum}{22}{subsection.4.13.39}%
+\contentsline {subsection}{\numberline {4.13.40}Weighted Minimum}{22}{subsection.4.13.40}%
+\contentsline {subsection}{\numberline {4.13.41}Weighted Sum Zero}{22}{subsection.4.13.41}%
+\contentsline {subsection}{\numberline {4.13.42}Aggregation Operators}{22}{subsection.4.13.42}%
+\contentsline {subsection}{\numberline {4.13.43}OWA Aggregation}{22}{subsection.4.13.43}%
+\contentsline {subsection}{\numberline {4.13.44}Quantifier\sphinxhyphen {}Guided OWA}{22}{subsection.4.13.44}%
+\contentsline {subsection}{\numberline {4.13.45}Choquet Integral}{22}{subsection.4.13.45}%
+\contentsline {subsection}{\numberline {4.13.46}Sugeno Integral}{22}{subsection.4.13.46}%
+\contentsline {subsection}{\numberline {4.13.47}Quasi\sphinxhyphen {}Sugeno Integral}{22}{subsection.4.13.47}%
+\contentsline {subsection}{\numberline {4.13.48}Sigma\sphinxhyphen {}Count Concept}{22}{subsection.4.13.48}%
+\contentsline {subsection}{\numberline {4.13.49}Important Constraints and Notes}{22}{subsection.4.13.49}%
+\contentsline {section}{\numberline {4.14}Axioms}{23}{section.4.14}%
+\contentsline {subsection}{\numberline {4.14.1}Assertion Axioms}{24}{subsection.4.14.1}%
+\contentsline {subsection}{\numberline {4.14.2}Concept Assertions}{24}{subsection.4.14.2}%
+\contentsline {subsection}{\numberline {4.14.3}Role Assertions}{24}{subsection.4.14.3}%
+\contentsline {subsection}{\numberline {4.14.4}General Concept Inclusion Axioms}{24}{subsection.4.14.4}%
+\contentsline {subsection}{\numberline {4.14.5}Standard General Concept Inclusion}{24}{subsection.4.14.5}%
+\contentsline {subsection}{\numberline {4.14.6}Goedel General Concept Inclusion}{24}{subsection.4.14.6}%
+\contentsline {subsection}{\numberline {4.14.7}Kleene\sphinxhyphen {}Dienes General Concept Inclusion}{24}{subsection.4.14.7}%
+\contentsline {subsection}{\numberline {4.14.8}Lukasiewicz General Concept Inclusion}{24}{subsection.4.14.8}%
+\contentsline {subsection}{\numberline {4.14.9}Zadeh General Concept Inclusion}{24}{subsection.4.14.9}%
+\contentsline {subsection}{\numberline {4.14.10}Concept Definition Axioms}{24}{subsection.4.14.10}%
+\contentsline {subsection}{\numberline {4.14.11}Complete Concept Definition}{24}{subsection.4.14.11}%
+\contentsline {subsection}{\numberline {4.14.12}Primitive Concept Definition}{24}{subsection.4.14.12}%
+\contentsline {subsection}{\numberline {4.14.13}Concept Equivalence}{25}{subsection.4.14.13}%
+\contentsline {subsection}{\numberline {4.14.14}Concept Disjointness and Union}{25}{subsection.4.14.14}%
+\contentsline {subsection}{\numberline {4.14.15}Concept Disjointness}{25}{subsection.4.14.15}%
+\contentsline {subsection}{\numberline {4.14.16}Disjoint Union}{25}{subsection.4.14.16}%
+\contentsline {subsection}{\numberline {4.14.17}Role Restriction Axioms}{25}{subsection.4.14.17}%
+\contentsline {subsection}{\numberline {4.14.18}Role Range Restriction}{25}{subsection.4.14.18}%
+\contentsline {subsection}{\numberline {4.14.19}Role Domain Restriction}{25}{subsection.4.14.19}%
+\contentsline {subsection}{\numberline {4.14.20}Role Property Axioms}{25}{subsection.4.14.20}%
+\contentsline {subsection}{\numberline {4.14.21}Functional Roles}{25}{subsection.4.14.21}%
+\contentsline {subsection}{\numberline {4.14.22}Inverse Functional Roles}{25}{subsection.4.14.22}%
+\contentsline {subsection}{\numberline {4.14.23}Reflexive Roles}{25}{subsection.4.14.23}%
+\contentsline {subsection}{\numberline {4.14.24}Symmetric Roles}{25}{subsection.4.14.24}%
+\contentsline {subsection}{\numberline {4.14.25}Transitive Roles}{26}{subsection.4.14.25}%
+\contentsline {subsection}{\numberline {4.14.26}Role Relationship Axioms}{26}{subsection.4.14.26}%
+\contentsline {subsection}{\numberline {4.14.27}Role Implication}{26}{subsection.4.14.27}%
+\contentsline {subsection}{\numberline {4.14.28}Inverse Roles}{26}{subsection.4.14.28}%
+\contentsline {subsection}{\numberline {4.14.29}Important Constraints}{26}{subsection.4.14.29}%
+\contentsline {section}{\numberline {4.15}Queries}{26}{section.4.15}%
+\contentsline {subsection}{\numberline {4.15.1}Knowledge Base Consistency Queries}{27}{subsection.4.15.1}%
+\contentsline {subsection}{\numberline {4.15.2}Satisfiability Check}{27}{subsection.4.15.2}%
+\contentsline {subsection}{\numberline {4.15.3}Instance Membership Queries}{27}{subsection.4.15.3}%
+\contentsline {subsection}{\numberline {4.15.4}Maximum Instance Membership}{27}{subsection.4.15.4}%
+\contentsline {subsection}{\numberline {4.15.5}Minimum Instance Membership}{27}{subsection.4.15.5}%
+\contentsline {subsection}{\numberline {4.15.6}All Instance Memberships}{27}{subsection.4.15.6}%
+\contentsline {subsection}{\numberline {4.15.7}Role Relationship Queries}{27}{subsection.4.15.7}%
+\contentsline {subsection}{\numberline {4.15.8}Maximum Role Relationship}{27}{subsection.4.15.8}%
+\contentsline {subsection}{\numberline {4.15.9}Minimum Role Relationship}{27}{subsection.4.15.9}%
+\contentsline {subsection}{\numberline {4.15.10}Concept Subsumption Queries}{27}{subsection.4.15.10}%
+\contentsline {subsection}{\numberline {4.15.11}Maximum Standard Subsumption}{27}{subsection.4.15.11}%
+\contentsline {subsection}{\numberline {4.15.12}Minimum Standard Subsumption}{27}{subsection.4.15.12}%
+\contentsline {subsection}{\numberline {4.15.13}Maximum Goedel Subsumption}{28}{subsection.4.15.13}%
+\contentsline {subsection}{\numberline {4.15.14}Minimum Goedel Subsumption}{28}{subsection.4.15.14}%
+\contentsline {subsection}{\numberline {4.15.15}Maximum Lukasiewicz Subsumption}{28}{subsection.4.15.15}%
+\contentsline {subsection}{\numberline {4.15.16}Minimum Lukasiewicz Subsumption}{28}{subsection.4.15.16}%
+\contentsline {subsection}{\numberline {4.15.17}Maximum Kleene\sphinxhyphen {}Dienes Subsumption}{28}{subsection.4.15.17}%
+\contentsline {subsection}{\numberline {4.15.18}Minimum Kleene\sphinxhyphen {}Dienes Subsumption}{28}{subsection.4.15.18}%
+\contentsline {subsection}{\numberline {4.15.19}Concept Satisfiability Queries}{28}{subsection.4.15.19}%
+\contentsline {subsection}{\numberline {4.15.20}Maximum Concept Satisfiability}{28}{subsection.4.15.20}%
+\contentsline {subsection}{\numberline {4.15.21}Minimum Concept Satisfiability}{28}{subsection.4.15.21}%
+\contentsline {subsection}{\numberline {4.15.22}Variable Optimization Queries}{28}{subsection.4.15.22}%
+\contentsline {subsection}{\numberline {4.15.23}Maximum Variable Value}{28}{subsection.4.15.23}%
+\contentsline {subsection}{\numberline {4.15.24}Minimum Variable Value}{28}{subsection.4.15.24}%
+\contentsline {subsection}{\numberline {4.15.25}Defuzzification Queries}{29}{subsection.4.15.25}%
+\contentsline {subsection}{\numberline {4.15.26}Largest of Maxima Defuzzification}{29}{subsection.4.15.26}%
+\contentsline {subsection}{\numberline {4.15.27}Middle of Maxima Defuzzification}{29}{subsection.4.15.27}%
+\contentsline {subsection}{\numberline {4.15.28}Smallest of Maxima Defuzzification}{29}{subsection.4.15.28}%
+\contentsline {subsection}{\numberline {4.15.29}Fuzzy Number Performance Analysis}{29}{subsection.4.15.29}%
+\contentsline {subsection}{\numberline {4.15.30}Best Non\sphinxhyphen {}Fuzzy Performance}{29}{subsection.4.15.30}%
+\contentsline {subsection}{\numberline {4.15.31}Important Notes on Defuzzification}{29}{subsection.4.15.31}%
+\contentsline {chapter}{\numberline {5}Fuzzy Concepts}{30}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Base Concepts}{30}{section.5.1}%
+\contentsline {subsection}{\numberline {5.1.1}Concept}{30}{subsection.5.1.1}%
+\contentsline {subsection}{\numberline {5.1.2}AtomicConcept}{30}{subsection.5.1.2}%
+\contentsline {subsection}{\numberline {5.1.3}TruthConcept}{30}{subsection.5.1.3}%
+\contentsline {section}{\numberline {5.2}Logical Operators}{30}{section.5.2}%
+\contentsline {subsection}{\numberline {5.2.1}OperatorConcept}{30}{subsection.5.2.1}%
+\contentsline {subsection}{\numberline {5.2.2}AllSomeConcept}{30}{subsection.5.2.2}%
+\contentsline {subsection}{\numberline {5.2.3}ImpliesConcept}{30}{subsection.5.2.3}%
+\contentsline {section}{\numberline {5.3}Fuzzy Integrals}{30}{section.5.3}%
+\contentsline {subsection}{\numberline {5.3.1}ChoquetIntegral}{30}{subsection.5.3.1}%
+\contentsline {subsection}{\numberline {5.3.2}SugenoIntegral}{31}{subsection.5.3.2}%
+\contentsline {subsection}{\numberline {5.3.3}QsugenoIntegral}{31}{subsection.5.3.3}%
+\contentsline {section}{\numberline {5.4}OWA Concepts}{31}{section.5.4}%
+\contentsline {subsection}{\numberline {5.4.1}OwaConcept}{31}{subsection.5.4.1}%
+\contentsline {subsection}{\numberline {5.4.2}QowaConcept}{31}{subsection.5.4.2}%
+\contentsline {section}{\numberline {5.5}Approximation and Threshold Concepts}{31}{section.5.5}%
+\contentsline {subsection}{\numberline {5.5.1}ApproximationConcept}{31}{subsection.5.5.1}%
+\contentsline {subsection}{\numberline {5.5.2}ThresholdConcept}{31}{subsection.5.5.2}%
+\contentsline {subsection}{\numberline {5.5.3}ExtendedThresholdConcept}{31}{subsection.5.5.3}%
+\contentsline {section}{\numberline {5.6}Value\sphinxhyphen {}Based Concepts}{31}{section.5.6}%
+\contentsline {subsection}{\numberline {5.6.1}HasValueConcept}{31}{subsection.5.6.1}%
+\contentsline {subsection}{\numberline {5.6.2}ValueConcept}{31}{subsection.5.6.2}%
+\contentsline {subsection}{\numberline {5.6.3}SelfConcept}{31}{subsection.5.6.3}%
+\contentsline {subsection}{\numberline {5.6.4}NegatedNominal}{31}{subsection.5.6.4}%
+\contentsline {section}{\numberline {5.7}Weighted Concepts}{32}{section.5.7}%
+\contentsline {subsection}{\numberline {5.7.1}WeightedConcept}{32}{subsection.5.7.1}%
+\contentsline {subsection}{\numberline {5.7.2}WeightedMinConcept}{32}{subsection.5.7.2}%
+\contentsline {subsection}{\numberline {5.7.3}WeightedMaxConcept}{32}{subsection.5.7.3}%
+\contentsline {subsection}{\numberline {5.7.4}WeightedSumConcept}{32}{subsection.5.7.4}%
+\contentsline {subsection}{\numberline {5.7.5}WeightedSumZeroConcept}{32}{subsection.5.7.5}%
+\contentsline {section}{\numberline {5.8}Counting and Modification Concepts}{32}{section.5.8}%
+\contentsline {subsection}{\numberline {5.8.1}SigmaConcept}{32}{subsection.5.8.1}%
+\contentsline {subsection}{\numberline {5.8.2}ModifiedConcept}{32}{subsection.5.8.2}%
+\contentsline {subsection}{\numberline {5.8.3}LinearlyModifiedConcept}{32}{subsection.5.8.3}%
+\contentsline {subsection}{\numberline {5.8.4}TriangularlyModifiedConcept}{32}{subsection.5.8.4}%
+\contentsline {section}{\numberline {5.9}Concrete Fuzzy Concepts}{32}{section.5.9}%
+\contentsline {subsection}{\numberline {5.9.1}FuzzyConcreteConcept}{32}{subsection.5.9.1}%
+\contentsline {subsection}{\numberline {5.9.2}CrispConcreteConcept}{32}{subsection.5.9.2}%
+\contentsline {subsection}{\numberline {5.9.3}ModifiedConcreteConcept}{32}{subsection.5.9.3}%
+\contentsline {subsection}{\numberline {5.9.4}LinearConcreteConcept}{33}{subsection.5.9.4}%
+\contentsline {subsection}{\numberline {5.9.5}LeftConcreteConcept}{33}{subsection.5.9.5}%
+\contentsline {subsection}{\numberline {5.9.6}RightConcreteConcept}{33}{subsection.5.9.6}%
+\contentsline {subsection}{\numberline {5.9.7}TriangularConcreteConcept}{33}{subsection.5.9.7}%
+\contentsline {subsection}{\numberline {5.9.8}TrapezoidalConcreteConcept}{33}{subsection.5.9.8}%
+\contentsline {subsection}{\numberline {5.9.9}TriangularFuzzyNumber}{33}{subsection.5.9.9}%
+\contentsline {chapter}{\numberline {6}Usage}{34}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Reasoning}{34}{section.6.1}%
+\contentsline {subsection}{\numberline {6.1.1}Knowledge base in example.fdl}{34}{subsection.6.1.1}%
+\contentsline {subsection}{\numberline {6.1.2}Python code}{34}{subsection.6.1.2}%
+\contentsline {section}{\numberline {6.2}Fuzzy OWL 2}{34}{section.6.2}%
+\contentsline {subsection}{\numberline {6.2.1}From *.fdl to *.owl}{34}{subsection.6.2.1}%
+\contentsline {subsection}{\numberline {6.2.2}From *.owl to *.fdl}{34}{subsection.6.2.2}%
+\contentsline {chapter}{\numberline {7}API Reference}{35}{chapter.7}%
+\contentsline {section}{\numberline {7.1}fuzzy\_dl\_owl2}{35}{section.7.1}%
+\contentsline {subsection}{\numberline {7.1.1}Submodules}{35}{subsection.7.1.1}%
+\contentsline {subsubsection}{\numberline {7.1.1.1}fuzzy\_dl\_owl2.fuzzydl}{35}{subsubsection.7.1.1.1}%
+\contentsline {paragraph}{\numberline {7.1.1.1.1}Submodules}{35}{paragraph.7.1.1.1.1}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.assertion}{35}{subparagraph*.4}%
+\contentsline {subparagraph}{Submodules}{35}{subparagraph*.5}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.assertion.assertion}{35}{subparagraph*.6}%
+\contentsline {subparagraph}{Classes}{35}{subparagraph*.7}%
+\contentsline {subparagraph}{Module Contents}{35}{subparagraph*.8}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.assertion.atomic\_assertion}{36}{subparagraph*.26}%
+\contentsline {subparagraph}{Classes}{36}{subparagraph*.27}%
+\contentsline {subparagraph}{Module Contents}{36}{subparagraph*.28}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.classification\_node}{36}{subparagraph*.35}%
+\contentsline {subparagraph}{Classes}{36}{subparagraph*.36}%
+\contentsline {subparagraph}{Module Contents}{36}{subparagraph*.37}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept}{37}{subparagraph*.57}%
+\contentsline {subparagraph}{Submodules}{37}{subparagraph*.58}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.all\_some\_concept}{37}{subparagraph*.59}%
+\contentsline {subparagraph}{Attributes}{37}{subparagraph*.60}%
+\contentsline {subparagraph}{Classes}{37}{subparagraph*.61}%
+\contentsline {subparagraph}{Module Contents}{37}{subparagraph*.62}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.approximation\_concept}{38}{subparagraph*.78}%
+\contentsline {subparagraph}{Attributes}{38}{subparagraph*.79}%
+\contentsline {subparagraph}{Classes}{38}{subparagraph*.80}%
+\contentsline {subparagraph}{Module Contents}{38}{subparagraph*.81}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.atomic\_concept}{39}{subparagraph*.107}%
+\contentsline {subparagraph}{Classes}{39}{subparagraph*.108}%
+\contentsline {subparagraph}{Module Contents}{40}{subparagraph*.109}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.choquet\_integral}{40}{subparagraph*.133}%
+\contentsline {subparagraph}{Classes}{40}{subparagraph*.134}%
+\contentsline {subparagraph}{Module Contents}{41}{subparagraph*.135}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.concept}{41}{subparagraph*.146}%
+\contentsline {subparagraph}{Classes}{41}{subparagraph*.147}%
+\contentsline {subparagraph}{Module Contents}{41}{subparagraph*.148}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.concrete}{43}{subparagraph*.204}%
+\contentsline {subparagraph}{Submodules}{43}{subparagraph*.205}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.concrete.crisp\_concrete\_concept}{43}{subparagraph*.206}%
+\contentsline {subparagraph}{Classes}{43}{subparagraph*.207}%
+\contentsline {subparagraph}{Module Contents}{44}{subparagraph*.208}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.concrete.fuzzy\_concrete\_concept}{44}{subparagraph*.221}%
+\contentsline {subparagraph}{Classes}{44}{subparagraph*.222}%
+\contentsline {subparagraph}{Module Contents}{44}{subparagraph*.223}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.concrete.fuzzy\_number}{45}{subparagraph*.234}%
+\contentsline {subparagraph}{Submodules}{45}{subparagraph*.235}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.concrete.fuzzy\_number.triangular\_fuzzy\_number}{45}{subparagraph*.236}%
+\contentsline {subparagraph}{Classes}{45}{subparagraph*.237}%
+\contentsline {subparagraph}{Module Contents}{45}{subparagraph*.238}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.concrete.left\_concrete\_concept}{46}{subparagraph*.263}%
+\contentsline {subparagraph}{Classes}{46}{subparagraph*.264}%
+\contentsline {subparagraph}{Module Contents}{46}{subparagraph*.265}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.concrete.linear\_concrete\_concept}{46}{subparagraph*.278}%
+\contentsline {subparagraph}{Classes}{46}{subparagraph*.279}%
+\contentsline {subparagraph}{Module Contents}{47}{subparagraph*.280}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.concrete.modified\_concrete\_concept}{47}{subparagraph*.293}%
+\contentsline {subparagraph}{Classes}{47}{subparagraph*.294}%
+\contentsline {subparagraph}{Module Contents}{47}{subparagraph*.295}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.concrete.right\_concrete\_concept}{48}{subparagraph*.308}%
+\contentsline {subparagraph}{Classes}{48}{subparagraph*.309}%
+\contentsline {subparagraph}{Module Contents}{48}{subparagraph*.310}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.concrete.trapezoidal\_concrete\_concept}{48}{subparagraph*.323}%
+\contentsline {subparagraph}{Classes}{48}{subparagraph*.324}%
+\contentsline {subparagraph}{Module Contents}{49}{subparagraph*.325}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.concrete.triangular\_concrete\_concept}{49}{subparagraph*.341}%
+\contentsline {subparagraph}{Classes}{49}{subparagraph*.342}%
+\contentsline {subparagraph}{Module Contents}{49}{subparagraph*.343}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.ext\_threshold\_concept}{50}{subparagraph*.357}%
+\contentsline {subparagraph}{Attributes}{50}{subparagraph*.358}%
+\contentsline {subparagraph}{Classes}{50}{subparagraph*.359}%
+\contentsline {subparagraph}{Module Contents}{50}{subparagraph*.360}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.has\_value\_concept}{51}{subparagraph*.377}%
+\contentsline {subparagraph}{Classes}{51}{subparagraph*.378}%
+\contentsline {subparagraph}{Module Contents}{51}{subparagraph*.379}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.implies\_concept}{51}{subparagraph*.392}%
+\contentsline {subparagraph}{Attributes}{51}{subparagraph*.393}%
+\contentsline {subparagraph}{Classes}{52}{subparagraph*.394}%
+\contentsline {subparagraph}{Module Contents}{52}{subparagraph*.395}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.interface}{53}{subparagraph*.416}%
+\contentsline {subparagraph}{Submodules}{53}{subparagraph*.417}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.interface.has\_concept\_interface}{53}{subparagraph*.418}%
+\contentsline {subparagraph}{Classes}{53}{subparagraph*.419}%
+\contentsline {subparagraph}{Module Contents}{53}{subparagraph*.420}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.interface.has\_concepts\_interface}{53}{subparagraph*.423}%
+\contentsline {subparagraph}{Classes}{53}{subparagraph*.424}%
+\contentsline {subparagraph}{Module Contents}{53}{subparagraph*.425}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.interface.has\_role\_concept\_interface}{54}{subparagraph*.428}%
+\contentsline {subparagraph}{Classes}{54}{subparagraph*.429}%
+\contentsline {subparagraph}{Module Contents}{54}{subparagraph*.430}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.interface.has\_role\_interface}{54}{subparagraph*.432}%
+\contentsline {subparagraph}{Classes}{54}{subparagraph*.433}%
+\contentsline {subparagraph}{Module Contents}{54}{subparagraph*.434}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.interface.has\_value\_interface}{54}{subparagraph*.437}%
+\contentsline {subparagraph}{Classes}{54}{subparagraph*.438}%
+\contentsline {subparagraph}{Module Contents}{54}{subparagraph*.439}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.interface.has\_weighted\_concepts\_interface}{54}{subparagraph*.442}%
+\contentsline {subparagraph}{Classes}{54}{subparagraph*.443}%
+\contentsline {subparagraph}{Module Contents}{55}{subparagraph*.444}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.modified}{55}{subparagraph*.447}%
+\contentsline {subparagraph}{Submodules}{55}{subparagraph*.448}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.modified.linearly\_modified\_concept}{55}{subparagraph*.449}%
+\contentsline {subparagraph}{Classes}{55}{subparagraph*.450}%
+\contentsline {subparagraph}{Module Contents}{55}{subparagraph*.451}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.modified.modified\_concept}{55}{subparagraph*.459}%
+\contentsline {subparagraph}{Classes}{55}{subparagraph*.460}%
+\contentsline {subparagraph}{Module Contents}{56}{subparagraph*.461}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.modified.triangularly\_modified\_concept}{56}{subparagraph*.474}%
+\contentsline {subparagraph}{Classes}{56}{subparagraph*.475}%
+\contentsline {subparagraph}{Module Contents}{56}{subparagraph*.476}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.negated\_nominal}{57}{subparagraph*.484}%
+\contentsline {subparagraph}{Classes}{57}{subparagraph*.485}%
+\contentsline {subparagraph}{Module Contents}{57}{subparagraph*.486}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.operator\_concept}{57}{subparagraph*.496}%
+\contentsline {subparagraph}{Attributes}{57}{subparagraph*.497}%
+\contentsline {subparagraph}{Classes}{58}{subparagraph*.498}%
+\contentsline {subparagraph}{Module Contents}{58}{subparagraph*.499}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.owa\_concept}{61}{subparagraph*.579}%
+\contentsline {subparagraph}{Classes}{61}{subparagraph*.580}%
+\contentsline {subparagraph}{Module Contents}{61}{subparagraph*.581}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.qowa\_concept}{61}{subparagraph*.592}%
+\contentsline {subparagraph}{Classes}{61}{subparagraph*.593}%
+\contentsline {subparagraph}{Module Contents}{61}{subparagraph*.594}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.quasi\_sugeno\_integral}{62}{subparagraph*.607}%
+\contentsline {subparagraph}{Classes}{62}{subparagraph*.608}%
+\contentsline {subparagraph}{Module Contents}{62}{subparagraph*.609}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.self\_concept}{63}{subparagraph*.619}%
+\contentsline {subparagraph}{Classes}{63}{subparagraph*.620}%
+\contentsline {subparagraph}{Module Contents}{63}{subparagraph*.621}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.sigma\_concept}{63}{subparagraph*.634}%
+\contentsline {subparagraph}{Classes}{63}{subparagraph*.635}%
+\contentsline {subparagraph}{Module Contents}{63}{subparagraph*.636}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.sigma\_count}{64}{subparagraph*.656}%
+\contentsline {subparagraph}{Classes}{64}{subparagraph*.657}%
+\contentsline {subparagraph}{Module Contents}{64}{subparagraph*.658}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.string\_concept}{65}{subparagraph*.674}%
+\contentsline {subparagraph}{Classes}{65}{subparagraph*.675}%
+\contentsline {subparagraph}{Module Contents}{65}{subparagraph*.676}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.sugeno\_integral}{65}{subparagraph*.685}%
+\contentsline {subparagraph}{Classes}{65}{subparagraph*.686}%
+\contentsline {subparagraph}{Module Contents}{66}{subparagraph*.687}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.threshold\_concept}{66}{subparagraph*.698}%
+\contentsline {subparagraph}{Attributes}{66}{subparagraph*.699}%
+\contentsline {subparagraph}{Classes}{66}{subparagraph*.700}%
+\contentsline {subparagraph}{Module Contents}{66}{subparagraph*.701}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.truth\_concept}{67}{subparagraph*.718}%
+\contentsline {subparagraph}{Attributes}{67}{subparagraph*.719}%
+\contentsline {subparagraph}{Classes}{67}{subparagraph*.720}%
+\contentsline {subparagraph}{Module Contents}{67}{subparagraph*.721}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.value\_concept}{68}{subparagraph*.744}%
+\contentsline {subparagraph}{Classes}{68}{subparagraph*.745}%
+\contentsline {subparagraph}{Module Contents}{68}{subparagraph*.746}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.weighted\_concept}{69}{subparagraph*.761}%
+\contentsline {subparagraph}{Classes}{69}{subparagraph*.762}%
+\contentsline {subparagraph}{Module Contents}{69}{subparagraph*.763}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.weighted\_max\_concept}{70}{subparagraph*.776}%
+\contentsline {subparagraph}{Classes}{70}{subparagraph*.777}%
+\contentsline {subparagraph}{Module Contents}{70}{subparagraph*.778}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.weighted\_min\_concept}{70}{subparagraph*.790}%
+\contentsline {subparagraph}{Classes}{70}{subparagraph*.791}%
+\contentsline {subparagraph}{Module Contents}{70}{subparagraph*.792}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.weighted\_sum\_concept}{71}{subparagraph*.804}%
+\contentsline {subparagraph}{Classes}{71}{subparagraph*.805}%
+\contentsline {subparagraph}{Module Contents}{71}{subparagraph*.806}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept.weighted\_sum\_zero\_concept}{72}{subparagraph*.818}%
+\contentsline {subparagraph}{Classes}{72}{subparagraph*.819}%
+\contentsline {subparagraph}{Module Contents}{72}{subparagraph*.820}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concept\_equivalence}{72}{subparagraph*.832}%
+\contentsline {subparagraph}{Classes}{72}{subparagraph*.833}%
+\contentsline {subparagraph}{Module Contents}{72}{subparagraph*.834}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.concrete\_feature}{73}{subparagraph*.841}%
+\contentsline {subparagraph}{Classes}{73}{subparagraph*.842}%
+\contentsline {subparagraph}{Module Contents}{73}{subparagraph*.843}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.degree}{73}{subparagraph*.854}%
+\contentsline {subparagraph}{Submodules}{73}{subparagraph*.855}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.degree.degree}{73}{subparagraph*.856}%
+\contentsline {subparagraph}{Classes}{73}{subparagraph*.857}%
+\contentsline {subparagraph}{Module Contents}{73}{subparagraph*.858}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.degree.degree\_expression}{74}{subparagraph*.873}%
+\contentsline {subparagraph}{Classes}{74}{subparagraph*.874}%
+\contentsline {subparagraph}{Module Contents}{74}{subparagraph*.875}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.degree.degree\_numeric}{75}{subparagraph*.890}%
+\contentsline {subparagraph}{Classes}{75}{subparagraph*.891}%
+\contentsline {subparagraph}{Module Contents}{75}{subparagraph*.892}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.degree.degree\_variable}{76}{subparagraph*.908}%
+\contentsline {subparagraph}{Classes}{76}{subparagraph*.909}%
+\contentsline {subparagraph}{Module Contents}{76}{subparagraph*.910}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.domain\_axiom}{76}{subparagraph*.925}%
+\contentsline {subparagraph}{Classes}{76}{subparagraph*.926}%
+\contentsline {subparagraph}{Module Contents}{76}{subparagraph*.927}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.exception}{77}{subparagraph*.931}%
+\contentsline {subparagraph}{Submodules}{77}{subparagraph*.932}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.exception.fuzzy\_ontology\_exception}{77}{subparagraph*.933}%
+\contentsline {subparagraph}{Exceptions}{77}{subparagraph*.934}%
+\contentsline {subparagraph}{Module Contents}{77}{subparagraph*.935}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.exception.inconsistent\_ontology\_exception}{77}{subparagraph*.937}%
+\contentsline {subparagraph}{Exceptions}{77}{subparagraph*.938}%
+\contentsline {subparagraph}{Module Contents}{77}{subparagraph*.939}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.feature\_function}{77}{subparagraph*.941}%
+\contentsline {subparagraph}{Classes}{77}{subparagraph*.942}%
+\contentsline {subparagraph}{Module Contents}{77}{subparagraph*.943}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.fuzzydl\_to\_owl2}{78}{subparagraph*.951}%
+\contentsline {subparagraph}{Classes}{78}{subparagraph*.952}%
+\contentsline {subparagraph}{Functions}{78}{subparagraph*.953}%
+\contentsline {subparagraph}{Module Contents}{78}{subparagraph*.954}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.general\_concept\_inclusion}{80}{subparagraph*.989}%
+\contentsline {subparagraph}{Classes}{80}{subparagraph*.990}%
+\contentsline {subparagraph}{Module Contents}{80}{subparagraph*.991}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.individual}{81}{subparagraph*.1014}%
+\contentsline {subparagraph}{Submodules}{81}{subparagraph*.1015}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.individual.created\_individual}{81}{subparagraph*.1016}%
+\contentsline {subparagraph}{Classes}{81}{subparagraph*.1017}%
+\contentsline {subparagraph}{Module Contents}{81}{subparagraph*.1018}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.individual.individual}{82}{subparagraph*.1041}%
+\contentsline {subparagraph}{Classes}{82}{subparagraph*.1042}%
+\contentsline {subparagraph}{Module Contents}{82}{subparagraph*.1043}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.individual.representative\_individual}{83}{subparagraph*.1070}%
+\contentsline {subparagraph}{Classes}{83}{subparagraph*.1071}%
+\contentsline {subparagraph}{Module Contents}{83}{subparagraph*.1072}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.knowledge\_base}{84}{subparagraph*.1082}%
+\contentsline {subparagraph}{Classes}{84}{subparagraph*.1083}%
+\contentsline {subparagraph}{Module Contents}{84}{subparagraph*.1084}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.label}{120}{subparagraph*.1547}%
+\contentsline {subparagraph}{Classes}{120}{subparagraph*.1548}%
+\contentsline {subparagraph}{Module Contents}{120}{subparagraph*.1549}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.milp}{121}{subparagraph*.1557}%
+\contentsline {subparagraph}{Submodules}{121}{subparagraph*.1558}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.milp.expression}{121}{subparagraph*.1559}%
+\contentsline {subparagraph}{Classes}{121}{subparagraph*.1560}%
+\contentsline {subparagraph}{Module Contents}{121}{subparagraph*.1561}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.milp.inequation}{122}{subparagraph*.1589}%
+\contentsline {subparagraph}{Attributes}{122}{subparagraph*.1590}%
+\contentsline {subparagraph}{Classes}{122}{subparagraph*.1591}%
+\contentsline {subparagraph}{Module Contents}{122}{subparagraph*.1592}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.milp.milp\_helper}{123}{subparagraph*.1613}%
+\contentsline {subparagraph}{Classes}{123}{subparagraph*.1614}%
+\contentsline {subparagraph}{Module Contents}{123}{subparagraph*.1615}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.milp.show\_variables\_helper}{127}{subparagraph*.1662}%
+\contentsline {subparagraph}{Classes}{127}{subparagraph*.1663}%
+\contentsline {subparagraph}{Module Contents}{128}{subparagraph*.1664}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.milp.solution}{129}{subparagraph*.1688}%
+\contentsline {subparagraph}{Classes}{129}{subparagraph*.1689}%
+\contentsline {subparagraph}{Module Contents}{129}{subparagraph*.1690}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.milp.term}{130}{subparagraph*.1701}%
+\contentsline {subparagraph}{Classes}{130}{subparagraph*.1702}%
+\contentsline {subparagraph}{Module Contents}{130}{subparagraph*.1703}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.milp.variable}{130}{subparagraph*.1719}%
+\contentsline {subparagraph}{Attributes}{130}{subparagraph*.1720}%
+\contentsline {subparagraph}{Classes}{131}{subparagraph*.1721}%
+\contentsline {subparagraph}{Module Contents}{131}{subparagraph*.1722}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.modifier}{132}{subparagraph*.1754}%
+\contentsline {subparagraph}{Submodules}{132}{subparagraph*.1755}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.modifier.linear\_modifier}{132}{subparagraph*.1756}%
+\contentsline {subparagraph}{Classes}{132}{subparagraph*.1757}%
+\contentsline {subparagraph}{Module Contents}{132}{subparagraph*.1758}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.modifier.modifier}{133}{subparagraph*.1771}%
+\contentsline {subparagraph}{Classes}{133}{subparagraph*.1772}%
+\contentsline {subparagraph}{Module Contents}{133}{subparagraph*.1773}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.modifier.triangular\_modifier}{134}{subparagraph*.1783}%
+\contentsline {subparagraph}{Classes}{134}{subparagraph*.1784}%
+\contentsline {subparagraph}{Module Contents}{134}{subparagraph*.1785}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.parser}{134}{subparagraph*.1798}%
+\contentsline {subparagraph}{Submodules}{134}{subparagraph*.1799}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.parser.dl\_parser}{134}{subparagraph*.1800}%
+\contentsline {subparagraph}{Attributes}{135}{subparagraph*.1801}%
+\contentsline {subparagraph}{Classes}{135}{subparagraph*.1802}%
+\contentsline {subparagraph}{Module Contents}{135}{subparagraph*.1803}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.primitive\_concept\_definition}{135}{subparagraph*.1816}%
+\contentsline {subparagraph}{Classes}{135}{subparagraph*.1817}%
+\contentsline {subparagraph}{Module Contents}{136}{subparagraph*.1818}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.query}{136}{subparagraph*.1840}%
+\contentsline {subparagraph}{Submodules}{136}{subparagraph*.1841}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.query.all\_instances\_query}{136}{subparagraph*.1842}%
+\contentsline {subparagraph}{Classes}{136}{subparagraph*.1843}%
+\contentsline {subparagraph}{Module Contents}{137}{subparagraph*.1844}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.query.bnp\_query}{137}{subparagraph*.1856}%
+\contentsline {subparagraph}{Classes}{137}{subparagraph*.1857}%
+\contentsline {subparagraph}{Module Contents}{137}{subparagraph*.1858}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.query.classification\_query}{138}{subparagraph*.1864}%
+\contentsline {subparagraph}{Classes}{138}{subparagraph*.1865}%
+\contentsline {subparagraph}{Module Contents}{138}{subparagraph*.1866}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.query.defuzzify}{138}{subparagraph*.1871}%
+\contentsline {subparagraph}{Submodules}{138}{subparagraph*.1872}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.query.defuzzify.defuzzify\_query}{138}{subparagraph*.1873}%
+\contentsline {subparagraph}{Classes}{138}{subparagraph*.1874}%
+\contentsline {subparagraph}{Module Contents}{138}{subparagraph*.1875}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.query.defuzzify.lom\_defuzzify\_query}{139}{subparagraph*.1884}%
+\contentsline {subparagraph}{Classes}{139}{subparagraph*.1885}%
+\contentsline {subparagraph}{Module Contents}{139}{subparagraph*.1886}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.query.defuzzify.mom\_defuzzify\_query}{139}{subparagraph*.1890}%
+\contentsline {subparagraph}{Classes}{139}{subparagraph*.1891}%
+\contentsline {subparagraph}{Module Contents}{139}{subparagraph*.1892}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.query.defuzzify.som\_defuzzify\_query}{140}{subparagraph*.1898}%
+\contentsline {subparagraph}{Classes}{140}{subparagraph*.1899}%
+\contentsline {subparagraph}{Module Contents}{140}{subparagraph*.1900}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.query.instance\_query}{140}{subparagraph*.1904}%
+\contentsline {subparagraph}{Classes}{140}{subparagraph*.1905}%
+\contentsline {subparagraph}{Module Contents}{140}{subparagraph*.1906}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.query.kb\_satisfiable\_query}{140}{subparagraph*.1911}%
+\contentsline {subparagraph}{Classes}{140}{subparagraph*.1912}%
+\contentsline {subparagraph}{Module Contents}{140}{subparagraph*.1913}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.query.max}{141}{subparagraph*.1919}%
+\contentsline {subparagraph}{Submodules}{141}{subparagraph*.1920}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.query.max.max\_instance\_query}{141}{subparagraph*.1921}%
+\contentsline {subparagraph}{Classes}{141}{subparagraph*.1922}%
+\contentsline {subparagraph}{Module Contents}{141}{subparagraph*.1923}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.query.max.max\_query}{141}{subparagraph*.1928}%
+\contentsline {subparagraph}{Classes}{141}{subparagraph*.1929}%
+\contentsline {subparagraph}{Module Contents}{141}{subparagraph*.1930}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.query.max.max\_related\_query}{142}{subparagraph*.1936}%
+\contentsline {subparagraph}{Classes}{142}{subparagraph*.1937}%
+\contentsline {subparagraph}{Module Contents}{142}{subparagraph*.1938}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.query.max.max\_satisfiable\_query}{142}{subparagraph*.1946}%
+\contentsline {subparagraph}{Classes}{142}{subparagraph*.1947}%
+\contentsline {subparagraph}{Module Contents}{143}{subparagraph*.1948}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.query.max.max\_subsumes\_query}{143}{subparagraph*.1953}%
+\contentsline {subparagraph}{Classes}{143}{subparagraph*.1954}%
+\contentsline {subparagraph}{Module Contents}{143}{subparagraph*.1955}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.query.min}{143}{subparagraph*.1960}%
+\contentsline {subparagraph}{Submodules}{143}{subparagraph*.1961}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.query.min.min\_instance\_query}{143}{subparagraph*.1962}%
+\contentsline {subparagraph}{Classes}{143}{subparagraph*.1963}%
+\contentsline {subparagraph}{Module Contents}{144}{subparagraph*.1964}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.query.min.min\_query}{144}{subparagraph*.1969}%
+\contentsline {subparagraph}{Classes}{144}{subparagraph*.1970}%
+\contentsline {subparagraph}{Module Contents}{144}{subparagraph*.1971}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.query.min.min\_related\_query}{144}{subparagraph*.1977}%
+\contentsline {subparagraph}{Classes}{144}{subparagraph*.1978}%
+\contentsline {subparagraph}{Module Contents}{144}{subparagraph*.1979}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.query.min.min\_satisfiable\_query}{145}{subparagraph*.1987}%
+\contentsline {subparagraph}{Classes}{145}{subparagraph*.1988}%
+\contentsline {subparagraph}{Module Contents}{145}{subparagraph*.1989}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.query.min.min\_subsumes\_query}{145}{subparagraph*.1994}%
+\contentsline {subparagraph}{Classes}{145}{subparagraph*.1995}%
+\contentsline {subparagraph}{Module Contents}{145}{subparagraph*.1996}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.query.query}{146}{subparagraph*.2001}%
+\contentsline {subparagraph}{Classes}{146}{subparagraph*.2002}%
+\contentsline {subparagraph}{Module Contents}{146}{subparagraph*.2003}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.query.related\_query}{146}{subparagraph*.2013}%
+\contentsline {subparagraph}{Classes}{146}{subparagraph*.2014}%
+\contentsline {subparagraph}{Module Contents}{147}{subparagraph*.2015}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.query.satisfiable\_query}{147}{subparagraph*.2021}%
+\contentsline {subparagraph}{Classes}{147}{subparagraph*.2022}%
+\contentsline {subparagraph}{Module Contents}{147}{subparagraph*.2023}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.query.subsumption\_query}{147}{subparagraph*.2025}%
+\contentsline {subparagraph}{Classes}{147}{subparagraph*.2026}%
+\contentsline {subparagraph}{Module Contents}{147}{subparagraph*.2027}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.range\_axiom}{148}{subparagraph*.2033}%
+\contentsline {subparagraph}{Classes}{148}{subparagraph*.2034}%
+\contentsline {subparagraph}{Module Contents}{148}{subparagraph*.2035}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.relation}{148}{subparagraph*.2039}%
+\contentsline {subparagraph}{Classes}{148}{subparagraph*.2040}%
+\contentsline {subparagraph}{Module Contents}{148}{subparagraph*.2041}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.restriction}{149}{subparagraph*.2057}%
+\contentsline {subparagraph}{Submodules}{149}{subparagraph*.2058}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.restriction.has\_value\_restriction}{149}{subparagraph*.2059}%
+\contentsline {subparagraph}{Classes}{149}{subparagraph*.2060}%
+\contentsline {subparagraph}{Module Contents}{149}{subparagraph*.2061}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.restriction.restriction}{149}{subparagraph*.2066}%
+\contentsline {subparagraph}{Classes}{149}{subparagraph*.2067}%
+\contentsline {subparagraph}{Module Contents}{149}{subparagraph*.2068}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.role\_parent\_with\_degree}{150}{subparagraph*.2080}%
+\contentsline {subparagraph}{Classes}{150}{subparagraph*.2081}%
+\contentsline {subparagraph}{Module Contents}{150}{subparagraph*.2082}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.util}{150}{subparagraph*.2088}%
+\contentsline {subparagraph}{Submodules}{150}{subparagraph*.2089}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.util.config\_reader}{150}{subparagraph*.2090}%
+\contentsline {subparagraph}{Classes}{150}{subparagraph*.2091}%
+\contentsline {subparagraph}{Module Contents}{150}{subparagraph*.2092}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.util.constants}{151}{subparagraph*.2105}%
+\contentsline {subparagraph}{Attributes}{151}{subparagraph*.2106}%
+\contentsline {subparagraph}{Classes}{151}{subparagraph*.2107}%
+\contentsline {subparagraph}{Module Contents}{151}{subparagraph*.2108}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.util.util}{168}{subparagraph*.2442}%
+\contentsline {subparagraph}{Attributes}{168}{subparagraph*.2443}%
+\contentsline {subparagraph}{Classes}{168}{subparagraph*.2444}%
+\contentsline {subparagraph}{Module Contents}{169}{subparagraph*.2445}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzydl.util.utils}{169}{subparagraph*.2459}%
+\contentsline {subparagraph}{Attributes}{169}{subparagraph*.2460}%
+\contentsline {subparagraph}{Functions}{169}{subparagraph*.2461}%
+\contentsline {subparagraph}{Module Contents}{169}{subparagraph*.2462}%
+\contentsline {subsubsection}{\numberline {7.1.1.2}fuzzy\_dl\_owl2.fuzzyowl2}{170}{subsubsection.7.1.1.2}%
+\contentsline {paragraph}{\numberline {7.1.1.2.1}Submodules}{170}{paragraph.7.1.1.2.1}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzyowl2.fuzzyowl2}{170}{subparagraph*.2467}%
+\contentsline {subparagraph}{Classes}{170}{subparagraph*.2468}%
+\contentsline {subparagraph}{Module Contents}{170}{subparagraph*.2469}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzyowl2.fuzzyowl2\_to\_fuzzydl}{176}{subparagraph*.2577}%
+\contentsline {subparagraph}{Classes}{176}{subparagraph*.2578}%
+\contentsline {subparagraph}{Module Contents}{176}{subparagraph*.2579}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzyowl2.owl\_types}{183}{subparagraph*.2678}%
+\contentsline {subparagraph}{Submodules}{183}{subparagraph*.2679}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzyowl2.owl\_types.choquet\_concept}{183}{subparagraph*.2680}%
+\contentsline {subparagraph}{Classes}{183}{subparagraph*.2681}%
+\contentsline {subparagraph}{Module Contents}{183}{subparagraph*.2682}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzyowl2.owl\_types.concept\_definition}{183}{subparagraph*.2687}%
+\contentsline {subparagraph}{Classes}{183}{subparagraph*.2688}%
+\contentsline {subparagraph}{Module Contents}{183}{subparagraph*.2689}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzyowl2.owl\_types.fuzzy\_datatype}{183}{subparagraph*.2693}%
+\contentsline {subparagraph}{Classes}{183}{subparagraph*.2694}%
+\contentsline {subparagraph}{Module Contents}{183}{subparagraph*.2695}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzyowl2.owl\_types.fuzzy\_modifier}{184}{subparagraph*.2702}%
+\contentsline {subparagraph}{Classes}{184}{subparagraph*.2703}%
+\contentsline {subparagraph}{Module Contents}{184}{subparagraph*.2704}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzyowl2.owl\_types.fuzzy\_nominal\_concept}{184}{subparagraph*.2706}%
+\contentsline {subparagraph}{Classes}{184}{subparagraph*.2707}%
+\contentsline {subparagraph}{Module Contents}{184}{subparagraph*.2708}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzyowl2.owl\_types.fuzzy\_property}{184}{subparagraph*.2713}%
+\contentsline {subparagraph}{Classes}{184}{subparagraph*.2714}%
+\contentsline {subparagraph}{Module Contents}{184}{subparagraph*.2715}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzyowl2.owl\_types.left\_shoulder\_function}{185}{subparagraph*.2717}%
+\contentsline {subparagraph}{Classes}{185}{subparagraph*.2718}%
+\contentsline {subparagraph}{Module Contents}{185}{subparagraph*.2719}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzyowl2.owl\_types.linear\_function}{185}{subparagraph*.2724}%
+\contentsline {subparagraph}{Classes}{185}{subparagraph*.2725}%
+\contentsline {subparagraph}{Module Contents}{185}{subparagraph*.2726}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzyowl2.owl\_types.linear\_modifier}{185}{subparagraph*.2731}%
+\contentsline {subparagraph}{Classes}{185}{subparagraph*.2732}%
+\contentsline {subparagraph}{Module Contents}{185}{subparagraph*.2733}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzyowl2.owl\_types.modified\_concept}{186}{subparagraph*.2737}%
+\contentsline {subparagraph}{Classes}{186}{subparagraph*.2738}%
+\contentsline {subparagraph}{Module Contents}{186}{subparagraph*.2739}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzyowl2.owl\_types.modified\_function}{186}{subparagraph*.2744}%
+\contentsline {subparagraph}{Classes}{186}{subparagraph*.2745}%
+\contentsline {subparagraph}{Module Contents}{186}{subparagraph*.2746}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzyowl2.owl\_types.modified\_property}{186}{subparagraph*.2751}%
+\contentsline {subparagraph}{Classes}{186}{subparagraph*.2752}%
+\contentsline {subparagraph}{Module Contents}{186}{subparagraph*.2753}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzyowl2.owl\_types.owa\_concept}{187}{subparagraph*.2759}%
+\contentsline {subparagraph}{Classes}{187}{subparagraph*.2760}%
+\contentsline {subparagraph}{Module Contents}{187}{subparagraph*.2761}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzyowl2.owl\_types.property\_definition}{187}{subparagraph*.2766}%
+\contentsline {subparagraph}{Classes}{187}{subparagraph*.2767}%
+\contentsline {subparagraph}{Module Contents}{187}{subparagraph*.2768}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzyowl2.owl\_types.qowa\_concept}{187}{subparagraph*.2772}%
+\contentsline {subparagraph}{Classes}{187}{subparagraph*.2773}%
+\contentsline {subparagraph}{Module Contents}{187}{subparagraph*.2774}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzyowl2.owl\_types.quasi\_sugeno\_concept}{188}{subparagraph*.2779}%
+\contentsline {subparagraph}{Classes}{188}{subparagraph*.2780}%
+\contentsline {subparagraph}{Module Contents}{188}{subparagraph*.2781}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzyowl2.owl\_types.right\_shoulder\_function}{188}{subparagraph*.2786}%
+\contentsline {subparagraph}{Classes}{188}{subparagraph*.2787}%
+\contentsline {subparagraph}{Module Contents}{188}{subparagraph*.2788}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzyowl2.owl\_types.sugeno\_concept}{188}{subparagraph*.2793}%
+\contentsline {subparagraph}{Classes}{188}{subparagraph*.2794}%
+\contentsline {subparagraph}{Module Contents}{188}{subparagraph*.2795}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzyowl2.owl\_types.trapezoidal\_function}{189}{subparagraph*.2800}%
+\contentsline {subparagraph}{Classes}{189}{subparagraph*.2801}%
+\contentsline {subparagraph}{Module Contents}{189}{subparagraph*.2802}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzyowl2.owl\_types.triangular\_function}{189}{subparagraph*.2809}%
+\contentsline {subparagraph}{Classes}{189}{subparagraph*.2810}%
+\contentsline {subparagraph}{Module Contents}{189}{subparagraph*.2811}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzyowl2.owl\_types.triangular\_modifer}{189}{subparagraph*.2817}%
+\contentsline {subparagraph}{Classes}{189}{subparagraph*.2818}%
+\contentsline {subparagraph}{Module Contents}{190}{subparagraph*.2819}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzyowl2.owl\_types.weighted\_concept}{190}{subparagraph*.2825}%
+\contentsline {subparagraph}{Classes}{190}{subparagraph*.2826}%
+\contentsline {subparagraph}{Module Contents}{190}{subparagraph*.2827}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzyowl2.owl\_types.weighted\_max\_concept}{190}{subparagraph*.2832}%
+\contentsline {subparagraph}{Classes}{190}{subparagraph*.2833}%
+\contentsline {subparagraph}{Module Contents}{190}{subparagraph*.2834}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzyowl2.owl\_types.weighted\_min\_concept}{191}{subparagraph*.2838}%
+\contentsline {subparagraph}{Classes}{191}{subparagraph*.2839}%
+\contentsline {subparagraph}{Module Contents}{191}{subparagraph*.2840}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzyowl2.owl\_types.weighted\_sum\_concept}{191}{subparagraph*.2844}%
+\contentsline {subparagraph}{Classes}{191}{subparagraph*.2845}%
+\contentsline {subparagraph}{Module Contents}{191}{subparagraph*.2846}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzyowl2.owl\_types.weighted\_sum\_zero\_concept}{191}{subparagraph*.2850}%
+\contentsline {subparagraph}{Classes}{191}{subparagraph*.2851}%
+\contentsline {subparagraph}{Module Contents}{191}{subparagraph*.2852}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzyowl2.parser}{192}{subparagraph*.2856}%
+\contentsline {subparagraph}{Submodules}{192}{subparagraph*.2857}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzyowl2.parser.owl2\_parser}{192}{subparagraph*.2858}%
+\contentsline {subparagraph}{Classes}{192}{subparagraph*.2859}%
+\contentsline {subparagraph}{Module Contents}{192}{subparagraph*.2860}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzyowl2.parser.owl2\_xml\_parser}{192}{subparagraph*.2866}%
+\contentsline {subparagraph}{Classes}{192}{subparagraph*.2867}%
+\contentsline {subparagraph}{Module Contents}{192}{subparagraph*.2868}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzyowl2.util}{193}{subparagraph*.2874}%
+\contentsline {subparagraph}{Submodules}{193}{subparagraph*.2875}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzyowl2.util.constants}{193}{subparagraph*.2876}%
+\contentsline {subparagraph}{Classes}{193}{subparagraph*.2877}%
+\contentsline {subparagraph}{Module Contents}{193}{subparagraph*.2878}%
+\contentsline {subparagraph}{fuzzy\_dl\_owl2.fuzzyowl2.util.fuzzy\_xml}{196}{subparagraph*.2958}%
+\contentsline {subparagraph}{Classes}{196}{subparagraph*.2959}%
+\contentsline {subparagraph}{Module Contents}{196}{subparagraph*.2960}%
+\contentsline {chapter}{\numberline {8}Indices and tables}{197}{chapter.8}%

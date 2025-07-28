@@ -28,7 +28,7 @@ venv/
 .idea/
 
 # Distribution / packaging
-build/
+# build/
 dist/
 *.egg-info/
 
