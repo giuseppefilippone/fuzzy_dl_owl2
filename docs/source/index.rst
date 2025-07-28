@@ -17,6 +17,7 @@ Welcome to fuzzy_dl_owl2's documentation!
    install_and_config
    new_grammar
    new_concepts
+   xml
    usage
    api/index
 
