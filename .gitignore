@@ -63,7 +63,6 @@ Pipfile.lock
 **/logs
 
 # results
-*.fdl
 **/results
 
 # wheel files
