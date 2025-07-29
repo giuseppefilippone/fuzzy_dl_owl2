@@ -12,51 +12,43 @@ from sortedcontainers import SortedSet
 from fuzzy_dl_owl2.fuzzydl.assertion.assertion import Assertion
 from fuzzy_dl_owl2.fuzzydl.classification_node import ClassificationNode
 from fuzzy_dl_owl2.fuzzydl.concept.all_some_concept import AllSomeConcept
-from fuzzy_dl_owl2.fuzzydl.concept.approximation_concept import ApproximationConcept
+from fuzzy_dl_owl2.fuzzydl.concept.approximation_concept import \
+    ApproximationConcept
 from fuzzy_dl_owl2.fuzzydl.concept.atomic_concept import AtomicConcept
 from fuzzy_dl_owl2.fuzzydl.concept.choquet_integral import ChoquetIntegral
 from fuzzy_dl_owl2.fuzzydl.concept.concept import Concept
-from fuzzy_dl_owl2.fuzzydl.concept.concrete.crisp_concrete_concept import (
-    CrispConcreteConcept,
-)
-from fuzzy_dl_owl2.fuzzydl.concept.concrete.fuzzy_concrete_concept import (
-    FuzzyConcreteConcept,
-)
-from fuzzy_dl_owl2.fuzzydl.concept.concrete.fuzzy_number.triangular_fuzzy_number import (
-    TriangularFuzzyNumber,
-)
-from fuzzy_dl_owl2.fuzzydl.concept.concrete.left_concrete_concept import (
-    LeftConcreteConcept,
-)
-from fuzzy_dl_owl2.fuzzydl.concept.concrete.linear_concrete_concept import (
-    LinearConcreteConcept,
-)
-from fuzzy_dl_owl2.fuzzydl.concept.concrete.modified_concrete_concept import (
-    ModifiedConcreteConcept,
-)
-from fuzzy_dl_owl2.fuzzydl.concept.concrete.right_concrete_concept import (
-    RightConcreteConcept,
-)
-from fuzzy_dl_owl2.fuzzydl.concept.concrete.trapezoidal_concrete_concept import (
-    TrapezoidalConcreteConcept,
-)
-from fuzzy_dl_owl2.fuzzydl.concept.concrete.triangular_concrete_concept import (
-    TriangularConcreteConcept,
-)
-from fuzzy_dl_owl2.fuzzydl.concept.ext_threshold_concept import ExtThresholdConcept
+from fuzzy_dl_owl2.fuzzydl.concept.concrete.crisp_concrete_concept import \
+    CrispConcreteConcept
+from fuzzy_dl_owl2.fuzzydl.concept.concrete.fuzzy_concrete_concept import \
+    FuzzyConcreteConcept
+from fuzzy_dl_owl2.fuzzydl.concept.concrete.fuzzy_number.triangular_fuzzy_number import \
+    TriangularFuzzyNumber
+from fuzzy_dl_owl2.fuzzydl.concept.concrete.left_concrete_concept import \
+    LeftConcreteConcept
+from fuzzy_dl_owl2.fuzzydl.concept.concrete.linear_concrete_concept import \
+    LinearConcreteConcept
+from fuzzy_dl_owl2.fuzzydl.concept.concrete.modified_concrete_concept import \
+    ModifiedConcreteConcept
+from fuzzy_dl_owl2.fuzzydl.concept.concrete.right_concrete_concept import \
+    RightConcreteConcept
+from fuzzy_dl_owl2.fuzzydl.concept.concrete.trapezoidal_concrete_concept import \
+    TrapezoidalConcreteConcept
+from fuzzy_dl_owl2.fuzzydl.concept.concrete.triangular_concrete_concept import \
+    TriangularConcreteConcept
+from fuzzy_dl_owl2.fuzzydl.concept.ext_threshold_concept import \
+    ExtThresholdConcept
 from fuzzy_dl_owl2.fuzzydl.concept.has_value_concept import HasValueConcept
 from fuzzy_dl_owl2.fuzzydl.concept.implies_concept import ImpliesConcept
-from fuzzy_dl_owl2.fuzzydl.concept.interface.has_concepts_interface import (
-    HasConceptsInterface,
-)
-from fuzzy_dl_owl2.fuzzydl.concept.interface.has_role_interface import HasRoleInterface
-from fuzzy_dl_owl2.fuzzydl.concept.interface.has_value_interface import (
-    HasValueInterface,
-)
-from fuzzy_dl_owl2.fuzzydl.concept.modified.modified_concept import ModifiedConcept
-from fuzzy_dl_owl2.fuzzydl.concept.modified.triangularly_modified_concept import (
-    TriangularlyModifiedConcept,
-)
+from fuzzy_dl_owl2.fuzzydl.concept.interface.has_concepts_interface import \
+    HasConceptsInterface
+from fuzzy_dl_owl2.fuzzydl.concept.interface.has_role_interface import \
+    HasRoleInterface
+from fuzzy_dl_owl2.fuzzydl.concept.interface.has_value_interface import \
+    HasValueInterface
+from fuzzy_dl_owl2.fuzzydl.concept.modified.modified_concept import \
+    ModifiedConcept
+from fuzzy_dl_owl2.fuzzydl.concept.modified.triangularly_modified_concept import \
+    TriangularlyModifiedConcept
 from fuzzy_dl_owl2.fuzzydl.concept.negated_nominal import NegatedNominal
 from fuzzy_dl_owl2.fuzzydl.concept.operator_concept import OperatorConcept
 from fuzzy_dl_owl2.fuzzydl.concept.owa_concept import OwaConcept
@@ -70,28 +62,30 @@ from fuzzy_dl_owl2.fuzzydl.concept.threshold_concept import ThresholdConcept
 from fuzzy_dl_owl2.fuzzydl.concept.truth_concept import TruthConcept
 from fuzzy_dl_owl2.fuzzydl.concept.value_concept import ValueConcept
 from fuzzy_dl_owl2.fuzzydl.concept.weighted_concept import WeightedConcept
-from fuzzy_dl_owl2.fuzzydl.concept.weighted_max_concept import WeightedMaxConcept
-from fuzzy_dl_owl2.fuzzydl.concept.weighted_min_concept import WeightedMinConcept
-from fuzzy_dl_owl2.fuzzydl.concept.weighted_sum_concept import WeightedSumConcept
-from fuzzy_dl_owl2.fuzzydl.concept.weighted_sum_zero_concept import (
-    WeightedSumZeroConcept,
-)
+from fuzzy_dl_owl2.fuzzydl.concept.weighted_max_concept import \
+    WeightedMaxConcept
+from fuzzy_dl_owl2.fuzzydl.concept.weighted_min_concept import \
+    WeightedMinConcept
+from fuzzy_dl_owl2.fuzzydl.concept.weighted_sum_concept import \
+    WeightedSumConcept
+from fuzzy_dl_owl2.fuzzydl.concept.weighted_sum_zero_concept import \
+    WeightedSumZeroConcept
 from fuzzy_dl_owl2.fuzzydl.concept_equivalence import ConceptEquivalence
 from fuzzy_dl_owl2.fuzzydl.concrete_feature import ConcreteFeature
 from fuzzy_dl_owl2.fuzzydl.degree.degree import Degree
 from fuzzy_dl_owl2.fuzzydl.degree.degree_expression import DegreeExpression
 from fuzzy_dl_owl2.fuzzydl.degree.degree_numeric import DegreeNumeric
 from fuzzy_dl_owl2.fuzzydl.degree.degree_variable import DegreeVariable
-from fuzzy_dl_owl2.fuzzydl.exception.inconsistent_ontology_exception import (
-    InconsistentOntologyException,
-)
+from fuzzy_dl_owl2.fuzzydl.exception.inconsistent_ontology_exception import \
+    InconsistentOntologyException
 from fuzzy_dl_owl2.fuzzydl.feature_function import FeatureFunction
-from fuzzy_dl_owl2.fuzzydl.general_concept_inclusion import GeneralConceptInclusion
-from fuzzy_dl_owl2.fuzzydl.individual.created_individual import CreatedIndividual
+from fuzzy_dl_owl2.fuzzydl.general_concept_inclusion import \
+    GeneralConceptInclusion
+from fuzzy_dl_owl2.fuzzydl.individual.created_individual import \
+    CreatedIndividual
 from fuzzy_dl_owl2.fuzzydl.individual.individual import Individual
-from fuzzy_dl_owl2.fuzzydl.individual.representative_individual import (
-    RepresentativeIndividual,
-)
+from fuzzy_dl_owl2.fuzzydl.individual.representative_individual import \
+    RepresentativeIndividual
 from fuzzy_dl_owl2.fuzzydl.milp.expression import Expression
 from fuzzy_dl_owl2.fuzzydl.milp.milp_helper import MILPHelper
 from fuzzy_dl_owl2.fuzzydl.milp.solution import Solution
@@ -99,29 +93,21 @@ from fuzzy_dl_owl2.fuzzydl.milp.term import Term
 from fuzzy_dl_owl2.fuzzydl.milp.variable import Variable
 from fuzzy_dl_owl2.fuzzydl.modifier.linear_modifier import LinearModifier
 from fuzzy_dl_owl2.fuzzydl.modifier.modifier import Modifier
-from fuzzy_dl_owl2.fuzzydl.modifier.triangular_modifier import TriangularModifier
-from fuzzy_dl_owl2.fuzzydl.primitive_concept_definition import (
-    PrimitiveConceptDefinition,
-)
+from fuzzy_dl_owl2.fuzzydl.modifier.triangular_modifier import \
+    TriangularModifier
+from fuzzy_dl_owl2.fuzzydl.primitive_concept_definition import \
+    PrimitiveConceptDefinition
 from fuzzy_dl_owl2.fuzzydl.relation import Relation
-from fuzzy_dl_owl2.fuzzydl.restriction.has_value_restriction import HasValueRestriction
+from fuzzy_dl_owl2.fuzzydl.restriction.has_value_restriction import \
+    HasValueRestriction
 from fuzzy_dl_owl2.fuzzydl.restriction.restriction import Restriction
 from fuzzy_dl_owl2.fuzzydl.util import constants
 from fuzzy_dl_owl2.fuzzydl.util.config_reader import ConfigReader
 from fuzzy_dl_owl2.fuzzydl.util.constants import (
-    BlockingDynamicType,
-    ConceptType,
-    ConcreteFeatureType,
-    CreatedIndividualBlockingType,
-    FeatureFunctionType,
-    FuzzyLogic,
-    InequalityType,
-    KnowledgeBaseRules,
-    LogicOperatorType,
-    RepresentativeIndividualType,
-    RestrictionType,
-    VariableType,
-)
+    BlockingDynamicType, ConceptType, ConcreteFeatureType,
+    CreatedIndividualBlockingType, FeatureFunctionType, FuzzyLogic,
+    InequalityType, KnowledgeBaseRules, LogicOperatorType,
+    RepresentativeIndividualType, RestrictionType, VariableType)
 from fuzzy_dl_owl2.fuzzydl.util.util import Util
 from fuzzy_dl_owl2.fuzzydl.util.utils import class_debugging
 

@@ -1,0 +1,4 @@
+(define-modifier very linear-modifier(0.8))
+(define-concept VeryHighPerson (very HighPerson))
+(define-primitive-concept HighPerson *top*)
+(define-primitive-concept VeryHighPerson *top*)

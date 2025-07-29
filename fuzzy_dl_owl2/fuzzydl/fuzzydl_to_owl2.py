@@ -798,6 +798,21 @@ class FuzzydlToOwl2:
             # )
             self.add_ontology_annotation(annotation)
 
+        # Process atomic concepts
+        # TODO
+        for c in self.kb.atomic_concepts.values():
+            self.ontology.add_axiom(
+                OWLDeclaration(
+                    self.get_class(str(c)),
+                    [
+                        OWLAnnotation(
+                            OWLAnnotationProperty(URIRef(RDFS.label)),
+                            OWLLiteral(Literal(str(c), lang="en")),
+                        )
+                    ],
+                )
+            )
+
         # Process concrete concepts
         for c in self.kb.concrete_concepts.values():
             self._process_concrete_concept(c)
