@@ -208,7 +208,7 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
             if len(literat_set) > 0:
                 return f"(= {self.get_data_property_name(p)} {literat_set})"
         Util.error(
-            f"Data some values restriction with range {range} and type {type} not supported -- DataSomeValuesFrom({p} {range})"
+            f"Data some values restriction with range {range} and type {type(range)} not supported -- DataSomeValuesFrom({p} {range})"
         )
         return None
 
@@ -220,7 +220,7 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
             if datatype_name in self.fuzzy_datatypes:
                 return f"(all {self.get_data_property_name(p)} {datatype_name})"
         Util.error(
-            f"Data all values restriction with range {range} and type {type} not supported -- DataAllValuesFrom({p} {range})"
+            f"Data all values restriction with range {range} and type {type(range)} not supported -- DataAllValuesFrom({p} {range})"
         )
         return None
 
