@@ -218,6 +218,7 @@ class FuzzyOwl2(object):
             if datatype_def_axioms is None:
                 continue
             for axiom in datatype_def_axioms:
+                Util.debug(f"Getting facets for axiom {axiom}...")
                 assert isinstance(axiom, OWLDatatypeDefinition)
                 datatype_name: str = self.get_short_name(axiom.datatype).replace(
                     ":", ""
@@ -226,6 +227,7 @@ class FuzzyOwl2(object):
                     continue
                 f1: typing.Optional[OWLFacet] = None
                 f2: typing.Optional[OWLFacet] = None
+                Util.debug(f"Getting facets for data range {axiom.data_range}...")
                 if isinstance(axiom.data_range, OWLDatatypeRestriction):
                     facets: list[OWLFacet] = list(axiom.data_range.restrictions)
                     f1: OWLFacet = facets[0]
@@ -261,14 +263,27 @@ class FuzzyOwl2(object):
                         continue
                     f1: OWLFacet = facets1[0]
                     f2: OWLFacet = facets2[0]
-                if f1 and f1.constraint_to_uriref() == OWLFacet.MIN_INCLUSIVE:
-                    facets[0] = float(str(f1.value.value))
-                elif f1 and f1.constraint_to_uriref() == OWLFacet.MAX_INCLUSIVE:
-                    facets[1] = float(str(f1.value.value))
-                if f2 and f2.constraint_to_uriref() == OWLFacet.MIN_INCLUSIVE:
-                    facets[0] = float(str(f2.value.value))
-                elif f2 and f2.constraint_to_uriref() == OWLFacet.MAX_INCLUSIVE:
-                    facets[1] = float(str(f2.value.value))
+
+                Util.debug(f"Facets 1 {f1}.")
+                Util.debug(f"Facets 2 {f2}.")
+                if f1:
+                    if f1.constraint_to_uriref() == OWLFacet.MIN_INCLUSIVE:
+                        facets[0] = float(str(f1.value.value))
+                    elif f1.constraint_to_uriref() == OWLFacet.MIN_EXCLUSIVE:
+                        facets[0] = float(str(f1.value.value)) + ConfigReader.EPSILON
+                    elif f1.constraint_to_uriref() == OWLFacet.MAX_INCLUSIVE:
+                        facets[1] = float(str(f1.value.value))
+                    elif f1.constraint_to_uriref() == OWLFacet.MAX_EXCLUSIVE:
+                        facets[1] = float(str(f1.value.value)) - ConfigReader.EPSILON
+                if f2:
+                    if f2.constraint_to_uriref() == OWLFacet.MIN_INCLUSIVE:
+                        facets[0] = float(str(f2.value.value))
+                    elif f2.constraint_to_uriref() == OWLFacet.MIN_EXCLUSIVE:
+                        facets[0] = float(str(f2.value.value)) + ConfigReader.EPSILON
+                    elif f2.constraint_to_uriref() == OWLFacet.MAX_INCLUSIVE:
+                        facets[1] = float(str(f2.value.value))
+                    elif f2.constraint_to_uriref() == OWLFacet.MAX_INCLUSIVE:
+                        facets[1] = float(str(f2.value.value)) - ConfigReader.EPSILON
                 return facets
         return facets
 
