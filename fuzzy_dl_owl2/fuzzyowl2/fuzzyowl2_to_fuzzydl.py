@@ -7,6 +7,7 @@ from fuzzy_dl_owl2.fuzzydl.util.constants import FuzzyDLKeyword
 from fuzzy_dl_owl2.fuzzydl.util.util import Util
 from fuzzy_dl_owl2.fuzzyowl2.fuzzyowl2 import FuzzyOwl2
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.choquet_concept import ChoquetConcept
+from fuzzy_dl_owl2.fuzzyowl2.owl_types.crisp_function import CrispFunction
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.fuzzy_nominal_concept import FuzzyNominalConcept
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.left_shoulder_function import (
     LeftShoulderFunction,
@@ -827,6 +828,9 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
 
     def write_linear_modifier_definition(self, name: str, mod: LinearModifier) -> None:
         self.__write(f"(define-modifier {name} {mod})")
+
+    def write_crisp_function_definition(self, name: str, dat: CrispFunction) -> None:
+        self.__write(f"(define-fuzzy-concept {name} {dat})")
 
     def write_left_shoulder_function_definition(
         self, name: str, dat: LeftShoulderFunction

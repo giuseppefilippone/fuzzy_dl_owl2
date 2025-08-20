@@ -11,6 +11,7 @@ from fuzzy_dl_owl2.fuzzyowl2.owl_types.concept_definition import ConceptDefiniti
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.fuzzy_datatype import FuzzyDatatype
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.fuzzy_modifier import FuzzyModifier
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.fuzzy_nominal_concept import FuzzyNominalConcept
+from fuzzy_dl_owl2.fuzzyowl2.owl_types.crisp_function import CrispFunction
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.left_shoulder_function import (
     LeftShoulderFunction,
 )
@@ -317,7 +318,9 @@ class FuzzyOwl2(object):
                     c.set_max_value(facets[1])
                     Util.debug(f"Concept for {datatype} -> {c}")
                     self.fuzzy_datatypes[datatype_name] = c
-                    if isinstance(c, LeftShoulderFunction):
+                    if isinstance(c, CrispFunction):
+                        self.write_crisp_function_definition(datatype_name, c)
+                    elif isinstance(c, LeftShoulderFunction):
                         self.write_left_shoulder_function_definition(datatype_name, c)
                     elif isinstance(c, RightShoulderFunction):
                         self.write_right_shoulder_function_definition(datatype_name, c)
@@ -1454,6 +1457,11 @@ class FuzzyOwl2(object):
 
     def write_linear_modifier_definition(self, name: str, mod: LinearModifier) -> None:
         Util.info(f"Write definition {name} = {mod}")
+
+    def write_crisp_function_definition(
+        self, name: str, dat: CrispFunction
+    ) -> None:
+        Util.info(f"Write definition {name} = {dat}")
 
     def write_left_shoulder_function_definition(
         self, name: str, dat: LeftShoulderFunction

@@ -525,9 +525,7 @@ class DLParser(object):
         if f is None:
             Util.error(f"Error: Fuzzy concept {f} has to be defined before being used.")
         if not isinstance(f, (RightConcreteConcept, LeftConcreteConcept)):
-            Util.error(
-                f"Error: Fuzzy concept {f} has to be a right or a linear function."
-            )
+            Util.error(f"Error: Fuzzy concept {f} has to be a right or left functions.")
         concepts: list[Concept] = [
             DLParser._to_concept(concept) for concept in list_tokens[1:]
         ]

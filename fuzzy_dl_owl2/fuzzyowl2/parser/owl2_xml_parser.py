@@ -10,6 +10,7 @@ import pyparsing as pp
 from fuzzy_dl_owl2.fuzzydl.util.config_reader import ConfigReader
 from fuzzy_dl_owl2.fuzzydl.util.util import Util
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.choquet_concept import ChoquetConcept
+from fuzzy_dl_owl2.fuzzyowl2.owl_types.crisp_function import CrispFunction
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.fuzzy_nominal_concept import FuzzyNominalConcept
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.left_shoulder_function import (
     LeftShoulderFunction,
@@ -148,7 +149,12 @@ class FuzzyOwl2XMLParser(object):
             child = root.find(FuzzyOWL2Keyword.DATATYPE.get_tag_name())
             datatype_type = child.attrib.get(FuzzyOWL2Keyword.TYPE.get_str_value())
 
-            if datatype_type == FuzzyOWL2Keyword.LEFT_SHOULDER:
+            if datatype_type == FuzzyOWL2Keyword.CRISP:
+                return CrispFunction(
+                    float(child.attrib.get(FuzzyOWL2Keyword.A.get_str_value())),
+                    float(child.attrib.get(FuzzyOWL2Keyword.B.get_str_value())),
+                )
+            elif datatype_type == FuzzyOWL2Keyword.LEFT_SHOULDER:
                 return LeftShoulderFunction(
                     float(child.attrib.get(FuzzyOWL2Keyword.A.get_str_value())),
                     float(child.attrib.get(FuzzyOWL2Keyword.B.get_str_value())),
