@@ -3536,10 +3536,12 @@ class KnowledgeBase:
             self.language += "F"
         if self.concrete_fuzzy_concepts:
             self.language += "(D)"
+
         Util.debug(f"Expressivity = {self.language}")
+        print("Expressivity = " + self.language)
         self.milp.set_nominal_variables(
-            "B" in self.language
-        ) or self.has_functional_abstract_roles()
+            "B" in self.language or self.has_functional_abstract_roles()
+        )
 
     def has_functional_abstract_roles(self) -> bool:
         for f in self.functional_roles:
