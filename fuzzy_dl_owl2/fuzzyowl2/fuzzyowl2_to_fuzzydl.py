@@ -103,6 +103,7 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
             return False
 
     def __write(self, line: str) -> None:
+        Util.debug(f"Writing line to FuzzyDL file: {line}")
         with open(self.output_dl, "a") as file:
             file.write(f"{line}\n")
 
@@ -419,25 +420,29 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
         return name
 
     def write_fuzzy_logic(self, logic: str) -> None:
+        super().write_fuzzy_logic(logic)
         self.__write(f"(define-fuzzy-logic {logic})")
 
     def write_concept_declaration(self, c: OWLClassExpression) -> None:
+        super().write_concept_declaration(c)
         self.__write(
             f"(define-primitive-concept {self.get_class_name(c)} {self.get_top_concept_name()})"
         )
 
     def write_data_property_declaration(self, dp: OWLDataPropertyExpression) -> None:
+        super().write_data_property_declaration(dp)
         self.write_functional_data_property_axiom(dp)
         self.__write(f"(range {self.get_data_property_name(dp)} *string*)")
 
     def write_object_property_declaration(
         self, op: OWLObjectPropertyExpression
     ) -> None:
-        pass
+        super().write_object_property_declaration(op)
 
     def write_concept_assertion_axiom(
         self, i: OWLIndividual, c: OWLClassExpression, d: float
     ) -> None:
+        super().write_concept_assertion_axiom(i, c, d)
         self.__write(
             f"(instance {self.get_individual_name(i)} {self.get_class_name(c)} {d})"
         )
@@ -449,6 +454,7 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
         p: OWLObjectPropertyExpression,
         d: float,
     ) -> None:
+        super().write_object_property_assertion_axiom(i1, i2, p, d)
         self.__write(
             f"(related {self.get_individual_name(i1)} {self.get_individual_name(i2)} {self.get_object_property_name(p)} {d})"
         )
@@ -460,6 +466,7 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
         p: OWLDataPropertyExpression,
         d: float,
     ) -> None:
+        super().write_data_property_assertion_axiom(i, lit, p, d)
         datatype: OWLDatatype = lit.datatype
         dp_name: str = self.get_data_property_name(p)
         if datatype is None:
@@ -491,7 +498,7 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
                     else:
                         value = int(str(lit.value))
                     self.__write(
-                        f"(instance {self.get_individual_name(i)} (>= {dp_name} {value}) {d})"
+                        f"(instance {self.get_individual_name(i)} (= {dp_name} {value}) {d})"
                     )
                 else:
                     if dp_name not in self.string_datatypes:
@@ -514,6 +521,7 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
         p: OWLObjectPropertyExpression,
         d: float,
     ) -> None:
+        super().write_negative_object_property_assertion_axiom(i1, i2, p, d)
         Util.error(
             f"Negative object property assertion not supported -- NegativeObjectPropertyAssertion({p} {i1} {i2} {d})"
         )
@@ -526,24 +534,28 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
         p: OWLDataPropertyExpression,
         d: float,
     ) -> None:
+        super().write_negative_data_property_assertion_axiom(i, lit, p, d)
         Util.error(
             f"Negative data property assertion not supported -- NegativeDataPropertyAssertion({p} {i} {lit} {d})"
         )
         return None
 
     def write_same_individual_axiom(self, ind_set: set[OWLIndividual]) -> None:
+        super().write_same_individual_axiom(ind_set)
         Util.error(
-            f"Same individual axiom not supported -- NegativeDataPropertyAssertion({self.__get_set_name(ind_set)})"
+            f"Same individual axiom not supported -- SameIndividuals({self.__get_set_name(ind_set)})"
         )
         return None
 
     def write_different_individuals_axiom(self, ind_set: set[OWLIndividual]) -> None:
+        super().write_different_individuals_axiom(ind_set)
         Util.error(
             f"Different individual axiom not supported -- DifferentIndividuals({self.__get_set_name(ind_set)})"
         )
         return None
 
     def write_disjoint_classes_axiom(self, class_set: set[OWLClassExpression]) -> None:
+        super().write_disjoint_classes_axiom(class_set)
         if len(class_set) <= 1:
             return
         self.__write(
@@ -551,6 +563,7 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
         )
 
     def write_disjoint_union_axiom(self, class_set: set[OWLClassExpression]) -> None:
+        super().write_disjoint_union_axiom(class_set)
         if len(class_set) <= 1:
             return
         for c in class_set:
@@ -563,6 +576,7 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
     def write_subclass_of_axiom(
         self, subclass: OWLClassExpression, superclass: OWLClassExpression, d: float
     ) -> None:
+        super().write_subclass_of_axiom(subclass, superclass, d)
         if isinstance(subclass, OWLClass) and d == 1:
             self.__write(
                 f"(define-primitive-concept {self.get_short_name(subclass)} {self.get_class_name(superclass)})"
@@ -575,6 +589,7 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
     def write_equivalent_classes_axiom(
         self, class_set: set[OWLClassExpression]
     ) -> None:
+        super().write_equivalent_classes_axiom(class_set)
         name: str = None
         left_class: OWLClassExpression = None
         for c in class_set:
@@ -597,6 +612,7 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
         superproperty: OWLObjectPropertyExpression,
         d: float,
     ) -> None:
+        super().write_sub_object_property_of_axiom(subproperty, superproperty, d)
         self.__write(
             f"(implies-role {self.get_object_property_name(subproperty)} {self.get_object_property_name(superproperty)} {d})"
         )
@@ -607,6 +623,7 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
         superproperty: OWLDataPropertyExpression,
         d: float,
     ) -> None:
+        super().write_sub_data_property_of_axiom(subproperty, superproperty, d)
         self.__write(
             f"(implies-role {self.get_data_property_name(subproperty)} {self.get_data_property_name(superproperty)} {d})"
         )
@@ -617,13 +634,16 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
         superproperty: OWLObjectPropertyExpression,
         d: float,
     ) -> None:
+        super().write_sub_property_chain_of_axiom(chain, superproperty, d)
         Util.error(
             f"Subproperty chain axiom not supported -- SubObjectPropertyOf(ObjectPropertyChain({self.__get_set_name(chain)}) {superproperty} {d})"
         )
+        return None
 
     def write_equivalent_object_properties_axiom(
         self, class_set: set[OWLObjectPropertyExpression]
     ) -> None:
+        super().write_equivalent_object_properties_axiom(class_set)
         first: OWLObjectPropertyExpression = next(class_set)
         first_name: str = self.get_object_property_name(first)
         for property in class_set - set([first]):
@@ -634,6 +654,7 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
     def write_equivalent_data_properties_axiom(
         self, class_set: set[OWLDataPropertyExpression]
     ) -> None:
+        super().write_equivalent_data_properties_axiom(class_set)
         first: OWLDataPropertyExpression = next(class_set)
         first_name: str = self.get_data_property_name(first)
         for property in class_set - set([first]):
@@ -644,28 +665,34 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
     def write_transitive_object_property_axiom(
         self, p: OWLObjectPropertyExpression
     ) -> None:
+        super().write_transitive_object_property_axiom(p)
         self.__write(f"(transitive {self.get_object_property_name(p)})")
 
     def write_symmetric_object_property_axiom(
         self, p: OWLObjectPropertyExpression
     ) -> None:
+        super().write_symmetric_object_property_axiom(p)
         self.__write(f"(symmetric {self.get_object_property_name(p)})")
 
     def write_asymmetric_object_property_axiom(
         self, p: OWLObjectPropertyExpression
     ) -> None:
+        super().write_asymmetric_object_property_axiom(p)
         Util.error(
             f"Asymmetric object property axiom not supported -- AsymmetricObjectProperty({p})"
         )
+        return None
 
     def write_reflexive_object_property_axiom(
         self, p: OWLObjectPropertyExpression
     ) -> None:
+        super().write_reflexive_object_property_axiom(p)
         self.__write(f"(reflexive {self.get_object_property_name(p)})")
 
     def write_irreflexive_object_property_axiom(
         self, p: OWLObjectPropertyExpression
     ) -> None:
+        super().write_irreflexive_object_property_axiom(p)
         Util.error(
             f"Irreflexive object property axiom not supported -- IrreflexiveObjectProperty({p})"
         )
@@ -673,14 +700,16 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
     def write_functional_object_property_axiom(
         self, p: OWLObjectPropertyExpression
     ) -> None:
+        super().write_functional_object_property_axiom(p)
         name: str = self.get_object_property_name(p)
         if name not in self.processed_functional_object_properties:
             self.processed_functional_object_properties.add(name)
             self.__write(f"(functional {name})")
 
     def write_functional_data_property_axiom(
-        self, p: OWLObjectPropertyExpression
+        self, p: OWLDataPropertyExpression
     ) -> None:
+        super().write_functional_data_property_axiom(p)
         name: str = self.get_data_property_name(p)
         if name not in self.processed_functional_data_properties:
             self.processed_functional_data_properties.add(name)
@@ -689,6 +718,7 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
     def write_inverse_object_property_axiom(
         self, p1: OWLObjectPropertyExpression, p2: OWLObjectPropertyExpression
     ) -> None:
+        super().write_inverse_object_property_axiom(p1, p2)
         self.__write(
             f"(inverse {self.get_object_property_name(p1)} {self.get_object_property_name(p2)})"
         )
@@ -696,11 +726,13 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
     def write_inverse_functional_object_property_axiom(
         self, p: OWLObjectPropertyExpression
     ) -> None:
+        super().write_inverse_functional_object_property_axiom(p)
         self.__write(f"(inverse-functional {self.get_object_property_name(p)})")
 
     def write_object_property_domain_axiom(
         self, p: OWLObjectPropertyExpression, c: OWLClassExpression
     ) -> None:
+        super().write_object_property_domain_axiom(p, c)
         self.__write(
             f"(domain {self.get_object_property_name(p)} {self.get_class_name(c)})"
         )
@@ -708,6 +740,7 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
     def write_object_property_range_axiom(
         self, p: OWLObjectPropertyExpression, c: OWLClassExpression
     ) -> None:
+        super().write_object_property_range_axiom(p, c)
         self.__write(
             f"(range {self.get_object_property_name(p)} {self.get_class_name(c)})"
         )
@@ -715,6 +748,7 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
     def write_data_property_domain_axiom(
         self, p: OWLDataPropertyExpression, c: OWLClassExpression
     ) -> None:
+        super().write_data_property_domain_axiom(p, c)
         self.__write(
             f"(domain {self.get_data_property_name(p)} {self.get_class_name(c)})"
         )
@@ -722,6 +756,7 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
     def write_data_property_range_axiom(
         self, p: OWLDataPropertyExpression, range: OWLDataRange
     ) -> None:
+        super().write_data_property_range_axiom(p, range)
         range_str: str = None
         dp_name: str = self.get_data_property_name(p)
         if isinstance(range, OWLDatatype):
@@ -810,111 +845,139 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
     def write_disjoint_object_properties_axiom(
         self, class_set: set[OWLObjectPropertyExpression]
     ) -> None:
+        super().write_disjoint_object_properties_axiom(class_set)
         Util.error(
             f"Disjoint object properties axiom not supported -- DisjointObjectProperties({self.__get_set_name(class_set)})"
         )
+        return None
 
     def write_disjoint_data_properties_axiom(
         self, class_set: set[OWLDataPropertyExpression]
     ) -> None:
+        super().write_disjoint_data_properties_axiom(class_set)
         Util.error(
             f"Disjoint data properties axiom not supported -- DisjointDataProperties({self.__get_set_name(class_set)})"
         )
+        return None
 
     def write_triangular_modifier_definition(
         self, name: str, mod: TriangularModifier
     ) -> None:
+        super().write_triangular_modifier_definition(name, mod)
         self.__write(f"(define-modifier {name} {mod})")
 
     def write_linear_modifier_definition(self, name: str, mod: LinearModifier) -> None:
+        super().write_linear_modifier_definition(name, mod)
         self.__write(f"(define-modifier {name} {mod})")
 
     def write_crisp_function_definition(self, name: str, dat: CrispFunction) -> None:
+        super().write_crisp_function_definition(name, dat)
         self.__write(f"(define-fuzzy-concept {name} {dat})")
 
     def write_left_shoulder_function_definition(
         self, name: str, dat: LeftShoulderFunction
     ) -> None:
+        super().write_left_shoulder_function_definition(name, dat)
         self.__write(f"(define-fuzzy-concept {name} {dat})")
 
     def write_right_shoulder_function_definition(
         self, name: str, dat: RightShoulderFunction
     ) -> None:
+        super().write_right_shoulder_function_definition(name, dat)
         self.__write(f"(define-fuzzy-concept {name} {dat})")
 
     def write_linear_function_definition(self, name: str, dat: LinearFunction) -> None:
+        super().write_linear_function_definition(name, dat)
         self.__write(f"(define-fuzzy-concept {name} {dat})")
 
     def write_triangular_function_definition(
         self, name: str, dat: TriangularFunction
     ) -> None:
+        super().write_triangular_function_definition(name, dat)
         self.__write(f"(define-fuzzy-concept {name} {dat})")
 
     def write_trapezoidal_function_definition(
         self, name: str, dat: TrapezoidalFunction
     ) -> None:
+        super().write_trapezoidal_function_definition(name, dat)
         self.__write(f"(define-fuzzy-concept {name} {dat})")
 
     def write_modified_function_definition(
         self, name: str, dat: ModifiedFunction
     ) -> None:
+        super().write_modified_function_definition(name, dat)
         self.__write(f"(define-concept {name} {dat})")
 
     def write_modified_property_definition(
         self, name: str, dat: ModifiedProperty
     ) -> None:
+        super().write_modified_property_definition(name, dat)
         Util.error(
             f"Modified property not supported -- EquivalentObjectProperties({name} <{dat.get_fuzzy_modifier()} {dat.get_property()}>)"
         )
+        return None
 
     def write_modified_concept_definition(
         self, name: str, dat: ModifiedConcept
     ) -> None:
+        super().write_modified_concept_definition(name, dat)
         self.__write(f"(define-concept {name} {dat})")
 
     def write_fuzzy_nominal_concept_definition(
         self, name: str, dat: FuzzyNominalConcept
     ) -> None:
+        super().write_fuzzy_nominal_concept_definition(name, dat)
         Util.error(
             f"Fuzzy nominal not supported -- EquivalentConcepts({name} OneOf({dat}))"
         )
+        return None
 
     def write_weighted_concept_definition(self, name: str, c: WeightedConcept) -> None:
+        super().write_weighted_concept_definition(name, c)
         self.__write(f"(define-concept {name} {c})")
 
     def write_weighted_max_concept_definition(
         self, name: str, c: WeightedMaxConcept
     ) -> None:
+        super().write_weighted_max_concept_definition(name, c)
         self.__write(f"(define-concept {name} {c})")
 
     def write_weighted_min_concept_definition(
         self, name: str, c: WeightedMinConcept
     ) -> None:
+        super().write_weighted_min_concept_definition(name, c)
         self.__write(f"(define-concept {name} {c})")
 
     def write_weighted_sum_concept_definition(
         self, name: str, c: WeightedSumConcept
     ) -> None:
+        super().write_weighted_sum_concept_definition(name, c)
         self.__write(f"(define-concept {name} {c})")
 
     def write_weighted_sum_zero_concept_definition(
         self, name: str, c: WeightedSumZeroConcept
     ) -> None:
+        super().write_weighted_sum_zero_concept_definition(name, c)
         self.__write(f"(define-concept {name} {c})")
 
     def write_owa_concept_definition(self, name: str, c: OwaConcept) -> None:
+        super().write_owa_concept_definition(name, c)
         self.__write(f"(define-concept {name} {c})")
 
     def write_choquet_concept_definition(self, name: str, c: ChoquetConcept) -> None:
+        super().write_choquet_concept_definition(name, c)
         self.__write(f"(define-concept {name} {c})")
 
     def write_sugeno_concept_definition(self, name: str, c: SugenoConcept) -> None:
+        super().write_sugeno_concept_definition(name, c)
         self.__write(f"(define-concept {name} {c})")
 
     def write_quasi_sugeno_concept_definition(
         self, name: str, c: QsugenoConcept
     ) -> None:
+        super().write_quasi_sugeno_concept_definition(name, c)
         self.__write(f"(define-concept {name} {c})")
 
     def write_qowa_concept_definition(self, name: str, c: QowaConcept) -> None:
+        super().write_qowa_concept_definition(name, c)
         self.__write(f"(define-concept {name} {c})")

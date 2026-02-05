@@ -8,10 +8,10 @@ from fuzzy_dl_owl2.fuzzydl.util.config_reader import ConfigReader
 from fuzzy_dl_owl2.fuzzydl.util.util import Util
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.choquet_concept import ChoquetConcept
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.concept_definition import ConceptDefinition
+from fuzzy_dl_owl2.fuzzyowl2.owl_types.crisp_function import CrispFunction
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.fuzzy_datatype import FuzzyDatatype
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.fuzzy_modifier import FuzzyModifier
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.fuzzy_nominal_concept import FuzzyNominalConcept
-from fuzzy_dl_owl2.fuzzyowl2.owl_types.crisp_function import CrispFunction
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.left_shoulder_function import (
     LeftShoulderFunction,
 )
@@ -932,6 +932,7 @@ class FuzzyOwl2(object):
             )
 
     def get_class_name(self, c: OWLClassExpression) -> str:
+        Util.debug(f"Getting class name for expression: {c}")
         if isinstance(c, OWLClass):
             d: OWLClass = typing.cast(OWLClass, c)
             if d.is_thing():
@@ -1072,6 +1073,7 @@ class FuzzyOwl2(object):
             raise ValueError
 
     def get_object_property_name(self, p: OWLObjectPropertyExpression) -> str:
+        Util.debug(f"Getting object property name for expression: {p}")
         if p.is_top_object_property():
             return self.get_top_object_property_name()
         elif p.is_bottom_object_property():
@@ -1080,6 +1082,7 @@ class FuzzyOwl2(object):
             return self.get_atomic_object_property_name(p)
 
     def get_data_property_name(self, p: OWLDataPropertyExpression) -> str:
+        Util.debug(f"Getting data property name for expression: {p}")
         if p.is_top_data_property():
             return self.get_top_data_property_name()
         elif p.is_bottom_data_property():
@@ -1088,6 +1091,7 @@ class FuzzyOwl2(object):
             return self.get_atomic_data_property_name(p)
 
     def get_individual_name(self, i: OWLIndividual) -> typing.Optional[str]:
+        Util.debug(f"Getting individual name for expression: {i}")
         if isinstance(i, OWLAnonymousIndividual):
             Util.info(f"Anonymous individual not supported")
             return None
@@ -1240,7 +1244,7 @@ class FuzzyOwl2(object):
 
     def get_atomic_object_property_name(self, p: OWLObjectProperty) -> str:
         name: str = self.get_short_name(p)
-        Util.info(f"Write object property {name}")
+        Util.info(f"Write atomic object property {name}")
         return ""
 
     def get_top_data_property_name(self) -> str:
@@ -1253,27 +1257,27 @@ class FuzzyOwl2(object):
 
     def get_atomic_data_property_name(self, p: OWLDataProperty) -> str:
         name: str = self.get_short_name(p)
-        Util.info(f"Write data property {name}")
+        Util.info(f"Write atomic data property {name}")
         return ""
 
     def write_fuzzy_logic(self, logic: str) -> None:
         Util.info(f"Write fuzzy logic {logic}")
 
     def write_concept_declaration(self, c: OWLClassExpression) -> None:
-        Util.info(f"Write declaration {c}")
+        Util.info(f"Write concept declaration {c}")
 
     def write_data_property_declaration(self, dp: OWLDataPropertyExpression) -> None:
-        Util.info(f"Write declaration {dp}")
+        Util.info(f"Write data property declaration {dp}")
 
     def write_object_property_declaration(
         self, op: OWLObjectPropertyExpression
     ) -> None:
-        Util.info(f"Write declaration {op}")
+        Util.info(f"Write object property declaration {op}")
 
     def write_concept_assertion_axiom(
         self, i: OWLIndividual, c: OWLClassExpression, d: float
     ) -> None:
-        Util.info(f"Write axiom {i}: {c} >= {d}")
+        Util.info(f"Write concept assertion axiom {i}: {c} >= {d}")
 
     def write_object_property_assertion_axiom(
         self,
@@ -1282,7 +1286,7 @@ class FuzzyOwl2(object):
         p: OWLObjectPropertyExpression,
         d: float,
     ) -> None:
-        Util.info(f"Write axiom ({i1}, {i2}): {p} >= {d}")
+        Util.info(f"Write object property assertion axiom ({i1}, {i2}): {p} >= {d}")
 
     def write_data_property_assertion_axiom(
         self,
@@ -1291,7 +1295,7 @@ class FuzzyOwl2(object):
         p: OWLDataPropertyExpression,
         d: float,
     ) -> None:
-        Util.info(f"Write axiom ({i}, {lit}): {p} >= {d}")
+        Util.info(f"Write data property assertion axiom ({i}, {lit}): {p} >= {d}")
 
     def write_negative_object_property_assertion_axiom(
         self,
@@ -1300,7 +1304,9 @@ class FuzzyOwl2(object):
         p: OWLObjectPropertyExpression,
         d: float,
     ) -> None:
-        Util.info(f"Write axiom ({i1}, {i2}): not {p} >= {d}")
+        Util.info(
+            f"Write negative object property assertion axiom ({i1}, {i2}): not {p} >= {d}"
+        )
 
     def write_negative_data_property_assertion_axiom(
         self,
@@ -1309,7 +1315,9 @@ class FuzzyOwl2(object):
         p: OWLDataPropertyExpression,
         d: float,
     ) -> None:
-        Util.info(f"Write axiom ({i}, {lit}): not {p} >= {d}")
+        Util.info(
+            f"Write negative data property assertion axiom ({i}, {lit}): not {p} >= {d}"
+        )
 
     def write_same_individual_axiom(self, ind_set: set[OWLIndividual]) -> None:
         Util.info(f"Write axiom SameIndividual({ind_set})")
@@ -1413,7 +1421,7 @@ class FuzzyOwl2(object):
     def write_inverse_object_property_axiom(
         self, p1: OWLObjectPropertyExpression, p2: OWLObjectPropertyExpression
     ) -> None:
-        Util.info(f"Write axiom ({p1} inverse of {p2})")
+        Util.info(f"Write inverse object property axiom - axiom ({p1} inverse of {p2})")
 
     def write_inverse_functional_object_property_axiom(
         self, p: OWLObjectPropertyExpression
@@ -1443,105 +1451,103 @@ class FuzzyOwl2(object):
     def write_disjoint_object_properties_axiom(
         self, class_set: set[OWLObjectPropertyExpression]
     ) -> None:
-        Util.info(f"Write axiom ({class_set})")
+        Util.info(f"Write disjoint object properties axiom ({class_set})")
 
     def write_disjoint_data_properties_axiom(
         self, class_set: set[OWLDataPropertyExpression]
     ) -> None:
-        Util.info(f"Write axiom ({class_set})")
+        Util.info(f"Write disjoint data properties axiom ({class_set})")
 
     def write_triangular_modifier_definition(
         self, name: str, mod: TriangularModifier
     ) -> None:
-        Util.info(f"Write definition {name} = {mod}")
+        Util.info(f"Write triangular modifier definition {name} = {mod}")
 
     def write_linear_modifier_definition(self, name: str, mod: LinearModifier) -> None:
-        Util.info(f"Write definition {name} = {mod}")
+        Util.info(f"Write linear modifier definition {name} = {mod}")
 
-    def write_crisp_function_definition(
-        self, name: str, dat: CrispFunction
-    ) -> None:
-        Util.info(f"Write definition {name} = {dat}")
+    def write_crisp_function_definition(self, name: str, dat: CrispFunction) -> None:
+        Util.info(f"Write crisp function definition {name} = {dat}")
 
     def write_left_shoulder_function_definition(
         self, name: str, dat: LeftShoulderFunction
     ) -> None:
-        Util.info(f"Write definition {name} = {dat}")
+        Util.info(f"Write left shoulder function definition {name} = {dat}")
 
     def write_right_shoulder_function_definition(
         self, name: str, dat: RightShoulderFunction
     ) -> None:
-        Util.info(f"Write definition {name} = {dat}")
+        Util.info(f"Write right shoulder function definition {name} = {dat}")
 
     def write_linear_function_definition(self, name: str, dat: LinearFunction) -> None:
-        Util.info(f"Write definition {name} = {dat}")
+        Util.info(f"Write linear function definition {name} = {dat}")
 
     def write_triangular_function_definition(
         self, name: str, dat: TriangularFunction
     ) -> None:
-        Util.info(f"Write definition {name} = {dat}")
+        Util.info(f"Write triangular function definition {name} = {dat}")
 
     def write_trapezoidal_function_definition(
         self, name: str, dat: TrapezoidalFunction
     ) -> None:
-        Util.info(f"Write definition {name} = {dat}")
+        Util.info(f"Write trapezoidal function definition {name} = {dat}")
 
     def write_modified_function_definition(
         self, name: str, dat: ModifiedFunction
     ) -> None:
-        Util.info(f"Write definition {name} = {dat}")
+        Util.info(f"Write modified function definition {name} = {dat}")
 
     def write_modified_property_definition(
         self, name: str, dat: ModifiedProperty
     ) -> None:
-        Util.info(f"Write definition {name} = {dat}")
+        Util.info(f"Write modified property definition {name} = {dat}")
 
     def write_modified_concept_definition(
         self, name: str, dat: ModifiedConcept
     ) -> None:
-        Util.info(f"Write definition {name} = {dat}")
+        Util.info(f"Write modified concept definition {name} = {dat}")
 
     def write_fuzzy_nominal_concept_definition(
         self, name: str, dat: FuzzyNominalConcept
     ) -> None:
-        Util.info(f"Write definition {name} = {dat}")
+        Util.info(f"Write fuzzy nominal concept definition {name} = {dat}")
 
     def write_weighted_concept_definition(self, name: str, c: WeightedConcept) -> None:
-        Util.info(f"Write definition {name} = {c}")
+        Util.info(f"Write weighted concept definition {name} = {c}")
 
     def write_weighted_max_concept_definition(
         self, name: str, c: WeightedMaxConcept
     ) -> None:
-        Util.info(f"Write definition {name} = {c}")
+        Util.info(f"Write weighted max concept definition {name} = {c}")
 
     def write_weighted_min_concept_definition(
         self, name: str, c: WeightedMinConcept
     ) -> None:
-        Util.info(f"Write definition {name} = {c}")
+        Util.info(f"Write weighted min concept definition {name} = {c}")
 
     def write_weighted_sum_concept_definition(
         self, name: str, c: WeightedSumConcept
     ) -> None:
-        Util.info(f"Write definition {name} = {c}")
+        Util.info(f"Write weighted sum concept definition {name} = {c}")
 
     def write_weighted_sum_zero_concept_definition(
         self, name: str, c: WeightedSumZeroConcept
     ) -> None:
-        Util.info(f"Write definition {name} = {c}")
+        Util.info(f"Write weighted sum zero concept definition {name} = {c}")
 
     def write_owa_concept_definition(self, name: str, c: OwaConcept) -> None:
-        Util.info(f"Write definition {name} = {c}")
+        Util.info(f"Write owa concept definition {name} = {c}")
 
     def write_choquet_concept_definition(self, name: str, c: ChoquetConcept) -> None:
-        Util.info(f"Write definition {name} = {c}")
+        Util.info(f"Write choquet concept definition {name} = {c}")
 
     def write_sugeno_concept_definition(self, name: str, c: SugenoConcept) -> None:
-        Util.info(f"Write definition {name} = {c}")
+        Util.info(f"Write sugeno concept definition {name} = {c}")
 
     def write_quasi_sugeno_concept_definition(
         self, name: str, c: QsugenoConcept
     ) -> None:
-        Util.info(f"Write definition {name} = {c}")
+        Util.info(f"Write quasi sugeno concept definition {name} = {c}")
 
     def write_qowa_concept_definition(self, name: str, c: QowaConcept) -> None:
-        Util.info(f"Write definition {name} = {c}")
+        Util.info(f"Write quasi owa concept definition {name} = {c}")
