@@ -5,12 +5,14 @@ networkx==3.3
 numpy==2.2.6
 pandas==2.3.0
 pulp==3.2.1
-pyowl2==1.0.2
+pyowl2==1.0.4
 pyparsing==3.2.3
 rdflib==7.1.4
 setuptools==80.8.0
 sortedcontainers==2.4.0
 trycast==1.2.1
+pillow==11.3.0
+langchain-ollama==0.3.6
 sphinx-autoapi
 sphinx
 myst_parser

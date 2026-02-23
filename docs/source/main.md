@@ -216,4 +216,4 @@ The directory `examples/TestSuite` contains all the knowledge bases used for the
 
 ## License
 
-This project is licensed under the Creative Commons Attribution-ShareAlike 4.0 International.
+This project is licensed under the Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0).

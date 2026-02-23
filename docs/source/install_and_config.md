@@ -1,10 +1,6 @@
 # Installation and Configuration
 
-Check the [repository](https://github.com/giuseppefilippone/fuzzy_dl_owl2/).
-
-```python
-pip install fuzzy-dl-owl2
-```
+Check the [repository](https://github.com/giuseppefilippone/fuzzy_dl_owl2/). The library is available on PyPI, so you can install it using pip: `pip install fuzzy-dl-owl2`.
 
 Examples of supported Fuzzy Description Logic Constructs
 
@@ -58,52 +54,34 @@ Supported MILP Providers:
 
 ### GUROBI
 
-- Install [gurobipy](https://pypi.org/project/gurobipy/):
-```python
-pip install gurobipy==12.0.0
-```
+- Install [gurobipy](https://pypi.org/project/gurobipy/): `pip install gurobipy==12.0.0`
 - Download the GUROBI license from their [website](https://www.gurobi.com/solutions/licensing/).
 - Add Gurobi to the PATH
 
 ### MIP
 
-- Install Python [MIP](https://www.python-mip.com/):
-```python
-pip install mip==1.16rc0
-```
+- Install Python [MIP](https://www.python-mip.com/): `pip install mip==1.16rc0`
 
 ### GLPK
 
 - Install [GLPK](https://www.gnu.org/software/glpk/) v5.0 and [GMP](https://gmplib.org/) v6.3.0
-- Install Python [pulp](https://github.com/coin-or/PuLP?tab=readme-ov-file):
-```python
-pip install pulp==3.2.1
-```
+- Install Python [pulp](https://github.com/coin-or/PuLP?tab=readme-ov-file): `pip install pulp==3.2.1`
 - Add GLPK to the PATH
 
 ### CBC
 
 - Install [CBC](https://github.com/coin-or/Cbc)
-- Install Python [pulp](https://github.com/coin-or/PuLP?tab=readme-ov-file):
-```python
-pip install pulp==3.2.1
-```
+- Install Python [pulp](https://github.com/coin-or/PuLP?tab=readme-ov-file): `pip install pulp==3.2.1`
 - Add CBC to the PATH
 
 ### CPLEX
 
 - Install [CPLEX](https://www.ibm.com/it-it/products/ilog-cplex-optimization-studio) v22.11
-- Install Python [pulp](https://github.com/coin-or/PuLP?tab=readme-ov-file):
-```python
-pip install pulp==3.2.1
-```
+- Install Python [pulp](https://github.com/coin-or/PuLP?tab=readme-ov-file): `pip install pulp==3.2.1`
 - Add CPLEX to the PATH
 
 ### HiGHS
 
 - Install [HiGHS](https://ergo-code.github.io/HiGHS/dev/interfaces/cpp/) v1.10.0
-- Install python [pulp](https://github.com/coin-or/PuLP?tab=readme-ov-file):
-```python
-pip install pulp==3.2.1
-```
+- Install python [pulp](https://github.com/coin-or/PuLP?tab=readme-ov-file): `pip install pulp==3.2.1`
 - Add HiGHS to the PATH

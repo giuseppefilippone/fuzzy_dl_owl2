@@ -1,6 +1,26 @@
 fuzzy_dl_owl2
 =============
 
+.. only:: html
+
+    .. figure:: /_uml/module_fuzzy_dl_owl2.png
+       :alt: UML Class Diagram for fuzzy_dl_owl2
+       :align: center
+       :width: 100%
+       :class: uml-diagram
+
+       UML Class Diagram for **fuzzy_dl_owl2**
+
+.. only:: latex
+
+    .. figure:: /_uml/module_fuzzy_dl_owl2.pdf
+       :alt: UML Class Diagram for fuzzy_dl_owl2
+       :align: center
+       :width: 100%
+       :class: uml-diagram
+
+       UML Class Diagram for **fuzzy_dl_owl2**
+
 .. py:module:: fuzzy_dl_owl2
 
 

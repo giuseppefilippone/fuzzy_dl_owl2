@@ -4,6 +4,20 @@ fuzzy_dl_owl2.fuzzydl.general_concept_inclusion
 .. py:module:: fuzzy_dl_owl2.fuzzydl.general_concept_inclusion
 
 
+
+.. ── LLM-GENERATED DESCRIPTION START ──
+
+Defines a data structure for representing fuzzy General Concept Inclusion axioms, which assert that one concept is subsumed by another to a specific degree of truth using a designated logic operator.
+
+
+Description
+-----------
+
+
+The implementation models a graded subsumption relationship where a specific concept is included within a broader category according to a defined truth value and fuzzy implication operator. By storing references to the subsumer, subsumed concept, degree, and operator type, the structure allows for the dynamic modification of these components through setter methods, making the underlying axiom mutable during runtime. Equality comparisons are determined by verifying that all constituent attributes match exactly between instances, while ordering comparisons rely on hash values to provide a consistent but arbitrary sorting mechanism. A string representation is generated to display the logical structure in a human-readable format, combining the concepts, operator type, and degree into a standard notation.
+
+.. ── LLM-GENERATED DESCRIPTION END ──
+
 Classes
 -------
 
@@ -15,60 +29,223 @@ Classes
 Module Contents
 ---------------
 
+.. only:: html
+
+    .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzydl_general_concept_inclusion_GeneralConceptInclusion.png
+       :alt: UML Class Diagram for GeneralConceptInclusion
+       :align: center
+       :width: 100%
+       :class: uml-diagram
+
+       UML Class Diagram for **GeneralConceptInclusion**
+
+.. only:: latex
+
+    .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzydl_general_concept_inclusion_GeneralConceptInclusion.pdf
+       :alt: UML Class Diagram for GeneralConceptInclusion
+       :align: center
+       :width: 100%
+       :class: uml-diagram
+
+       UML Class Diagram for **GeneralConceptInclusion**
+
 .. py:class:: GeneralConceptInclusion(subsumer: fuzzy_dl_owl2.fuzzydl.concept.concept.Concept, subsumed: fuzzy_dl_owl2.fuzzydl.concept.concept.Concept, degree: fuzzy_dl_owl2.fuzzydl.degree.degree.Degree, type_: fuzzy_dl_owl2.fuzzydl.util.constants.LogicOperatorType)
 
-   General concept inclusion axiom.
+   Represents a fuzzy logic axiom stating that one concept is included within another to a specific degree of truth. It defines a relationship between a subsumed concept and a subsumer concept, utilizing a specific logic operator type (such as Łukasiewicz or Gödel) to determine the implication semantics. Users can instantiate this class to define axioms, modify the degree or concepts via setter methods, and compare instances for equality or ordering. The object is mutable, allowing updates to the underlying concepts or the degree of inclusion after creation.
+
+   :param subsumer: The general concept or super-category that encompasses the subsumed concept.
+   :type subsumer: Concept
+   :param subsumed: The concept that is included within the subsumer concept.
+   :type subsumed: Concept
+   :param degree: The lower bound truth value specifying the minimum extent to which the subsumed concept is included in the subsumer concept.
+   :type degree: Degree
+   :param type: Specifies the fuzzy implication operator (e.g., Łukasiewicz, Gödel, Product) used to evaluate the truth of the inclusion.
+   :type type: LogicOperatorType
 
 
    .. py:method:: __eq__(other: Self) -> bool
 
+      Determines structural equality between the current instance and another object by verifying that the other object is an instance of the same class and that all critical attributes are identical. The comparison specifically checks that the `subsumed`, `subsumer`, `degree`, and `type` attributes of both objects match exactly. If the other object is not a `GeneralConceptInclusion` or if any of these attributes differ, the method returns `False`.
+
+      :param other: The object to compare for equality.
+      :type other: typing.Self
+
+      :return: True if the other object is an instance of GeneralConceptInclusion and all attributes (subsumed, subsumer, degree, and type) are equal; otherwise, False.
+
+      :rtype: bool
+
+
 
    .. py:method:: __ge__(other: Self) -> bool
+
+      Implements the greater-than-or-equal-to comparison operator for the instance. The method determines the result by negating the outcome of the less-than comparison (`self < other`), effectively checking if the current object is not strictly less than the other. This implementation relies entirely on the `__lt__` method; any exceptions raised during the less-than comparison will be propagated, and if `__lt__` returns `NotImplemented`, this method will return `False` rather than allowing the interpreter to try the reflected comparison.
+
+      :param other: The object to compare against the current instance.
+      :type other: typing.Self
+
+      :return: True if the object is greater than or equal to the other object, False otherwise.
+
+      :rtype: bool
+
 
 
    .. py:method:: __gt__(other: Self) -> bool
 
+      Determines whether this instance is considered greater than another object by comparing their hash values. The method returns `True` if the provided argument is an instance of `GeneralConceptInclusion` and the hash of the current instance is strictly greater than the hash of the argument. If the argument is not an instance of the same class or if its hash value is equal to or less than the current instance's hash, the method returns `False`.
+
+      :param other: Another instance of the same class to compare against based on hash value.
+      :type other: typing.Self
+
+      :return: True if `other` is an instance of `GeneralConceptInclusion` and the hash of the current object is greater than the hash of `other`; otherwise, False.
+
+      :rtype: bool
+
+
 
    .. py:method:: __hash__() -> int
+
+      Returns the hash value of the object by calculating the hash of its string representation. This allows instances of this class to be used as dictionary keys or stored in sets. Because the hash is derived from the string output, any changes to the object's state that affect its string representation will alter its hash, which may lead to unexpected behavior if the object is used in hash-based collections after modification.
+
+      :return: An integer hash value computed from the string representation of the object.
+
+      :rtype: int
+
 
 
    .. py:method:: __le__(other: Self) -> bool
 
+      Checks if the current instance is less than or equal to another instance by inverting the result of the greater-than comparison. This implementation relies on the `__gt__` method to define the ordering relationship, returning `True` whenever the instance is not greater than the provided argument. The method performs no side effects and simply returns a boolean value based on the existing comparison logic.
+
+      :param other: The object to compare against the current instance.
+      :type other: typing.Self
+
+      :return: True if the instance is less than or equal to the other instance, False otherwise.
+
+      :rtype: bool
+
+
 
    .. py:method:: __lt__(other: Self) -> bool
+
+      Determines whether the current instance is considered less than another object based on their hash values. The method first checks if the `other` argument is an instance of `GeneralConceptInclusion`; if the types do not match, it returns `False`. When both objects are of the same type, the comparison is performed by evaluating if the hash of the current instance is strictly less than the hash of the `other` instance. Note that because this relies on hash values, the ordering is arbitrary and may vary between Python runs, and distinct objects with identical hash values will not be strictly ordered relative to one another.
+
+      :param other: The object to compare against.
+      :type other: typing.Self
+
+      :return: True if `other` is an instance of `GeneralConceptInclusion` and the hash of the current instance is less than the hash of `other`; otherwise, False.
+
+      :rtype: bool
+
 
 
    .. py:method:: __ne__(other: Self) -> bool
 
+      Checks for inequality between the current instance and another `GeneralConceptInclusion` object. The method returns `True` if the two instances are not considered equal, and `False` otherwise. This implementation relies on the `__eq__` method, effectively returning the logical negation of the equality comparison. Consequently, any specific logic or edge cases handled by the equality operator are implicitly applied here in reverse.
+
+      :param other: The object to compare against.
+      :type other: typing.Self
+
+      :return: True if the object is not equal to the other object, False otherwise.
+
+      :rtype: bool
+
+
 
    .. py:method:: __repr__() -> str
+
+      Returns a string representation of the concept inclusion by delegating to the `__str__` method. Consequently, the output is identical to the informal string representation, prioritizing human readability over a machine-parseable format. This behavior ensures that the object appears consistently whether printed directly or inspected in a debugger.
+
+      :return: Returns the string representation of the object.
+
+      :rtype: str
+
 
 
    .. py:method:: __str__() -> str
 
+      Returns a human-readable string representation of the concept inclusion relationship, formatted to display the logical structure and its associated degree of truth. The representation concatenates the subsumed concept, the first character of the inclusion type's name, the subsumer concept, and the degree value into a specific notation: "subsumed =>_{type} subsumer >= degree". This method has no side effects, though it requires the internal attributes to be properly initialized to avoid errors during string interpolation.
+
+      :return: A formatted string representing the subsumption relationship, displaying the subsumed item, the first letter of the type, the subsumer, and the degree.
+
+      :rtype: str
+
+
 
    .. py:method:: clone() -> Self
+
+      Creates and returns a new instance of the class that replicates the state of the current object. The new object is initialized with the same `subsumer`, `subsumed`, `degree`, and `type` attributes as the original. This method performs a shallow copy of the attributes, meaning that if they are mutable objects, modifications to those objects in the clone will affect the original instance. The operation does not modify the state of the current object.
+
+      :return: A new instance of the class with the same attribute values as the current object.
+
+      :rtype: typing.Self
+
 
 
    .. py:method:: get_degree() -> fuzzy_dl_owl2.fuzzydl.degree.degree.Degree
 
+      Returns the degree associated with this general concept inclusion. This method serves as an accessor to retrieve the internal attribute representing the weight, confidence, or specific metric of the inclusion relationship. It performs a read-only operation and does not alter the state of the object.
+
+      :return: The `Degree` object associated with this instance.
+
+      :rtype: Degree
+
+
 
    .. py:method:: get_subsumed() -> fuzzy_dl_owl2.fuzzydl.concept.concept.Concept
+
+      Returns the concept that is subsumed within this general concept inclusion axiom. In the context of the inclusion relationship, this represents the subclass or the left-hand side of the statement. The method acts as a simple accessor for the internal `subsumed` attribute and does not modify the state of the object or perform any computations.
+
+      :return: The concept that is subsumed by this instance.
+
+      :rtype: Concept
+
 
 
    .. py:method:: get_subsumer() -> fuzzy_dl_owl2.fuzzydl.concept.concept.Concept
 
+      Retrieves the super-concept, or subsumer, associated with this general concept inclusion. This represents the concept on the right-hand side of the inclusion relationship, effectively the broader category that the sub-concept falls under. The method acts as a simple accessor for the internal `subsumer` attribute and does not modify the object's state.
+
+      :return: The concept that subsumes the current object.
+
+      :rtype: Concept
+
+
 
    .. py:method:: get_type() -> fuzzy_dl_owl2.fuzzydl.util.constants.LogicOperatorType
+
+      Retrieves the specific logic operator type associated with this general concept inclusion instance. This method acts as a getter for the internal `type` attribute, returning the classification of the logical operator without modifying the object's state.
+
+      :return: The logic operator type associated with this instance.
+
+      :rtype: LogicOperatorType
+
 
 
    .. py:method:: set_degree(deg: fuzzy_dl_owl2.fuzzydl.degree.degree.Degree) -> None
 
+      Assigns the specified degree value to the `GeneralConceptInclusion` instance, replacing any existing value stored in the `degree` attribute. This method acts as a direct setter for the internal state, accepting a `Degree` object as input. Since it performs a direct assignment without validation logic, callers should ensure that the provided `deg` argument is valid and appropriate for the context of the concept inclusion, as this mutation occurs in place and affects subsequent operations that rely on the degree property.
+
+      :param deg: The degree value to assign to the instance.
+      :type deg: Degree
+
+
 
    .. py:method:: set_subsumed(new_concept: fuzzy_dl_owl2.fuzzydl.concept.concept.Concept) -> None
 
+      Assigns the provided concept as the subsumed entity within this general concept inclusion relationship. This method directly overwrites the existing `subsumed` attribute with the new value, effectively updating the left-hand side of the inclusion statement. It performs no validation on the input type beyond the type hint, so passing an incompatible object may lead to errors in subsequent operations.
+
+      :param new_concept: The concept to assign to the subsumed attribute.
+      :type new_concept: Concept
+
+
 
    .. py:method:: set_subsumer(new_concept: fuzzy_dl_owl2.fuzzydl.concept.concept.Concept) -> None
+
+      Updates the super-concept, or subsumer, associated with this General Concept Inclusion. The method accepts a `Concept` instance which replaces the current value of the `subsumer` attribute. This operation directly mutates the object's state, overwriting any previously defined subsumer without performing validation or checks on the new concept.
+
+      :param new_concept: The concept to assign as the subsumer.
+      :type new_concept: Concept
+
 
 
    .. py:attribute:: degree
@@ -85,5 +262,4 @@ Module Contents
 
    .. py:attribute:: type
       :type:  fuzzy_dl_owl2.fuzzydl.util.constants.LogicOperatorType
-
 
