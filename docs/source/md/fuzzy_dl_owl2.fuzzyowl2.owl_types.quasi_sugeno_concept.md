@@ -1,7 +1,7 @@
 # Summary
 
-Defines a class representing a quasi-Sugeno integral fuzzy logic operator that aggregates multiple concepts using specific weights within the FuzzyOWL2 ontology framework.
+Implements a data structure for handling quasi-Sugeno integral concepts within a fuzzy ontology framework.
 
 ## Description
 
-The implementation extends the base concept definition to model a weighted aggregation of fuzzy concepts based on the quasi-Sugeno integral logic. Upon initialization, the object accepts a list of numerical coefficients and a corresponding list of concept identifiers, storing them as internal state to define the aggregation parameters. Accessor methods allow retrieval of these weights and concepts, enabling other components of the system to utilize the specific criteria and their associated importance values during logical processing. A string representation method formats the data into a parenthetical syntax, which facilitates serialization or display by combining the operator identifier with the space-separated weights and concept lists.
+The software defines a specialized component that models the quasi-Sugeno integral, a fuzzy logic operator used for weighted aggregation of multiple criteria. By extending a base definition class, it encapsulates a collection of numerical weights alongside a corresponding list of concept identifiers to represent the importance and structure of the aggregated elements. The implementation ensures that the specific operator type is registered during initialization and exposes the internal data through accessor methods to support downstream logical processing. Furthermore, the logic includes a string serialization mechanism that formats the weights and concepts into a parenthetical expression suitable for parsing or display within the broader system.

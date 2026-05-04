@@ -7,14 +7,14 @@ fuzzy_dl_owl2.fuzzydl.query.defuzzify.defuzzify_query
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-An abstract base class that implements the logic for converting fuzzy membership degrees into crisp values for specific features within a knowledge base using Mixed-Integer Linear Programming.
+An abstract base class that defines the structure for defuzzifying fuzzy logic queries by converting membership degrees into crisp values using Mixed-Integer Linear Programming.
 
 
 Description
 -----------
 
 
-Defuzzification logic is provided to transform fuzzy membership degrees into crisp numerical values for specific features associated with individuals. The process begins by determining the maximum degree of satisfaction for a given concept and individual, asserting this calculated value back into a cloned knowledge base to ensure a consistent state for further operations. Once the context is established, the system retrieves the variable linked to the target feature and optimizes an objective expression derived from that variable using Mixed-Integer Linear Programming. By delegating the creation of the objective expression to subclasses, the design supports various defuzzification strategies while centralizing the common workflow of solving satisfiability, managing assertions, and handling potential ontology inconsistencies.
+Defuzzification logic is encapsulated within this abstract class, which orchestrates the conversion of fuzzy membership degrees into crisp numerical values for a specific individual and feature. The process begins by calculating the maximum degree of membership for a given individual to a concept and asserting this value into a cloned version of the knowledge base to establish a constrained environment. Once the context is set, the logic identifies the mathematical variable associated with the target feature and optimizes an objective expression derived from that variable to produce the final crisp result. By delegating the construction of the objective expression to subclasses, the design allows for various defuzzification strategies while centralizing the common workflow of solving Mixed-Integer Linear Programming problems and handling potential ontology inconsistencies.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

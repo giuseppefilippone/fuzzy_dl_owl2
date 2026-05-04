@@ -1,25 +1,25 @@
 # Summary
 
-A comprehensive framework for executing reasoning tasks over fuzzy description logic knowledge bases, utilizing Mixed-Integer Linear Programming to resolve complex logical queries.
+A reasoning engine that executes fuzzy description logic queries by translating logical constraints into mixed-integer linear programming optimization problems to determine membership degrees and consistency.
 
 ## Description
 
-The architecture relies on a hierarchy of abstract base classes that define standard interfaces for various operations, including instance retrieval, classification, subsumption checks, and satisfiability verification. By translating fuzzy logic constructs into mathematical optimization problems, the system calculates precise membership degrees, truth values, and crisp defuzzified outputs while ensuring the underlying ontology remains consistent. To maintain data integrity during these intensive computations, the design frequently operates on cloned instances of the knowledge base, isolating solver modifications from the original data source. Specialized sub-modules further refine this approach by implementing specific strategies for minimization, maximization, and the conversion of fuzzy values into representative crisp numbers.
+The architecture relies on a hierarchy of abstract base classes that define standard interfaces for executing, preprocessing, and timing operations against a knowledge base, ensuring consistent behavior across diverse reasoning tasks. Concrete implementations extend these foundations to perform specific logical evaluations, such as determining the subsumption degree between concepts, verifying the satisfiability of the entire ontology, or retrieving all individuals that match a conceptual definition. To handle the inherent complexity of fuzzy logic, the system translates semantic constraints into mathematical models, utilizing mixed-integer linear programming to compute precise upper and lower bounds for membership degrees and relationships. Specialized sub-packages further organize this functionality by grouping optimization strategies for minimum and maximum value calculations, as well as defuzzification methods that convert fuzzy results into crisp numerical outputs. Throughout the process, the software manages potential inconsistencies by cloning knowledge bases to preserve state and implementing robust error handling to report logical contradictions gracefully.
 
 ## Modules
 
-- [`fuzzy_dl_owl2.fuzzydl.query.all_instances_query`](./fuzzydl_query_all_instances_query.md) — Retrieves all individuals from a knowledge base that are instances of a specified concept and calculates their respective fuzzy membership degrees.
-- [`fuzzy_dl_owl2.fuzzydl.query.bnp_query`](./fuzzydl_query_bnp_query.md) — Encapsulates the logic for determining the best non-fuzzy performance value of a triangular fuzzy number within a standardized query structure.
-- [`fuzzy_dl_owl2.fuzzydl.query.classification_query`](./fuzzydl_query_classification_query.md) — Encapsulates the logic for executing a classification operation on a knowledge base within a query framework.
-- [`fuzzy_dl_owl2.fuzzydl.query.instance_query`](./fuzzydl_query_instance_query.md) — An abstract base class that defines a framework for querying the membership degree of a specific individual relative to a given concept.
-- [`fuzzy_dl_owl2.fuzzydl.query.kb_satisfiable_query`](./fuzzydl_query_kb_satisfiable_query.md) — Determines the satisfiability of a knowledge base by checking for logical consistency through optimization and ABox solving.
-- [`fuzzy_dl_owl2.fuzzydl.query.query`](./fuzzydl_query_query.md) — An abstract base class establishes a standard interface for executing and timing queries against a fuzzy knowledge base.
-- [`fuzzy_dl_owl2.fuzzydl.query.related_query`](./fuzzydl_query_related_query.md) — An abstract base class defining the structure for queries that evaluate role assertions and relationships between individuals within a fuzzy description logic framework.
-- [`fuzzy_dl_owl2.fuzzydl.query.satisfiable_query`](./fuzzydl_query_satisfiable_query.md) — A base class representing min/max satisfiability queries for fuzzy concepts within a logic framework.
-- [`fuzzy_dl_owl2.fuzzydl.query.subsumption_query`](./fuzzydl_query_subsumption_query.md) — An abstract base class defines the structure for evaluating fuzzy subsumption relationships between two concepts.
+- [`fuzzy_dl_owl2.fuzzydl.query.all_instances_query`] — Retrieves all individuals from a knowledge base that satisfy a specified concept and calculates their corresponding fuzzy membership degrees.
+- [`fuzzy_dl_owl2.fuzzydl.query.bnp_query`] — Encapsulates the calculation of the best non-fuzzy performance for a triangular fuzzy number within a query framework.
+- [`fuzzy_dl_owl2.fuzzydl.query.classification_query`] — A specialized query implementation that triggers the classification of a knowledge base and handles potential inconsistencies by returning specific solution states.
+- [`fuzzy_dl_owl2.fuzzydl.query.instance_query`] — An abstract base class that defines a framework for querying the membership degree of a specific individual within a given concept.
+- [`fuzzy_dl_owl2.fuzzydl.query.kb_satisfiable_query`] — A query implementation that determines the logical consistency and satisfiability of a fuzzy description logic knowledge base.
+- [`fuzzy_dl_owl2.fuzzydl.query.query`] — An abstract base class defines the standard interface for executing, preprocessing, and timing queries against a fuzzy knowledge base.
+- [`fuzzy_dl_owl2.fuzzydl.query.related_query`] — An abstract base class defines the structure for queries evaluating role assertions and membership degrees between individuals in a fuzzy description logic system.
+- [`fuzzy_dl_owl2.fuzzydl.query.satisfiable_query`] — Establishes a foundational interface for min/max satisfiability queries that evaluate the degree to which a specific fuzzy concept is satisfied, optionally within the context of a particular individual.
+- [`fuzzy_dl_owl2.fuzzydl.query.subsumption_query`] — An abstract base class that defines the structure for evaluating the degree to which one concept is subsumed by another within a fuzzy logic framework.
 
 ## Sub-packages
 
-- [`fuzzy_dl_owl2.fuzzydl.query.defuzzify`](./fuzzydl_query_defuzzify_INDEX.md) — A framework for converting fuzzy membership degrees into crisp numerical values using Mixed-Integer Linear Programming strategies.
-- [`fuzzy_dl_owl2.fuzzydl.query.max`](./fuzzydl_query_max_INDEX.md) — A suite of reasoning components that computes maximum degrees of membership, truth, and subsumption within fuzzy ontologies by formulating and solving mixed-integer linear programming problems.
-- [`fuzzy_dl_owl2.fuzzydl.query.min`](./fuzzydl_query_min_INDEX.md) — A set of optimization mechanisms for fuzzy description logic that determine minimum truth values and lower bounds by transforming logical queries into Mixed-Integer Linear Programming problems.
+- [`fuzzy_dl_owl2.fuzzydl.query.defuzzify`] — A suite of defuzzification strategies converts fuzzy membership degrees into crisp numerical values by leveraging Mixed-Integer Linear Programming to optimize objective expressions within a constrained knowledge base.
+- [`fuzzy_dl_owl2.fuzzydl.query.max`] — A suite of fuzzy logic optimization queries that compute maximum truth values for concepts, individuals, and relationships using mixed-integer linear programming.
+- [`fuzzy_dl_owl2.fuzzydl.query.min`] — A set of fuzzy description logic query mechanisms that calculates the greatest lower bounds of various logical relationships by transforming them into mixed-integer linear programming optimization problems.

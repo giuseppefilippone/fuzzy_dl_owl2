@@ -1,7 +1,7 @@
 # Summary
 
-An abstract base class that defines a framework for querying the membership degree of a specific individual relative to a given concept.
+An abstract base class that defines a framework for querying the membership degree of a specific individual within a given concept.
 
 ## Description
 
-It serves as a foundational component within a fuzzy description logic system, specifically designed to handle queries that determine the extent to which an individual belongs to a concept. By inheriting from the abstract base class, it enforces a strict validation rule during initialization that prevents the use of concrete concepts, ensuring that only abstract concepts are processed for instance retrieval. The structure stores the provided concept and individual as core attributes while reserving a placeholder for an expression object, which subclasses are expected to populate to represent the specific membership degree logic. This design facilitates the creation of specialized queries, such as those seeking minimum or maximum membership degrees, by providing a consistent interface and validation mechanism for all derived implementations.
+This class serves as a foundational component for determining how strongly a particular individual belongs to a specific concept within a fuzzy description logic system. By inheriting from the abstract query base, it enforces a strict validation during initialization to ensure that the target concept is abstract rather than concrete, raising an error if this constraint is violated. The design stores the provided concept and individual as core attributes while initializing a placeholder for the membership expression, which subclasses are expected to populate with specific logic for calculating or retrieving degrees. This structure allows for specialized implementations, such as finding minimum or maximum membership degrees, to build upon a consistent and validated data model.

@@ -38,6 +38,7 @@ from fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_sum_zero_concept import (
     WeightedSumZeroConcept,
 )
 from fuzzy_dl_owl2.fuzzyowl2.parser.owl2_xml_parser import FuzzyOwl2XMLParser
+from fuzzy_dl_owl2.fuzzyowl2.util.sort_dl_lines import sort_by_fuzzydl_pdf_order
 from pyowl2.abstracts.annotation_value import OWLAnnotationValue
 from pyowl2.abstracts.axiom import OWLAxiom
 from pyowl2.abstracts.class_expression import OWLClassExpression
@@ -225,6 +226,9 @@ class FuzzyOwl2(object):
         self.ontologies.add(self.ontology)
         # self.ontologies.update(self.manager.getImportsClosure(self.ontology))
 
+        # Printed lines are stored in this list for testing purposes
+        self.lines: list[str] = []
+
     def get_short_name(self, e: OWLEntity) -> str:
         """
         Computes a concise short name for the given OWL entity by parsing its Internationalized Resource Identifier (IRI). The method isolates the portion of the IRI string that follows the final hash symbol ('#'), effectively extracting the fragment identifier. If the IRI does not contain a hash symbol, the full string representation of the IRI is returned. This operation is side-effect free and is typically used to generate human-readable labels for ontology entities.
@@ -247,6 +251,14 @@ class FuzzyOwl2(object):
         self.process_concept_annotations()
         self.process_property_annotations()
         self.process_ontology_axioms()
+        self.__final_write()
+
+    def __final_write(self) -> None:
+        """Sorts the lines stored in the internal list to ensure a consistent and organized output format. This method can be used after all lines have been collected to arrange them in a specific order, such as alphabetically or based on predefined criteria, before writing them to the output file. Sorting the lines can enhance readability and maintain a structured presentation of the translated fuzzy DL definitions."""
+        sorted_lines: list[str] = sort_by_fuzzydl_pdf_order(self.lines)
+        with open(self.output_dl, "w") as file:
+            for line in sorted_lines:
+                file.write(f"{line}\n")
 
     def process_ontology_annotations(self) -> None:
         """Iterates through the loaded ontologies to identify and process annotations specifically associated with the fuzzy label property. For each ontology, it retrieves the available annotations and filters out any that do not match the configured fuzzy label or are missing. The string value of the matching annotations is parsed into a logic representation, which is then written to the output via the internal writer method. This process ensures that only relevant fuzzy logic definitions are extracted and persisted, while skipping ontologies or annotations that do not meet the criteria."""
@@ -406,6 +418,8 @@ class FuzzyOwl2(object):
                         self.write_triangular_function_definition(datatype_name, c)
                     elif isinstance(c, TrapezoidalFunction):
                         self.write_trapezoidal_function_definition(datatype_name, c)
+                    elif isinstance(c, ModifiedFunction):
+                        self.write_modified_function_definition(datatype_name, c)
                 elif isinstance(c, LinearModifier):
                     self.fuzzy_modifiers[datatype_name] = c
                     self.write_linear_modifier_definition(datatype_name, c)
@@ -2434,7 +2448,7 @@ class FuzzyOwl2(object):
         :param name: Identifier for the modified concept.
         :type name: str
         :param dat: The modified concept object to be written.
-        :type dat: fuzzy_dl_owl2.fuzzydl.concept.modified.modified_concept.ModifiedConcept
+        :type dat: fuzzy_dl_owl2.fuzzyowl2.owl_types.modified_concept.ModifiedConcept
         """
 
         Util.info(f"Write modified concept definition {name} = {dat}")

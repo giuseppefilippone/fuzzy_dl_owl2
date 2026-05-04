@@ -7,14 +7,14 @@ fuzzy_dl_owl2.fuzzydl.parser.dl_parser
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A specialized parser for Fuzzy Description Logic that interprets textual input to construct a knowledge base and a set of executable queries using the pyparsing library.
+A comprehensive parser for Fuzzy Description Logic that utilizes the pyparsing library to transform textual definitions into a structured knowledge base and executable queries.
 
 
 Description
 -----------
 
 
-The software defines a comprehensive grammar for a Fuzzy Description Logic language, enabling the interpretation of complex constructs such as fuzzy concepts, modifiers, roles, and axioms. It utilizes the pyparsing library to define syntax rules and parse actions that transform raw string tokens into domain-specific objects, including concepts, individuals, and various query types. During the parsing process, the system validates semantic constraints, such as ensuring abstract concepts are not used where concrete ones are required and enforcing logic-specific rules for operators like conjunction and implication. The parser populates a central ``KnowledgeBase`` instance with the interpreted data and accumulates a list of queries, which can subsequently be solved to perform reasoning tasks like subsumption checking, instance retrieval, and satisfiability analysis. By supporting multiple fuzzy logic semantics, including Zadeh and Lukasiewicz, the implementation provides a flexible framework for defining and reasoning about fuzzy ontologies.
+The software implements a robust grammar using the ``pyparsing`` library to interpret a domain-specific language for Fuzzy Description Logic, enabling the translation of raw text into a structured object model. It supports a wide array of fuzzy logic constructs, including abstract and concrete concepts, modifiers, weighted aggregations, and integral operators, while dynamically adapting to different logic semantics such as Zadeh, Lukasiewicz, and classical logic. During the parsing process, static callback methods validate the input and instantiate domain-specific objects like ``Concept``, ``Individual``, and ``Degree``, which are subsequently registered within a central ``KnowledgeBase`` instance. Beyond constructing the domain model, the system extracts and compiles query definitions—ranging from satisfiability checks to instance retrieval—into executable objects that can be processed by the underlying reasoning engine. The design relies heavily on side effects within parsing actions to populate the global knowledge base state, ensuring that the parsed syntax directly corresponds to the runtime data structures required for inference and Mixed-Integer Linear Programming (MILP) solving.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

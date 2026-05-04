@@ -16,13 +16,16 @@ Examples:
     python code_documenter.py ./src --model codellama --output docs_md
 """
 
+from __future__ import annotations
+
 import ast
-import logging
 import sys
 import textwrap
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional
+
+from sphinx.util import logging as sphinx_logging
 
 if TYPE_CHECKING:
     from langchain_ollama import ChatOllama
@@ -30,12 +33,7 @@ if TYPE_CHECKING:
 # ──────────────────────────────────────────────
 # Logging
 # ──────────────────────────────────────────────
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s │ %(levelname)-7s │ %(message)s",
-    datefmt="%H:%M:%S",
-)
-log = logging.getLogger("documenter")
+logger = sphinx_logging.getLogger(__name__)
 
 # ──────────────────────────────────────────────
 # Data models
@@ -123,13 +121,13 @@ def parse_module(filepath: Path, root_dir: Path) -> Optional[ModuleInfo]:
     try:
         source = filepath.read_text(encoding="utf-8", errors="replace")
     except Exception as e:
-        log.warning("[md_injector] Could not read %s: %s", filepath, e)
+        logger.warning("[md_injector] Could not read %s: %s", filepath, e)
         return None
 
     try:
         ast.parse(source, filename=str(filepath))
     except SyntaxError as e:
-        log.warning("[md_injector] Syntax error in %s: %s", filepath, e)
+        logger.warning("[md_injector] Syntax error in %s: %s", filepath, e)
         return None
 
     rel = filepath.relative_to(root_dir)
@@ -154,12 +152,12 @@ def scan_directory(root_dir: Path) -> PackageInfo:
 
         for pf in sorted(directory.glob("*.py")):
             if pf.name == "__init__.py":
-                log.debug("[md_injector] Skipping %s", pf.relative_to(root_dir))
+                logger.debug("[md_injector] Skipping %s", pf.relative_to(root_dir))
                 continue
             mod = parse_module(pf, root_dir)
             if mod:
                 pkg.modules.append(mod)
-                log.debug("[md_injector] Indexed  %s", mod.module_name)
+                logger.debug("[md_injector] Indexed  %s", mod.module_name)
 
         for child in sorted(directory.iterdir()):
             if child.is_dir() and not _is_skipped_dir(child.name):
@@ -177,8 +175,7 @@ def scan_directory(root_dir: Path) -> PackageInfo:
 # LLM prompts
 # ──────────────────────────────────────────────
 
-CODE_SYSTEM = textwrap.dedent(
-    """\
+CODE_SYSTEM = textwrap.dedent("""\
     You are a senior Python developer and technical writer.
     Your job is to describe a Python source file.
 
@@ -205,11 +202,9 @@ CODE_SYSTEM = textwrap.dedent(
        Instead, directly describe what the software *does*.
        Bad:  "This file implements a REST API client."
        Good: "A REST API client that communicates with ..."
-"""
-)
+""")
 
-PKG_SYSTEM = textwrap.dedent(
-    """\
+PKG_SYSTEM = textwrap.dedent("""\
     You are a senior Python developer and technical writer.
     Your job is to describe a Python package (a directory of related modules).
 
@@ -238,8 +233,7 @@ PKG_SYSTEM = textwrap.dedent(
        Instead, directly describe what the software *does*.
        Bad:  "This package provides utilities for database access."
        Good: "A database access layer that abstracts ..."
-"""
-)
+""")
 
 
 # ──────────────────────────────────────────────
@@ -250,17 +244,17 @@ PKG_SYSTEM = textwrap.dedent(
 def _llm_call(llm: ChatOllama, system: str, user: str) -> str:
     from langchain_core.messages import HumanMessage, SystemMessage
 
-    try:
-        resp = llm.invoke(
-            [
-                SystemMessage(content=system),
-                HumanMessage(content=user),
-            ]
-        )
-        return resp.content.strip()
-    except Exception as e:
-        log.error("[md_injector] LLM error: %s", e)
-        return f"*Description unavailable — LLM error: {e}*"
+    while True:
+        try:
+            resp = llm.invoke(
+                [
+                    SystemMessage(content=system),
+                    HumanMessage(content=user),
+                ]
+            )
+            return resp.content.strip()
+        except Exception as e:
+            logger.error("[md_injector] LLM error: %s", e)
 
 
 def _split_summary_description(raw: str) -> tuple[str, str]:
@@ -379,7 +373,7 @@ def process_tree(
 
     # 1) Describe every .py file first
     for mod in pkg.modules:
-        log.debug("[md_injector]%s📄  %s", indent, mod.module_name)
+        logger.debug("[md_injector]%s📄  %s", indent, mod.module_name)
         fname = source_dir.stem + "." + mod.module_name + ".md"
         filepath = output_dir / fname
 
@@ -388,7 +382,7 @@ def process_tree(
 
         describe_file(llm, mod)
         filepath.write_text(mod.markdown, encoding="utf-8")
-        log.debug("[md_injector] %s    → %s", indent, fname)
+        logger.debug("[md_injector] %s    → %s", indent, fname)
 
     # 2) Recurse into sub-packages (depth-first)
     for sub in pkg.sub_packages:
@@ -396,7 +390,7 @@ def process_tree(
 
     # 3) Describe the package using the children's markdowns
     if pkg.modules or pkg.sub_packages:
-        log.debug("[md_injector]%s📦  %s", indent, pkg.name)
+        logger.debug("[md_injector]%s📦  %s", indent, pkg.name)
         idx = (
             "INDEX.md"
             if pkg.relative_path == "."
@@ -410,7 +404,7 @@ def process_tree(
         if not filepath.exists():
             describe_package(llm, pkg, source_dir)
             filepath.write_text(pkg.markdown, encoding="utf-8")
-            log.debug("[md_injector] %s    → %s", indent, idx)
+            logger.debug("[md_injector] %s    → %s", indent, idx)
 
 
 # ──────────────────────────────────────────────
@@ -438,32 +432,32 @@ def process_library(output_dir: Path, source_dir: Path, model: str) -> None:
     from langchain_ollama import ChatOllama
 
     if not source_dir.is_dir():
-        log.error("[md_injector] Source directory does not exist: %s", source_dir)
+        logger.error("[md_injector] Source directory does not exist: %s", source_dir)
         sys.exit(1)
 
     output_dir.mkdir(exist_ok=True)
 
-    log.debug("═" * 60)
-    log.debug("[md_injector] Python Codebase Documenter")
-    log.debug("═" * 60)
-    log.debug("[md_injector] Source:  %s", source_dir)
-    log.debug("[md_injector] Output:  %s", output_dir)
-    log.debug("[md_injector] Model:   %s", model)
-    log.debug("═" * 60)
+    logger.debug("═" * 60)
+    logger.debug("[md_injector] Python Codebase Documenter")
+    logger.debug("═" * 60)
+    logger.debug("[md_injector] Source:  %s", source_dir)
+    logger.debug("[md_injector] Output:  %s", output_dir)
+    logger.debug("[md_injector] Model:   %s", model)
+    logger.debug("═" * 60)
 
     # Scan
-    log.debug("[md_injector] Scanning ...")
+    logger.debug("[md_injector] Scanning ...")
     root_pkg = scan_directory(source_dir)
     total = _count_modules(root_pkg)
     if total == 0:
-        log.warning(
+        logger.warning(
             "[md_injector] No .py files found (excluding __init__.py) in %s", source_dir
         )
         sys.exit(0)
-    log.debug("[md_injector] Found %d file(s) to document\n", total)
+    logger.debug("[md_injector] Found %d file(s) to document\n", total)
 
     # Init LLM
-    log.debug("[md_injector] Connecting to Ollama (model=%s)...", model)
+    logger.debug("[md_injector] Connecting to Ollama (model=%s)...", model)
     llm = ChatOllama(
         model=model,
         temperature=0.2,
@@ -472,9 +466,11 @@ def process_library(output_dir: Path, source_dir: Path, model: str) -> None:
     # Process bottom-up
     process_tree(llm, source_dir, root_pkg, output_dir)
 
-    log.debug("═" * 60)
-    log.debug("[md_injector] Documentation complete! Files written to: %s", output_dir)
-    log.debug("═" * 60)
+    logger.debug("═" * 60)
+    logger.debug(
+        "[md_injector] Documentation complete! Files written to: %s", output_dir
+    )
+    logger.debug("═" * 60)
 
 
 if __name__ == "__main__":

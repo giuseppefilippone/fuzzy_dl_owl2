@@ -7,14 +7,18 @@ fuzzy_dl_owl2.fuzzydl.query.all_instances_query
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Retrieves all individuals from a knowledge base that are instances of a specified concept and calculates their respective fuzzy membership degrees.
+Retrieves all individuals from a knowledge base that satisfy a specified concept and calculates their corresponding fuzzy membership degrees.
 
 
 Description
 -----------
 
 
-The software provides a mechanism to query a knowledge base for all entities that belong to a given abstract concept, determining the extent to which each entity satisfies the concept criteria using fuzzy logic principles. Instead of a binary classification, the system calculates a specific membership degree for every individual, allowing for nuanced retrieval based on partial satisfaction of the concept definition. Two distinct algorithms are implemented to perform these calculations: an iterative approach that solves a minimum instance query for each entity sequentially, and an optimization-based approach that utilizes Mixed-Integer Linear Programming (MILP) to maximize the sum of membership variables across all individuals simultaneously. Before execution, the system ensures the underlying ontology is consistent, and it dynamically manages the creation of variables and assertions within the mathematical model to accurately reflect the relationships between individuals and the target concept.
+Software designed to retrieve all entities from a knowledge base that satisfy a specific conceptual definition, operating within a fuzzy logic framework where membership is represented by a degree rather than a binary value. It extends the base query functionality to handle complex retrieval tasks by accepting a target concept and evaluating every individual in the ontology to determine the extent to which they satisfy the criteria. The implementation ensures that the input concept is abstract rather than concrete, enforcing structural constraints on the query definition to maintain logical validity.
+
+The core logic involves iterating through the individuals of the knowledge base and calculating the minimum degree of membership for each relative to the target concept. Two distinct solving strategies are provided: a standard approach that executes a minimum instance query for every individual sequentially, and an advanced optimization method that constructs a Mixed Integer Linear Programming (MILP) model to solve for all degrees simultaneously. The optimization approach introduces semi-continuous variables for each individual, links them to the concept via assertions, and maximizes the sum of these variables to determine the most accurate membership values.
+
+Consistency checks are performed prior to calculation to ensure the ABox of the knowledge base is valid, returning a specific error state if the ontology is found to be inconsistent. Results are stored internally, mapping individuals to their calculated degrees, and can be accessed to view the fuzzy classification of the entire population. The design integrates tightly with the underlying MILP solver and knowledge base structure, allowing for efficient batch processing of instance retrieval queries.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

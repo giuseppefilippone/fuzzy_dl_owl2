@@ -7,14 +7,14 @@ fuzzy_dl_owl2.fuzzydl.query.query
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-An abstract base class establishes a standard interface for executing and timing queries against a fuzzy knowledge base.
+An abstract base class defines the standard interface for executing, preprocessing, and timing queries against a fuzzy knowledge base.
 
 
 Description
 -----------
 
 
-The architecture enforces a strict contract where concrete implementations must define logic for preparing data against a *KnowledgeBase* and resolving the query to produce a *Solution*. By integrating high-resolution timing utilities, the design allows for precise measurement of execution duration, which is essential for performance analysis in complex reasoning tasks. Subclasses are responsible for specific algorithmic details, such as normalizing terms or applying fuzzy logic rules, while the base structure handles the common workflow of initialization, execution, and result retrieval. This abstraction promotes consistency across different query types, ensuring that every operation can be tracked, timed, and represented as a string without requiring repetitive boilerplate code.
+The architecture establishes a contract that requires concrete implementations to handle the preparation of data and the resolution of specific logical problems against a provided knowledge base. By mandating the implementation of preprocessing and solving logic, it ensures that all derived query types can interact correctly with the underlying fuzzy logic system and produce standardized solution objects. To support performance analysis and optimization, the design incorporates high-resolution timing utilities that allow the execution duration of the solving process to be captured and reported in seconds. This abstraction facilitates the creation of diverse query types while maintaining a consistent structure for execution flow and metric collection across the system.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

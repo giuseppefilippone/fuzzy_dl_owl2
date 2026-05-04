@@ -39,21 +39,21 @@ fuzzy_dl_owl2.fuzzydl.concept.concrete.fuzzy_number
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Models uncertain numerical values using triangular membership functions to support arithmetic, logical operations, and defuzzification within a fuzzy logic framework.
+Implements a mathematical framework for handling uncertain values through triangular fuzzy numbers, supporting arithmetic operations, logical comparisons, and defuzzification.
 
 
 Description
 -----------
 
 
-Uncertainty is represented through a triangular membership function defined by lower, peak, and upper bounds, ensuring strict validation during initialization to maintain data integrity. Arithmetic manipulations rely on interval arithmetic principles to generate new instances without modifying the originals, while fuzzy logical tasks such as conjunction and disjunction are handled by delegating to an external operator system. To bridge the gap between fuzzy and crisp values, utilities for calculating the Best Non-Fuzzy Performance are included, alongside class-level mechanisms for defining a global universe of discourse that governs range management.
+Uncertainty is modeled using a triangular membership function defined by lower, peak, and upper bounds, allowing for the representation of imprecise data within a structured framework. The architecture relies on inheritance from a concrete concept base to manage data structures and enforce strict type validation, ensuring that all instances adhere to defined constraints. Mathematical operations are handled through operator overloading and interval arithmetic principles, which generate new immutable objects rather than modifying existing states, while logical conjunctions and disjunctions are facilitated by integration with an operator concept handler. To bridge the gap between fuzzy and crisp values, the system calculates the Best Non-Fuzzy Performance (BNP), and class-level attributes establish a global universe of discourse to maintain consistent boundaries across the application.
 
 
 Modules
 -------
 
 
-* ``fuzzy_dl_owl2.fuzzydl.concept.concrete.fuzzy_number.triangular_fuzzy_number`` — A Python class that models triangular fuzzy numbers, providing arithmetic and logical operations alongside utilities for defuzzification and range management.
+* [``fuzzy_dl_owl2.fuzzydl.concept.concrete.fuzzy_number.triangular_fuzzy_number``] — A Python class representing triangular fuzzy numbers that supports arithmetic operations, logical comparisons, and defuzzification.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

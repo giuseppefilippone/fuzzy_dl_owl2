@@ -7,14 +7,14 @@ fuzzy_dl_owl2.fuzzydl.concept.threshold_concept
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Implements a logical construct for applying numerical threshold constraints to concepts within a fuzzy description logic framework.
+A Python class representing threshold constraints applied to fuzzy logic concepts to determine satisfaction based on a numerical boundary.
 
 
 Description
 -----------
 
 
-The software defines a specialized entity that enforces numerical boundaries on the satisfaction degree of a nested concept, supporting both positive and negative threshold conditions to determine fulfillment based on a specific weight. By inheriting from base concept interfaces, it integrates seamlessly into a larger fuzzy logic system, allowing for complex expressions involving conjunctions, disjunctions, and negations through operator overloading that delegates to external operator handlers. Design choices include static factory methods for convenient instantiation of specific threshold types and a delegation pattern for retrieving atomic concepts and roles directly from the encapsulated inner concept. The implementation ensures that structural modifications, such as cloning or recursively replacing sub-concepts, preserve the specific weight and constraint type while maintaining the integrity of the logical hierarchy.
+The software models a threshold constraint within a graded or fuzzy logic framework, evaluating whether the degree of fulfillment of a nested concept meets a specific numerical weight. It supports both positive thresholds, requiring a degree to be greater than or equal to a value, and negative thresholds, requiring a degree to be less than or equal to a value. By encapsulating a base concept, this component allows for the construction of complex logical expressions that include boundary conditions, integrating seamlessly with a broader hierarchy of logical constructs. Standard operations such as conjunction, disjunction, and negation are supported through delegation to an operator handler, while structural manipulations like cloning and recursive replacement ensure that the threshold logic can be maintained across transformations of the concept tree. The design delegates the retrieval of atomic concepts and roles to the inner concept, ensuring that the threshold wrapper acts primarily as a modifier of the satisfaction degree rather than a fundamental change to the underlying semantic structure.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

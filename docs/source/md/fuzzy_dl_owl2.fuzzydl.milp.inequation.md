@@ -1,7 +1,7 @@
 # Summary
 
-Encapsulates a mathematical inequality of the form expression compared to zero, typically used within fuzzy description logic ontologies.
+Encapsulates mathematical inequalities of the form expression compared to zero for use in fuzzy description logic ontologies.
 
 ## Description
 
-Mathematical inequalities of the form expression compared to zero are modeled to support fuzzy description logic ontologies, specifically for representing the degree of satisfaction of a concept by an individual. The implementation normalizes constraints by storing a linear expression and a comparison operator, ensuring the right-hand side is always zero to simplify solver integration. Static factory methods are provided to conveniently instantiate specific inequality types, such as greater than or less than, without requiring manual specification of the operator enumeration. Functionality includes cloning instances, accessing underlying terms and constants, and checking for zero-valued expressions, alongside standard Python protocols for hashing, equality, and string representation to enable use in collections and debugging scenarios.
+The software models linear constraints by pairing a mathematical expression with a relational operator, ensuring the right-hand side is always normalized to zero. It supports the creation of greater-than, less-than, and equality constraints through static factory methods, which simplify the instantiation process by automatically assigning the appropriate operator type. Internally, the logic delegates term and constant retrieval to the encapsulated expression object while providing mechanisms to clone the inequality and check if the expression evaluates to zero. Standard object behaviors such as hashing, equality comparison, and string representation are implemented to facilitate the use of these constraints within sets, dictionaries, and debugging workflows.

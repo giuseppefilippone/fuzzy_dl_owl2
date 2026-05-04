@@ -7,14 +7,14 @@ fuzzy_dl_owl2.fuzzydl.general_concept_inclusion
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Defines a data structure for representing fuzzy General Concept Inclusion axioms, which assert that one concept is subsumed by another to a specific degree of truth using a designated logic operator.
+A Python class representing a fuzzy logic axiom that defines the inclusion of one concept within another to a specific degree of truth.
 
 
 Description
 -----------
 
 
-The implementation models a graded subsumption relationship where a specific concept is included within a broader category according to a defined truth value and fuzzy implication operator. By storing references to the subsumer, subsumed concept, degree, and operator type, the structure allows for the dynamic modification of these components through setter methods, making the underlying axiom mutable during runtime. Equality comparisons are determined by verifying that all constituent attributes match exactly between instances, while ordering comparisons rely on hash values to provide a consistent but arbitrary sorting mechanism. A string representation is generated to display the logical structure in a human-readable format, combining the concepts, operator type, and degree into a standard notation.
+The software models a graded subsumption relationship between two concepts within a fuzzy description logic framework, capturing the extent to which a sub-concept is included in a super-concept. It encapsulates a specific logic operator type, such as Łukasiewicz or Gödel, to determine the semantic implications of the relationship, while storing a degree value that serves as a lower bound for the truth of the inclusion. Designed as a mutable data structure, the implementation allows for the modification of the underlying concepts and the degree of truth after instantiation, facilitating dynamic updates to the logical axioms. To support integration into larger systems, the implementation provides mechanisms for structural equality comparison, hash-based ordering, and a human-readable string representation that visualizes the logical structure and associated truth value.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

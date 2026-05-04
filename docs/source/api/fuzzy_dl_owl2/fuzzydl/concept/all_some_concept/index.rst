@@ -7,14 +7,14 @@ fuzzy_dl_owl2.fuzzydl.concept.all_some_concept
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Implements a class representing universal and existential quantified role restrictions within a fuzzy description logic framework.
+Implements a class for representing universal and existential quantified role restrictions within a fuzzy description logic system.
 
 
 Description
 -----------
 
 
-The software models quantified role restrictions, specifically universal and existential constraints, which are fundamental constructs in description logic for defining relationships between individuals. It employs a factory pattern for instantiation, enabling logical optimizations that simplify complex expressions—such as reducing a universal restriction over the top concept to the top concept itself—before object creation. Logic for negation is implemented by inverting the quantifier type and recursively negating the nested concept, ensuring that the logical structure remains consistent during operations. Furthermore, the implementation supports structural manipulations like cloning and sub-concept replacement, allowing the system to dynamically modify concept definitions while maintaining the integrity of role hierarchies and atomic constituents.
+The software provides a mechanism to model complex logical constraints involving roles and concepts, specifically focusing on universal ("all") and existential ("some") quantification. It employs a static factory pattern to instantiate these restrictions, allowing for logical optimizations such as reducing trivial cases where a universal restriction applies to the top concept or an existential restriction applies to the bottom concept. By implementing a specific interface for role-based concepts, the design ensures that operations like negation, cloning, and sub-concept replacement are handled consistently, with negation specifically inverting the quantifier type while recursively negating the nested concept. The implementation delegates the retrieval of atomic components and roles to the underlying child concept, thereby maintaining a hierarchical structure that supports complex reasoning within the broader fuzzy description logic framework.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

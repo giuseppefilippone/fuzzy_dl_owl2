@@ -7,14 +7,14 @@ fuzzy_dl_owl2.fuzzydl.concept.concrete.fuzzy_number.triangular_fuzzy_number
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A Python class that models triangular fuzzy numbers, providing arithmetic and logical operations alongside utilities for defuzzification and range management.
+A Python class representing triangular fuzzy numbers that supports arithmetic operations, logical comparisons, and defuzzification.
 
 
 Description
 -----------
 
 
-The software models uncertain numerical values using a triangular membership function defined by three distinct parameters representing the lower bound, the peak, and the upper bound. It supports flexible initialization, allowing instances to be created either with or without an explicit string identifier, while enforcing strict validation on the input types and argument counts. Arithmetic operations such as addition, subtraction, multiplication, and division are implemented to produce new instances based on interval arithmetic principles, ensuring that the original operands remain unmodified. Furthermore, the logic integrates with a broader framework by delegating fuzzy logical operations like conjunction and disjunction to an external operator handler, while also providing utilities for defuzzification through the calculation of the Best Non-Fuzzy Performance. Class-level configuration allows for the definition of a global range or universe of discourse, which influences how these fuzzy numbers are identified and managed within the system.
+The software models uncertain values using a triangular membership function defined by three distinct parameters: a lower bound, a peak value where membership is absolute, and an upper bound. Instances can be created with or without a specific identifier, and the implementation relies on inheritance from a concrete concept base to manage the underlying data structure while enforcing strict type validation during initialization. Arithmetic capabilities are provided through operator overloading, allowing for addition, subtraction, multiplication, and division that generate new instances based on interval arithmetic principles rather than modifying the original objects. Beyond basic math, the implementation integrates with an operator concept handler to perform logical conjunctions, disjunctions, and negations, while also offering utilities to calculate a defuzzified crisp value known as the Best Non-Fuzzy Performance (BNP). Class-level attributes allow for the definition of a global range or universe of discourse, affecting how these numbers are identified and bounded across the system.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

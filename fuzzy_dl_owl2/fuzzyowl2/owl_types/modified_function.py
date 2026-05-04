@@ -11,7 +11,6 @@ class ModifiedFunction(FuzzyDatatype):
     :type _d: str
     """
 
-
     def __init__(self, mod: str, d: str) -> None:
         """
         Initializes a new instance of the ModifiedFunction class by accepting two string parameters, `mod` and `d`. This method ensures that the parent class is properly initialized via a call to `super().__init__()` before storing the provided arguments in private instance attributes named `_mod` and `_d`. While the type hints suggest strings, the method will store any object passed to it, making these values available for subsequent operations within the instance.
@@ -52,9 +51,9 @@ class ModifiedFunction(FuzzyDatatype):
         """
         Returns a human-readable string representation of the object, formatted as a parenthesized tuple containing the internal modifier and data attributes separated by a space. This method is invoked implicitly by the `str()` built-in function and the `print` statement, providing a concise summary of the object's state without modifying it. The output depends entirely on the string conversion of the underlying `_mod` and `_d` attributes, meaning any exceptions raised during their stringification will propagate to this call.
 
-        :return: A string representation of the object, formatted as '(_mod _d)'.
+        :return: A string representation of the object, formatted as 'modified(_mod, _d)'.
 
         :rtype: str
         """
 
-        return f"({self._mod} {self._d})"
+        return f"modified({self._mod}, {self._d})"

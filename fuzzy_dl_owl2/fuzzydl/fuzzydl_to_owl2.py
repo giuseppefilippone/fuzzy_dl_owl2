@@ -31,6 +31,9 @@ from fuzzy_dl_owl2.fuzzydl.concept.concrete.trapezoidal_concrete_concept import 
 from fuzzy_dl_owl2.fuzzydl.concept.concrete.triangular_concrete_concept import (
     TriangularConcreteConcept,
 )
+from fuzzy_dl_owl2.fuzzydl.concept.concrete.modified_concrete_concept import (
+    ModifiedConcreteConcept,
+)
 from fuzzy_dl_owl2.fuzzydl.concept.has_value_concept import HasValueConcept
 from fuzzy_dl_owl2.fuzzydl.concept.interface.has_weighted_concepts_interface import (
     HasWeightedConceptsInterface,
@@ -878,6 +881,7 @@ class FuzzydlToOwl2:
         Util.debug(f"Getting object property -> {role}")
         if self.exist_data_property(role):
             return self.get_data_property(role)
+
         obj = OWLObjectProperty(self.object_property_iri(role))
         self.ontology.add_axiom(
             OWLDeclaration(
@@ -909,6 +913,7 @@ class FuzzydlToOwl2:
         Util.debug(f"Getting data property -> {role}")
         if self.exist_object_property(role):
             return self.get_object_property(role)
+
         data = OWLDataProperty(self.data_property_iri(role))
         self.ontology.add_axiom(
             OWLDeclaration(
@@ -1430,6 +1435,11 @@ class FuzzydlToOwl2:
                 FuzzyOWL2Keyword.B.get_str_value(): str(c.b),
                 FuzzyOWL2Keyword.C.get_str_value(): str(c.c),
                 FuzzyOWL2Keyword.D.get_str_value(): str(c.d),
+            }
+        elif isinstance(c, ModifiedConcreteConcept):
+            return FuzzyOWL2Keyword.MODIFIED.get_str_value(), {
+                FuzzyOWL2Keyword.MODIFIER.get_str_value(): str(c.modifier),
+                FuzzyOWL2Keyword.BASE.get_str_value(): str(c.modified),
             }
         return "", dict()
 

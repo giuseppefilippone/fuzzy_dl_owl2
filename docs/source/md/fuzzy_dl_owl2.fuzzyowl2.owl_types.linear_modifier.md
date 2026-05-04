@@ -1,7 +1,7 @@
 # Summary
 
-Defines a class that applies linear transformations to fuzzy logic membership degrees within the FuzzyOWL2 framework.
+A fuzzy logic modifier that applies a linear transformation to membership degrees using a specific coefficient.
 
 ## Description
 
-Extending the base functionality of fuzzy modifiers, this implementation introduces a linear transformation mechanism designed to scale or adjust membership degrees. The core logic relies on a single floating-point coefficient provided during instantiation, which dictates the intensity or nature of the linear adjustment applied to fuzzy values. By encapsulating this coefficient as a private attribute, the design ensures that the transformation parameter remains consistent and accessible only through specific accessor methods. Furthermore, the implementation includes a string representation that clearly identifies the modifier type and its associated coefficient, facilitating easier debugging and logging within the broader system.
+Extending the base fuzzy modifier functionality, this implementation handles linear transformations required to scale or adjust membership degrees within the FuzzyOWL2 framework. The logic encapsulates a single floating-point coefficient that defines the specific linear operation, ensuring that the mathematical parameter is stored securely and remains accessible for reasoning tasks. By inheriting from the parent class, the design integrates seamlessly into the broader hierarchy while providing a distinct string representation that clearly identifies the modifier type and its associated value. This approach allows for precise manipulation of fuzzy set semantics through a simple, coefficient-based model.

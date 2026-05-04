@@ -7,14 +7,14 @@ fuzzy_dl_owl2.fuzzydl.degree.degree_numeric
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Encapsulates a specific numeric value to represent the satisfaction level of a concept within a fuzzy description logic framework.
+Encapsulates a specific floating-point value to represent a degree of satisfaction within a fuzzy logic framework.
 
 
 Description
 -----------
 
 
-A concrete realization of a degree wraps a floating-point number to quantify the satisfaction level of a concept within a fuzzy description logic framework. Extending the abstract ``Degree`` base class, this component bridges high-level logical concepts with low-level mathematical representations required for computation, ensuring specific numeric values are treated uniformly alongside other degree types. Arithmetic operations integrate the stored value into larger algebraic expressions, enabling the construction of complex mathematical models. The logic facilitates the generation of inequality constraints by comparing external expressions against the internal numeric value, which is essential for formulating mixed-integer linear programming (MILP) problems. Utility functions allow for type identification and value inspection, ensuring the system distinguishes numeric degrees from symbolic or abstract representations during logical evaluation.
+Concrete floating-point values are wrapped to enable the quantification of concept satisfaction levels in a manner compatible with mathematical solvers. Arithmetic operations and inequality generation are supported to integrate these numeric values seamlessly into mixed-integer linear programming expressions. Utility functions for instance creation, cloning, and type verification ensure that the system can efficiently manage and distinguish numeric degrees from other abstract representations. Functionality is provided to handle comparisons, string representation, and specific checks for unit or zero values, fulfilling the requirements of the broader degree hierarchy.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

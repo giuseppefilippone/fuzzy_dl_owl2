@@ -19,6 +19,7 @@ from fuzzy_dl_owl2.fuzzyowl2.owl_types.left_shoulder_function import (
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.linear_function import LinearFunction
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.linear_modifier import LinearModifier
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.modified_concept import ModifiedConcept
+from fuzzy_dl_owl2.fuzzyowl2.owl_types.modified_function import ModifiedFunction
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.modified_property import ModifiedProperty
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.owa_concept import OwaConcept
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.property_definition import PropertyDefinition
@@ -48,7 +49,6 @@ class FuzzyOwl2XMLParser(object):
 
     :raises ValueError: Raised when the parsed XML string contains an unsupported, unrecognized, or missing annotation type that does not correspond to any of the defined FuzzyOWL2 elements (Concept, Datatype, Modifier, Axiom, Ontology, or Role).
     """
-
 
     @staticmethod
     def get_caseless_attrib(attrib: dict[str, str], key: str) -> typing.Optional[str]:
@@ -217,6 +217,11 @@ class FuzzyOwl2XMLParser(object):
                     float(child.attrib.get(FuzzyOWL2Keyword.B.get_str_value())),
                     float(child.attrib.get(FuzzyOWL2Keyword.C.get_str_value())),
                     float(child.attrib.get(FuzzyOWL2Keyword.D.get_str_value())),
+                )
+            elif datatype_type == FuzzyOWL2Keyword.MODIFIED:
+                return ModifiedFunction(
+                    child.attrib.get(FuzzyOWL2Keyword.MODIFIER.get_str_value()),
+                    child.attrib.get(FuzzyOWL2Keyword.BASE.get_str_value()),
                 )
         elif annotation_type == FuzzyOWL2Keyword.MODIFIER:
             child = root.find(FuzzyOWL2Keyword.MODIFIER.get_tag_name())

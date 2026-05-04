@@ -7,14 +7,14 @@ fuzzy_dl_owl2.fuzzydl.degree.degree_variable
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Encapsulates a symbolic variable to represent a dynamic degree of satisfaction for use in algebraic expressions and constraints.
+Defines a symbolic representation of a degree of satisfaction using an algebraic variable to enable dynamic constraint generation within a fuzzy logic system.
 
 
 Description
 -----------
 
 
-The software provides a mechanism to treat degrees of satisfaction as symbolic algebraic variables rather than fixed numeric constants, enabling dynamic constraint solving within a fuzzy logic framework. By wrapping a ``Variable`` instance, the implementation allows these symbolic degrees to participate in the construction of linear expressions and inequalities, effectively bridging the gap between abstract fuzzy logic concepts and Mixed-Integer Linear Programming (MILP) formulations. Design choices ensure that the entity is explicitly identified as non-numeric, preventing it from being confused with concrete values during type checking or evaluation phases. Furthermore, the logic supports standard algebraic operations such as addition, subtraction, and scalar multiplication, which are essential for building complex constraints where the satisfaction level must be determined by a solver rather than hardcoded.
+This component acts as a symbolic wrapper for a degree of satisfaction, allowing the magnitude to be represented by an algebraic variable rather than a fixed numeric constant. By bridging the gap between abstract fuzzy logic concepts and linear algebra, it enables the creation of mathematical expressions and constraints where the satisfaction level is an unknown value to be solved for. The implementation supports various algebraic manipulations, such as addition, subtraction, and scalar multiplication, which are essential for constructing the complex linear equations required by the underlying solver. Furthermore, it distinguishes itself from numeric degrees by explicitly identifying as non-numeric, ensuring that the system treats it as a dynamic entity during constraint generation and type checking.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

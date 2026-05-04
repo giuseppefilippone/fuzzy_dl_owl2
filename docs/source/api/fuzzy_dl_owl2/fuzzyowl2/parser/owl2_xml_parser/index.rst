@@ -7,14 +7,14 @@ fuzzy_dl_owl2.fuzzyowl2.parser.owl2_xml_parser
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Converts FuzzyOWL2 XML annotations into Python objects representing fuzzy logic concepts, datatypes, and modifiers.
+A specialized parser converts FuzzyOWL2 XML annotations into corresponding Python data structures representing fuzzy logic elements.
 
 
 Description
 -----------
 
 
-The software utilizes the standard library's ElementTree to interpret XML strings containing fuzzy logic definitions, mapping specific tags and attributes to a hierarchy of Python classes representing fuzzy concepts, datatypes, and modifiers. By examining the root element's type annotation, the logic dispatches the parsing process to construct appropriate objects, ranging from simple triangular functions to complex weighted or aggregated concepts like OWA and Sugeno integrals. Configuration parameters are loaded from an external file to ensure the parsing environment is correctly initialized before processing the input data. Robust error handling is integrated to manage file access issues or malformed XML structures, logging detailed tracebacks to aid in debugging while preventing runtime crashes during the conversion process.
+The software interprets XML strings containing FuzzyOWL2 annotations to instantiate a wide variety of Python objects representing fuzzy logic constructs, such as concept definitions, fuzzy datatypes, and property definitions. By leveraging the standard library's XML parsing capabilities, the logic inspects specific attributes within the XML structure to determine the appropriate class to construct, ranging from simple triangular functions to complex weighted or aggregated concepts like Choquet or Sugeno integrals. A central dispatch mechanism routes the parsing flow based on the annotation type, ensuring that nested elements, such as lists of weights or concept names, are correctly extracted and mapped to the corresponding object attributes. Additionally, the implementation integrates with an external configuration system to load necessary parameters before parsing and includes robust error handling to manage file access issues or malformed XML gracefully.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

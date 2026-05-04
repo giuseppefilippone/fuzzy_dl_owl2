@@ -7,14 +7,14 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_sum_concept
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Defines a specialized concept structure that aggregates multiple underlying definitions into a weighted sum representation for fuzzy logic operations.
+A specialized class representing a weighted sum concept that aggregates multiple concept definitions within the FuzzyOWL2 framework.
 
 
 Description
 -----------
 
 
-Extending the base definition structure, this implementation models a complex fuzzy logic construct by combining a collection of subordinate concept definitions into a single weighted sum entity. During initialization, the component concepts are stored by reference, allowing the structure to act as a container for the specific elements that contribute to the aggregate calculation. The design facilitates the retrieval of these underlying components for further processing or serialization, ensuring that the composite nature of the fuzzy concept is preserved throughout the application logic. Additionally, a string representation is provided to visualize the aggregation in a human-readable format, displaying the components within a parenthesized expression prefixed by a specific identifier.
+The software extends the base definition structure to model complex fuzzy logic operations by combining a collection of existing concept definitions into a single aggregate entity. By initializing with a specific type identifier and storing a reference to a list of component concepts, the implementation allows for the representation of mathematical summations where individual elements contribute to a larger whole. Access to the internal collection is provided to support downstream processing or serialization, while a custom string representation ensures the structure can be displayed in a readable, parenthesized format. This design facilitates the construction of hierarchical concept models where weighted sums can be nested or combined with other fuzzy logic primitives.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

@@ -1,18 +1,18 @@
 # Summary
 
-A translation framework that converts OWL2 ontologies annotated with fuzzy logic semantics into a Fuzzy Description Logic representation suitable for reasoning engines.
+A translation framework that converts OWL2 ontologies annotated with fuzzy logic into the specific syntax required by Fuzzy Description Logic reasoners.
 
 ## Description
 
-Software designed to bridge standard OWL2 ontologies extended with fuzzy logic annotations and specific Fuzzy Description Logic formats used by reasoning engines achieves this by parsing logic definitions from either custom annotation syntax or standard XML, transforming them into a structured object model that encapsulates complex fuzzy operators, mathematical membership functions, and linguistic hedges. An object-oriented hierarchy of abstract base classes and concrete components models these entities, supporting operations like weighted sums, OWA, and Choquet integrals while ensuring consistent interfaces for data access. Architectural design separates concerns into distinct layers for lexical analysis, data serialization, and translation, allowing the system to handle class expressions, property characteristics, and datatypes while maintaining a separation between the logical structure of the ontology and its physical representation. By systematically processing ontology annotations and axioms, the system generates a serialized text output that encapsulates the fuzzy semantics required for downstream inference tasks.
+The software processes OWL2 ontology files to extract fuzzy logic semantics defined through annotations, transforming them into a format compatible with Fuzzy Description Logic reasoners. It relies on a comprehensive type system of abstract base classes and concrete implementations to model complex fuzzy constructs, such as triangular functions, linear modifiers, and aggregation operators like OWA or Sugeno integrals. Specialized parsing logic utilizing both pyparsing and standard XML analysis interprets these fuzzy elements, converting raw text or tokens into strongly typed domain objects while a central dispatch mechanism orchestrates the translation flow. Foundational utilities manage the fuzzy logic vocabulary, generate compliant XML, and organize ontology statements to ensure the output adheres to specification standards and maintains a consistent order for downstream processing.
 
 ## Modules
 
-- [`fuzzy_dl_owl2.fuzzyowl2.fuzzyowl2`](./fuzzyowl2_fuzzyowl2.md) — A translator that converts OWL2 ontologies annotated with fuzzy logic semantics into a Fuzzy Description Logic representation suitable for reasoning.
-- [`fuzzy_dl_owl2.fuzzyowl2.fuzzyowl2_to_fuzzydl`](./fuzzyowl2_fuzzyowl2_to_fuzzydl.md) — A translator that converts FuzzyOWL2 ontology structures into the text-based syntax required by the FuzzyDL reasoner.
+- [`fuzzy_dl_owl2.fuzzyowl2.fuzzyowl2`] — A translator that converts OWL2 ontologies annotated with fuzzy logic into a Fuzzy Description Logic representation for use in reasoning systems.
+- [`fuzzy_dl_owl2.fuzzyowl2.fuzzyowl2_to_fuzzydl`] — A converter that transforms ontologies defined in the FuzzyOWL2 format into the specific syntax required by the FuzzyDL reasoner.
 
 ## Sub-packages
 
-- [`fuzzy_dl_owl2.fuzzyowl2.owl_types`](./fuzzyowl2_owl_types_INDEX.md) — Core type definitions and data structures for modeling fuzzy logic concepts, properties, and mathematical functions within the FuzzyOWL2 ontology framework.
-- [`fuzzy_dl_owl2.fuzzyowl2.parser`](./fuzzyowl2_parser_INDEX.md) — Parsing utilities interpret Fuzzy OWL 2 logic definitions provided in either a custom annotation syntax or standard XML format, transforming them into a structured object model suitable for reasoning.
-- [`fuzzy_dl_owl2.fuzzyowl2.util`](./fuzzyowl2_util_INDEX.md) — Foundational utilities for parsing and serializing FuzzyOWL2 ontologies by centralizing vocabulary definitions and abstracting XML construction.
+- [`fuzzy_dl_owl2.fuzzyowl2.owl_types`] — Core data structures and abstract interfaces for defining fuzzy logic concepts, properties, and datatypes within the FuzzyOWL2 ontology framework.
+- [`fuzzy_dl_owl2.fuzzyowl2.parser`] — Specialized parsing logic transforms Fuzzy OWL 2 XML annotations and grammar-based strings into internal knowledge bases and fuzzy logic objects.
+- [`fuzzy_dl_owl2.fuzzyowl2.util`] — Foundational utilities for managing fuzzy logic vocabulary, generating compliant XML, and organizing ontology statements according to specification standards.

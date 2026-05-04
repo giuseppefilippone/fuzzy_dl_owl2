@@ -47,21 +47,24 @@ How it works
 
 from __future__ import annotations
 
+import logging
 import re
-from logging import DEBUG
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from sphinx.util import logging
+from sphinx.util import logging as sphinx_logging
 
 if TYPE_CHECKING:
     from sphinx.application import Sphinx
 
 __version__ = "1.0.0"
-
-logger = logging.getLogger(__name__)
-logger.setLevel(DEBUG)
-
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s │ %(levelname)-7s │ %(message)s",
+    datefmt="%H:%M:%S",
+)
+logger = sphinx_logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 logger.debug(
     "[md_docs] Sphinx MD Docs extension loaded (name =%s, version=%s)",
     __name__,
@@ -326,6 +329,9 @@ def _on_builder_inited(app: Sphinx) -> None:
         md_dir = Path(app.confdir) / md_dir
 
     if app.config.sphinx_md_injector_generate:
+        logger.info(
+            "[md_injector] Starting to process library for Markdown generation..."
+        )
         logger.debug(
             "[md_injector] Starting to process library for Markdown generation..."
         )

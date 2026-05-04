@@ -7,14 +7,14 @@ fuzzy_dl_owl2.fuzzydl.individual.representative_individual
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A proxy class representing a collection of individuals satisfying a fuzzy condition based on a specific feature and threshold.
+A concrete proxy that models a collection of individuals satisfying a specific fuzzy condition relative to a threshold by associating a feature with a triangular fuzzy number.
 
 
 Description
 -----------
 
 
-The software models a concrete proxy for a collection of entities that satisfy a specific fuzzy condition relative to a defined threshold. By encapsulating a ``TriangularFuzzyNumber`` applied to a particular feature, it determines membership through a comparison type, thereby modeling the relationship between a specific individual and the abstract group it represents. This structure enables the handling of uncertainty and partial truths within a fuzzy logic framework by associating a concrete ``CreatedIndividual`` with a fuzzy constraint. Accessor methods are provided to retrieve the classification type, the feature name, the fuzzy value, and the referenced individual, allowing the system to evaluate degrees of satisfaction during feature evaluation.
+Acting as a bridge between a concrete entity and an abstract group defined by fuzzy logic constraints, the implementation encapsulates the logic required to define sets of entities based on feature evaluation. By storing a feature name, a classification type, and a ``TriangularFuzzyNumber``, the software allows for the precise quantification of partial truths and uncertainty in how an individual satisfies a concept. The structure links a specific ``CreatedIndividual`` to these broader criteria, enabling the system to determine membership degrees through comparisons such as greater than or less than. Accessor methods expose the underlying data necessary for these evaluations, ensuring that the fuzzy logic framework can consistently handle degrees of satisfaction without directly manipulating internal state.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

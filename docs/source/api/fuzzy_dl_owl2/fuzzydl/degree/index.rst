@@ -39,24 +39,24 @@ fuzzy_dl_owl2.fuzzydl.degree
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Defines a polymorphic architecture for representing degrees of satisfaction in fuzzy description logic systems using numeric, variable, or algebraic expression metrics.
+A polymorphic framework for quantifying fuzzy logic satisfaction levels through numeric, variable, and symbolic expression representations designed for constraint solving.
 
 
 Description
 -----------
 
 
-An abstract base class establishes a unified interface for quantifying the extent to which a concept is satisfied, enabling the system to handle various underlying representations such as raw numbers, symbolic variables, or complex mathematical expressions interchangeably. Concrete implementations bridge high-level logical concepts with low-level mathematical requirements by encapsulating floating-point values, algebraic variables, or symbolic expressions, all of which support arithmetic manipulation like addition, subtraction, and scaling. These components facilitate the formulation of optimization problems by generating inequality constraints and participating in mixed-integer linear programming (MILP) models, ensuring that dynamic satisfaction levels can be solved rather than hardcoded. A static factory method ensures correct instantiation based on input type, while utility checks for specific states like zero or one support the logical reasoning required by the broader fuzzy logic framework.
+An abstract base class establishes a unified interface for handling various representations of satisfaction metrics, enabling the system to treat raw numbers, algebraic variables, and complex expressions interchangeably. Concrete implementations wrap floating-point values for fixed constants or utilize symbolic wrappers to represent unknowns and dynamic formulas, ensuring that all types support essential arithmetic operations like addition, subtraction, and scalar multiplication. This polymorphic design facilitates the generation of mathematical inequalities and constraints required by mixed-integer linear programming solvers, allowing the reasoning engine to formulate optimization problems where satisfaction levels act as boundaries or targets. By explicitly distinguishing between numeric and non-numeric entities, the architecture ensures that type-specific logic is applied correctly during the resolution of fuzzy constraints and the construction of linear equations.
 
 
 Modules
 -------
 
 
-* ``fuzzy_dl_owl2.fuzzydl.degree.degree`` — An abstract base class defines the interface for a degree metric used to quantify the extent to which a concept is satisfied within a fuzzy description logic system.
-* ``fuzzy_dl_owl2.fuzzydl.degree.degree_expression`` — A symbolic representation of a degree that wraps an algebraic expression to support dynamic, non-numeric calculations within a fuzzy logic framework.
-* ``fuzzy_dl_owl2.fuzzydl.degree.degree_numeric`` — Encapsulates a specific numeric value to represent the satisfaction level of a concept within a fuzzy description logic framework.
-* ``fuzzy_dl_owl2.fuzzydl.degree.degree_variable`` — Encapsulates a symbolic variable to represent a dynamic degree of satisfaction for use in algebraic expressions and constraints.
+* [``fuzzy_dl_owl2.fuzzydl.degree.degree``] — An abstract base class defines the interface for a degree metric used to quantify the extent to which a concept is satisfied within a fuzzy logic system.
+* [``fuzzy_dl_owl2.fuzzydl.degree.degree_expression``] — A symbolic wrapper for algebraic expressions that represents non-numeric degrees within a fuzzy logic framework, enabling dynamic constraint generation and mathematical manipulation.
+* [``fuzzy_dl_owl2.fuzzydl.degree.degree_numeric``] — Encapsulates a specific floating-point value to represent a degree of satisfaction within a fuzzy logic framework.
+* [``fuzzy_dl_owl2.fuzzydl.degree.degree_variable``] — Defines a symbolic representation of a degree of satisfaction using an algebraic variable to enable dynamic constraint generation within a fuzzy logic system.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

@@ -27,22 +27,23 @@ fuzzy_dl_owl2.fuzzyowl2.util
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Foundational utilities for parsing and serializing FuzzyOWL2 ontologies by centralizing vocabulary definitions and abstracting XML construction.
+Foundational utilities for managing fuzzy logic vocabulary, generating compliant XML, and organizing ontology statements according to specification standards.
 
 
 Description
 -----------
 
 
-To support the processing of the FuzzyOWL2 language, the software separates concerns into distinct layers for lexical analysis and data serialization. One component establishes a robust parsing framework by enumerating fuzzy logic concept types and mapping specific syntax keywords to parsing objects, thereby eliminating scattered string literals and ensuring semantic correctness during token identification. Complementing the parsing logic, a builder pattern implementation abstracts the manual creation of XML elements, transforming high-level inputs like class expressions and truth degrees into a hierarchical format that strictly adheres to the FuzzyOWL2 schema. Finally, a serialization mechanism converts these generated XML trees into clean, human-readable strings, facilitating debugging and storage while maintaining a separation between the logical structure of the ontology and its physical representation.
+Centralized enumerations define the core vocabulary of fuzzy logic concepts and map parsing tokens to concrete grammar definitions, serving as a single source of truth for the framework's syntax. A domain-specific builder abstracts low-level XML manipulation to construct elements that strictly adhere to the FuzzyOWL2 specification, handling everything from root ontology nodes to complex weighted structures. To ensure consistency with reference documentation, a sorting mechanism arranges fuzzyDL statements based on specific syntax patterns, grouping and ranking commands to produce a standardized visual structure. Together, these components abstract the complexities of language processing and output generation, allowing the broader system to reliably handle fuzzy ontology operations without hardcoding implementation details.
 
 
 Modules
 -------
 
 
-* ``fuzzy_dl_owl2.fuzzyowl2.util.constants`` — Centralizes the definition of fuzzy concept types and parsing keywords required for processing the FuzzyOWL2 ontology language.
-* ``fuzzy_dl_owl2.fuzzyowl2.util.fuzzy_xml`` — A builder utility class that generates XML elements conforming to the FuzzyOWL2 ontology specification.
+* [``fuzzy_dl_owl2.fuzzyowl2.util.constants``] — Establishes a centralized vocabulary of fuzzy logic concept types and parsing tokens for the FuzzyOWL2 framework.
+* [``fuzzy_dl_owl2.fuzzyowl2.util.fuzzy_xml``] — A utility builder for generating XML elements that conform to the FuzzyOWL2 ontology specification.
+* [``fuzzy_dl_owl2.fuzzyowl2.util.sort_dl_lines``] — Implements a sorting mechanism for fuzzyDL statements that arranges them according to the specific syntax order presented in the official PDF documentation.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -54,4 +55,5 @@ Submodules
 
    /api/fuzzy_dl_owl2/fuzzyowl2/util/constants/index
    /api/fuzzy_dl_owl2/fuzzyowl2/util/fuzzy_xml/index
+   /api/fuzzy_dl_owl2/fuzzyowl2/util/sort_dl_lines/index
 

@@ -7,14 +7,14 @@ fuzzy_dl_owl2.fuzzydl.query.max.max_related_query
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A software component that calculates the maximum truth degree of a role relationship between two individuals in a fuzzy ontology.
+A query mechanism that calculates the maximum degree of truth for a specific relationship between two individuals within a fuzzy knowledge base.
 
 
 Description
 -----------
 
 
-Designed to operate within a fuzzy description logic framework, the component formulates an optimization problem to maximize the membership degree of a specific role assertion between two entities. By leveraging Mixed-Integer Linear Programming (MILP), it translates the semantic relationship into mathematical constraints, specifically utilizing a ``HasValueConcept`` to model the restriction that one individual must be related to another via a defined role. The execution workflow involves resolving the ABox for consistency, cloning the knowledge base to preserve the original state, and applying preprocessing steps to construct the necessary objective expression for the solver. Robustness is ensured through exception handling that detects ontology inconsistencies, returning a specific solution state rather than failing when the underlying data is contradictory.
+This component extends the functionality of relationship queries by focusing on optimization rather than simple verification, specifically seeking the highest possible truth value for a role assertion between two defined entities. By leveraging Mixed-Integer Linear Programming (MILP), the logic translates the fuzzy description logic constraints into mathematical expressions that can be solved numerically. During execution, the system isolates the problem by cloning the knowledge base to prevent side effects on the original data, then formulates an objective function that targets the specific variable representing the relationship degree. Error handling is integrated directly into the workflow to manage cases where the underlying ontology is inconsistent, ensuring that the process fails gracefully without corrupting the system state.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

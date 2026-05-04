@@ -9,14 +9,14 @@ Represents the logic inference type used in the fuzzy ontology.
 
 ```xml
 <fuzzyOwl2 fuzzyType="ontology">
-    <FuzzyLogic logic="lukasiewicz" />
+    <FuzzyLogic logic="lukasiewicz|zadeh|classical" />
 </fuzzyOwl2>
 ```
 
-**Description:** Specifies the type of fuzzy logic inference applied in the ontology, such as "Zadeh", "Łukasiewicz", "Gödel", etc. The default logic used is "lukasiewicz" if not specified.
+**Description:** Specifies the type of fuzzy logic inference applied in the ontology, such as "Zadeh", "Łukasiewicz", and "Classical". The default logic used is "lukasiewicz" if not specified.
 
 **Keys:**
-*   `logic`: The type of fuzzy logic inference used in the ontology. Possible values include "lukasiewicz", "goedel", and "zadeh".
+*   `logic`: The type of fuzzy logic inference used in the ontology. Possible values include "lukasiewicz", "zadeh", and "classical".
 
 ------
 
@@ -242,6 +242,22 @@ Represents a linear membership function.
 *   `type`: The shape of the datatype, which is "linear".
 *   `a`: Parameter defining the linear function.
 *   `b`: Parameter defining the linear function.
+
+### Modified Datatype
+Represents a datatype that has been modified by a specific function.
+
+```xml
+<fuzzyOwl2 fuzzyType="datatype">
+    <Datatype type="modified" modifier="ModifierIRI" base="BaseDatatypeIRI" />
+</fuzzyOwl2>
+```
+
+**Description:** A datatype definition where a base datatype is altered by a modifier, affecting the fuzzy interpretation of the datatype.
+
+**Keys:**
+*   `type`: The type of the datatype, which is "modified".
+*   `modifier`: The IRI or identifier of the modifier being applied.
+*   `base`: The IRI or identifier of the base datatype being modified.
 
 ------
 

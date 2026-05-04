@@ -1,7 +1,7 @@
 # Summary
 
-Implements the Largest of Maxima defuzzification strategy to derive crisp numerical values from fuzzy membership functions by maximizing the target variable in an optimization context.
+Implements the Largest of Maxima defuzzification strategy to determine the highest crisp value within the region of maximum membership for a specific feature.
 
 ## Description
 
-The Largest of Maxima (LOM) approach is utilized to resolve fuzzy values into precise numbers by identifying the highest point within the plateau of maximum membership degrees. By extending the base defuzzification logic, the implementation accepts a specific concept, an individual entity, and a feature name to define the scope of the calculation. To facilitate this within a mixed-integer linear programming environment, the logic constructs an objective expression that mathematically represents the negation of the target variable. This formulation allows the underlying optimization solver to effectively maximize the variable value, thereby satisfying the criteria for selecting the largest maximum during the defuzzification process.
+The software provides a mechanism to convert fuzzy membership values into crisp numbers by selecting the largest numerical value where the degree of membership is maximized. It operates within a fuzzy logic framework by accepting a concept definition, a specific individual entity, and a target feature name to define the scope of the calculation. To facilitate the computation, the logic integrates with a mathematical optimization engine by generating an objective expression that represents the negative of the target variable. This formulation allows the underlying solver, which typically minimizes objectives, to effectively maximize the variable and thereby identify the largest value within the plateau of maximum membership.

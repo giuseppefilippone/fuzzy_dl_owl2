@@ -7,14 +7,14 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.crisp_function
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Defines a crisp function data structure for modeling precise mathematical intervals within the FuzzyOWL2 ontology framework.
+A specialized datatype class representing a crisp function within the FuzzyOWL2 framework to model precise mathematical intervals or linear transformations.
 
 
 Description
 -----------
 
 
-The software implements a specialized datatype designed to integrate exact, non-fuzzy mathematical constraints into a fuzzy logic environment. By extending the base fuzzy datatype, it allows for the representation of linear transformations or precise intervals defined by specific coefficients. The core functionality revolves around storing two primary numerical parameters, typically interpreted as coefficients for a linear equation, while relying on inherited attributes to define the lower and upper bounds of the interval. Access to these internal values is provided through getter methods, ensuring that the precise state of the function can be retrieved without modification. A string representation formats the bounds and coefficients together, facilitating debugging and display within the broader ontology system.
+Acting as a bridge between non-fuzzy, exact logic and a broader fuzzy system, the implementation models precise mathematical intervals or linear transformations using specific coefficients. The logic is driven by two primary numerical parameters, ``a`` and ``b``, which are supplied during instantiation to define the function's behavior, while operating within conceptual lower and upper bounds inherited from the parent datatype. Accessor methods are provided to retrieve these coefficients without modifying the internal state, ensuring encapsulation of the mathematical properties. Furthermore, a string representation formats the current configuration, including the bounds and coefficients, to facilitate debugging and display within the ontology context.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

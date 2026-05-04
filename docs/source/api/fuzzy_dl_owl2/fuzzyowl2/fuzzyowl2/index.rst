@@ -7,14 +7,14 @@ fuzzy_dl_owl2.fuzzyowl2.fuzzyowl2
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A translator that converts OWL2 ontologies annotated with fuzzy logic semantics into a Fuzzy Description Logic representation suitable for reasoning.
+A translator that converts OWL2 ontologies annotated with fuzzy logic into a Fuzzy Description Logic representation for use in reasoning systems.
 
 
 Description
 -----------
 
 
-The ``FuzzyOwl2`` class acts as a bridge between standard OWL2 ontologies extended with fuzzy logic annotations and a specific Fuzzy Description Logic format used by reasoning engines. It loads an ontology, inspects entities like classes, properties, and datatypes for specific fuzzy annotations, and parses these annotations to construct corresponding fuzzy logic concepts, modifiers, and functions. The translation process involves iterating through the ontology's axioms—covering the TBox, RBox, and ABox components—to extract both structural definitions and fuzzy truth values. It distinguishes between crisp axioms and those carrying specific degrees of membership, ensuring that the output representation accurately reflects the uncertainty or vagueness defined in the source. By systematically processing ontology annotations and axioms, the system generates a serialized text output that encapsulates the fuzzy semantics required for downstream inference tasks.
+The software processes OWL2 ontology files to extract fuzzy logic semantics defined through annotations, transforming them into a format compatible with Fuzzy Description Logic reasoners. It parses complex fuzzy constructs, such as triangular functions, linear modifiers, and aggregation operators like OWA or Sugeno integrals, from datatype, concept, and property declarations. The translation pipeline handles both standard crisp axioms and those annotated with specific truth degrees, ensuring that the structural hierarchy and logical constraints of the original ontology are preserved in the target representation. By maintaining internal registries of defined concepts, properties, and datatypes, the system prevents duplicate definitions and manages dependencies between fuzzy elements. Finally, the extracted definitions and axioms are serialized to an output file, sorted to maintain a consistent order suitable for downstream processing.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -44,7 +44,7 @@ Module Contents
     .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzyowl2_fuzzyowl2_FuzzyOwl2.pdf
        :alt: UML Class Diagram for FuzzyOwl2
        :align: center
-       :width: 10.2cm
+       :width: 10.0cm
        :class: uml-diagram
 
        UML Class Diagram for **FuzzyOwl2**
@@ -84,6 +84,12 @@ Module Contents
    :type fuzzy_label: OWLAnnotationProperty
 
    :raises ValueError: Raised when an annotation parsed from the ontology is invalid or unsupported for its context. This occurs if a datatype, concept, or property annotation does not correspond to a recognized fuzzy logic construct, if an axiom degree annotation cannot be interpreted as a number, or if an OWL class expression type is not handled by the translator.
+
+
+   .. py:method:: __final_write() -> None
+
+      Sorts the lines stored in the internal list to ensure a consistent and organized output format. This method can be used after all lines have been collected to arrange them in a specific order, such as alphabetically or based on predefined criteria, before writing them to the output file. Sorting the lines can enhance readability and maintain a structured presentation of the translated fuzzy DL definitions.
+
 
 
    .. py:method:: __get_degree(axiom: pyowl2.abstracts.axiom.OWLAxiom) -> float
@@ -956,7 +962,7 @@ Module Contents
       :param name: Identifier for the modified concept.
       :type name: str
       :param dat: The modified concept object to be written.
-      :type dat: fuzzy_dl_owl2.fuzzydl.concept.modified.modified_concept.ModifiedConcept
+      :type dat: fuzzy_dl_owl2.fuzzyowl2.owl_types.modified_concept.ModifiedConcept
 
 
 
@@ -1319,6 +1325,12 @@ Module Contents
 
    .. py:attribute:: fuzzy_modifiers
       :type:  dict[str, fuzzy_dl_owl2.fuzzyowl2.owl_types.concept_definition.ConceptDefinition]
+
+
+   .. py:attribute:: lines
+      :type:  list[str]
+      :value: []
+
 
 
    .. py:attribute:: ontologies

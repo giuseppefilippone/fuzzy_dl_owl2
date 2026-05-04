@@ -39,25 +39,25 @@ fuzzy_dl_owl2.fuzzydl.query.max
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A suite of reasoning components that computes maximum degrees of membership, truth, and subsumption within fuzzy ontologies by formulating and solving mixed-integer linear programming problems.
+A suite of fuzzy logic optimization queries that compute maximum truth values for concepts, individuals, and relationships using mixed-integer linear programming.
 
 
 Description
 -----------
 
 
-These reasoning components leverage mixed-integer linear programming to determine the highest possible truth values for various logical constructs, including concept membership, role relationships, and subsumption hierarchies. To ensure data integrity during complex optimization tasks, the architecture operates on cloned instances of the knowledge base rather than modifying the source data directly. The underlying logic transforms fuzzy description logic problems into mathematical constraints, often converting maximization objectives into minimization tasks through negation or constructing specific implication concepts based on the chosen logical operator. Robustness is built into the workflow through consistency checks of the ABox and exception handling for contradictory ontologies, ensuring that the solver returns valid solution states or appropriate error indicators.
+These components operate within a fuzzy description logic framework to determine the upper bounds of truth values for various logical constructs, including concept subsumption, individual instance checking, and relationship assertions. By leveraging Mixed-Integer Linear Programming (MILP), the architecture translates fuzzy semantic constraints into solvable mathematical optimization problems, often cloning the underlying knowledge base to ensure the original state remains unaltered during the calculation. The implementation handles complex logical requirements, such as universal restrictions, through dynamic blocking strategies and supports various fuzzy logic operators like Łukasiewicz and Gödel to define specific implication constraints. Robust error management is integrated throughout to gracefully handle inconsistent ontologies, ensuring that optimization failures return specific status indicators rather than causing runtime errors.
 
 
 Modules
 -------
 
 
-* ``fuzzy_dl_owl2.fuzzydl.query.max.max_instance_query`` — A reasoning query that computes the maximum degree of membership for a specific individual within a given concept by solving a mixed-integer linear programming optimization problem.
-* ``fuzzy_dl_owl2.fuzzydl.query.max.max_query`` — A query operation that determines the maximum possible value of a specific expression within a fuzzy knowledge base by transforming the problem into a minimization task.
-* ``fuzzy_dl_owl2.fuzzydl.query.max.max_related_query`` — A software component that calculates the maximum truth degree of a role relationship between two individuals in a fuzzy ontology.
-* ``fuzzy_dl_owl2.fuzzydl.query.max.max_satisfiable_query`` — A query mechanism that calculates the maximal degree of satisfiability for a fuzzy concept within a fuzzy description logic knowledge base, optionally scoped to a specific individual.
-* ``fuzzy_dl_owl2.fuzzydl.query.max.max_subsumes_query`` — Determines the maximum degree to which one fuzzy concept is subsumed by another by transforming the logical relationship into a minimization problem within a knowledge base.
+* [``fuzzy_dl_owl2.fuzzydl.query.max.max_instance_query``] — A reasoning query that computes the maximum degree of membership for a specific individual within a given concept using mixed-integer linear programming.
+* [``fuzzy_dl_owl2.fuzzydl.query.max.max_query``] — A query operation that determines the maximum possible value of a specific expression while maintaining consistency with a fuzzy knowledge base.
+* [``fuzzy_dl_owl2.fuzzydl.query.max.max_related_query``] — A query mechanism that calculates the maximum degree of truth for a specific relationship between two individuals within a fuzzy knowledge base.
+* [``fuzzy_dl_owl2.fuzzydl.query.max.max_satisfiable_query``] — A fuzzy logic query mechanism that calculates the maximal satisfiability degree of a concept within a knowledge base using mixed-integer linear programming.
+* [``fuzzy_dl_owl2.fuzzydl.query.max.max_subsumes_query``] — Determines the maximum degree to which one fuzzy concept is subsumed by another by formulating and solving a Mixed-Integer Linear Programming optimization problem.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

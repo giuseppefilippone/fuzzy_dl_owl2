@@ -1,15 +1,26 @@
+
+# Defining the logic to be used in the knowledge base, in this case, we are using the Łukasiewicz fuzzy logic.
 (define-fuzzy-logic lukasiewicz)
+
+# Defining a linear modifier "very" with a parameter of 0.8, which will be used to modify the membership degree of concepts.
 (define-modifier very linear-modifier(0.8))
 
-(define-fuzzy-concept eq243 crisp(0,400,243,243))
-(define-fuzzy-concept geq300 crisp(0,400,300,400))
+# Defining crisp concepts for speed with specific values
+(define-fuzzy-concept eq243 crisp(0, 400, 243, 243))
+(define-fuzzy-concept geq300 crisp(0, 400, 300, 400))
+# Defining a fuzzy concept for speed with a right shoulder function, where the membership degree starts to increase from 180, reaches 1 at 250, and remains 1 afterwards.
+(define-fuzzy-concept High right-shoulder(0, 400, 180, 250))
+# Defining a modified concept "VeryHigh" by applying "very" to "High".
+(define-fuzzy-concept VeryHigh modified(very, High))
 
-(define-fuzzy-concept High right-shoulder(0,400,180,250))
+# Defining the complex concept "SportCar" as a Car with a speed that is "VeryHigh".
+(define-concept SportCar (and Car (some speed VeryHigh)))
 
-(define-concept SportCar (and Car (some speed (very High))))
-
+# Defining two instances of Car with different speeds.
 (instance ferrari (and Car (some speed geq300)) 1)
 (instance audi (and Car (some speed eq243)) 1)
 
-#(min-instance? ferrari SportCar)
+# What is the membership degree of "audi" with respect to the concept "SportCar"?
 (min-instance? audi SportCar)
+# What is the membership degree of "ferrari" with respect to the concept "SportCar"?
+(min-instance? ferrari SportCar)

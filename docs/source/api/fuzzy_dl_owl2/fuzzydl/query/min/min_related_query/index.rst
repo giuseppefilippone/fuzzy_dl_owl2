@@ -7,14 +7,14 @@ fuzzy_dl_owl2.fuzzydl.query.min.min_related_query
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A query mechanism that determines the minimum membership degree of a role relationship between two individuals within a fuzzy ontology using mixed-integer linear programming.
+A query mechanism that determines the minimum degree to which two individuals are related through a specific role within a fuzzy description logic knowledge base.
 
 
 Description
 -----------
 
 
-The software implements a specific type of fuzzy description logic query designed to compute the minimum truth value associated with a role assertion between two distinct individuals. By leveraging mixed-integer linear programming, the logic constructs a mathematical model where the objective is to minimize the degree to which the first individual participates in a specific role with the second individual. To ensure the integrity of the original data, the process operates on a cloned version of the provided knowledge base, thereby preventing unintended side effects during the optimization phase. The implementation dynamically generates necessary constraints and assertions, such as those involving negation and existential restrictions, before invoking the solver to derive the final result. Error handling mechanisms are integrated to gracefully manage scenarios where the underlying ontology is found to be inconsistent, returning a specific status rather than failing abruptly.
+The software implements a specialized query for fuzzy description logic ontologies, specifically designed to compute the minimum membership degree of a role assertion between two distinct individuals. By leveraging mixed-integer linear programming, the system constructs an optimization problem where the objective is to minimize the degree variable associated with the relationship. To ensure the integrity of the original data, the process operates on a cloned instance of the knowledge base, allowing for the addition of temporary assertions and constraints without side effects. The logic involves transforming the role relationship into a concept expression, integrating it into the solver, and handling potential ontology inconsistencies by returning a specific status rather than raising an error.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

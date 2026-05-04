@@ -7,14 +7,14 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.triangular_modifer
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Implements a triangular membership function used to define fuzzy modifiers within the FuzzyOWL2 framework.
+A specialized class representing a triangular membership function used to apply fuzzy logic modifications within the FuzzyOWL2 framework.
 
 
 Description
 -----------
 
 
-Software components within the FuzzyOWL2 framework utilize this implementation to model fuzzy concepts through a geometric triangular shape defined by three distinct numerical parameters. By inheriting from a base fuzzy modifier class, the logic establishes a specific membership function where the degree of truth increases linearly from a left endpoint to a central peak and then decreases linearly to a right endpoint. The design encapsulates these three floating-point values—representing the support start, the maximum membership point, and the support end—to allow for the precise calculation of membership degrees for a given concept. Encapsulation is further supported by accessor methods that retrieve the specific boundary and peak values, alongside a string representation that aids in debugging and logging by clearly displaying the modifier's configuration.
+The implementation extends the base fuzzy modifier functionality to model degrees of membership using a geometric triangle defined by three distinct parameters. By accepting floating-point values for the left endpoint, the peak point, and the right endpoint, the logic determines the specific shape of the fuzzy set, where membership typically increases linearly to the peak and decreases linearly afterwards. Encapsulation of these numerical values allows the system to represent the modification applied to a concept without exposing the internal state directly, relying instead on accessors to retrieve the specific coordinates. The design ensures that the object can be easily identified and debugged through a string representation that explicitly lists the defining parameters, facilitating integration into larger fuzzy ontology processing workflows.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

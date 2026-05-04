@@ -7,14 +7,14 @@ fuzzy_dl_owl2.fuzzydl.exception.fuzzy_ontology_exception
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A custom exception class designed to handle errors specific to the fuzzy description logic framework.
+Defines a specialized exception for handling errors specific to fuzzy ontology operations.
 
 
 Description
 -----------
 
 
-Specialized error handling is provided for issues arising during the manipulation of concepts within the fuzzy description logic system, such as invalid definitions or incorrect application of modifiers. By inheriting from the standard Python ``Exception`` class, the implementation enables developers to distinguish domain-specific failures from general runtime errors, facilitating more granular control flow and debugging. Instantiation requires a descriptive string message that is passed to the superclass constructor, ensuring that the resulting error object behaves consistently with native Python exceptions while providing context specific to fuzzy ontology operations. This approach allows for precise exception catching strategies, ensuring that errors related to the logic framework can be managed separately from other types of exceptions in larger applications.
+By extending the standard Python ``Exception`` class, this component provides a mechanism to isolate and manage errors that occur specifically within the fuzzy description logic domain. It is intended to be raised when operations involving concept manipulation encounter issues, such as invalid definitions or the improper application of modifiers, thereby ensuring that these specific failures are distinct from generic system errors. The design allows for precise error handling by accepting a descriptive string message during instantiation, which facilitates detailed logging and debugging of ontology-related logic. Integrating this custom exception into the broader framework enables developers to implement targeted exception handling strategies that improve the robustness and clarity of error reporting in complex fuzzy logic computations.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

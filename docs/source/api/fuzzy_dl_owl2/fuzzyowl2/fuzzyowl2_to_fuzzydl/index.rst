@@ -7,14 +7,14 @@ fuzzy_dl_owl2.fuzzyowl2.fuzzyowl2_to_fuzzydl
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A translator that converts FuzzyOWL2 ontology structures into the text-based syntax required by the FuzzyDL reasoner.
+A converter that transforms ontologies defined in the FuzzyOWL2 format into the specific syntax required by the FuzzyDL reasoner.
 
 
 Description
 -----------
 
 
-Extending the base ``FuzzyOwl2`` class, the software traverses the ontology structure and translates OWL entities—such as classes, object properties, data properties, and individuals—into their corresponding FuzzyDL constructs like concepts, roles, and instances. The converter handles a wide range of semantic elements, including class expressions (intersections, unions, complements), property characteristics (transitivity, symmetry, functionality), and complex fuzzy logic operators such as weighted sums, OWA, and Choquet integrals. It also manages the definition of datatypes, automatically setting appropriate ranges for numerical values and handling string or boolean types. During the conversion process, the class writes the resulting syntax to a specified output file while maintaining internal sets to track declared entities and prevent redundancy. Additionally, it includes error handling to identify and report unsupported constructs, such as cardinality restrictions or specific property axioms, ensuring the user is aware of translation limitations.
+Extending the base FuzzyOwl2 class, the software traverses the ontology structure and translates OWL entities—such as classes, object properties, data properties, and individuals—into their corresponding FuzzyDL constructs like concepts, roles, and instances. The converter handles a wide range of semantic elements, including class expressions (intersections, unions, complements), property characteristics (transitivity, symmetry, functionality), and complex fuzzy logic operators such as weighted sums, OWA, and Choquet integrals. It also manages the definition of datatypes, automatically setting appropriate ranges for numerical values and handling string or boolean types. During the conversion process, the class writes the resulting syntax to a specified output file while maintaining internal sets to track declared entities and prevent redundancy. Additionally, it includes error handling to identify and report unsupported constructs, such as cardinality restrictions or specific property axioms, ensuring the user is aware of translation limitations.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -44,7 +44,7 @@ Module Contents
     .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzyowl2_fuzzyowl2_to_fuzzydl_FuzzyOwl2ToFuzzyDL.pdf
        :alt: UML Class Diagram for FuzzyOwl2ToFuzzyDL
        :align: center
-       :width: 5.4cm
+       :width: 5.3cm
        :class: uml-diagram
 
        UML Class Diagram for **FuzzyOwl2ToFuzzyDL**
@@ -828,7 +828,7 @@ Module Contents
 
    .. py:method:: write_modified_function_definition(name: str, dat: fuzzy_dl_owl2.fuzzyowl2.owl_types.modified_function.ModifiedFunction) -> None
 
-      This method serializes a modified function definition into the FuzzyDL syntax and writes it to the output file. It accepts the function's name and a `ModifiedFunction` object containing the definition details. The process begins by invoking the parent class's implementation to ensure any base-level processing occurs. Subsequently, it formats the definition as a FuzzyDL concept using the syntax `(define-concept <name> <dat>)` and writes this string to the underlying file stream, resulting in a direct side effect of appending data to the output destination.
+      This method serializes a modified function definition into the FuzzyDL syntax and writes it to the output file. It accepts the function's name and a `ModifiedFunction` object containing the definition details. The process begins by invoking the parent class's implementation to ensure any base-level processing occurs. Subsequently, it formats the definition as a FuzzyDL concept using the syntax `(define-fuzzy-concept <name> <dat>)` and writes this string to the underlying file stream, resulting in a direct side effect of appending data to the output destination.
 
       :param name: The identifier assigned to the modified function in the output definition.
       :type name: str
@@ -1187,6 +1187,12 @@ Module Contents
 
    .. py:attribute:: data_properties
       :type:  set[str]
+
+
+   .. py:attribute:: lines
+      :type:  list[str]
+      :value: []
+
 
 
    .. py:attribute:: numerical_datatypes

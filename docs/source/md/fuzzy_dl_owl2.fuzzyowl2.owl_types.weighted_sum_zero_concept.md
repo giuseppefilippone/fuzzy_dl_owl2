@@ -1,7 +1,7 @@
 # Summary
 
-Defines a fuzzy logic concept within the FuzzyOWL2 framework that enforces a constraint where a weighted sum of component concepts equals zero.
+A specialized class within the FuzzyOWL2 framework represents a fuzzy logic constraint defined by a weighted sum of component concepts equating to zero.
 
 ## Description
 
-Extending the base definition for ontology concepts, this implementation captures a specific type of fuzzy logic constraint requiring that the aggregate of weighted components results in zero. The design relies on aggregating a collection of subordinate concept definitions, which serve as the operands within the mathematical expression. By registering with a specific type identifier during initialization, the component integrates seamlessly into the broader FuzzyOWL2 framework while maintaining a distinct semantic meaning. Functionality includes exposing the internal list of operands for further processing and generating a standardized string representation that reflects the underlying logical structure.
+It extends the base definition to encapsulate a collection of subordinate concept definitions that act as the operands for this specific calculation. The design facilitates the storage and retrieval of these internal components while providing a standardized string representation that identifies the constraint type and its elements. By treating the zero-sum condition as a distinct entity, the implementation allows the ontology to express complex mathematical relationships and constraints as first-class objects.

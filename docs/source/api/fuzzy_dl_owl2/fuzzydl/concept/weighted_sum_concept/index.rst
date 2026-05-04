@@ -7,14 +7,14 @@ fuzzy_dl_owl2.fuzzydl.concept.weighted_sum_concept
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Implements a composite fuzzy concept that aggregates sub-concepts using a weighted linear combination.
+A weighted sum concept that aggregates sub-concepts using specific numerical weights to form a linear combination within a fuzzy description logic system.
 
 
 Description
 -----------
 
 
-The software models a complex fuzzy description logic entity by combining multiple sub-concepts with specific numerical coefficients to represent a linear mixture. It enforces strict validation rules during initialization, ensuring that the number of weights matches the number of constituent concepts and that the total weight sum does not exceed 1.0 to maintain logical consistency. By inheriting from a base concept class and an interface for weighted components, the implementation integrates seamlessly into a broader fuzzy logic framework, supporting standard logical operations such as negation, conjunction, and disjunction through operator overloading. The design facilitates structural manipulation by allowing recursive replacement of specific sub-concepts and the retrieval of atomic components or roles, while also providing a string-based representation for hashing and identification purposes.
+The component models a composite entity by combining multiple sub-concepts into a linear mixture, enforcing strict validation during initialization to ensure the number of weights matches the number of concepts and that the total weight sum does not exceed 1.0. By inheriting from a base concept class and implementing a specific interface for weighted structures, the design integrates seamlessly into the broader logic framework. It supports standard logical operations such as negation, conjunction, and disjunction by delegating to a central operator handler, allowing these complex structures to participate in broader logical expressions. Additionally, the implementation facilitates structural analysis and manipulation, enabling the retrieval of atomic components, extraction of associated roles, and recursive replacement of nested concepts while preserving the original weighting scheme.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

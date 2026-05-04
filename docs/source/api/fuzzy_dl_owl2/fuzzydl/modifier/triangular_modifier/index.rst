@@ -7,14 +7,14 @@ fuzzy_dl_owl2.fuzzydl.modifier.triangular_modifier
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Implements a triangular fuzzy logic modifier that applies a piecewise linear membership function to concepts based on defined boundary parameters.
+A fuzzy logic modifier that applies a triangular membership function to concepts based on three defining parameters.
 
 
 Description
 -----------
 
 
-The software defines a fuzzy logic component that applies a triangular membership function to concepts, characterized by three distinct parameters representing the lower bound, peak, and upper bound. By enforcing a strict ordering constraint on these parameters, the implementation ensures that membership degrees increase linearly from zero to one and then decrease back to zero, providing a precise mathematical model for vague or gradual transitions. When applied to a base concept, the logic wraps the original entity into a specialized modified concept, allowing the system to evaluate membership values according to the defined triangular shape. Furthermore, the implementation supports standard logical operations such as conjunction, disjunction, and negation through operator overloading, enabling complex fuzzy reasoning by combining multiple modifiers or concepts.
+The software implements a specific type of fuzzy logic modifier characterized by a triangular membership function, which determines the degree to which a value belongs to a concept based on three distinct parameters: a left boundary, a peak, and a right boundary. By enforcing the constraint that the left boundary must be less than or equal to the peak, which in turn must be less than or equal to the right boundary, the implementation ensures a valid geometric shape where membership increases linearly from zero to one and then decreases back to zero. When applied to a base concept, the logic wraps the original entity into a specialized structure that incorporates these triangular characteristics, allowing for the dynamic calculation of membership degrees for any given input value. Furthermore, the design supports logical composition by overloading standard operators to perform conjunctions, disjunctions, and negations, effectively enabling the combination of multiple triangular modifiers into complex fuzzy expressions.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

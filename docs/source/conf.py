@@ -15,10 +15,10 @@ project = "Fuzzy DL OWL 2"
 copyright = "2025, Giuseppe Filippone"
 author = "Giuseppe Filippone"
 # The short X.Y version
-version = "1.0.11"
+version = "1.0.12"
 
 # The full version, including alpha/beta/rc tags
-release = "1.0.11"
+release = "1.0.12"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -45,7 +45,7 @@ myst_enable_extensions = [
 myst_dmath_double_inline = True
 
 templates_path = ["_templates"]
-exclude_patterns = ["_uml", "md"]
+exclude_patterns = ["_uml", "md", "old_md"]
 add_module_names = False
 python_maximum_signature_line_length = 128
 

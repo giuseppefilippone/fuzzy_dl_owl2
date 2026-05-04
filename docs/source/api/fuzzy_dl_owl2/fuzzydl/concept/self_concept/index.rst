@@ -7,14 +7,14 @@ fuzzy_dl_owl2.fuzzydl.concept.self_concept
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Implements a self-referential concept within fuzzy description logic that signifies an individual satisfies a relationship with itself through a specified role.
+Implements a self-referential concept construct within fuzzy description logic that requires an individual to be related to itself through a specified role.
 
 
 Description
 -----------
 
 
-The software models a specific type of atomic concept used to express reflexivity or local reflexivity properties, ensuring that an entity is linked to itself via a defined role. By inheriting from a base concept class and a role interface, the implementation encapsulates a role string and automatically generates a standardized string representation formatted as a self-referential expression. It supports logical manipulation through operator overloading, allowing instances to be combined using conjunction, disjunction, and negation by delegating these operations to a central operator handler. Additional functionality includes cloning capabilities, role retrieval, and hash computation based on the string representation, enabling the concept to function effectively within larger logical structures and collections like sets or dictionaries.
+The software provides a mechanism to model reflexive relationships within a fuzzy description logic framework, specifically capturing scenarios where an entity must satisfy a relationship with itself. By inheriting from a base concept class and a role-handling interface, the implementation ensures that the entity is treated as an atomic unit while still carrying the semantic weight of the specific role involved. Logical operations such as conjunction, disjunction, and negation are supported through delegation to a central operator handler, allowing these self-referential constructs to be seamlessly integrated into complex logical expressions. Additionally, the design includes functionality for cloning, role retrieval, and standardized string formatting, which facilitates consistent identification and hashing within the broader system.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

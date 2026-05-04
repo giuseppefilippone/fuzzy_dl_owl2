@@ -39,23 +39,23 @@ fuzzy_dl_owl2.fuzzydl.individual
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A subsystem for managing individual entities within a fuzzy description logic ontology that supports tableau-based reasoning, hierarchical tracking, and fuzzy constraint evaluation.
+An entity management system for fuzzy description logic reasoning that supports hierarchical tracking, state cloning, and fuzzy constraint evaluation.
 
 
 Description
 -----------
 
 
-At the core, a foundational class encapsulates the state of specific instances by managing concept assertions, role relations, and constraints to serve as nodes within a knowledge graph. Extending this base structure, a specialized implementation handles dynamically generated nodes for tableau algorithms, incorporating mechanisms for lineage tracking, depth calculation, and blocking optimizations to prevent infinite expansion during inference. To support the non-deterministic nature of reasoning, the architecture employs deep cloning of internal states, enabling the preservation of snapshots for backtracking and branching scenarios while distinguishing between abstract nodes and concrete instances. Additionally, a proxy component models collections of entities satisfying fuzzy conditions by encapsulating triangular fuzzy numbers and thresholds, thereby integrating uncertainty and partial truth evaluation into the reasoning framework.
+The architecture centers on defining and manipulating instances within a knowledge base, ranging from core entities that manage concept assertions and role relations to dynamically generated nodes used in completion forests. To support tableau-based reasoning algorithms, the system implements deep cloning capabilities that allow the exploration of logical branches without mutating original data, while blocking mechanisms prevent infinite loops by tracking redundant expansions. Fuzzy logic constraints are handled through proxy structures that link concrete entities to abstract groups defined by triangular fuzzy numbers, enabling the quantification of partial truths and degrees of satisfaction. Together, these components enforce strict identity rules and optimize memory usage by pruning unnecessary relations, ensuring efficient inference within complex reasoning frameworks.
 
 
 Modules
 -------
 
 
-* ``fuzzy_dl_owl2.fuzzydl.individual.created_individual`` — A class representing dynamically generated nodes within a completion forest for tableau-based reasoning, supporting hierarchical tracking, blocking mechanisms, and state cloning.
-* ``fuzzy_dl_owl2.fuzzydl.individual.individual`` — Defines a base class representing an individual entity within a fuzzy description logic ontology, managing concept assertions, role relations, and restrictions during reasoning processes.
-* ``fuzzy_dl_owl2.fuzzydl.individual.representative_individual`` — A proxy class representing a collection of individuals satisfying a fuzzy condition based on a specific feature and threshold.
+* [``fuzzy_dl_owl2.fuzzydl.individual.created_individual``] — A class representing dynamically generated nodes within a completion forest for tableau-based reasoning, incorporating hierarchical tracking, blocking mechanisms, and state cloning capabilities.
+* [``fuzzy_dl_owl2.fuzzydl.individual.individual``] — Defines a core entity class representing a specific instance within a fuzzy description logic knowledge base, managing concept assertions, role relations, and restrictions during reasoning processes.
+* [``fuzzy_dl_owl2.fuzzydl.individual.representative_individual``] — A concrete proxy that models a collection of individuals satisfying a specific fuzzy condition relative to a threshold by associating a feature with a triangular fuzzy number.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

@@ -7,14 +7,14 @@ fuzzy_dl_owl2.fuzzydl.milp.show_variables_helper
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A configuration manager that controls the visibility and display of elements within a fuzzy description logic ontology, including atomic concepts, individuals, abstract roles, and concrete features.
+A configuration manager controls the visibility and display settings of variables, concepts, individuals, and role fillers within a fuzzy description logic system.
 
 
 Description
 -----------
 
 
-The software acts as a centralized registry for determining which components of a fuzzy description logic ontology should be rendered or tracked during processing. It distinguishes between global visibility, where specific roles or features apply to every individual, and targeted visibility, which restricts display settings to a defined subset of individuals. By maintaining separate collections for atomic concepts, individuals, abstract roles, and concrete features, the system allows fine-grained control over the output of membership degrees and filler values. Furthermore, it integrates fuzzy logic by associating concrete feature fillers with linguistic labels and maps internal variable objects to human-readable strings for presentation. The design supports state cloning, enabling the preservation of specific display configurations without affecting the original state, which is crucial for iterative processing or branching logic within the MILP solver context.
+It distinguishes between global visibility, which applies to all entities, and specific visibility restricted to particular individuals, thereby allowing for granular control over output data. The logic integrates fuzzy semantics by associating linguistic labels with concrete feature fillers and mapping internal variable objects to human-readable string names. Furthermore, the design supports deep cloning of the entire configuration state, enabling the preservation or branching of display settings during complex reasoning or solving processes.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

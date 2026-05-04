@@ -7,14 +7,14 @@ fuzzy_dl_owl2.fuzzydl.concept.approximation_concept
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A class representing logical approximations such as lower and upper bounds within a fuzzy description logic framework.
+A class representing logical approximation constructs that constrain individuals based on the properties of related entities through specific roles within a fuzzy description logic framework.
 
 
 Description
 -----------
 
 
-The software models complex logical constructs that constrain individuals based on the properties of related entities through specific roles, effectively representing various forms of quantification within a description logic framework. It encapsulates lower approximations, which correspond to universal quantification, and upper approximations, corresponding to existential quantification, along with their tight or loose nested variants that define conditions such as "all related individuals must satisfy C" or "there exists a related individual satisfying C." Construction of these entities is handled through static factory methods that abstract the specific type enumeration, allowing users to define concepts by specifying a role name and a target concept without direct instantiation. Internally, the logic supports transformation into standard quantifier structures, handles logical negation by inverting the approximation type via a predefined mapping, and integrates with the broader concept hierarchy to support operations like conjunction, disjunction, and structural replacement.
+This implementation models various forms of quantification, including lower approximations (universal quantification) and upper approximations (existential quantification), along with their tight and loose nested variants. Instead of allowing direct instantiation, the design relies on static factory methods to construct these concepts by specifying a role name and a target concept, ensuring that only valid approximation types are created. The logic includes functionality to transform these specialized approximations into standard "all" and "some" quantifier structures, facilitating their use within the broader description logic system. Furthermore, the class supports logical negation by automatically inverting the approximation type and integrates seamlessly with the concept hierarchy to enable operations such as conjunction, disjunction, and recursive replacement of sub-concepts.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

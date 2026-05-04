@@ -7,14 +7,14 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.qowa_concept
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A specialized class representing a Quantified Ordered Weighted Averaging (OWA) concept within the FuzzyOWL2 ontology language.
+Encapsulates the definition of a Quantified Ordered Weighted Averaging (OWA) concept used in fuzzy logic ontology modeling.
 
 
 Description
 -----------
 
 
-Extending the base definition for ontology concepts, this implementation models fuzzy logic operations where a set of concepts is aggregated according to a specific linguistic quantifier. The design allows for the representation of complex, weighted aggregations by storing a quantifier string alongside a collection of underlying concept identifiers. Upon initialization, the entity is registered as a QUANTIFIED_OWA type, ensuring it integrates correctly with the broader type system used for fuzzy logic reasoning. Accessor methods expose the internal state, while the string representation formats the data into a parenthetical syntax suitable for logical parsing or display.
+It extends the base definition for concepts to specifically handle scenarios where a set of fuzzy concepts is aggregated according to a linguistic quantifier. By accepting a string representing the quantifier and a collection of underlying concept identifiers, the implementation allows for the representation of complex, weighted aggregations required by the FuzzyOWL2 specification. The internal state is managed through private attributes that store the aggregation logic and the target concepts, which can be retrieved via accessor methods for use in broader reasoning tasks. A string representation is provided to output the structure in a parenthetical syntax, facilitating easy visualization or serialization of the logical expression.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

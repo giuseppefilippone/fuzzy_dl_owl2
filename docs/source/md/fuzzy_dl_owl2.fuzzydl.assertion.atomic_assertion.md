@@ -1,7 +1,7 @@
 # Summary
 
-Implements a data structure for representing atomic assertions within a fuzzy description logic system by associating a concept with a minimum membership degree.
+Defines a fundamental logical constraint within a fuzzy logic framework by associating a specific concept with a minimum membership degree threshold.
 
 ## Description
 
-Software components within a fuzzy description logic system rely on this structure to model fundamental constraints where a specific concept must satisfy a minimum membership threshold. By associating a *Concept* instance with a *Degree* object, the implementation encapsulates the logical relationship between an entity and its required truth value. Accessor methods are provided to retrieve the concept's identifier and the specific degree value, enabling the evaluation of logical rules or constraints. Additionally, a string representation is generated to visualize the assertion in a human-readable format, displaying the concept and the associated degree enclosed in angle brackets.
+The software models a basic logical statement in fuzzy description logics, specifically asserting that a particular concept possesses a membership degree that is at least equal to a specified lower bound. By encapsulating a `Concept` instance and a `Degree` instance, the implementation serves as a data structure that represents the condition where a concept's truth value meets or exceeds a defined threshold. Functionality is provided to retrieve the identifier of the concept and the specific degree value, ensuring that the components of the logical constraint can be accessed and utilized by other parts of the system. The design focuses on storing these two core elements and offering a string representation for debugging or logging, thereby acting as a foundational component for constructing more complex fuzzy logic assertions.

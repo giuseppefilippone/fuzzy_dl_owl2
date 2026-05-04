@@ -39,22 +39,22 @@ fuzzy_dl_owl2.fuzzydl.restriction
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Implements fuzzy description logic restrictions that enforce constraints on roles and concepts using specific membership degrees.
+Implements fuzzy logic restrictions within a description logic framework to model constraints involving roles, concepts, and individuals.
 
 
 Description
 -----------
 
 
-Logic constraints within a fuzzy framework are modeled by combining roles, concepts, and degree thresholds to define specific relationships. A universal restriction ensures that for all entities connected via a given role, they belong to a specified concept with a certainty meeting a lower bound degree. Another type of constraint enforces that a specific role must be associated with a particular individual, using a fuzzy degree to represent the strength of this association. These components utilize a common base structure to manage attributes like role names and degrees while translating logical assertions into formatted string expressions suitable for integration into broader reasoning tasks.
+Designed to operate within fuzzy description logics, the software provides mechanisms to define and manage logical constraints that enforce specific membership degrees or certainty levels. The architecture relies on inheritance to handle different types of restrictions, including those that associate a specific role with an individual and those that enforce universal quantification across a role and concept combination. By storing core components such as role identifiers, target concepts, individuals, and fuzzy degree objects, the system ensures that logical assertions can be evaluated, copied, and represented textually according to formal syntax rules. These implementations collectively support the representation of complex logical relationships, allowing for the precise definition of conditions where entities must satisfy specific criteria with a defined degree of truth.
 
 
 Modules
 -------
 
 
-* ``fuzzy_dl_owl2.fuzzydl.restriction.has_value_restriction`` — A fuzzy description logic restriction that enforces a specific value for a given role, constrained by a degree of membership.
-* ``fuzzy_dl_owl2.fuzzydl.restriction.restriction`` — A class representing a universal restriction that combines a role, a concept, and a degree threshold within a fuzzy logic framework.
+* [``fuzzy_dl_owl2.fuzzydl.restriction.has_value_restriction``] — Defines a fuzzy logic restriction that associates a specific role with a particular individual, constrained by a lower bound degree.
+* [``fuzzy_dl_owl2.fuzzydl.restriction.restriction``] — A universal restriction in a fuzzy description logic system that enforces a minimum membership degree for a specific role and concept combination.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

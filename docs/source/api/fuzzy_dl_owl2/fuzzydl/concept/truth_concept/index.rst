@@ -7,14 +7,14 @@ fuzzy_dl_owl2.fuzzydl.concept.truth_concept
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A Python implementation of the universal and contradictory concepts within a fuzzy description logic framework, modeling the extreme truth values Top and Bottom.
+A Python implementation of the universal (Top) and contradictory (Bottom) concepts within a fuzzy description logic framework.
 
 
 Description
 -----------
 
 
-The software defines a specialized class representing the two boundary elements of a concept lattice: the universal concept (Top) and the contradictory concept (Bottom). These entities serve as logical constants where Top acts as an identity for conjunction and an absorbing element for disjunction, while Bottom behaves inversely. The implementation enforces immutability and atomicity, ensuring that these entities cannot be decomposed or modified through structural replacement operations. Standard logical operators such as negation, conjunction, and disjunction are overridden to adhere to the algebraic properties of these truth values, allowing them to interact seamlessly with other concepts in the system. Global instances are provided to facilitate easy access to these logical constants throughout the application.
+The software models the two extreme truth values, known as the universal concept (Top) and the contradictory concept (Bottom), which serve as the boundary elements within a fuzzy description logic hierarchy. These concepts represent states that are either always satisfied or never satisfied, acting as identity or absorbing elements during logical operations such as conjunction and disjunction. By inheriting from a base concept class, the implementation ensures that these truth values integrate seamlessly with the broader logic framework while maintaining immutability and atomic status. The design includes static factory methods and global constants to facilitate the instantiation and reuse of these fundamental logical constructs, supporting standard behaviors like negation, cloning, and equality comparison without allowing internal structural modification.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

@@ -7,14 +7,14 @@ fuzzy_dl_owl2.fuzzydl.concept.modified.linearly_modified_concept
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Represents a fuzzy description logic concept whose truth value is adjusted by a linear modifier, enabling the construction of modified concepts within a logical hierarchy.
+A class representing a fuzzy description logic concept whose degree of satisfaction is adjusted by a linear modifier.
 
 
 Description
 -----------
 
 
-Construction relies on a base concept and a specific modifier object, delegating initialization logic to the parent class to establish the core relationship between the two components. Logical operations such as negation, conjunction, and disjunction are supported through operator overloading, which delegates the creation of complex logical expressions to a central ``OperatorConcept`` utility. Structural manipulation is facilitated by methods for cloning the instance and replacing sub-concepts within the base structure, ensuring that modifications result in new independent instances rather than mutating existing ones. Hashing is derived from the string representation to allow these concepts to be used effectively within sets and as dictionary keys.
+The implementation extends the base modified concept structure to handle linear transformations of truth values, allowing for the scaling or shifting of a base concept's satisfaction degree. By encapsulating a specific concept alongside a linear modifier, the logic enables the construction of complex expressions where fuzzy truth values are adjusted mathematically before being used in further reasoning. Standard logical operations such as negation, conjunction, and disjunction are supported through operator overloading, which delegates the actual computation to a central operator handler to ensure consistency across the system. Additionally, the design facilitates structural manipulation by providing mechanisms to clone the entire concept or replace specific sub-concepts within the hierarchy without altering the original instance, which is essential for maintaining immutability during logical inference. Hashing relies on the string representation of the object, allowing these modified concepts to be used effectively within collections like sets and dictionaries.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

@@ -7,14 +7,14 @@ fuzzy_dl_owl2.fuzzydl.query.max.max_subsumes_query
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Determines the maximum degree to which one fuzzy concept is subsumed by another by transforming the logical relationship into a minimization problem within a knowledge base.
+Determines the maximum degree to which one fuzzy concept is subsumed by another by formulating and solving a Mixed-Integer Linear Programming optimization problem.
 
 
 Description
 -----------
 
 
-MaxSubsumesQuery handles the computation of subsumption degrees by leveraging mixed-integer linear programming to optimize an objective derived from fuzzy logic implications. Depending on the configured operator type, such as Łukasiewicz or Zadeh, the logic constructs a corresponding implication or operator concept to represent the relationship between the input concepts. To preserve the integrity of the original data, the process operates on a cloned instance of the knowledge base, optionally solving the ABox before proceeding with the optimization. The preprocessing phase creates a new individual and links it to the constructed concept, setting the associated variable as the objective to be minimized. Finally, the optimization routine attempts to find the minimum value for this variable, which corresponds to the maximum subsumption degree, while gracefully managing exceptions related to inconsistent ontologies.
+Functionality is provided to calculate the maximum truth value for which one fuzzy concept implies another, extending standard subsumption reasoning into the fuzzy domain. Support for various fuzzy logic operators, such as Łukasiewicz and Gödel, enables the construction of specific implication concepts that define the semantic constraints of the query. Execution involves cloning the knowledge base to preserve the original state, followed by the creation of an objective expression that minimizes the degree of the derived implication within a Mixed-Integer Linear Programming model. The optimization process yields the precise maximum subsumption degree, while error handling mechanisms manage scenarios involving inconsistent ontologies.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

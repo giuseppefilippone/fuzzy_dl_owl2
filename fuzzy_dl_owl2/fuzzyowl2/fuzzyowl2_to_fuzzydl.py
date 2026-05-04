@@ -8,52 +8,43 @@ from fuzzy_dl_owl2.fuzzydl.util.util import Util
 from fuzzy_dl_owl2.fuzzyowl2.fuzzyowl2 import FuzzyOwl2
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.choquet_concept import ChoquetConcept
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.crisp_function import CrispFunction
-from fuzzy_dl_owl2.fuzzyowl2.owl_types.fuzzy_nominal_concept import \
-    FuzzyNominalConcept
-from fuzzy_dl_owl2.fuzzyowl2.owl_types.left_shoulder_function import \
-    LeftShoulderFunction
+from fuzzy_dl_owl2.fuzzyowl2.owl_types.fuzzy_nominal_concept import FuzzyNominalConcept
+from fuzzy_dl_owl2.fuzzyowl2.owl_types.left_shoulder_function import (
+    LeftShoulderFunction,
+)
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.linear_function import LinearFunction
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.linear_modifier import LinearModifier
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.modified_concept import ModifiedConcept
-from fuzzy_dl_owl2.fuzzyowl2.owl_types.modified_function import \
-    ModifiedFunction
-from fuzzy_dl_owl2.fuzzyowl2.owl_types.modified_property import \
-    ModifiedProperty
+from fuzzy_dl_owl2.fuzzyowl2.owl_types.modified_function import ModifiedFunction
+from fuzzy_dl_owl2.fuzzyowl2.owl_types.modified_property import ModifiedProperty
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.owa_concept import OwaConcept
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.qowa_concept import QowaConcept
-from fuzzy_dl_owl2.fuzzyowl2.owl_types.quasi_sugeno_concept import \
-    QsugenoConcept
-from fuzzy_dl_owl2.fuzzyowl2.owl_types.right_shoulder_function import \
-    RightShoulderFunction
+from fuzzy_dl_owl2.fuzzyowl2.owl_types.quasi_sugeno_concept import QsugenoConcept
+from fuzzy_dl_owl2.fuzzyowl2.owl_types.right_shoulder_function import (
+    RightShoulderFunction,
+)
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.sugeno_concept import SugenoConcept
-from fuzzy_dl_owl2.fuzzyowl2.owl_types.trapezoidal_function import \
-    TrapezoidalFunction
-from fuzzy_dl_owl2.fuzzyowl2.owl_types.triangular_function import \
-    TriangularFunction
-from fuzzy_dl_owl2.fuzzyowl2.owl_types.triangular_modifer import \
-    TriangularModifier
+from fuzzy_dl_owl2.fuzzyowl2.owl_types.trapezoidal_function import TrapezoidalFunction
+from fuzzy_dl_owl2.fuzzyowl2.owl_types.triangular_function import TriangularFunction
+from fuzzy_dl_owl2.fuzzyowl2.owl_types.triangular_modifer import TriangularModifier
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_concept import WeightedConcept
-from fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_max_concept import \
-    WeightedMaxConcept
-from fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_min_concept import \
-    WeightedMinConcept
-from fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_sum_concept import \
-    WeightedSumConcept
-from fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_sum_zero_concept import \
-    WeightedSumZeroConcept
+from fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_max_concept import WeightedMaxConcept
+from fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_min_concept import WeightedMinConcept
+from fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_sum_concept import WeightedSumConcept
+from fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_sum_zero_concept import (
+    WeightedSumZeroConcept,
+)
 from pyowl2.abstracts.class_expression import OWLClassExpression
 from pyowl2.abstracts.data_property_expression import OWLDataPropertyExpression
 from pyowl2.abstracts.data_range import OWLDataRange
 from pyowl2.abstracts.entity import OWLEntity
 from pyowl2.abstracts.individual import OWLIndividual
-from pyowl2.abstracts.object_property_expression import \
-    OWLObjectPropertyExpression
+from pyowl2.abstracts.object_property_expression import OWLObjectPropertyExpression
 from pyowl2.base.datatype import OWLDatatype
 from pyowl2.base.owl_class import OWLClass
 from pyowl2.data_range.data_intersection_of import OWLDataIntersectionOf
 from pyowl2.data_range.data_one_of import OWLDataOneOf
-from pyowl2.data_range.datatype_restriction import (OWLDatatypeRestriction,
-                                                    OWLFacet)
+from pyowl2.data_range.datatype_restriction import OWLDatatypeRestriction, OWLFacet
 from pyowl2.expressions.data_property import OWLDataProperty
 from pyowl2.expressions.object_property import OWLObjectProperty
 from pyowl2.individual.anonymous_individual import OWLAnonymousIndividual
@@ -128,6 +119,8 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
         self.processed_functional_data_properties: set[str] = set()
         self.processed_functional_object_properties: set[str] = set()
 
+        self.lines: list[str] = []
+
     @staticmethod
     def is_reserved_word(s: str) -> bool:
         """
@@ -173,6 +166,7 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
         Util.debug(f"Writing line to FuzzyDL file: {line}")
         with open(self.output_dl, "a") as file:
             file.write(f"{line}\n")
+        self.lines.append(line)
 
     def get_short_name(self, s: typing.Union[OWLEntity, str]) -> str:
         """
@@ -1711,7 +1705,7 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
         self, name: str, dat: ModifiedFunction
     ) -> None:
         """
-        This method serializes a modified function definition into the FuzzyDL syntax and writes it to the output file. It accepts the function's name and a `ModifiedFunction` object containing the definition details. The process begins by invoking the parent class's implementation to ensure any base-level processing occurs. Subsequently, it formats the definition as a FuzzyDL concept using the syntax `(define-concept <name> <dat>)` and writes this string to the underlying file stream, resulting in a direct side effect of appending data to the output destination.
+        This method serializes a modified function definition into the FuzzyDL syntax and writes it to the output file. It accepts the function's name and a `ModifiedFunction` object containing the definition details. The process begins by invoking the parent class's implementation to ensure any base-level processing occurs. Subsequently, it formats the definition as a FuzzyDL concept using the syntax `(define-fuzzy-concept <name> <dat>)` and writes this string to the underlying file stream, resulting in a direct side effect of appending data to the output destination.
 
         :param name: The identifier assigned to the modified function in the output definition.
         :type name: str
@@ -1720,7 +1714,7 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
         """
 
         super().write_modified_function_definition(name, dat)
-        self.__write(f"(define-concept {name} {dat})")
+        self.__write(f"(define-fuzzy-concept {name} {dat})")
 
     def write_modified_property_definition(
         self, name: str, dat: ModifiedProperty

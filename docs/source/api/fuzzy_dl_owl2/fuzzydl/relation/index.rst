@@ -7,14 +7,14 @@ fuzzy_dl_owl2.fuzzydl.relation
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Defines a data structure for representing fuzzy role assertions that link two individuals through a named relationship constrained by a lower bound degree.
+A class representing a fuzzy role assertion that connects two individuals via a specific relationship type and a lower bound degree.
 
 
 Description
 -----------
 
 
-The software models a specific type of logical assertion used in fuzzy description logics, where a relationship exists between a subject and an object entity. It encapsulates the properties of this connection, including the name of the role, the two distinct individuals involved, and a degree value that acts as a lower bound for the truth of the assertion. Design choices include allowing the modification of the participating individuals after instantiation, which provides flexibility for dynamic updates within a larger reasoning system. String representations are provided to visualize the relationship both with and without the degree constraint, facilitating debugging and logging. The implementation also supports cloning to create independent copies of the assertion, ensuring that modifications to a copy do not affect the original instance.
+The software models a role assertion within a fuzzy description logic framework, defining a binary connection between a subject individual and an object individual. It encapsulates the properties of the relationship, including the role name, the two participating entities, and a lower bound degree that represents the minimum truth value required for the assertion to hold. The design allows for the dynamic modification of the subject and object individuals after instantiation, ensuring flexibility in constructing and updating knowledge graphs. Furthermore, the implementation provides mechanisms for cloning the assertion to create independent copies and generating string representations that either include or exclude the degree constraint for various reporting needs.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

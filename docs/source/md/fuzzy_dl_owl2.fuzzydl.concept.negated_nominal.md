@@ -1,7 +1,7 @@
 # Summary
 
-Defines a class representing the logical complement of a named individual within a fuzzy description logic framework.
+Implements a representation for the logical complement of a named individual in fuzzy description logic.
 
 ## Description
 
-A class is defined to model the complement of a specific named individual, allowing the expression of constraints that exclude particular entities from a domain. By inheriting from the base `Concept` class, it integrates into the broader ontology structure while enforcing specific logical rules, such as the prohibition of nested negation which results in a runtime exception. Logical operations like conjunction and disjunction are supported through operator overloading, which delegates the actual computation to a separate utility class to maintain consistency across different concept types. Instances are made compatible with hash-based collections by deriving their hash value from a standardized string representation of the negated individual.
+The software models the logical complement of a named individual within a fuzzy description logic system, allowing the expression of constraints that exclude specific entities from a domain. By inheriting from the base `Concept` class, it establishes itself as an atomic type that encapsulates an individual identifier and automatically generates a standardized string representation for the negated form. Logical operations such as conjunction and disjunction are supported through delegation to an external operator handler, enabling the construction of complex concept expressions. A strict design constraint is enforced to prevent nested negation, ensuring that attempting to complement an already negated nominal results in a specific exception to maintain logical consistency. Functionality for object cloning and hashing is provided to facilitate the use of these concepts within data structures and algorithms requiring object identity management.

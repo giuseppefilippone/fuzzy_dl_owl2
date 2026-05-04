@@ -1,16 +1,16 @@
 # Summary
 
-A collection of abstract base classes defining standardized contracts for managing roles, concepts, values, and weighted entities within a fuzzy description logic framework.
+A collection of abstract interfaces defining the structural contracts for managing concepts, roles, values, and weights within a fuzzy description logic system.
 
 ## Description
 
-Abstract base classes establish a robust architectural foundation by enforcing specific contracts for state management across the fuzzy description logic system. Functionality encompasses the management of various data structures, ranging from individual string-based roles and generic values to mutable collections of concepts that may carry associated numerical weights. By employing property-based access and deep copy mechanisms, the design ensures data integrity and encapsulation, allowing dynamic updates to internal states while protecting against unintended external side effects. Inheritance is leveraged to aggregate distinct behaviors, such as combining role management with conceptual context, thereby providing a flexible and reusable blueprint for complex domain entities.
+These interfaces establish a foundational architecture by separating the definition of data relationships from their concrete implementation. Specific extensions allow for the association of arbitrary values with roles while enforcing strict state isolation through deep copy operations to prevent unintended side effects. Furthermore, the design supports the representation of magnitude or significance by integrating numerical weights directly into concept management structures. Together, these abstract contracts ensure consistency and encapsulation across the system, enabling robust handling of complex fuzzy logic operations.
 
 ## Modules
 
-- [`fuzzy_dl_owl2.fuzzydl.concept.interface.has_concept_interface`](./fuzzydl_concept_interface_has_concept_interface.md) — An abstract base class providing a standard interface for objects to manage and update a mutable conceptual entity.
-- [`fuzzy_dl_owl2.fuzzydl.concept.interface.has_concepts_interface`](./fuzzydl_concept_interface_has_concepts_interface.md) — An abstract base class that provides a standardized mechanism for storing, retrieving, and updating a mutable collection of Concept objects.
-- [`fuzzy_dl_owl2.fuzzydl.concept.interface.has_role_concept_interface`](./fuzzydl_concept_interface_has_role_concept_interface.md) — An abstract base class that establishes a contract for objects requiring both a functional role and an associated concept.
-- [`fuzzy_dl_owl2.fuzzydl.concept.interface.has_role_interface`](./fuzzydl_concept_interface_has_role_interface.md) — An abstract base class defines a standard interface for managing a role attribute within an object.
-- [`fuzzy_dl_owl2.fuzzydl.concept.interface.has_value_interface`](./fuzzydl_concept_interface_has_value_interface.md) — An abstract base class extends role management capabilities by introducing a generic value attribute with deep copy protection.
-- [`fuzzy_dl_owl2.fuzzydl.concept.interface.has_weighted_concepts_interface`](./fuzzydl_concept_interface_has_weighted_concepts_interface.md) — An abstract base class that defines a contract for managing a collection of concepts alongside associated numerical weights.
+- [`fuzzy_dl_owl2.fuzzydl.concept.interface.has_concept_interface`] — 
+- [`fuzzy_dl_owl2.fuzzydl.concept.interface.has_concepts_interface`] — 
+- [`fuzzy_dl_owl2.fuzzydl.concept.interface.has_role_concept_interface`] — 
+- [`fuzzy_dl_owl2.fuzzydl.concept.interface.has_role_interface`] — 
+- [`fuzzy_dl_owl2.fuzzydl.concept.interface.has_value_interface`] — An abstract base class that extends role management capabilities by incorporating a generic value attribute protected by deep copy operations to ensure state isolation.
+- [`fuzzy_dl_owl2.fuzzydl.concept.interface.has_weighted_concepts_interface`] — An abstract interface that extends concept management to include associated numerical weights.

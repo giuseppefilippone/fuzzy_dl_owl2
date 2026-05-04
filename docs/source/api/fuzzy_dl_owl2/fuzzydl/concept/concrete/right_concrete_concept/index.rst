@@ -7,14 +7,14 @@ fuzzy_dl_owl2.fuzzydl.concept.concrete.right_concrete_concept
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Implements a right-shoulder fuzzy membership function where truth values increase linearly from zero to one over a specified interval.
+A specialized class models a fuzzy logic concept characterized by a "right shoulder" membership function, where the degree of truth transitions linearly from zero to one as an input value increases.
 
 
 Description
 -----------
 
 
-The implementation models concepts that become increasingly true as a variable grows, such as "high temperature," by defining a geometric shape where membership is zero up to a certain point, ramps up linearly, and then stays at one. It enforces strict ordering constraints during initialization to ensure the domain boundaries correctly encapsulate the transition interval, preventing invalid logical states. By overriding standard Python operators, the class seamlessly integrates with a larger fuzzy logic framework to support negation, conjunction, and disjunction operations. Additional utility features include the ability to generate string representations, clone instances to preserve state, and compute hash values for use in collections.
+It is designed to represent linguistic terms that imply a threshold or increasing magnitude, such as "high temperature" or "large size," by defining a specific domain interval and a transition range. Initialization logic enforces strict geometric constraints to ensure the domain boundaries fully encompass the transition interval, guaranteeing structural validity for subsequent calculations. Core functionality involves computing membership degrees through linear interpolation for values falling within the transition range, while returning absolute truth values for inputs outside this range. Additionally, the component integrates with a broader fuzzy description logic framework by supporting standard logical operations like negation, conjunction, and disjunction through operator overloading, which delegates complex logic to a centralized operator handler.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

@@ -131,7 +131,6 @@ class DLParser(object):
     :type queries_list: list[Query]
     """
 
-
     kb: KnowledgeBase = None
     queries_list: list[Query] = []
 
@@ -791,7 +790,6 @@ class DLParser(object):
         :rtype: pp.ParseResults
         """
 
-
         if ConfigReader.DEBUG_PRINT:
             Util.debug(f"\t\t_parse_truth_constants -> {tokens}")
         list_tokens: list[str] = tokens.as_list()
@@ -815,6 +813,7 @@ class DLParser(object):
         if ConfigReader.DEBUG_PRINT:
             Util.debug(f"\t\t_parse_fuzzy_concept -> {tokens}")
         list_tokens: list = tokens.as_list()
+
         if DLParser.kb.concrete_concepts.get(list_tokens[0]) is not None:
             Util.error(
                 f"Error: Fuzzy concept {list_tokens[0]} has to be defined before being used."
@@ -1073,7 +1072,6 @@ class DLParser(object):
         :rtype: typing.Any
         """
 
-
         if ConfigReader.DEBUG_PRINT:
             Util.debug(f"\t\t_parse_restrictions -> {tokens}")
         tokens = tokens.as_list()
@@ -1118,7 +1116,6 @@ class DLParser(object):
 
         :rtype: pp.ParseResults
         """
-
 
         if ConfigReader.DEBUG_PRINT:
             Util.debug(f"\t\t_parse_datatype_restriction -> {tokens}")
@@ -1403,7 +1400,6 @@ class DLParser(object):
         :rtype: pp.ParseResults
         """
 
-
         if ConfigReader.DEBUG_PRINT:
             Util.debug(f"\t\t_show_abstract_fillers -> {tokens}")
         list_tokens: list = tokens.as_list()
@@ -1476,7 +1472,6 @@ class DLParser(object):
 
         :rtype: pp.ParseResults
         """
-
 
         if ConfigReader.DEBUG_PRINT:
             Util.debug(f"\t\t_show_instances -> {tokens}")
@@ -1642,7 +1637,6 @@ class DLParser(object):
 
         :rtype: pp.ParseResults
         """
-
 
         if ConfigReader.DEBUG_PRINT:
             Util.debug(f"\t\t_parse_axioms -> {tokens}")
@@ -2745,7 +2739,6 @@ class DLParser(object):
         :rtype: tuple[KnowledgeBase, list[Query]]
         """
 
-
         try:
             starting_time: float = time.perf_counter_ns()
             DLParser.load_config(*args)
@@ -2782,7 +2775,6 @@ class DLParser(object):
         :param args: Variable length positional arguments used to specify configuration parameters and the input file for parsing.
         :type args: typing.Any
         """
-
 
         try:
             kb, queries = DLParser.get_kb(*args)

@@ -39,21 +39,21 @@ fuzzy_dl_owl2.fuzzydl.parser
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A specialized parser for Fuzzy Description Logic that interprets textual input to construct a knowledge base and a set of executable queries using the pyparsing library.
+A parsing engine that translates textual Fuzzy Description Logic definitions into a structured knowledge base and executable queries for reasoning tasks.
 
 
 Description
 -----------
 
 
-Leveraging the pyparsing library, the software defines a comprehensive grammar for a Fuzzy Description Logic language to handle complex constructs such as fuzzy concepts, modifiers, roles, and axioms. Through syntax rules and parse actions, raw string tokens are transformed into domain-specific objects while simultaneously validating semantic constraints to enforce logic-specific rules for operators. The interpretation process populates a central ``KnowledgeBase`` instance with the structured data and accumulates a list of queries intended for reasoning tasks like subsumption checking, instance retrieval, and satisfiability analysis. Support for multiple fuzzy logic semantics, including Zadeh and Lukasiewicz, provides a flexible framework for defining and reasoning about fuzzy ontologies.
+A comprehensive grammar implemented via the ``pyparsing`` library interprets a domain-specific language for Fuzzy Description Logic, transforming raw text into a structured object model. Support covers a diverse range of fuzzy logic constructs—such as abstract and concrete concepts, modifiers, and weighted aggregations—while dynamically adjusting to various logic semantics including Zadeh, Lukasiewicz, and classical logic. Static callback methods validate input and instantiate domain-specific entities like ``Concept``, ``Individual``, and ``Degree``, registering them within a central ``KnowledgeBase`` to maintain global state. Beyond constructing the domain model, extracted query definitions—ranging from satisfiability checks to instance retrieval—are compiled into executable objects ready for processing by the underlying reasoning engine and Mixed-Integer Linear Programming solver.
 
 
 Modules
 -------
 
 
-* ``fuzzy_dl_owl2.fuzzydl.parser.dl_parser`` — A specialized parser for Fuzzy Description Logic that interprets textual input to construct a knowledge base and a set of executable queries using the pyparsing library.
+* [``fuzzy_dl_owl2.fuzzydl.parser.dl_parser``] — A comprehensive parser for Fuzzy Description Logic that utilizes the pyparsing library to transform textual definitions into a structured knowledge base and executable queries.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

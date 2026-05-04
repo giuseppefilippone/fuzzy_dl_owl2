@@ -7989,6 +7989,7 @@ class KnowledgeBase:
             Util.warning(
                 f"Warning: {role_name} is the name of both a concept and a role."
             )
+
         if conc.is_concrete():
             # role_name is concrete
             if role_name in self.abstract_roles:

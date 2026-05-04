@@ -7,14 +7,14 @@ fuzzy_dl_owl2.fuzzydl.query.satisfiable_query
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A base class representing min/max satisfiability queries for fuzzy concepts within a logic framework.
+Establishes a foundational interface for min/max satisfiability queries that evaluate the degree to which a specific fuzzy concept is satisfied, optionally within the context of a particular individual.
 
 
 Description
 -----------
 
 
-Designed to function as an abstract interface, the software evaluates the degree to which a specific fuzzy concept is satisfied, optionally within the context of a particular individual. Strict validation rules ensure that the target concept is not concrete, thereby maintaining logical consistency during the evaluation process. Method overloading supports flexible initialization, allowing queries to be constructed with just a concept or with both a concept and an individual. Internal state management stores the relevant concept, individual, and a placeholder for the resulting objective expression, preparing the groundwork for subsequent satisfiability checks and bound calculations.
+The implementation provides a robust initialization mechanism that accepts a mandatory fuzzy concept and an optional individual entity, ensuring that the provided concept is not concrete before proceeding. By storing these core components—specifically the concept, the optional individual, and a placeholder for the resulting objective expression—the logic prepares the necessary state for subsequent satisfiability testing operations. Design decisions include the use of method overloading to distinguish between general concept satisfiability checks and those bound to a specific individual, thereby centralizing validation logic and preventing invalid configurations. Ultimately, the structure serves as a specialized extension of the generic query framework, tailored to support the derivation of bounds or extents of concept fulfillment in fuzzy description logic reasoning.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

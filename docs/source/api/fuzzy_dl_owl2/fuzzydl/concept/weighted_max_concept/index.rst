@@ -7,14 +7,14 @@ fuzzy_dl_owl2.fuzzydl.concept.weighted_max_concept
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A Python class representing a weighted maximum operation over a collection of concepts within a fuzzy description logic framework.
+Implements a weighted maximum concept for fuzzy description logic that pairs sub-concepts with numerical weights to perform logical operations.
 
 
 Description
 -----------
 
 
-The implementation defines a logical structure where sub-concepts are paired with numerical weights to perform a weighted maximization, ensuring semantic validity by requiring that the number of weights matches the number of concepts and that at least one weight is normalized to 1.0. By inheriting from base classes, it integrates seamlessly into a broader fuzzy logic system, enabling standard logical operations such as conjunction, disjunction, and negation through operator overloading. Structural integrity is maintained through utility functions that allow for the recursive retrieval of atomic concepts and roles, as well as the replacement of specific sub-concepts within the hierarchy. The design treats these logical entities as immutable for hashing purposes, utilizing a generated string representation to uniquely identify instances within hash-based collections.
+The software models a specific type of logical construct where a collection of concepts is combined using a weighted maximum function, requiring strict validation to ensure the number of weights matches the number of concepts and that at least one weight is normalized to 1.0. It integrates with a broader logic framework by inheriting from base concept classes and implementing interfaces for weighted operations, allowing it to participate in standard logical manipulations such as conjunction, disjunction, and negation through operator overloading. Beyond initialization, the implementation supports structural traversal to extract atomic concepts and roles, provides cloning capabilities for safe copying, and enables recursive replacement of sub-concepts within the hierarchy. The object relies on a generated string representation for hashing and identification, ensuring that the weighted structure can be uniquely identified within collections or used as dictionary keys.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

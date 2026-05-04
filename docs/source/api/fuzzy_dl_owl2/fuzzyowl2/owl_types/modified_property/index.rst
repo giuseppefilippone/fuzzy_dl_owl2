@@ -7,14 +7,14 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.modified_property
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Defines a data structure for representing fuzzy properties that have been altered by linguistic modifiers within the FuzzyOWL2 framework.
+Represents a property within the FuzzyOWL2 framework that has been altered by a fuzzy modifier or linguistic hedge.
 
 
 Description
 -----------
 
 
-Extending the base functionality of fuzzy properties, the implementation allows for the representation of nuanced relationships where the truth value of a property is adjusted by a specific factor. By storing a linguistic hedge and a target property name as distinct string attributes, the design enables the precise definition of modified concepts such as "very tall" or "somewhat fast." Accessor methods are provided to retrieve the specific modifier and the underlying property, ensuring that the internal state remains encapsulated while remaining accessible for logical operations. Furthermore, the string representation is overridden to display the combination as a parenthesized pair, facilitating easy debugging and textual output within the broader fuzzy logic system.
+Extending the base ``FuzzyProperty`` structure, this component enables the representation of nuanced relationships where a standard property is subjected to a linguistic hedge or fuzzy modifier. By accepting a modifier string and a property name during instantiation, the software captures the specific alteration applied to the relationship, allowing for distinctions such as "very" or "somewhat" to be preserved alongside the core property identifier. Internal storage maintains these two distinct elements, and dedicated accessors expose the underlying property and its associated modifier without modifying the object's state. String representations are generated to display the combined entity as a parenthesized pair, ensuring that the modified nature of the property is clearly communicated in textual outputs.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

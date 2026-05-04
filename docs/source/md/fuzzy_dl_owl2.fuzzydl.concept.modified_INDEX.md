@@ -1,13 +1,13 @@
 # Summary
 
-Implements fuzzy description logic concepts that apply linear or triangular modifiers to base concepts to adjust membership degrees.
+A collection of fuzzy description logic components that apply mathematical modifiers, such as linear scaling or triangular transformations, to adjust the satisfaction degree of base concepts.
 
 ## Description
 
-A framework enables the semantic alteration of fuzzy description logic concepts by wrapping base entities with specific modifiers that adjust the degree of membership. An abstract wrapper preserves the structural properties of the underlying concept, such as roles and atomicity, while delegating structural queries to the original entity to ensure data integrity. Concrete implementations handle distinct mathematical transformations, such as linear and triangular adjustments, by extending the core wrapper logic. Logical operations including negation, conjunction, and disjunction are facilitated through operator overloading, which delegates the creation of complex expressions to a centralized utility to maintain consistency across the hierarchy. Furthermore, the architecture supports structural manipulation through cloning and sub-concept replacement, ensuring that modifications generate independent instances without mutating existing objects.
+The architecture relies on a wrapper pattern where a generic base entity encapsulates a specific concept and applies a modifier to alter its semantic interpretation within a fuzzy logic context. Specific implementations handle distinct mathematical transformations, such as linear scaling or shifting of truth values and non-linear triangular adjustments, while inheriting common behaviors for structural manipulation and logical composition. Logical operations like negation, conjunction, and disjunction are supported through operator overloading, which delegates the actual computation to a central operator handler to ensure consistency across the system. To maintain immutability during inference, the design includes mechanisms for cloning entire structures and recursively replacing sub-concepts without altering the original instances, with hashing based on string representations to facilitate use within collections.
 
 ## Modules
 
-- [`fuzzy_dl_owl2.fuzzydl.concept.modified.linearly_modified_concept`](./fuzzydl_concept_modified_linearly_modified_concept.md) — Represents a fuzzy description logic concept whose truth value is adjusted by a linear modifier, enabling the construction of modified concepts within a logical hierarchy.
-- [`fuzzy_dl_owl2.fuzzydl.concept.modified.modified_concept`](./fuzzydl_concept_modified_modified_concept.md) — A conceptual wrapper that applies a semantic modifier to a base concept to adjust the degree of membership within a fuzzy description logic framework.
-- [`fuzzy_dl_owl2.fuzzydl.concept.modified.triangularly_modified_concept`](./fuzzydl_concept_modified_triangularly_modified_concept.md) — A conceptual entity that applies a triangular transformation to a base concept's membership degree while supporting logical operations and structural manipulation.
+- [`fuzzy_dl_owl2.fuzzydl.concept.modified.linearly_modified_concept`] — A class representing a fuzzy description logic concept whose degree of satisfaction is adjusted by a linear modifier.
+- [`fuzzy_dl_owl2.fuzzydl.concept.modified.modified_concept`] — A specialized conceptual entity that wraps a base concept with a modifier to adjust the degree of truth or satisfaction within a fuzzy description logic framework.
+- [`fuzzy_dl_owl2.fuzzydl.concept.modified.triangularly_modified_concept`] — A specialized fuzzy logic concept that applies a triangular modifier to a base concept to non-linearly transform its degree of satisfaction.

@@ -7,14 +7,14 @@ fuzzy_dl_owl2.fuzzydl.query.defuzzify.som_defuzzify_query
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A query implementation that applies the Smallest of Maxima defuzzification strategy to resolve fuzzy feature values into crisp numerical outputs.
+A specialized query implementation applies the Smallest of Maxima strategy to convert fuzzy logic values into crisp numerical outputs.
 
 
 Description
 -----------
 
 
-The logic operates by identifying the domain values that correspond to the highest degree of membership for a specific individual within a given concept and selecting the smallest among those maxima. Accepting a target concept, an individual instance, and a feature name defines the scope of the fuzzy evaluation required to determine the crisp output. To facilitate this calculation within a mathematical optimization context, the implementation constructs a linear objective expression that assigns a unit coefficient to a decision variable, effectively instructing an underlying solver to minimize this variable. Inheritance from a base defuzzification query class allows this strategy to fit seamlessly into a broader framework where different defuzzification methods can be utilized depending on the analytical requirements.
+By identifying domain values that correspond to the highest degree of membership for a specific individual within a given concept, the logic selects the smallest value among those maxima. Extending a base defuzzification handler allows the component to inherit standard initialization parameters, such as the target concept, individual instance, and feature name, while defining unique behavior for the optimization process. The objective function is constructed to minimize a specific variable, ensuring that the mathematical solver identifies the lower bound of the maximized membership set.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

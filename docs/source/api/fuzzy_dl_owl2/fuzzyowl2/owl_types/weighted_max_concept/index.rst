@@ -7,14 +7,14 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_max_concept
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Implements a fuzzy logic operator that performs weighted maximum aggregation over a collection of concepts.
+A specialized class representing a weighted maximum aggregation operator used within the FuzzyOWL2 ontology framework to combine fuzzy concepts.
 
 
 Description
 -----------
 
 
-The software defines a data structure for representing a weighted maximum aggregation operator used in fuzzy logic ontologies. By extending a base definition class, it integrates into the broader type system and identifies itself specifically as a weighted maximum entity. During initialization, it accepts a collection of other concept definitions which act as the operands for the fuzzy logic calculation. Access to these internal components is provided for further processing, while a string representation method allows the structure to be visualized in a human-readable format.
+The software defines a specific fuzzy logic construct that performs a weighted maximum calculation over a collection of concept definitions. By inheriting from the base concept definition class, it integrates into the broader type system and explicitly identifies itself as a weighted maximum entity during initialization. Internally, it maintains a list of operand concepts which are aggregated according to fuzzy logic principles, and exposes these components for further processing or evaluation. Additionally, the implementation includes a string representation mechanism that formats the internal structure in a human-readable syntax suitable for debugging or logging.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

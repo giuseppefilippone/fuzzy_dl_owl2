@@ -7,14 +7,14 @@ fuzzy_dl_owl2.fuzzyowl2.parser.owl2_parser
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A parser implementation that interprets Fuzzy OWL 2 annotation strings and transforms them into structured KnowledgeBase and Query objects using the pyparsing library.
+A specialized parser that interprets Fuzzy OWL 2 XML annotations and transforms them into a knowledge base and query objects using the pyparsing library.
 
 
 Description
 -----------
 
 
-The software constructs a comprehensive grammar using the pyparsing library to recognize and interpret the syntax of Fuzzy OWL 2 annotations, which include complex fuzzy logic operators, modifiers, and data types. It defines a set of parsing actions that transform raw token streams into specific domain objects, such as modified concepts, weighted aggregations, and various fuzzy datatype functions like triangular or trapezoidal shapes. The central class orchestrates the parsing process by enabling left recursion to handle nested concept definitions and managing the conversion of these definitions into a KnowledgeBase and a list of Query instances. Error handling and configuration loading are integrated into the main execution flow to ensure robust processing of input strings and proper initialization of the underlying reasoning system.
+The implementation relies on the pyparsing library to define a comprehensive grammar capable of recognizing complex fuzzy logic constructs embedded within XML-like tags. It handles a wide variety of fuzzy elements, including modified concepts, weighted aggregations, integral-based concepts like OWA and Sugeno, and specific fuzzy datatypes such as triangular or trapezoidal functions. As the input is processed, a series of internal callback functions transform raw token sequences into strongly typed domain objects, effectively bridging the gap between text representation and the internal object model. Parsing orchestration is managed through a central class that exposes the grammar definition and provides a static method to initiate the translation of annotation strings into a knowledge base and associated queries.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

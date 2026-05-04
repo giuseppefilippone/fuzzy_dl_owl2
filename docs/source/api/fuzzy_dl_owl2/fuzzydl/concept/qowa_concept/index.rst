@@ -7,14 +7,14 @@ fuzzy_dl_owl2.fuzzydl.concept.qowa_concept
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Implements a Quantified Ordered Weighted Averaging (QOWA) strategy that aggregates a collection of concepts using a fuzzy quantifier to dynamically determine weighting schemes.
+Implements a Quantified Ordered Weighted Averaging (QOWA) concept that dynamically calculates aggregation weights based on a provided fuzzy quantifier.
 
 
 Description
 -----------
 
 
-Extending the standard Ordered Weighted Averaging functionality, this logic introduces a quantified approach where a fuzzy quantifier dictates the aggregation weights instead of relying on explicit user-defined values. By evaluating the membership degree of the provided quantifier across the range of input concepts, the system automatically computes the necessary weights to perform the aggregation. The design supports standard logical operations such as conjunction, disjunction, and negation by delegating to a central operator handler, ensuring consistent behavior within the broader fuzzy description logic framework. Structural consistency is maintained through mechanisms for cloning and replacing sub-concepts, allowing the object to be manipulated or copied without affecting the original data structure.
+The software defines a specialized fuzzy logic construct that performs aggregation over a collection of concepts by deriving weights from a linguistic quantifier rather than requiring explicit manual specification. By evaluating the membership degree of the quantifier at regular intervals across the input list, the system automatically generates a weighting scheme that reflects the semantics of the quantifier, such as "most" or "some". This design allows for dynamic adjustment of the aggregation logic, as changing the quantifier immediately recalculates the weights and updates the internal representation. To ensure compatibility with the broader fuzzy description logic framework, the implementation supports standard logical operations like conjunction, disjunction, and negation, while also providing mechanisms for structural cloning and recursive replacement of sub-concepts.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

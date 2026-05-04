@@ -7,14 +7,14 @@ fuzzy_dl_owl2.fuzzydl.restriction.restriction
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A class representing a universal restriction that combines a role, a concept, and a degree threshold within a fuzzy logic framework.
+A universal restriction in a fuzzy description logic system that enforces a minimum membership degree for a specific role and concept combination.
 
 
 Description
 -----------
 
 
-The software models a universal restriction within a logical framework by combining a specific role, a target concept, and a lower bound degree to define a constraint. It represents the condition that for all entities connected via the given role, they must belong to the specified concept with a certainty or membership level that meets or exceeds the provided degree. The structure supports cloning to create independent copies of the restriction and provides accessors for the role name, concept, and degree. String representations are generated to reflect the logical syntax, including a format that explicitly includes the degree threshold as an inequality.
+The software models a universal restriction within a logical framework by combining a specific role, a target concept, and a lower bound degree to define a constraint. It represents the condition that for all entities connected via the given role, they must belong to the specified concept with a certainty or membership level that meets or exceeds the provided degree. The implementation stores these three core components—role name, concept, and degree—and provides mechanisms to create independent copies of the restriction object to ensure data integrity during processing. String representations are generated to reflect the logical syntax, offering formats that either explicitly include the degree threshold or focus solely on the universal scope of the role and concept relationship.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

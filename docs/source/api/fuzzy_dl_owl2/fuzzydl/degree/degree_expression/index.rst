@@ -7,14 +7,14 @@ fuzzy_dl_owl2.fuzzydl.degree.degree_expression
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A symbolic representation of a degree that wraps an algebraic expression to support dynamic, non-numeric calculations within a fuzzy logic framework.
+A symbolic wrapper for algebraic expressions that represents non-numeric degrees within a fuzzy logic framework, enabling dynamic constraint generation and mathematical manipulation.
 
 
 Description
 -----------
 
 
-Extending the base ``Degree`` abstraction, this implementation provides a mechanism to handle satisfaction measures that are not fixed numeric values but are instead defined by symbolic algebraic expressions. By encapsulating an ``Expression`` object, the logic enables dynamic manipulation of degrees through standard arithmetic operations such as addition, subtraction, and scalar multiplication, which are essential for formulating complex constraints in optimization problems. The design explicitly treats these entities as non-numeric, ensuring that they are processed symbolically during the construction of mathematical models, specifically when generating inequalities that compare external expressions against the internal state. Functionality includes cloning capabilities and equality checks based on the underlying expression, ensuring that the symbolic nature of the degree is preserved throughout algebraic transformations and comparisons.
+Symbolic degree representations extend the abstract concept of a degree by encapsulating an algebraic expression, allowing for dynamic and context-dependent measures of satisfaction rather than fixed numeric values. Wrapping an ``Expression`` object facilitates the construction of mathematical constraints and inequalities required for mixed-integer linear programming formulations within a fuzzy logic system. Algebraic manipulations such as addition, subtraction, and scalar multiplication are supported by delegating operations to the underlying expression, ensuring compatibility with the broader constraint-solving architecture. Explicitly distinguishing the entity as non-numeric ensures the system handles optimization and comparison logic differently than it would for concrete constant degrees during the resolution of fuzzy constraints.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

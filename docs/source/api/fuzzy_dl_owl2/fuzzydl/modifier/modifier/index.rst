@@ -7,14 +7,14 @@ fuzzy_dl_owl2.fuzzydl.modifier.modifier
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-An abstract base class defines the interface for fuzzy logic modifiers that transform concepts and calculate membership degrees.
+An abstract base class defines the interface for fuzzy logic modifiers that transform concepts and calculate adjusted membership degrees.
 
 
 Description
 -----------
 
 
-Designed to serve as a foundational blueprint for fuzzy logic operations, the abstract base class establishes a contract for creating linguistic hedges or operators that alter the interpretation of fuzzy concepts. By enforcing the implementation of specific behaviors such as modifying concept structures and recalculating membership degrees, it ensures that all concrete subclasses adhere to a consistent mathematical and logical standard required by the broader fuzzy description logic system. The architecture encapsulates the management of string identifiers, allowing names to be assigned explicitly or derived dynamically from the specific logic of the modifier, while also providing mechanisms for creating independent duplicates of objects through cloning. Ultimately, the design facilitates the extension of the knowledge base with custom transformation rules, enabling the system to handle complex linguistic nuances by mapping real-valued inputs to normalized membership intervals.
+Software components designed to implement linguistic hedges or transformations within a fuzzy logic system rely on this blueprint to ensure consistent behavior. By enforcing the implementation of specific mathematical and structural operations, the architecture guarantees that every concrete modifier can accurately transform a given concept and calculate the resulting membership degree within the normalized range of zero to one. The design encapsulates the logic required for object duplication and dynamic naming, allowing specific implementations to define their own string identifiers while maintaining a standard interface for cloning and modification. Through abstract methods, the structure mandates that subclasses provide the necessary algorithms to apply changes to fuzzy concepts, thereby separating the general definition of a modifier from the specific mathematical rules used to intensify or dilute membership values.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

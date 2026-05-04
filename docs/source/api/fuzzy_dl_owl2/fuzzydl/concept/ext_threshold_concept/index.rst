@@ -7,14 +7,14 @@ fuzzy_dl_owl2.fuzzydl.concept.ext_threshold_concept
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A fuzzy description logic concept that applies a variable-based threshold condition to the satisfaction degree of a nested concept.
+A Python class representing extended threshold concepts that apply variable-based constraints to the satisfaction degree of a nested concept within a fuzzy description logic framework.
 
 
 Description
 -----------
 
 
-It defines a logical construct within a fuzzy description logic system that imposes a variable-based threshold on the satisfaction degree of another concept. By wrapping a base concept and a specific variable, it models conditions where satisfaction must be either greater than or equal to, or less than or equal to, the variable's value. The design leverages inheritance to integrate with existing concept hierarchies while delegating complex logical operations such as negation, conjunction, and disjunction to a dedicated operator handler. Furthermore, it supports structural manipulation through cloning and replacement of nested components, ensuring that the threshold logic remains consistent while the underlying concept structure evolves.
+The software implements a specialized logical construct designed to evaluate fuzzy concepts against a dynamic threshold defined by a variable. By encapsulating a base concept and a weight variable, it determines satisfaction based on whether the nested concept's degree meets or exceeds, or falls below, the specified threshold value. This design allows for the creation of both positive and negative constraints, effectively modeling complex conditions where the boundaries of concept satisfaction are not fixed but depend on external variables. Functionality includes static factory methods for instantiating specific threshold types, as well as mechanisms for cloning and replacing internal components to support structural manipulation. Logical operations such as negation, conjunction, and disjunction are handled by delegating to a central operator utility, ensuring consistent behavior across the system. Furthermore, the implementation delegates the extraction of atomic concepts and roles to the underlying nested concept, maintaining a clean separation of concerns while providing a comprehensive string representation for hashing and identification.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

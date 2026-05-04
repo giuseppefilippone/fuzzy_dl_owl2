@@ -39,24 +39,24 @@ fuzzy_dl_owl2.fuzzydl.query.defuzzify
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A framework for converting fuzzy membership degrees into crisp numerical values using Mixed-Integer Linear Programming strategies.
+A suite of defuzzification strategies converts fuzzy membership degrees into crisp numerical values by leveraging Mixed-Integer Linear Programming to optimize objective expressions within a constrained knowledge base.
 
 
 Description
 -----------
 
 
-Defuzzification logic transforms fuzzy membership degrees into precise numbers for specific features within a knowledge base, relying on Mixed-Integer Linear Programming to solve the optimization problems. An abstract base class centralizes the common workflow, such as determining the maximum degree of satisfaction, asserting values into a cloned knowledge base, and managing ontology inconsistencies. By delegating the creation of objective expressions to subclasses, the architecture supports various defuzzification strategies while maintaining a consistent mechanism for retrieving variables and interacting with the solver. Concrete implementations utilize this structure to apply specific mathematical approaches, such as minimizing or maximizing target variables to find the smallest or largest maxima, or calculating the arithmetic mean of boundaries within the plateau of maximum membership.
+An abstract base class orchestrates the common workflow required to transform fuzzy logic results into precise numbers, establishing a constrained environment by asserting the maximum degree of membership into a cloned knowledge base. By identifying the mathematical variable associated with a target feature, the system utilizes a mathematical optimization engine to solve Mixed-Integer Linear Programming problems, where the specific objective function determines the final crisp output. Subclasses implement distinct defuzzification methods by defining unique optimization objectives, such as identifying the smallest or largest value within the region of maximum membership or calculating the arithmetic mean of these boundaries. This architecture centralizes the logic for handling ontology inconsistencies and solving constraints while allowing flexibility in how the target variable is manipulated to achieve the desired numerical result.
 
 
 Modules
 -------
 
 
-* ``fuzzy_dl_owl2.fuzzydl.query.defuzzify.defuzzify_query`` — An abstract base class that implements the logic for converting fuzzy membership degrees into crisp values for specific features within a knowledge base using Mixed-Integer Linear Programming.
-* ``fuzzy_dl_owl2.fuzzydl.query.defuzzify.lom_defuzzify_query`` — Implements the Largest of Maxima defuzzification strategy to derive crisp numerical values from fuzzy membership functions by maximizing the target variable in an optimization context.
-* ``fuzzy_dl_owl2.fuzzydl.query.defuzzify.mom_defuzzify_query`` — Implements the Mean of Maxima defuzzification strategy to calculate a crisp feature value for an individual within a fuzzy ontology.
-* ``fuzzy_dl_owl2.fuzzydl.query.defuzzify.som_defuzzify_query`` — A query implementation that applies the Smallest of Maxima defuzzification strategy to resolve fuzzy feature values into crisp numerical outputs.
+* [``fuzzy_dl_owl2.fuzzydl.query.defuzzify.defuzzify_query``] — An abstract base class that defines the structure for defuzzifying fuzzy logic queries by converting membership degrees into crisp values using Mixed-Integer Linear Programming.
+* [``fuzzy_dl_owl2.fuzzydl.query.defuzzify.lom_defuzzify_query``] — Implements the Largest of Maxima defuzzification strategy to determine the highest crisp value within the region of maximum membership for a specific feature.
+* [``fuzzy_dl_owl2.fuzzydl.query.defuzzify.mom_defuzzify_query``] — Implements the Mean of Maxima defuzzification strategy to calculate a crisp feature value for an individual within a fuzzy ontology.
+* [``fuzzy_dl_owl2.fuzzydl.query.defuzzify.som_defuzzify_query``] — A specialized query implementation applies the Smallest of Maxima strategy to convert fuzzy logic values into crisp numerical outputs.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

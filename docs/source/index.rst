@@ -15,8 +15,8 @@ Welcome to fuzzy_dl_owl2's documentation!
    main
    funding
    install_and_config
-   new_grammar
-   new_concepts
+   grammar
+   concepts
    xml
    usage
    api/index
