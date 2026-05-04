@@ -81,7 +81,7 @@ suppress_warnings = [
 
 # -- Custom Sphinx extension: Markdown Injector --------------------------------
 # LOCAL builds (with Ollama running):
-sphinx_md_injector_generate = False  # runs LLM, writes .md, then injects
+sphinx_md_injector_generate = os.environ.get("READTHEDOCS") != "True"  # runs LLM, writes .md, then injects
 # Point to the directory code_documenter.py wrote into.
 # Absolute path, or relative to the directory containing conf.py.
 sphinx_md_injector_dir = "./md"
