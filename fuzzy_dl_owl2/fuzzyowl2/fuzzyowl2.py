@@ -914,12 +914,22 @@ class FuzzyOwl2(object):
             # ########
             #  TBox
             # ########
+
+            # Set of classes that have been processed in the current ontology to avoid redundant processing of class declarations when they are already covered by other axioms (e.g., disjointness or equivalence axioms).
+            processed_classes: set[str] = set()
             for axiom in ontology.get_axioms(AxiomsType.DISJOINT_CLASSES):
                 assert isinstance(axiom, OWLDisjointClasses)
                 if str(axiom) not in self.processed_axioms:
                     Util.debug(f"Disjoint axiom -> {axiom}")
                     self.processed_axioms.add(str(axiom))
                     self.write_disjoint_classes_axiom(axiom.class_expressions)
+
+                    # Update the set of processed classes with the classes involved in the disjointness axiom to prevent redundant processing of their declarations later on.
+                    processed_classes.update(
+                        str(cls)
+                        for cls in axiom.class_expressions
+                        if isinstance(cls, OWLClass)
+                    )
             for axiom in ontology.get_axioms(AxiomsType.DISJOINT_UNIONS):
                 assert isinstance(axiom, OWLDisjointUnion)
                 if str(axiom) not in self.processed_axioms:
@@ -928,6 +938,14 @@ class FuzzyOwl2(object):
                     self.write_disjoint_union_axiom(
                         [axiom.union_class] + axiom.disjoint_class_expressions
                     )
+
+                    # Update the set of processed classes with the union class and the classes involved in the disjoint union axiom to prevent redundant processing of their declarations later on.
+                    processed_classes.update(
+                        str(cls)
+                        for cls in [axiom.union_class]
+                        + axiom.disjoint_class_expressions
+                        if isinstance(cls, OWLClass)
+                    )
             self.__write_subclass_of_axiom(ontology, annotated=True)
             for axiom in ontology.get_axioms(AxiomsType.EQUIVALENT_CLASSES):
                 assert isinstance(axiom, OWLEquivalentClasses)
@@ -935,14 +953,29 @@ class FuzzyOwl2(object):
                     Util.debug(f"Equivalent classes axiom -> {axiom}")
                     self.processed_axioms.add(str(axiom))
                     self.write_equivalent_classes_axiom(axiom.class_expressions)
+
+                    # Update the set of processed classes with the classes involved in the equivalence axiom to prevent redundant processing of their declarations later on.
+                    processed_classes.update(
+                        str(cls)
+                        for cls in axiom.class_expressions
+                        if isinstance(cls, OWLClass)
+                    )
+
+            # Primitive concept declarations are processed after handling disjointness and equivalence axioms to avoid redundant processing of classes that are already covered by these axioms. If a class is involved in a disjointness or equivalence axiom, its declaration is implicitly handled through those axioms, so we can skip writing a separate declaration for it. This approach optimizes the processing by reducing redundancy and ensuring that each class is declared only once, either explicitly or through its participation in other axioms.
             for axiom in ontology.get_axioms(AxiomsType.CLASSES):
                 assert isinstance(axiom, OWLDeclaration)
                 cls: OWLEntity = axiom.entity
                 assert isinstance(cls, OWLClass)
+                if str(cls) in processed_classes:
+                    Util.debug(
+                        f"Skipping concept declaration axiom for {cls} as it is already processed."
+                    )
+                    continue
                 if cls != OWLClass.thing() and str(cls) not in self.processed_axioms:
                     Util.debug(f"Concept declaration axiom -> {cls}")
                     self.processed_axioms.add(str(cls))
                     self.write_concept_declaration(cls)
+
             # ########
             #  RBox
             # ########
