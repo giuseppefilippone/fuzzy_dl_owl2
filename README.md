@@ -421,12 +421,12 @@ concept := (
 | (w-max ($v_1$ $C_1$) $\ldots$ ($v_k$ $C_k$) ) | weighted max of concepts | $\max_{i=1}^{k} \min \\{v_i, x_i\\}$|
 | (w-min ($v_1$ $C_1$) $\ldots$ ($v_k$ $C_k$) ) | weighted min of concepts | $\min_{i=1}^{k} \max \\{1 - v_i, x_i\\}$|
 | (w-sum-zero ($n_1$ $C_1$) $\ldots$ ($n_k$ $C_k$) ) | weighted min of concepts | if $C_i^\mathcal{I}(x) = 0$ for some $i \in \\{1, \ldots, k\\}$, then $0$; otherwise $\sum_{i=1}^{k} n_i C_i^\mathcal{I}(x)$|
-|(owa ($w_1$, $\ldots$, $w_n$) ($C_1$, $\ldots$, $C_n$) | OWA aggregation operator | $\sum_{i=1}^n w_i y_i $ |
-|(q-owa $Q$ ($C_1$, $\ldots$, $C_n$) | quantifier-guided OWA with name $Q$, where $Q$ is a right-shoulder or a linear function | $\sum_{i=1}^n w_i y_i $, where $w_i = Q(\frac{i}{n}) - Q(\frac{i - 1}{n})$|
-|(choquet ($w_1$, $\ldots$, $w_n$) ($C_1$, $\ldots$, $C_n$) | Choquet integral | $y_1 w_1 + \sum_{i=2}^n (y_i - y_{i - 1}) w_i $ |
-|(sugeno ($v_1$, $\ldots$, $v_n$) ($C_1$, $\ldots$, $C_n$) | Sugeno integral | $\max_{i=1}^n \min \\{y_i, mu_i\\}$ |
-|(q-sugeno ($v_1$, $\ldots$, $v_n$) ($C_1$, $\ldots$, $C_n$) | Quasi-Sugeno integral | $\max_{i=1}^n y_i \otimes_L mu_i $|
-|(sigma-count $R$ $C$ $\\{a_1\ \ldots\ a_k\\}$ $F_C$ | A Sigma-Count concept with role $R$ and associated to the concept $C$, the individuals $a_i$ and the fuzzy concrete concept $F_C$ | |
+|(owa ($w_1$, $\ldots$, $w_n$) ($C_1$, $\ldots$, $C_n$)) | OWA aggregation operator | $\sum_{i=1}^n w_i y_i $ |
+|(q-owa $Q$ ($C_1$, $\ldots$, $C_n$)) | quantifier-guided OWA with name $Q$, where $Q$ is a right-shoulder or a linear function | $\sum_{i=1}^n w_i y_i $, where $w_i = Q(\frac{i}{n}) - Q(\frac{i - 1}{n})$|
+|(choquet ($w_1$, $\ldots$, $w_n$) ($C_1$, $\ldots$, $C_n$)) | Choquet integral | $y_1 w_1 + \sum_{i=2}^n (y_i - y_{i - 1}) w_i $ |
+|(sugeno ($v_1$, $\ldots$, $v_n$) ($C_1$, $\ldots$, $C_n$)) | Sugeno integral | $\max_{i=1}^n \min \\{y_i, mu_i\\}$ |
+|(q-sugeno ($v_1$, $\ldots$, $v_n$) ($C_1$, $\ldots$, $C_n$)) | Quasi-Sugeno integral | $\max_{i=1}^n y_i \otimes_L mu_i $|
+|(sigma-count $R$ $C$ $\\{a_1\ \ldots\ a_k\\}$ $F_C$) | A Sigma-Count concept with role $R$ and associated to the concept $C$, the individuals $a_i$ and the fuzzy concrete concept $F_C$ | |
 
 - $n_1, \ldots, n_k \in \[0, 1\]$, with $\sum_{i=1}^k\ n_i \leq 1$;
 - $w_1, \ldots, w_n \in \[0, 1\]$, with $\sum_{i=1}^n\ w_i = 1$;
