@@ -35,7 +35,6 @@ fuzzy_dl_owl2
 │   │   ├── concept.py
 │   │   ├── concrete
 │   │   │   ├── __init__.py
-│   │   │   ├── __pycache__
 │   │   │   ├── crisp_concrete_concept.py
 │   │   │   ├── fuzzy_concrete_concept.py
 │   │   │   ├── fuzzy_number
@@ -52,7 +51,6 @@ fuzzy_dl_owl2
 │   │   ├── implies_concept.py
 │   │   ├── interface
 │   │   │   ├── __init__.py
-│   │   │   ├── __pycache__
 │   │   │   ├── has_concept_interface.py
 │   │   │   ├── has_concepts_interface.py
 │   │   │   ├── has_role_concept_interface.py
@@ -86,10 +84,10 @@ fuzzy_dl_owl2
 │   ├── concrete_feature.py
 │   ├── degree
 │   │   ├── __init__.py
+│   │   ├── degree.py
 │   │   ├── degree_expression.py
 │   │   ├── degree_numeric.py
-│   │   ├── degree_variable.py
-│   │   └── degree.py
+│   │   └── degree_variable.py
 │   ├── domain_axiom.py
 │   ├── exception
 │   │   ├── __init__.py
@@ -169,12 +167,13 @@ fuzzy_dl_owl2
 │       └── utils.py
 └── fuzzyowl2
     ├── __init__.py
-    ├── fuzzyowl2_to_fuzzydl.py
     ├── fuzzyowl2.py
+    ├── fuzzyowl2_to_fuzzydl.py
     ├── owl_types
     │   ├── __init__.py
     │   ├── choquet_concept.py
     │   ├── concept_definition.py
+    │   ├── crisp_function.py
     │   ├── fuzzy_datatype.py
     │   ├── fuzzy_modifier.py
     │   ├── fuzzy_nominal_concept.py
@@ -193,7 +192,7 @@ fuzzy_dl_owl2
     │   ├── sugeno_concept.py
     │   ├── trapezoidal_function.py
     │   ├── triangular_function.py
-    │   ├── triangular_modifer.py
+    │   ├── triangular_modifier.py
     │   ├── weighted_concept.py
     │   ├── weighted_max_concept.py
     │   ├── weighted_min_concept.py
@@ -206,7 +205,8 @@ fuzzy_dl_owl2
     └── util
         ├── __init__.py
         ├── constants.py
-        └── fuzzy_xml.py
+        ├── fuzzy_xml.py
+        └── sort_dl_lines.py
 ```
 
 ## Test

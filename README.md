@@ -790,7 +790,7 @@ fuzzy_dl_owl2
     │   ├── sugeno_concept.py
     │   ├── trapezoidal_function.py
     │   ├── triangular_function.py
-    │   ├── triangular_modifer.py
+    │   ├── triangular_modifier.py
     │   ├── weighted_concept.py
     │   ├── weighted_max_concept.py
     │   ├── weighted_min_concept.py

@@ -12,8 +12,6 @@ Examples of supported Fuzzy Description Logic Constructs
 
 ## Configuration of the MILP solver
 
-Since version 1.0.1 uses `Gurobi Optimizer` (see [gurobipy](https://support.gurobi.com/hc/en-us/articles/360044290292-How-do-I-install-Gurobi-for-Python) for the Fuzzy DL reasoning, please create a GUROBI license to use this library.
-
 For the configuration, create a `CONFIG.ini` file in the same directory used for the execution of the library.
 Example of your execution directory:
 ```text

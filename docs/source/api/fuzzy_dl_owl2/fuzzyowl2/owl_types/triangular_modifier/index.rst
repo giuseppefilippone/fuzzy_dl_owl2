@@ -1,20 +1,20 @@
-fuzzy_dl_owl2.fuzzyowl2.owl_types.triangular_modifer
-====================================================
+fuzzy_dl_owl2.fuzzyowl2.owl_types.triangular_modifier
+=====================================================
 
-.. py:module:: fuzzy_dl_owl2.fuzzyowl2.owl_types.triangular_modifer
+.. py:module:: fuzzy_dl_owl2.fuzzyowl2.owl_types.triangular_modifier
 
 
 
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A specialized class representing a triangular membership function used to apply fuzzy logic modifications within the FuzzyOWL2 framework.
+Implements a triangular membership function used to define fuzzy modifiers within the FuzzyOWL2 framework.
 
 
 Description
 -----------
 
 
-The implementation extends the base fuzzy modifier functionality to model degrees of membership using a geometric triangle defined by three distinct parameters. By accepting floating-point values for the left endpoint, the peak point, and the right endpoint, the logic determines the specific shape of the fuzzy set, where membership typically increases linearly to the peak and decreases linearly afterwards. Encapsulation of these numerical values allows the system to represent the modification applied to a concept without exposing the internal state directly, relying instead on accessors to retrieve the specific coordinates. The design ensures that the object can be easily identified and debugged through a string representation that explicitly lists the defining parameters, facilitating integration into larger fuzzy ontology processing workflows.
+It models the degree of membership using a geometric shape defined by three specific parameters: a left endpoint representing the start of the support, a peak point indicating maximum membership, and a right endpoint marking the end of the support. By inheriting from a base fuzzy modifier class, this implementation integrates into the broader framework to apply specific fuzzy logic transformations to concepts based on the provided numerical boundaries. The logic encapsulates these values to define the specific characteristics of the modification, providing access to the underlying coordinates while ensuring the object can be easily represented as a string for debugging or logging purposes.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -23,7 +23,7 @@ Classes
 
 .. autoapisummary::
 
-   fuzzy_dl_owl2.fuzzyowl2.owl_types.triangular_modifer.TriangularModifier
+   fuzzy_dl_owl2.fuzzyowl2.owl_types.triangular_modifier.TriangularModifier
 
 
 Module Contents
@@ -31,7 +31,7 @@ Module Contents
 
 .. only:: html
 
-    .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzyowl2_owl_types_triangular_modifer_TriangularModifier.png
+    .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzyowl2_owl_types_triangular_modifier_TriangularModifier.png
        :alt: UML Class Diagram for TriangularModifier
        :align: center
        :width: 100%
@@ -41,7 +41,7 @@ Module Contents
 
 .. only:: latex
 
-    .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzyowl2_owl_types_triangular_modifer_TriangularModifier.pdf
+    .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzyowl2_owl_types_triangular_modifier_TriangularModifier.pdf
        :alt: UML Class Diagram for TriangularModifier
        :align: center
        :width: 8.2cm
@@ -53,7 +53,7 @@ Module Contents
 
    Bases: :py:obj:`fuzzy_dl_owl2.fuzzyowl2.owl_types.fuzzy_modifier.FuzzyModifier`
 
-   .. autoapi-inheritance-diagram:: fuzzy_dl_owl2.fuzzyowl2.owl_types.triangular_modifer.TriangularModifier
+   .. autoapi-inheritance-diagram:: fuzzy_dl_owl2.fuzzyowl2.owl_types.triangular_modifier.TriangularModifier
       :parts: 1
       :private-bases:
 

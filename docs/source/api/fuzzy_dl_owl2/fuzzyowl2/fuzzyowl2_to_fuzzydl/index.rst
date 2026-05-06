@@ -1089,7 +1089,7 @@ Module Contents
 
 
 
-   .. py:method:: write_triangular_modifier_definition(name: str, mod: fuzzy_dl_owl2.fuzzyowl2.owl_types.triangular_modifer.TriangularModifier) -> None
+   .. py:method:: write_triangular_modifier_definition(name: str, mod: fuzzy_dl_owl2.fuzzyowl2.owl_types.triangular_modifier.TriangularModifier) -> None
 
       This method outputs the definition of a triangular modifier in the FuzzyDL syntax. It takes the modifier's name and the `TriangularModifier` object as arguments to construct the definition. The method first delegates to the parent class's implementation to handle any shared initialization or processing. Subsequently, it writes the formatted S-expression command, `(define-modifier name mod)`, to the internal output stream, effectively serializing the fuzzy logic concept for the FuzzyDL reasoner.
 

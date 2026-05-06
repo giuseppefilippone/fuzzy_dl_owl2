@@ -29,7 +29,7 @@ The software provides a comprehensive type system for representing fuzzy logic c
 - [`fuzzy_dl_owl2.fuzzyowl2.owl_types.sugeno_concept`] — A specialized data structure representing a Sugeno fuzzy integral concept that aggregates multiple fuzzy concepts using a corresponding set of weights.
 - [`fuzzy_dl_owl2.fuzzyowl2.owl_types.trapezoidal_function`] — A Python implementation of a trapezoidal membership function that models fuzzy sets with a flat top region.
 - [`fuzzy_dl_owl2.fuzzyowl2.owl_types.triangular_function`] — Implements a triangular membership function for fuzzy logic systems, characterized by three defining points.
-- [`fuzzy_dl_owl2.fuzzyowl2.owl_types.triangular_modifer`] — A specialized class representing a triangular membership function used to apply fuzzy logic modifications within the FuzzyOWL2 framework.
+- [`fuzzy_dl_owl2.fuzzyowl2.owl_types.triangular_modifier`] — A specialized class representing a triangular membership function used to apply fuzzy logic modifications within the FuzzyOWL2 framework.
 - [`fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_concept`] — Defines a data structure for representing weighted concepts in the FuzzyOWL2 ontology language by associating a numerical weight with a named fuzzy concept.
 - [`fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_max_concept`] — A specialized class representing a weighted maximum aggregation operator used within the FuzzyOWL2 ontology framework to combine fuzzy concepts.
 - [`fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_min_concept`] — Implements a weighted minimum aggregation operator within the FuzzyOWL2 framework to construct complex fuzzy concepts from a collection of sub-concepts.

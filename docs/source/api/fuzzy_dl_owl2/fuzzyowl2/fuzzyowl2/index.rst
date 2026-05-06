@@ -1229,7 +1229,7 @@ Module Contents
 
 
 
-   .. py:method:: write_triangular_modifier_definition(name: str, mod: fuzzy_dl_owl2.fuzzyowl2.owl_types.triangular_modifer.TriangularModifier) -> None
+   .. py:method:: write_triangular_modifier_definition(name: str, mod: fuzzy_dl_owl2.fuzzyowl2.owl_types.triangular_modifier.TriangularModifier) -> None
 
       This method generates a human-readable definition of a triangular modifier and outputs it via the logging utility. It constructs a string representation by combining the provided name with the string representation of the modifier object, formatted as "name = modifier". The primary side effect is the emission of this information to the standard output or log stream, which is useful for debugging or tracking the configuration of fuzzy logic components. The output format depends implicitly on the string conversion logic of the provided `TriangularModifier` instance.
 

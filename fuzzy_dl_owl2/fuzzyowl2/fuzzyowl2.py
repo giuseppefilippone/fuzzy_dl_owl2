@@ -29,7 +29,7 @@ from fuzzy_dl_owl2.fuzzyowl2.owl_types.right_shoulder_function import (
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.sugeno_concept import SugenoConcept
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.trapezoidal_function import TrapezoidalFunction
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.triangular_function import TriangularFunction
-from fuzzy_dl_owl2.fuzzyowl2.owl_types.triangular_modifer import TriangularModifier
+from fuzzy_dl_owl2.fuzzyowl2.owl_types.triangular_modifier import TriangularModifier
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_concept import WeightedConcept
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_max_concept import WeightedMaxConcept
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_min_concept import WeightedMinConcept
