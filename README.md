@@ -417,10 +417,10 @@ concept := (
 | ([>= var ] C) | threshold concept | if $C^\mathcal{I}(x) \geq \mathrm{var}$, then $C^\mathcal{I}(x)$; otherwise $0$|
 | ([<= var ] C) | threshold concept | if $C^\mathcal{I}(x) \leq \mathrm{var}$, then $C^\mathcal{I}(x)$; otherwise $0$|
 | (n C) | weighted concept C with weight n | $n C^\mathcal{I}(x)$|
-| (w-sum ($n_1$ $C_1$) $\ldots$ ($n_k$ $C_k$) ) | weighted sum of concepts | $\sum_{i=1}^{k} n_i C_i^\mathcal{I}(x)$ |
 | (w-max ($v_1$ $C_1$) $\ldots$ ($v_k$ $C_k$) ) | weighted max of concepts | $\max_{i=1}^{k} \min \\{v_i, x_i\\}$|
 | (w-min ($v_1$ $C_1$) $\ldots$ ($v_k$ $C_k$) ) | weighted min of concepts | $\min_{i=1}^{k} \max \\{1 - v_i, x_i\\}$|
-| (w-sum-zero ($n_1$ $C_1$) $\ldots$ ($n_k$ $C_k$) ) | weighted min of concepts | if $C_i^\mathcal{I}(x) = 0$ for some $i \in \\{1, \ldots, k\\}$, then $0$; otherwise $\sum_{i=1}^{k} n_i C_i^\mathcal{I}(x)$|
+| (w-sum ($n_1$ $C_1$) $\ldots$ ($n_k$ $C_k$) ) | weighted sum of concepts | $\sum_{i=1}^{k} n_i C_i^\mathcal{I}(x)$ |
+| (w-sum-zero ($n_1$ $C_1$) $\ldots$ ($n_k$ $C_k$) ) | weighted sum of concepts with zero handling | if $C_i^\mathcal{I}(x) = 0$ for some $i \in \\{1, \ldots, k\\}$, then $0$; otherwise $\sum_{i=1}^{k} n_i C_i^\mathcal{I}(x)$|
 |(owa ($w_1$, $\ldots$, $w_n$) ($C_1$, $\ldots$, $C_n$)) | OWA aggregation operator | $\sum_{i=1}^n w_i y_i $ |
 |(q-owa $Q$ ($C_1$, $\ldots$, $C_n$)) | quantifier-guided OWA with name $Q$, where $Q$ is a right-shoulder or a linear function | $\sum_{i=1}^n w_i y_i $, where $w_i = Q(\frac{i}{n}) - Q(\frac{i - 1}{n})$|
 |(choquet ($w_1$, $\ldots$, $w_n$) ($C_1$, $\ldots$, $C_n$)) | Choquet integral | $y_1 w_1 + \sum_{i=2}^n (y_i - y_{i - 1}) w_i $ |
