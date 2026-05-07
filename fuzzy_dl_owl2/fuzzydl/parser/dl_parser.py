@@ -617,6 +617,11 @@ class DLParser(object):
             DLParser._to_concept(w_concept.curr_concept)
             for w_concept in list_tokens[1:]
         ]
+        if min(weights) < 0.0:
+            Util.error("Error: The weights must be non-negative.")
+        if max(weights) > 1.0:
+            Util.error("Error: The weights must be less than or equal to 1.")
+
         if operator == FuzzyDLKeyword.W_SUM:
             if not (sum(weights) <= 1.0):
                 Util.error(
