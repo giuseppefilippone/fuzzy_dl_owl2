@@ -690,19 +690,30 @@ class DLParser(object):
         concepts: list[Concept] = [
             DLParser._to_concept(concept) for concept in list_tokens[1:][length // 2 :]
         ]
+        if min(weights) < 0.0:
+            Util.error("Error: The weights must be non-negative.")
+        if max(weights) > 1.0:
+            Util.error("Error: The weights must be less than or equal to 1.")
+
         if operator == FuzzyDLKeyword.OWA:
             if sum(weights) != 1.0:
                 Util.error("Error: The sum of the weights must be equal to 1.")
             return pp.ParseResults([OwaConcept(weights, concepts)])
         elif operator == FuzzyDLKeyword.CHOQUET:
+            if sorted(weights) != weights:
+                Util.error("Error: The weights must be in non-decreasing order.")
             if max(weights) != 1.0:
                 Util.error("Error: The maximum of the weights must be equal to 1.")
             return pp.ParseResults([ChoquetIntegral(weights, concepts)])
         elif operator == FuzzyDLKeyword.SUGENO:
+            if sorted(weights) != weights:
+                Util.error("Error: The weights must be in non-decreasing order.")
             if max(weights) != 1.0:
                 Util.error("Error: The maximum of the weights must be equal to 1.")
             return pp.ParseResults([SugenoIntegral(weights, concepts)])
         elif operator == FuzzyDLKeyword.QUASI_SUGENO:
+            if sorted(weights) != weights:
+                Util.error("Error: The weights must be in non-decreasing order.")
             if max(weights) != 1.0:
                 Util.error("Error: The maximum of the weights must be equal to 1.")
             return pp.ParseResults([QsugenoIntegral(weights, concepts)])
