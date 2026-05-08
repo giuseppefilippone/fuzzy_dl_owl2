@@ -7,38 +7,47 @@ from fuzzy_dl_owl2.fuzzydl.util import constants
 from fuzzy_dl_owl2.fuzzydl.util.config_reader import ConfigReader
 from fuzzy_dl_owl2.fuzzydl.util.util import Util
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.choquet_concept import ChoquetConcept
-from fuzzy_dl_owl2.fuzzyowl2.owl_types.concept_definition import ConceptDefinition
+from fuzzy_dl_owl2.fuzzyowl2.owl_types.concept_definition import \
+    ConceptDefinition
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.crisp_function import CrispFunction
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.fuzzy_datatype import FuzzyDatatype
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.fuzzy_modifier import FuzzyModifier
-from fuzzy_dl_owl2.fuzzyowl2.owl_types.fuzzy_nominal_concept import FuzzyNominalConcept
-from fuzzy_dl_owl2.fuzzyowl2.owl_types.left_shoulder_function import (
-    LeftShoulderFunction,
-)
+from fuzzy_dl_owl2.fuzzyowl2.owl_types.fuzzy_nominal_concept import \
+    FuzzyNominalConcept
+from fuzzy_dl_owl2.fuzzyowl2.owl_types.left_shoulder_function import \
+    LeftShoulderFunction
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.linear_function import LinearFunction
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.linear_modifier import LinearModifier
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.modified_concept import ModifiedConcept
-from fuzzy_dl_owl2.fuzzyowl2.owl_types.modified_function import ModifiedFunction
-from fuzzy_dl_owl2.fuzzyowl2.owl_types.modified_property import ModifiedProperty
+from fuzzy_dl_owl2.fuzzyowl2.owl_types.modified_function import \
+    ModifiedFunction
+from fuzzy_dl_owl2.fuzzyowl2.owl_types.modified_property import \
+    ModifiedProperty
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.owa_concept import OwaConcept
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.qowa_concept import QowaConcept
-from fuzzy_dl_owl2.fuzzyowl2.owl_types.quasi_sugeno_concept import QsugenoConcept
-from fuzzy_dl_owl2.fuzzyowl2.owl_types.right_shoulder_function import (
-    RightShoulderFunction,
-)
+from fuzzy_dl_owl2.fuzzyowl2.owl_types.quasi_sugeno_concept import \
+    QsugenoConcept
+from fuzzy_dl_owl2.fuzzyowl2.owl_types.right_shoulder_function import \
+    RightShoulderFunction
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.sugeno_concept import SugenoConcept
-from fuzzy_dl_owl2.fuzzyowl2.owl_types.trapezoidal_function import TrapezoidalFunction
-from fuzzy_dl_owl2.fuzzyowl2.owl_types.triangular_function import TriangularFunction
-from fuzzy_dl_owl2.fuzzyowl2.owl_types.triangular_modifier import TriangularModifier
+from fuzzy_dl_owl2.fuzzyowl2.owl_types.trapezoidal_function import \
+    TrapezoidalFunction
+from fuzzy_dl_owl2.fuzzyowl2.owl_types.triangular_function import \
+    TriangularFunction
+from fuzzy_dl_owl2.fuzzyowl2.owl_types.triangular_modifier import \
+    TriangularModifier
 from fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_concept import WeightedConcept
-from fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_max_concept import WeightedMaxConcept
-from fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_min_concept import WeightedMinConcept
-from fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_sum_concept import WeightedSumConcept
-from fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_sum_zero_concept import (
-    WeightedSumZeroConcept,
-)
+from fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_max_concept import \
+    WeightedMaxConcept
+from fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_min_concept import \
+    WeightedMinConcept
+from fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_sum_concept import \
+    WeightedSumConcept
+from fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_sum_zero_concept import \
+    WeightedSumZeroConcept
 from fuzzy_dl_owl2.fuzzyowl2.parser.owl2_xml_parser import FuzzyOwl2XMLParser
-from fuzzy_dl_owl2.fuzzyowl2.util.sort_dl_lines import sort_by_fuzzydl_pdf_order
+from fuzzy_dl_owl2.fuzzyowl2.util.sort_dl_lines import \
+    sort_by_fuzzydl_pdf_order
 from pyowl2.abstracts.annotation_value import OWLAnnotationValue
 from pyowl2.abstracts.axiom import OWLAxiom
 from pyowl2.abstracts.class_expression import OWLClassExpression
@@ -46,102 +55,98 @@ from pyowl2.abstracts.data_property_expression import OWLDataPropertyExpression
 from pyowl2.abstracts.data_range import OWLDataRange
 from pyowl2.abstracts.entity import OWLEntity
 from pyowl2.abstracts.individual import OWLIndividual
-from pyowl2.abstracts.object_property_expression import OWLObjectPropertyExpression
+from pyowl2.abstracts.object_property_expression import \
+    OWLObjectPropertyExpression
 from pyowl2.axioms.assertion.class_assertion import OWLClassAssertion
-from pyowl2.axioms.assertion.data_property_assertion import OWLDataPropertyAssertion
-from pyowl2.axioms.assertion.different_individuals import OWLDifferentIndividuals
-from pyowl2.axioms.assertion.negative_data_property_assertion import (
-    OWLNegativeDataPropertyAssertion,
-)
-from pyowl2.axioms.assertion.negative_object_property_assertion import (
-    OWLNegativeObjectPropertyAssertion,
-)
-from pyowl2.axioms.assertion.object_property_assertion import OWLObjectPropertyAssertion
+from pyowl2.axioms.assertion.data_property_assertion import \
+    OWLDataPropertyAssertion
+from pyowl2.axioms.assertion.different_individuals import \
+    OWLDifferentIndividuals
+from pyowl2.axioms.assertion.negative_data_property_assertion import \
+    OWLNegativeDataPropertyAssertion
+from pyowl2.axioms.assertion.negative_object_property_assertion import \
+    OWLNegativeObjectPropertyAssertion
+from pyowl2.axioms.assertion.object_property_assertion import \
+    OWLObjectPropertyAssertion
 from pyowl2.axioms.assertion.same_individual import OWLSameIndividual
 from pyowl2.axioms.class_axiom.disjoint_classes import OWLDisjointClasses
 from pyowl2.axioms.class_axiom.disjoint_union import OWLDisjointUnion
 from pyowl2.axioms.class_axiom.equivalent_classes import OWLEquivalentClasses
 from pyowl2.axioms.class_axiom.sub_class_of import OWLSubClassOf
-from pyowl2.axioms.data_property_axiom.data_property_domain import OWLDataPropertyDomain
-from pyowl2.axioms.data_property_axiom.data_property_range import OWLDataPropertyRange
-from pyowl2.axioms.data_property_axiom.disjoint_data_properties import (
-    OWLDisjointDataProperties,
-)
-from pyowl2.axioms.data_property_axiom.equivalent_data_properties import (
-    OWLEquivalentDataProperties,
-)
-from pyowl2.axioms.data_property_axiom.functional_data_property import (
-    OWLFunctionalDataProperty,
-)
-from pyowl2.axioms.data_property_axiom.sub_data_property_of import OWLSubDataPropertyOf
+from pyowl2.axioms.data_property_axiom.data_property_domain import \
+    OWLDataPropertyDomain
+from pyowl2.axioms.data_property_axiom.data_property_range import \
+    OWLDataPropertyRange
+from pyowl2.axioms.data_property_axiom.disjoint_data_properties import \
+    OWLDisjointDataProperties
+from pyowl2.axioms.data_property_axiom.equivalent_data_properties import \
+    OWLEquivalentDataProperties
+from pyowl2.axioms.data_property_axiom.functional_data_property import \
+    OWLFunctionalDataProperty
+from pyowl2.axioms.data_property_axiom.sub_data_property_of import \
+    OWLSubDataPropertyOf
 from pyowl2.axioms.datatype_definition import OWLDatatypeDefinition
 from pyowl2.axioms.declaration import OWLDeclaration
-from pyowl2.axioms.object_property_axiom.asymmetric_object_property import (
-    OWLAsymmetricObjectProperty,
-)
-from pyowl2.axioms.object_property_axiom.disjoint_object_properties import (
-    OWLDisjointObjectProperties,
-)
-from pyowl2.axioms.object_property_axiom.equivalent_object_properties import (
-    OWLEquivalentObjectProperties,
-)
-from pyowl2.axioms.object_property_axiom.functional_object_property import (
-    OWLFunctionalObjectProperty,
-)
-from pyowl2.axioms.object_property_axiom.inverse_functional_object_property import (
-    OWLInverseFunctionalObjectProperty,
-)
-from pyowl2.axioms.object_property_axiom.inverse_object_properties import (
-    OWLInverseObjectProperties,
-)
-from pyowl2.axioms.object_property_axiom.irreflexive_object_property import (
-    OWLIrreflexiveObjectProperty,
-)
-from pyowl2.axioms.object_property_axiom.object_property_chain import (
-    OWLObjectPropertyChain,
-)
-from pyowl2.axioms.object_property_axiom.object_property_domain import (
-    OWLObjectPropertyDomain,
-)
-from pyowl2.axioms.object_property_axiom.object_property_range import (
-    OWLObjectPropertyRange,
-)
-from pyowl2.axioms.object_property_axiom.reflexive_object_property import (
-    OWLReflexiveObjectProperty,
-)
-from pyowl2.axioms.object_property_axiom.sub_object_property_of import (
-    OWLSubObjectPropertyOf,
-)
-from pyowl2.axioms.object_property_axiom.symmetric_object_property import (
-    OWLSymmetricObjectProperty,
-)
-from pyowl2.axioms.object_property_axiom.transitive_object_property import (
-    OWLTransitiveObjectProperty,
-)
+from pyowl2.axioms.object_property_axiom.asymmetric_object_property import \
+    OWLAsymmetricObjectProperty
+from pyowl2.axioms.object_property_axiom.disjoint_object_properties import \
+    OWLDisjointObjectProperties
+from pyowl2.axioms.object_property_axiom.equivalent_object_properties import \
+    OWLEquivalentObjectProperties
+from pyowl2.axioms.object_property_axiom.functional_object_property import \
+    OWLFunctionalObjectProperty
+from pyowl2.axioms.object_property_axiom.inverse_functional_object_property import \
+    OWLInverseFunctionalObjectProperty
+from pyowl2.axioms.object_property_axiom.inverse_object_properties import \
+    OWLInverseObjectProperties
+from pyowl2.axioms.object_property_axiom.irreflexive_object_property import \
+    OWLIrreflexiveObjectProperty
+from pyowl2.axioms.object_property_axiom.object_property_chain import \
+    OWLObjectPropertyChain
+from pyowl2.axioms.object_property_axiom.object_property_domain import \
+    OWLObjectPropertyDomain
+from pyowl2.axioms.object_property_axiom.object_property_range import \
+    OWLObjectPropertyRange
+from pyowl2.axioms.object_property_axiom.reflexive_object_property import \
+    OWLReflexiveObjectProperty
+from pyowl2.axioms.object_property_axiom.sub_object_property_of import \
+    OWLSubObjectPropertyOf
+from pyowl2.axioms.object_property_axiom.symmetric_object_property import \
+    OWLSymmetricObjectProperty
+from pyowl2.axioms.object_property_axiom.transitive_object_property import \
+    OWLTransitiveObjectProperty
 from pyowl2.base.annotation import OWLAnnotation
 from pyowl2.base.annotation_property import OWLAnnotationProperty
 from pyowl2.base.datatype import OWLDatatype
 from pyowl2.base.iri import IRI
 from pyowl2.base.owl_class import OWLClass
 from pyowl2.class_expression.data_all_values_from import OWLDataAllValuesFrom
-from pyowl2.class_expression.data_exact_cardinality import OWLDataExactCardinality
+from pyowl2.class_expression.data_exact_cardinality import \
+    OWLDataExactCardinality
 from pyowl2.class_expression.data_has_value import OWLDataHasValue
 from pyowl2.class_expression.data_max_cardinality import OWLDataMaxCardinality
 from pyowl2.class_expression.data_min_cardinality import OWLDataMinCardinality
 from pyowl2.class_expression.data_some_values_from import OWLDataSomeValuesFrom
-from pyowl2.class_expression.object_all_values_from import OWLObjectAllValuesFrom
+from pyowl2.class_expression.object_all_values_from import \
+    OWLObjectAllValuesFrom
 from pyowl2.class_expression.object_complement_of import OWLObjectComplementOf
-from pyowl2.class_expression.object_exact_cardinality import OWLObjectExactCardinality
+from pyowl2.class_expression.object_exact_cardinality import \
+    OWLObjectExactCardinality
 from pyowl2.class_expression.object_has_self import OWLObjectHasSelf
 from pyowl2.class_expression.object_has_value import OWLObjectHasValue
-from pyowl2.class_expression.object_intersection_of import OWLObjectIntersectionOf
-from pyowl2.class_expression.object_max_cardinality import OWLObjectMaxCardinality
-from pyowl2.class_expression.object_min_cardinality import OWLObjectMinCardinality
+from pyowl2.class_expression.object_intersection_of import \
+    OWLObjectIntersectionOf
+from pyowl2.class_expression.object_max_cardinality import \
+    OWLObjectMaxCardinality
+from pyowl2.class_expression.object_min_cardinality import \
+    OWLObjectMinCardinality
 from pyowl2.class_expression.object_one_of import OWLObjectOneOf
-from pyowl2.class_expression.object_some_values_from import OWLObjectSomeValuesFrom
+from pyowl2.class_expression.object_some_values_from import \
+    OWLObjectSomeValuesFrom
 from pyowl2.class_expression.object_union_of import OWLObjectUnionOf
 from pyowl2.data_range.data_intersection_of import OWLDataIntersectionOf
-from pyowl2.data_range.datatype_restriction import OWLDatatypeRestriction, OWLFacet
+from pyowl2.data_range.datatype_restriction import (OWLDatatypeRestriction,
+                                                    OWLFacet)
 from pyowl2.expressions.data_property import OWLDataProperty
 from pyowl2.expressions.object_property import OWLObjectProperty
 from pyowl2.getter.rdf_xml_getter import AxiomsType
@@ -255,10 +260,13 @@ class FuzzyOwl2(object):
 
     def __final_write(self) -> None:
         """Sorts the lines stored in the internal list to ensure a consistent and organized output format. This method can be used after all lines have been collected to arrange them in a specific order, such as alphabetically or based on predefined criteria, before writing them to the output file. Sorting the lines can enhance readability and maintain a structured presentation of the translated fuzzy DL definitions."""
+        with open(self.output_dl, "r") as file:
+            old_output: str = file.read()
+        Util.debug(f"Old output:\n{old_output}")
         sorted_lines: list[str] = sort_by_fuzzydl_pdf_order(self.lines)
         with open(self.output_dl, "w") as file:
             for line in sorted_lines:
-                file.write(f"{line}\n")
+                file.write(line + "\n")
 
     def process_ontology_annotations(self) -> None:
         """Iterates through the loaded ontologies to identify and process annotations specifically associated with the fuzzy label property. For each ontology, it retrieves the available annotations and filters out any that do not match the configured fuzzy label or are missing. The string value of the matching annotations is parsed into a logic representation, which is then written to the output via the internal writer method. This process ensures that only relevant fuzzy logic definitions are extracted and persisted, while skipping ontologies or annotations that do not meet the criteria."""
@@ -580,7 +588,7 @@ class FuzzyOwl2(object):
 
     def __write_subclass_of_axiom(
         self, ontology: OWLOntology, annotated: bool = True
-    ) -> None:
+    ) -> set[str]:
         """
         Processes subclass axioms from the provided ontology, separating them based on their associated fuzzy degree and the `annotated` flag. When `annotated` is True, the method writes axioms with degrees different from 1.0 to the output and records them as processed. Conversely, when `annotated` is False, it writes axioms with a degree of 1.0 only if they have not been previously processed, ensuring no duplication. This method relies on `__get_degree` to determine the fuzzy value and updates the internal `processed_axioms` set to track state.
 
@@ -590,6 +598,7 @@ class FuzzyOwl2(object):
         :type annotated: bool
         """
 
+        processed_classes: set[str] = set()
         for axiom in ontology.get_axioms(AxiomsType.SUBCLASSES):
             assert isinstance(axiom, OWLSubClassOf)
             subclass: OWLClassExpression = axiom.sub_class_expression
@@ -601,6 +610,9 @@ class FuzzyOwl2(object):
                 Util.debug(f"Subjclass of axiom -> {axiom}")
                 self.write_subclass_of_axiom(subclass, superclass, degree)
                 self.processed_axioms.add(f"{subclass} => {superclass}")
+
+                processed_classes.add(str(subclass))
+                processed_classes.add(str(superclass))
             else:
                 if (
                     degree == 1.0
@@ -609,6 +621,9 @@ class FuzzyOwl2(object):
                     Util.debug(f"Not annotated subclass of axiom -> {axiom}")
                     self.processed_axioms.add(f"{subclass} => {superclass}")
                     self.write_subclass_of_axiom(subclass, superclass, degree)
+                    processed_classes.add(str(subclass))
+                    processed_classes.add(str(superclass))
+        return processed_classes
 
     def __write_subobject_property_axiom(
         self, ontology: OWLOntology, annotated: bool = True
@@ -946,7 +961,9 @@ class FuzzyOwl2(object):
                         + axiom.disjoint_class_expressions
                         if isinstance(cls, OWLClass)
                     )
-            self.__write_subclass_of_axiom(ontology, annotated=True)
+            processed_classes.update(
+                self.__write_subclass_of_axiom(ontology, annotated=True)
+            )
             for axiom in ontology.get_axioms(AxiomsType.EQUIVALENT_CLASSES):
                 assert isinstance(axiom, OWLEquivalentClasses)
                 if str(axiom) not in self.processed_axioms:
@@ -975,6 +992,7 @@ class FuzzyOwl2(object):
                     Util.debug(f"Concept declaration axiom -> {cls}")
                     self.processed_axioms.add(str(cls))
                     self.write_concept_declaration(cls)
+                    processed_classes.add(str(cls))
 
             # ########
             #  RBox
@@ -1145,8 +1163,9 @@ class FuzzyOwl2(object):
                     Util.debug(f"Different individuals axiom -> {axiom}")
                     self.processed_axioms.add(str(axiom))
                     self.write_different_individuals_axiom(axiom.individuals)
+
             # ########
-            # Not annotated sublcass axioms
+            # Not annotated subclass axioms
             # ########
             self.__write_subclass_of_axiom(ontology, annotated=False)
             self.__write_subobject_property_axiom(ontology, annotated=False)

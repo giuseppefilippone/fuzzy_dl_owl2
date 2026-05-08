@@ -3,6 +3,7 @@ from __future__ import annotations
 import re
 from collections.abc import Iterable
 from itertools import groupby
+
 from fuzzy_dl_owl2.fuzzydl.util import Util
 
 # Total syntax order induced by the PDF:
@@ -21,7 +22,7 @@ FUZZYDL_PDF_ORDER: list[str] = [
     r"^\s*\(\s*define-fuzzy-concept\b.*\bcrisp\s*\(",
     r"^\s*\(\s*define-fuzzy-concept\b.*\bleft-shoulder\s*\(",
     r"^\s*\(\s*define-fuzzy-concept\b.*\bright-shoulder\s*\(",
-    r"^\s*\(\s*define-fuzzy-number\b.*\btriangular\s*\(",
+    r"^\s*\(\s*define-fuzzy-concept\b.*\btriangular\s*\(",
     r"^\s*\(\s*define-fuzzy-concept\b.*\btrapezoidal\s*\(",
     r"^\s*\(\s*define-fuzzy-concept\b.*\blinear\s*\(",
     r"^\s*\(\s*define-fuzzy-concept\b.*\bmodified\s*\(",
@@ -114,10 +115,11 @@ def find_fuzzydl_pdf_order_index(text: str) -> int:
     If no entry matches, return a large number so the item sorts at the end.
     """
     for index, pattern in enumerate(FUZZYDL_PDF_ORDER_RE):
-        if pattern.search(text):
-            Util.debug(
-                f"Matched {text!r} to pattern {pattern.pattern!r} at index {index}"
-            )
+        match_result = pattern.search(text)
+        Util.debug(
+            f"Matching result -> {match_result} for pattern {pattern.pattern!r} on text {text!r}"
+        )
+        if match_result:
             return index
     Util.debug(f"No fuzzyDL PDF-order match for {text!r}")
     return 10**9
@@ -143,6 +145,9 @@ def sort_by_fuzzydl_pdf_order(
     ]
 
     prepared.sort(key=lambda item: (item[0], item[1]))
+
+    for index, value in prepared:
+        Util.debug(f"[{index}] = {value!r}")
 
     result: list[str] = []
 

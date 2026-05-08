@@ -22,6 +22,9 @@ from fuzzy_dl_owl2.fuzzydl.concept.concrete.fuzzy_concrete_concept import (
 from fuzzy_dl_owl2.fuzzydl.concept.concrete.left_concrete_concept import (
     LeftConcreteConcept,
 )
+from fuzzy_dl_owl2.fuzzydl.concept.concrete.modified_concrete_concept import (
+    ModifiedConcreteConcept,
+)
 from fuzzy_dl_owl2.fuzzydl.concept.concrete.right_concrete_concept import (
     RightConcreteConcept,
 )
@@ -30,9 +33,6 @@ from fuzzy_dl_owl2.fuzzydl.concept.concrete.trapezoidal_concrete_concept import 
 )
 from fuzzy_dl_owl2.fuzzydl.concept.concrete.triangular_concrete_concept import (
     TriangularConcreteConcept,
-)
-from fuzzy_dl_owl2.fuzzydl.concept.concrete.modified_concrete_concept import (
-    ModifiedConcreteConcept,
 )
 from fuzzy_dl_owl2.fuzzydl.concept.has_value_concept import HasValueConcept
 from fuzzy_dl_owl2.fuzzydl.concept.interface.has_weighted_concepts_interface import (
@@ -1272,7 +1272,7 @@ class FuzzydlToOwl2:
                 ):
                     axiom: OWLAxiom = OWLSubDataPropertyOf(op, op2)
                 else:
-                    raise ValueError(
+                    raise Util.error(
                         f"Invalid property types: {type(op)} and {type(op2)}"
                     )
                 self.ontology.add_axiom(axiom)

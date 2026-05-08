@@ -36,7 +36,6 @@ class MILPProvider(enum.StrEnum):
     :raises ValueError: Raised when the string provided to `from_str` does not match any of the available MILP provider options.
     """
 
-
     GUROBI = enum.auto()
     MIP = enum.auto()
     # SCIPY = enum.auto()
@@ -82,7 +81,6 @@ class ConcreteFeatureType(enum.Enum):
     :type BOOLEAN: typing.Any
     """
 
-
     STRING = 0
     INTEGER = 1
     REAL = 2
@@ -126,7 +124,6 @@ class FeatureFunctionType(enum.Enum):
     :param PRODUCT: Represents the product of a number and a feature.
     :type PRODUCT: typing.Any
     """
-
 
     # Atomic feature
     ATOMIC = 0
@@ -181,7 +178,6 @@ class BlockingDynamicType(enum.Enum):
     :param ANYWHERE_DOUBLE_BLOCKING: A blocking strategy where a node is blocked if there exists any ancestor node that satisfies the double blocking condition.
     :type ANYWHERE_DOUBLE_BLOCKING: typing.Any
     """
-
 
     NO_BLOCKING = 0
     SUBSET_BLOCKING = 1
@@ -320,7 +316,6 @@ class KnowledgeBaseRules(enum.Enum):
     :type RULE_NOT_SIGMA_COUNT: typing.Any
     """
 
-
     RULE_ATOMIC = 0
     RULE_COMPLEMENT = 1
     RULE_GOEDEL_AND = 2
@@ -408,7 +403,6 @@ class LogicOperatorType(enum.Enum):
     :param ZADEH: Represents the standard fuzzy logic operators defined by Lotfi Zadeh, utilizing minimum for conjunction and maximum for disjunction.
     :type ZADEH: typing.Any
     """
-
 
     LUKASIEWICZ = 0
     GOEDEL = 1
@@ -579,7 +573,6 @@ class ConceptType(enum.Enum):
     :param NOT_SIGMA_CONCEPT: Represents the negation of a sigma-count concept.
     :type NOT_SIGMA_CONCEPT: typing.Any
     """
-
 
     # Conjunction
     AND = 0
@@ -753,7 +746,6 @@ class CreatedIndividualBlockingType(enum.Enum):
     :type UNCHECKED: typing.Any
     """
 
-
     BLOCKED = 0
     NOT_BLOCKED = 1
     # Unchecked blocking
@@ -792,7 +784,6 @@ class RepresentativeIndividualType(enum.Enum):
     :type LESS_EQUAL: typing.Any
     """
 
-
     GREATER_EQUAL = 0
     LESS_EQUAL = 1
 
@@ -830,7 +821,6 @@ class InequalityType(enum.StrEnum):
     :param EQUAL: Represents an equality relationship.
     :type EQUAL: typing.Any
     """
-
 
     GREATER_THAN = ">"
     LESS_THAN = "<"
@@ -872,7 +862,6 @@ class VariableType(enum.StrEnum):
     :param SEMI_CONTINUOUS: Represents a variable that is either zero or takes a value within a specified continuous range.
     :type SEMI_CONTINUOUS: typing.Any
     """
-
 
     BINARY = enum.auto()
     CONTINUOUS = enum.auto()
@@ -1150,7 +1139,6 @@ class FuzzyDLKeyword(enum.Enum):
     :raises NotImplementedError: Raised when comparing the keyword to an object of an unsupported type. Equality is only implemented for strings, pyparsing elements, and other FuzzyDLKeyword instances.
     """
 
-
     MAX_INSTANCE_QUERY = pp.CaselessKeyword("max-instance?")
     MIN_INSTANCE_QUERY = pp.CaselessKeyword("min-instance?")
     ALL_INSTANCES_QUERY = pp.CaselessKeyword("all-instances?")
@@ -1353,7 +1341,6 @@ class RestrictionType(enum.Enum):
     :type EXACT_VALUE: typing.Any
     """
 
-
     AT_MOST_VALUE = 0
     AT_LEAST_VALUE = 1
     EXACT_VALUE = 2
@@ -1392,7 +1379,6 @@ class FuzzyLogic(enum.StrEnum):
     :param LUKASIEWICZ: Specifies the Łukasiewicz variant of fuzzy logic for reasoning operations.
     :type LUKASIEWICZ: typing.Any
     """
-
 
     CLASSICAL = "classical"
     ZADEH = "zadeh"
