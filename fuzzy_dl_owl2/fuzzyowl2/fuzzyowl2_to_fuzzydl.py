@@ -162,11 +162,20 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
         :param line: The string content to be appended to the FuzzyDL output file.
         :type line: str
         """
-
-        Util.debug(f"Writing line to FuzzyDL file: {line}")
-        with open(self.output_dl, "a") as file:
-            file.write(f"{line}\n")
-        self.lines.append(line)
+        try:
+            Util.debug(f"Writing line to FuzzyDL file: {line}")
+            if re.search(
+                r"\bNone\b", line, flags=re.IGNORECASE | re.MULTILINE | re.DOTALL
+            ):
+                # This check is a safeguard against writing 'None' to the output, which would indicate an unsupported construct or an error in the conversion process. If 'None' is detected in the line, an exception is raised to alert the user and prevent the generation of invalid FuzzyDL syntax.
+                raise Exception(
+                    "Attempting to write 'None' to FuzzyDL file, which indicates an unsupported construct or error in the conversion process."
+                )
+            with open(self.output_dl, "a") as file:
+                file.write(f"{line}\n")
+            self.lines.append(line)
+        except Exception as e:
+            Util.debug(f"Error writing to FuzzyDL file the line {line}: {e}")
 
     def get_short_name(self, s: typing.Union[OWLEntity, str]) -> str:
         """
@@ -773,7 +782,7 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
         :rtype: typing.Optional[str]
         """
 
-        Util.error("Top object property not supported")
+        Util.debug("Top object property not supported")
         return None
 
     def get_bottom_object_property_name(self) -> typing.Optional[str]:
@@ -785,7 +794,7 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
         :rtype: typing.Optional[str]
         """
 
-        Util.error("Bottom object property not supported")
+        Util.debug("Bottom object property not supported")
         return None
 
     def get_atomic_object_property_name(self, p: OWLObjectProperty) -> str:
@@ -816,7 +825,7 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
         :rtype: typing.Optional[str]
         """
 
-        Util.error("Top data property not supported")
+        Util.debug("Top data property not supported")
         return None
 
     def get_bottom_data_property_name(self) -> typing.Optional[str]:
@@ -828,7 +837,7 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
         :rtype: typing.Optional[str]
         """
 
-        Util.error("Bottom data property not supported")
+        Util.debug("Bottom data property not supported")
         return None
 
     def get_atomic_data_property_name(self, p: OWLDataProperty) -> str:
