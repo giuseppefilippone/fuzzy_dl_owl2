@@ -15,10 +15,10 @@ project = "Fuzzy DL OWL 2"
 copyright = "2025, Giuseppe Filippone"
 author = "Giuseppe Filippone"
 # The short X.Y version
-version = "1.0.12"
+version = "1.0.15"
 
 # The full version, including alpha/beta/rc tags
-release = "1.0.12"
+release = "1.0.15"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -81,7 +81,9 @@ suppress_warnings = [
 
 # -- Custom Sphinx extension: Markdown Injector --------------------------------
 # LOCAL builds (with Ollama running):
-sphinx_md_injector_generate = os.environ.get("READTHEDOCS") != "True"  # runs LLM, writes .md, then injects
+sphinx_md_injector_generate = (
+    os.environ.get("READTHEDOCS") != "True"
+)  # runs LLM, writes .md, then injects
 # Point to the directory code_documenter.py wrote into.
 # Absolute path, or relative to the directory containing conf.py.
 sphinx_md_injector_dir = "./md"
