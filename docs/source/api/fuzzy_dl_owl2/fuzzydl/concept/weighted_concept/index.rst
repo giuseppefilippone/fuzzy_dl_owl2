@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.concept.weighted_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A class representing a concept modified by a numerical weight within a fuzzy description logic framework.
@@ -189,4 +193,3 @@ Module Contents
 
       :param value: The new weight to assign to the object.
       :type value: float
-

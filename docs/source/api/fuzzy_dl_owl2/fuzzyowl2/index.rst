@@ -25,6 +25,10 @@ fuzzy_dl_owl2.fuzzyowl2
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A translation framework that converts OWL2 ontologies annotated with fuzzy logic into the specific syntax required by Fuzzy Description Logic reasoners.
@@ -66,4 +70,3 @@ Submodules
    /api/fuzzy_dl_owl2/fuzzyowl2/owl_types/index
    /api/fuzzy_dl_owl2/fuzzyowl2/parser/index
    /api/fuzzy_dl_owl2/fuzzyowl2/util/index
-

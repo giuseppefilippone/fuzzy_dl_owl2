@@ -25,6 +25,10 @@ fuzzy_dl_owl2.fuzzydl.concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A comprehensive framework for defining, manipulating, and evaluating fuzzy description logic concepts through a variety of mathematical constructs and architectural patterns.
@@ -114,4 +118,3 @@ Submodules
    /api/fuzzy_dl_owl2/fuzzydl/concept/weighted_min_concept/index
    /api/fuzzy_dl_owl2/fuzzydl/concept/weighted_sum_concept/index
    /api/fuzzy_dl_owl2/fuzzydl/concept/weighted_sum_zero_concept/index
-

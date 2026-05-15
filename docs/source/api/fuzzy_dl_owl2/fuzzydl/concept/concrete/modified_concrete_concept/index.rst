@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.concept.concrete.modified_concrete_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A fuzzy concrete concept wrapper that applies a linguistic modifier to the membership degree of an underlying base concept.
@@ -199,4 +203,3 @@ Module Contents
 
       :param value: The new modifier instance to assign to the object.
       :type value: Modifier
-

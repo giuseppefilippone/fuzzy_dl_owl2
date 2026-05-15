@@ -25,6 +25,10 @@ fuzzy_dl_owl2.fuzzydl.assertion
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Models fuzzy logic assertions by associating individuals and concepts with minimum membership degree thresholds within a description logic framework.
@@ -54,4 +58,3 @@ Submodules
 
    /api/fuzzy_dl_owl2/fuzzydl/assertion/assertion/index
    /api/fuzzy_dl_owl2/fuzzydl/assertion/atomic_assertion/index
-

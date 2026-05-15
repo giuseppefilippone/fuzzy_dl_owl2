@@ -37,6 +37,10 @@ fuzzy_dl_owl2.fuzzydl.query.min
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Specialized query implementations that compute minimum degrees of membership, subsumption, and satisfiability within fuzzy description logic knowledge bases using Mixed-Integer Linear Programming.
@@ -72,4 +76,3 @@ Submodules
    /api/fuzzy_dl_owl2/fuzzydl/query/min/min_related_query/index
    /api/fuzzy_dl_owl2/fuzzydl/query/min/min_satisfiable_query/index
    /api/fuzzy_dl_owl2/fuzzydl/query/min/min_subsumes_query/index
-

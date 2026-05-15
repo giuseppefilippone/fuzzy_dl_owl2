@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.query.defuzzify.som_defuzzify_query
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A specialized query implementation applies the Smallest of Maxima strategy to convert fuzzy logic values into crisp numerical outputs.
@@ -81,5 +85,3 @@ Module Contents
       :return: An Expression object representing the variable `q` with a coefficient of 1.0.
 
       :rtype: Expression
-
-

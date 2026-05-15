@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.fuzzy_datatype
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 An abstract base class defines the structural foundation for fuzzy datatypes by managing a range characterized by lower and upper bounds.
@@ -123,5 +127,3 @@ Module Contents
    .. py:attribute:: _k2
       :type:  float
       :value: 0.0
-
-

@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.milp.term
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A Python class representing a linear term consisting of a coefficient and a variable for use in fuzzy description logic MILP formulations.
@@ -237,5 +241,3 @@ Module Contents
       :return: Returns the `Variable` instance stored in the `var` attribute.
 
       :rtype: Variable
-
-

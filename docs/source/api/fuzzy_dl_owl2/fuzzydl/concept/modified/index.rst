@@ -37,6 +37,10 @@ fuzzy_dl_owl2.fuzzydl.concept.modified
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A collection of fuzzy description logic components that apply mathematical modifiers, such as linear scaling or triangular transformations, to adjust the satisfaction degree of base concepts.
@@ -68,4 +72,3 @@ Submodules
    /api/fuzzy_dl_owl2/fuzzydl/concept/modified/linearly_modified_concept/index
    /api/fuzzy_dl_owl2/fuzzydl/concept/modified/modified_concept/index
    /api/fuzzy_dl_owl2/fuzzydl/concept/modified/triangularly_modified_concept/index
-

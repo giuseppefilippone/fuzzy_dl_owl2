@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.concept.concrete.right_concrete_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A specialized class models a fuzzy logic concept characterized by a "right shoulder" membership function, where the degree of truth transitions linearly from zero to one as an input value increases.
@@ -195,4 +199,3 @@ Module Contents
       :type value: float
 
       :raises ValueError: Raised if the provided value is less than `k1`, as `k2` must be greater than or equal to `k1`.
-

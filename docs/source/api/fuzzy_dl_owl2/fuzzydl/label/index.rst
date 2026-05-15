@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.label
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A data structure representing a weighted fuzzy concept that pairs a semantic category with a specific degree of satisfaction.
@@ -118,4 +122,3 @@ Module Contents
 
    .. py:attribute:: weight
       :type:  fuzzy_dl_owl2.fuzzydl.degree.degree.Degree
-

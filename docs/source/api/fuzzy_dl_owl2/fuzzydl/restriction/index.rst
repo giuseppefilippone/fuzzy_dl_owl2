@@ -37,6 +37,10 @@ fuzzy_dl_owl2.fuzzydl.restriction
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Implements fuzzy logic restrictions within a description logic framework to model constraints involving roles, concepts, and individuals.
@@ -66,4 +70,3 @@ Submodules
 
    /api/fuzzy_dl_owl2/fuzzydl/restriction/has_value_restriction/index
    /api/fuzzy_dl_owl2/fuzzydl/restriction/restriction/index
-

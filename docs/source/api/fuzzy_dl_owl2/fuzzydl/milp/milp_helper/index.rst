@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.milp.milp_helper
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A comprehensive manager for Mixed-Integer Linear Programming (MILP) problems that translates high-level fuzzy logic constructs into mathematical optimization models and interfaces with various solver backends.
@@ -991,5 +995,3 @@ Module Contents
    .. py:attribute:: variables
       :type:  list[fuzzy_dl_owl2.fuzzydl.milp.variable.Variable]
       :value: []
-
-

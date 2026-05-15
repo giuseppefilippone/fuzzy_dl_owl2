@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.milp.variable
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A symbolic variable class for linear expressions that manages types, bounds, and naming within mixed-integer linear programming contexts.

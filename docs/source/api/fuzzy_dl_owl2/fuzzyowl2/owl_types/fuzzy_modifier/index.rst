@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.fuzzy_modifier
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 An abstract base class is established to define the structural contract for fuzzy modifiers that alter membership degrees within the FuzzyOWL2 framework.
@@ -59,4 +63,3 @@ Module Contents
 
 
    This abstract base class defines the structure for fuzzy modifiers used within the FuzzyOWL2 framework, serving as a linguistic hedge that alters the membership degree of fuzzy concepts. It acts as a contract for implementing specific transformations, such as intensifiers like "very" or dilutors like "somewhat," which mathematically adjust the truth values of fuzzy axioms. Since this class is abstract, it cannot be instantiated directly; instead, it should be subclassed to create concrete modifier implementations that apply specific logic to fuzzy expressions.
-

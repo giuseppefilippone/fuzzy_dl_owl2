@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.classification_node
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Defines a graph node entity for modeling concepts in a classification hierarchy with shared global state for names and weighted relationships.
@@ -227,4 +231,3 @@ Module Contents
 
    .. py:attribute:: OUTPUT_EDGES
       :type:  dict[Self, float]
-

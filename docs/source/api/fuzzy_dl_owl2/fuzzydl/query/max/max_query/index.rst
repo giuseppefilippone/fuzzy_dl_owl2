@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.query.max.max_query
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A query operation that determines the maximum possible value of a specific expression while maintaining consistency with a fuzzy knowledge base.
@@ -98,4 +102,3 @@ Module Contents
 
    .. py:attribute:: obj_expr
       :type:  fuzzy_dl_owl2.fuzzydl.milp.expression.Expression
-

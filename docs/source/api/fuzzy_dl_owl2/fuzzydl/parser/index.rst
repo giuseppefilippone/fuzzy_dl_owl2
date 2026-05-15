@@ -37,6 +37,10 @@ fuzzy_dl_owl2.fuzzydl.parser
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A parsing engine that translates textual Fuzzy Description Logic definitions into a structured knowledge base and executable queries for reasoning tasks.
@@ -64,4 +68,3 @@ Submodules
    :maxdepth: 1
 
    /api/fuzzy_dl_owl2/fuzzydl/parser/dl_parser/index
-

@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.degree.degree
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 An abstract base class defines the interface for a degree metric used to quantify the extent to which a concept is satisfied within a fuzzy logic system.
@@ -251,5 +255,3 @@ Module Contents
       :return: An Expression representing the result of subtracting the current instance from the provided expression.
 
       :rtype: Expression
-
-

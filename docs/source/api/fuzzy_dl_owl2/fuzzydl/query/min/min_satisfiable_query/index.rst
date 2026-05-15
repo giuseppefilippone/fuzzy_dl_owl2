@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.query.min.min_satisfiable_query
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Calculates the minimal degree of satisfiability for a fuzzy concept using Mixed-Integer Linear Programming optimization.
@@ -111,5 +115,3 @@ Module Contents
       :return: A Solution object representing the optimal value found for the objective expression. If the ontology is inconsistent, returns a Solution indicating an inconsistent knowledge base. The solution value is guaranteed to be non-negative.
 
       :rtype: Solution
-
-

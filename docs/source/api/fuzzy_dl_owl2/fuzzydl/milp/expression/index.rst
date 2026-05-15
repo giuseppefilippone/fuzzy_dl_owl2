@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.milp.expression
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A linear mathematical expression model represents the degree of satisfaction of concepts within fuzzy description logic ontologies.
@@ -428,5 +432,3 @@ Module Contents
       :return: The result of subtracting the second expression from the first.
 
       :rtype: typing.Self
-
-

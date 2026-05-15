@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.property_definition
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Encapsulates a property name and its associated fuzzy modifier to define linguistic hedges within the FuzzyOWL2 ontology framework.
@@ -85,4 +89,3 @@ Module Contents
 
    .. py:attribute:: _prop
       :type:  str
-

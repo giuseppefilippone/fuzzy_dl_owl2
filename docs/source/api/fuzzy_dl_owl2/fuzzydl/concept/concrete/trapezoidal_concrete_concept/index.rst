@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.concept.concrete.trapezoidal_concrete_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Implements a trapezoidal membership function for fuzzy logic concepts, defining degrees of membership based on specific geometric parameters.
@@ -238,4 +242,3 @@ Module Contents
 
       :param value: The new name to assign to the object.
       :type value: str
-

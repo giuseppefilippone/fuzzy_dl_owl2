@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.concept.qowa_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Implements a Quantified Ordered Weighted Averaging (QOWA) concept that dynamically calculates aggregation weights based on a provided fuzzy quantifier.
@@ -188,4 +192,3 @@ Module Contents
 
       :param new_type: The classification or category to assign to the concept.
       :type new_type: fuzzy_dl_owl2.fuzzydl.util.constants.ConceptType
-

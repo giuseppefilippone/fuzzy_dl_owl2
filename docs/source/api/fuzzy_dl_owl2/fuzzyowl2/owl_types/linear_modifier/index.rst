@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.linear_modifier
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A fuzzy logic modifier that applies a linear transformation to membership degrees using a specific coefficient.
@@ -86,4 +90,3 @@ Module Contents
 
    .. py:attribute:: _c
       :type:  float
-

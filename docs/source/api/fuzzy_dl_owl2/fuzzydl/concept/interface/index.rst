@@ -37,6 +37,10 @@ fuzzy_dl_owl2.fuzzydl.concept.interface
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A collection of abstract interfaces defining the structural contracts for managing concepts, roles, values, and weights within a fuzzy description logic system.
@@ -74,4 +78,3 @@ Submodules
    /api/fuzzy_dl_owl2/fuzzydl/concept/interface/has_role_interface/index
    /api/fuzzy_dl_owl2/fuzzydl/concept/interface/has_value_interface/index
    /api/fuzzy_dl_owl2/fuzzydl/concept/interface/has_weighted_concepts_interface/index
-

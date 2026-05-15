@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.concrete_feature
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A class representing a concrete feature characterized by a name and a specific data type such as string, boolean, integer, or real.
@@ -192,5 +196,3 @@ Module Contents
 
       :param new_type: The concrete feature type to assign to the instance.
       :type new_type: ConcreteFeatureType
-
-

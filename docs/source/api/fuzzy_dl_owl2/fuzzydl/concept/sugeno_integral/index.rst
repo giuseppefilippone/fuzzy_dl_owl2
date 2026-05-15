@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.concept.sugeno_integral
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A composite structure representing a Sugeno integral functions as a fuzzy measure to aggregate multiple sub-concepts based on a corresponding set of numerical weights.
@@ -177,5 +181,3 @@ Module Contents
       :return: Returns a new Concept representing the negation of the Sugeno Integral resulting from replacing concept 'a' with concept 'c' in the internal concepts.
 
       :rtype: Concept
-
-

@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.concept.interface.has_concepts_interface
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 An abstract base class that defines a standard interface for objects requiring a mutable collection of concepts.
@@ -76,4 +80,3 @@ Module Contents
 
       :param value: An iterable of Concept objects to assign to the internal concepts list.
       :type value: typing.Iterable[Concept]
-

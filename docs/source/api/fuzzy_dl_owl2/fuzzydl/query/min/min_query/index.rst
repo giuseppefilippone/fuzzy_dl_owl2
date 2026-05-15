@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.query.min.min_query
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A query implementation that calculates the minimum possible value of a specific expression within a fuzzy description logic knowledge base.
@@ -93,4 +97,3 @@ Module Contents
 
 
    .. py:attribute:: obj_expr
-

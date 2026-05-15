@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.util.config_reader
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A centralized configuration manager for a fuzzy description logic reasoning engine that loads parameters from files and command-line arguments to control precision, optimization strategies, and solver selection.
@@ -143,5 +147,3 @@ Module Contents
    .. py:attribute:: RULE_ACYCLIC_TBOXES
       :type:  bool
       :value: True
-
-

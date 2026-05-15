@@ -25,6 +25,10 @@ fuzzy_dl_owl2.fuzzyowl2.util
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Foundational utilities for managing fuzzy logic vocabulary, generating compliant XML, and organizing ontology statements according to specification standards.
@@ -56,4 +60,3 @@ Submodules
    /api/fuzzy_dl_owl2/fuzzyowl2/util/constants/index
    /api/fuzzy_dl_owl2/fuzzyowl2/util/fuzzy_xml/index
    /api/fuzzy_dl_owl2/fuzzyowl2/util/sort_dl_lines/index
-

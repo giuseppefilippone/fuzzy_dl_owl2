@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.concept.interface.has_value_interface
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 An abstract base class that extends role management capabilities by incorporating a generic value attribute protected by deep copy operations to ensure state isolation.
@@ -76,4 +80,3 @@ Module Contents
 
       :param value: The value to set. A deep copy of this object is stored internally to prevent external mutations from affecting the internal state.
       :type value: typing.Any
-

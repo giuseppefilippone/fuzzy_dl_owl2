@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.fuzzy_property
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Defines an abstract base class that serves as a structural blueprint for properties governed by fuzzy logic principles within the FuzzyOWL2 ontology framework.
@@ -59,4 +63,3 @@ Module Contents
 
 
    This abstract base class defines the structural blueprint for properties that operate within the FuzzyOWL2 ontology framework, specifically those governed by fuzzy logic principles. It establishes a common interface for representing relationships that possess degrees of membership or truth, rather than binary constraints. Intended for extension, this class should be subclassed to implement concrete fuzzy property types, ensuring consistency across the fuzzy knowledge representation system.
-

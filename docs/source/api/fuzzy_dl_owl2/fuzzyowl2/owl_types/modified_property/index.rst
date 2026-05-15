@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.modified_property
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Represents a property within the FuzzyOWL2 framework that has been altered by a fuzzy modifier or linguistic hedge.
@@ -112,4 +116,3 @@ Module Contents
 
    .. py:attribute:: _prop
       :type:  str
-

@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.concept.interface.has_concept_interface
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 An abstract base class defines a standard interface for managing and updating a mutable conceptual entity.
@@ -76,4 +80,3 @@ Module Contents
 
       :param value: The Concept object to set as the current concept.
       :type value: Concept
-

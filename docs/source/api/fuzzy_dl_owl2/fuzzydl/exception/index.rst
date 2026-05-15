@@ -25,6 +25,10 @@ fuzzy_dl_owl2.fuzzydl.exception
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Specialized exception handling mechanisms for managing errors specific to fuzzy description logic and ontology operations.
@@ -54,4 +58,3 @@ Submodules
 
    /api/fuzzy_dl_owl2/fuzzydl/exception/fuzzy_ontology_exception/index
    /api/fuzzy_dl_owl2/fuzzydl/exception/inconsistent_ontology_exception/index
-

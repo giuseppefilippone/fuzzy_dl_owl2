@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.util.utils
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Utility decorators are provided to facilitate debugging through method tracing and to manage deep recursion by dynamically adjusting system limits.
@@ -24,6 +28,7 @@ Attributes
 .. autoapisummary::
 
    fuzzy_dl_owl2.fuzzydl.util.utils.FULL_CLASS_DEBUG_PRINT
+   fuzzy_dl_owl2.fuzzydl.util.utils.RECURSION_LIMIT_CAP
 
 
 Functions
@@ -66,3 +71,7 @@ Module Contents
    :type:  bool
    :value: False
 
+
+.. py:data:: RECURSION_LIMIT_CAP
+   :type:  int
+   :value: 1048576

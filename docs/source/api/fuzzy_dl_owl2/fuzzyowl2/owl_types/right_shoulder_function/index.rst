@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.right_shoulder_function
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A Python class implementation modeling a right-shoulder fuzzy membership function within the FuzzyOWL2 framework.
@@ -102,4 +106,3 @@ Module Contents
 
    .. py:attribute:: _b
       :type:  float
-

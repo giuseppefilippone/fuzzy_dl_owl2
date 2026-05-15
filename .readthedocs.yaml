@@ -11,6 +11,8 @@ build:
     python: "3.11"
   apt_packages:
     - graphviz
+    - ghostscript
+    - texlive-extra-utils
   jobs:
     pre_build:
       - rm -rf docs/source/api

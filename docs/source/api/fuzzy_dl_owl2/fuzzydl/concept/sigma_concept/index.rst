@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.concept.sigma_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A class representing a sigma-count construct within fuzzy description logic that evaluates concepts based on the cardinality of related individuals.
@@ -238,4 +242,3 @@ Module Contents
 
    .. py:attribute:: role
       :type:  str
-

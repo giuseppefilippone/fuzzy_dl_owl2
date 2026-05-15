@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.query.max.max_related_query
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A query mechanism that calculates the maximum degree of truth for a specific relationship between two individuals within a fuzzy knowledge base.
@@ -110,4 +114,3 @@ Module Contents
 
    .. py:attribute:: role
       :type:  str
-

@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.triangular_modifier
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Implements a triangular membership function used to define fuzzy modifiers within the FuzzyOWL2 framework.
@@ -118,4 +122,3 @@ Module Contents
 
    .. py:attribute:: _c
       :type:  float
-

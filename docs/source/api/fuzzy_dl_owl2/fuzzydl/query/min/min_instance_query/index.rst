@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.query.min.min_instance_query
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Calculates the greatest lower bound of membership for a specific individual relative to a given concept using Mixed-Integer Linear Programming optimization.
@@ -90,5 +94,3 @@ Module Contents
       :return: A Solution object representing the result of optimizing the preprocessed knowledge base. If the knowledge base is inconsistent, returns a Solution indicating an inconsistent state.
 
       :rtype: Solution
-
-

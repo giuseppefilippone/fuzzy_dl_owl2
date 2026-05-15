@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.assertion.assertion
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Models a fuzzy logic assertion that associates an individual with a concept subject to a minimum membership degree threshold.
@@ -208,4 +212,3 @@ Module Contents
 
    .. py:attribute:: individual
       :type:  fuzzy_dl_owl2.fuzzydl.individual.individual.Individual
-

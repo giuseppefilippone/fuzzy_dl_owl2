@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.modifier.modifier
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 An abstract base class defines the interface for fuzzy logic modifiers that transform concepts and calculate adjusted membership degrees.
@@ -149,4 +153,3 @@ Module Contents
 
    .. py:attribute:: name
       :type:  str
-

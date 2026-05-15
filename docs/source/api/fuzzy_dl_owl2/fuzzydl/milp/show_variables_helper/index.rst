@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.milp.show_variables_helper
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A configuration manager controls the visibility and display settings of variables, concepts, individuals, and role fillers within a fuzzy description logic system.
@@ -319,4 +323,3 @@ Module Contents
 
    .. py:attribute:: variables
       :type:  dict[fuzzy_dl_owl2.fuzzydl.milp.variable.Variable, str]
-

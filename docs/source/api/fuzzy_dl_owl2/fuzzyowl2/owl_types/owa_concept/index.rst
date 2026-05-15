@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.owa_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Models an Ordered Weighted Averaging (OWA) operation within a fuzzy ontology framework by aggregating a list of concepts using a specific set of numerical weights.
@@ -102,4 +106,3 @@ Module Contents
 
    .. py:attribute:: _weights
       :type:  list[float]
-

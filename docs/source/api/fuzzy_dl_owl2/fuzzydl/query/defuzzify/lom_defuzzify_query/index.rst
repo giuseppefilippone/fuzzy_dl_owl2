@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.query.defuzzify.lom_defuzzify_query
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Implements the Largest of Maxima defuzzification strategy to determine the highest crisp value within the region of maximum membership for a specific feature.
@@ -81,5 +85,3 @@ Module Contents
       :return: An Expression representing the negative of the specified variable.
 
       :rtype: Expression
-
-

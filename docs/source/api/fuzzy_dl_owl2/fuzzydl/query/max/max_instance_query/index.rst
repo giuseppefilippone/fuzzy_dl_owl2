@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.query.max.max_instance_query
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A reasoning query that computes the maximum degree of membership for a specific individual within a given concept using mixed-integer linear programming.
@@ -90,5 +94,3 @@ Module Contents
       :return: The Solution object resulting from the optimization of the preprocessed knowledge base, or a solution indicating an inconsistent ontology.
 
       :rtype: Solution
-
-

@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.concept.operator_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A Python implementation of logical operators for fuzzy description logic that supports multiple semantics, including classical, Lukasiewicz, and Gödel logic, while providing mechanisms for expression simplification and normalization.

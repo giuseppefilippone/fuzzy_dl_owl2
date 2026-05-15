@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.concept.value_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A Python class representing value restrictions such as "at most" or "at least" within a fuzzy description logic system.
@@ -224,4 +228,3 @@ Module Contents
 
       :param value: The new name to assign to the object.
       :type value: str
-

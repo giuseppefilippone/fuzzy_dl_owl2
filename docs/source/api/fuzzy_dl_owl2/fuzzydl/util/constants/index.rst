@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.util.constants
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A central configuration module that defines enumerations, type aliases, and global constants for a fuzzy description logic reasoning system.
@@ -51,6 +55,14 @@ Classes
    fuzzy_dl_owl2.fuzzydl.util.constants.RepresentativeIndividualType
    fuzzy_dl_owl2.fuzzydl.util.constants.RestrictionType
    fuzzy_dl_owl2.fuzzydl.util.constants.VariableType
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   fuzzy_dl_owl2.fuzzydl.util.constants.ensure_results_dir
 
 
 Module Contents
@@ -2548,6 +2560,8 @@ Module Contents
    .. py:attribute:: SEMI_CONTINUOUS
 
 
+.. py:function:: ensure_results_dir() -> str
+
 .. py:data:: KNOWLEDGE_BASE_SEMANTICS
    :type:  FuzzyLogic
 
@@ -2574,4 +2588,3 @@ Module Contents
 .. py:data:: STAR_SEPARATOR
    :type:  str
    :value: '*************************'
-

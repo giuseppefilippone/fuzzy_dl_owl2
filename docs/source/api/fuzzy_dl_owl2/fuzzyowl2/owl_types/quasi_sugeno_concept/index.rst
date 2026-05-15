@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.quasi_sugeno_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Implements a data structure for handling quasi-Sugeno integral concepts within a fuzzy ontology framework.
@@ -102,4 +106,3 @@ Module Contents
 
    .. py:attribute:: _weights
       :type:  list[float]
-

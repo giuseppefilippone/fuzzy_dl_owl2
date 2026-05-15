@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzyowl2.util.constants
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Establishes a centralized vocabulary of fuzzy logic concept types and parsing tokens for the FuzzyOWL2 framework.
@@ -531,4 +535,3 @@ Module Contents
 
 
    .. py:attribute:: ZADEH
-

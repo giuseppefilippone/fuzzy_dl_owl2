@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_min_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Implements a weighted minimum aggregation operator within the FuzzyOWL2 framework to construct complex fuzzy concepts from a collection of sub-concepts.
@@ -86,4 +90,3 @@ Module Contents
 
    .. py:attribute:: _wc
       :type:  list[fuzzy_dl_owl2.fuzzyowl2.owl_types.concept_definition.ConceptDefinition]
-

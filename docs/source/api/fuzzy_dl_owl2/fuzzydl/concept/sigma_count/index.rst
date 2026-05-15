@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.concept.sigma_count
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A structural representation of a sigma-count concept used in fuzzy description logic to evaluate constraints based on the number of role fillers satisfying specific conditions.
@@ -173,4 +177,3 @@ Module Contents
 
    .. py:attribute:: variable
       :type:  fuzzy_dl_owl2.fuzzydl.milp.variable.Variable
-

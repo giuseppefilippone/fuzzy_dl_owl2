@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.concept.ext_threshold_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A Python class representing extended threshold concepts that apply variable-based constraints to the satisfaction degree of a nested concept within a fuzzy description logic framework.

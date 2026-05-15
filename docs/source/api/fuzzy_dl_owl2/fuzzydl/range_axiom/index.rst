@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.range_axiom
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Defines a logical constraint that restricts the permissible types of individuals that can serve as the target of a specific role within a fuzzy description logic system.
@@ -65,4 +69,3 @@ Module Contents
 
    .. py:attribute:: role
       :type:  str
-

@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.concept.weighted_max_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Implements a weighted maximum concept for fuzzy description logic that pairs sub-concepts with numerical weights to perform logical operations.
@@ -173,4 +177,3 @@ Module Contents
 
       :param value: The new name to assign to the object.
       :type value: str
-

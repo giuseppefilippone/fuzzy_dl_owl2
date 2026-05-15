@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_sum_zero_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A specialized class within the FuzzyOWL2 framework represents a fuzzy logic constraint defined by a weighted sum of component concepts equating to zero.
@@ -86,4 +90,3 @@ Module Contents
 
    .. py:attribute:: _wc
       :type:  list[fuzzy_dl_owl2.fuzzyowl2.owl_types.concept_definition.ConceptDefinition]
-

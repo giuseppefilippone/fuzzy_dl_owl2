@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.sugeno_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A specialized data structure representing a Sugeno fuzzy integral concept that aggregates multiple fuzzy concepts using a corresponding set of weights.
@@ -102,4 +106,3 @@ Module Contents
 
    .. py:attribute:: _weights
       :type:  list[float]
-

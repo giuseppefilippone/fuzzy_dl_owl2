@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.concept.interface.has_role_interface
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 An abstract base class that standardizes the management of a role attribute through getter and setter properties.
@@ -76,4 +80,3 @@ Module Contents
 
       :param value: The new role to assign.
       :type value: str
-

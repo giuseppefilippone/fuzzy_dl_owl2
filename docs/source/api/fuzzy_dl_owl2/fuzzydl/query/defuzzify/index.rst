@@ -37,6 +37,10 @@ fuzzy_dl_owl2.fuzzydl.query.defuzzify
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A suite of defuzzification strategies converts fuzzy membership degrees into crisp numerical values by leveraging Mixed-Integer Linear Programming to optimize objective expressions within a constrained knowledge base.
@@ -70,4 +74,3 @@ Submodules
    /api/fuzzy_dl_owl2/fuzzydl/query/defuzzify/lom_defuzzify_query/index
    /api/fuzzy_dl_owl2/fuzzydl/query/defuzzify/mom_defuzzify_query/index
    /api/fuzzy_dl_owl2/fuzzydl/query/defuzzify/som_defuzzify_query/index
-

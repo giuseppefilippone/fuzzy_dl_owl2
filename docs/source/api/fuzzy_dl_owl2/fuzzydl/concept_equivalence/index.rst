@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.concept_equivalence
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Encapsulates the logical axiom asserting that two distinct concepts are equivalent within a fuzzy description logic system.
@@ -95,4 +99,3 @@ Module Contents
 
    .. py:attribute:: c2
       :type:  fuzzy_dl_owl2.fuzzydl.concept.concept.Concept
-

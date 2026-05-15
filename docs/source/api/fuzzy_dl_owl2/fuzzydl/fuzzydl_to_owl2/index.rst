@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.fuzzydl_to_owl2
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Software that translates FuzzyDL knowledge bases into OWL2 ontologies, preserving fuzzy logic semantics through specialized annotations and standard semantic web structures.
@@ -530,4 +534,3 @@ Module Contents
 .. py:function:: main()
 
    Serves as the command-line entry point for the script, initiating the conversion process from FuzzyDL ontology files to OWL2 format. It strictly enforces that exactly two command-line arguments are supplied: the input path for the FuzzyDL ontology and the output path for the generated OWL2 ontology. If the argument count is invalid, the function prints a usage instruction to standard error and terminates the application with an error code. When arguments are valid, it instantiates the FuzzydlToOwl2 converter with the specified paths and triggers the conversion routine, resulting in file system modifications.
-

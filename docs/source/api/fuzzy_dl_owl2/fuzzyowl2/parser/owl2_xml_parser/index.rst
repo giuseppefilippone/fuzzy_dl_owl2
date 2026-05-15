@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzyowl2.parser.owl2_xml_parser
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A specialized parser converts FuzzyOWL2 XML annotations into corresponding Python data structures representing fuzzy logic elements.
@@ -130,5 +134,3 @@ Module Contents
       :return: Returns a Python object representing the parsed FuzzyOWL2 element. The specific type is determined by the XML's `fuzzyType` attribute and may be a `ConceptDefinition`, `FuzzyDatatype`, `PropertyDefinition`, `FuzzyModifier`, a `float` (for axiom degrees), or a `str` (for ontology logic).
 
       :rtype: typing.Union[ConceptDefinition, FuzzyDatatype, PropertyDefinition, FuzzyModifier, float, str]
-
-

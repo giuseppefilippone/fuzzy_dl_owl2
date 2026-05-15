@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.left_shoulder_function
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A specialized data structure representing a left-shoulder membership function for fuzzy logic systems where membership values decrease as input values increase.
@@ -102,4 +106,3 @@ Module Contents
 
    .. py:attribute:: _b
       :type:  float
-

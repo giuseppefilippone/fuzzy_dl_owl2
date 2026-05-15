@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.restriction.restriction
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A universal restriction in a fuzzy description logic system that enforces a minimum membership degree for a specific role and concept combination.
@@ -141,4 +145,3 @@ Module Contents
 
    .. py:attribute:: role_name
       :type:  str
-

@@ -37,6 +37,10 @@ fuzzy_dl_owl2.fuzzydl.modifier
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A fuzzy logic subsystem that transforms the membership degrees of concepts through configurable mathematical functions.
@@ -68,4 +72,3 @@ Submodules
    /api/fuzzy_dl_owl2/fuzzydl/modifier/linear_modifier/index
    /api/fuzzy_dl_owl2/fuzzydl/modifier/modifier/index
    /api/fuzzy_dl_owl2/fuzzydl/modifier/triangular_modifier/index
-

@@ -37,6 +37,10 @@ fuzzy_dl_owl2.fuzzydl.degree
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A polymorphic framework for quantifying fuzzy logic satisfaction levels through numeric, variable, and symbolic expression representations designed for constraint solving.
@@ -70,4 +74,3 @@ Submodules
    /api/fuzzy_dl_owl2/fuzzydl/degree/degree_expression/index
    /api/fuzzy_dl_owl2/fuzzydl/degree/degree_numeric/index
    /api/fuzzy_dl_owl2/fuzzydl/degree/degree_variable/index
-

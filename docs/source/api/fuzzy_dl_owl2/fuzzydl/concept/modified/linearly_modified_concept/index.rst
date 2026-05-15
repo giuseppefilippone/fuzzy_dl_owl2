@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.concept.modified.linearly_modified_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A class representing a fuzzy description logic concept whose degree of satisfaction is adjusted by a linear modifier.
@@ -129,5 +133,3 @@ Module Contents
       :return: A new instance of the class where the underlying concept has `a` replaced by `c`, retaining the current modifier.
 
       :rtype: typing.Self
-
-

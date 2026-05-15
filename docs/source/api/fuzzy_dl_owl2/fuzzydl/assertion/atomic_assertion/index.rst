@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.assertion.atomic_assertion
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Defines a fundamental logical constraint within a fuzzy logic framework by associating a specific concept with a minimum membership degree threshold.
@@ -95,4 +99,3 @@ Module Contents
 
    .. py:attribute:: degree
       :type:  fuzzy_dl_owl2.fuzzydl.degree.degree.Degree
-

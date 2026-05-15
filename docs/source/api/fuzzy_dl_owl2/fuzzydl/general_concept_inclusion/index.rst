@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.general_concept_inclusion
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A Python class representing a fuzzy logic axiom that defines the inclusion of one concept within another to a specific degree of truth.
@@ -262,4 +266,3 @@ Module Contents
 
    .. py:attribute:: type
       :type:  fuzzy_dl_owl2.fuzzydl.util.constants.LogicOperatorType
-

@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.concept.concrete.crisp_concrete_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Defines a crisp concrete concept within a fuzzy logic framework using a binary membership function based on specific validity and satisfaction intervals.
@@ -197,4 +201,3 @@ Module Contents
       :type value: float
 
       :raises ValueError: Raised if the provided value is less than `k1`, as `k2` must be greater than or equal to `k1`.
-

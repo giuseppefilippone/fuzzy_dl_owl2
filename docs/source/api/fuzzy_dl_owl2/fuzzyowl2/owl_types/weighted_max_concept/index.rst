@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_max_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A specialized class representing a weighted maximum aggregation operator used within the FuzzyOWL2 ontology framework to combine fuzzy concepts.
@@ -86,4 +90,3 @@ Module Contents
 
    .. py:attribute:: _wc
       :type:  list[fuzzy_dl_owl2.fuzzyowl2.owl_types.concept_definition.ConceptDefinition]
-

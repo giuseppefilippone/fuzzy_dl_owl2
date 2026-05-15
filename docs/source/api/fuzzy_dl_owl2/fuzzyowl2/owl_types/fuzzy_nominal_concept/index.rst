@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.fuzzy_nominal_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A class representing a fuzzy nominal concept that associates a specific individual with a degree of membership within an ontology.
@@ -102,4 +106,3 @@ Module Contents
 
    .. py:attribute:: _n
       :type:  float
-

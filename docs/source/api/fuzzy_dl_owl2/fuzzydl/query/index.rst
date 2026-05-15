@@ -25,6 +25,10 @@ fuzzy_dl_owl2.fuzzydl.query
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A reasoning engine that executes fuzzy description logic queries by translating logical constraints into mixed-integer linear programming optimization problems to determine membership degrees and consistency.
@@ -80,4 +84,3 @@ Submodules
    /api/fuzzy_dl_owl2/fuzzydl/query/related_query/index
    /api/fuzzy_dl_owl2/fuzzydl/query/satisfiable_query/index
    /api/fuzzy_dl_owl2/fuzzydl/query/subsumption_query/index
-

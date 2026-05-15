@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.crisp_function
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A specialized datatype class representing a crisp function within the FuzzyOWL2 framework to model precise mathematical intervals or linear transformations.
@@ -102,4 +106,3 @@ Module Contents
 
    .. py:attribute:: _b
       :type:  float
-

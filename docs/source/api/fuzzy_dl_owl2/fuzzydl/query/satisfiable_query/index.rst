@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.query.satisfiable_query
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Establishes a foundational interface for min/max satisfiability queries that evaluate the degree to which a specific fuzzy concept is satisfied, optionally within the context of a particular individual.
@@ -79,5 +83,3 @@ Module Contents
 
       :param c: The fuzzy concept to be checked for satisfiability.
       :type c: Concept
-
-

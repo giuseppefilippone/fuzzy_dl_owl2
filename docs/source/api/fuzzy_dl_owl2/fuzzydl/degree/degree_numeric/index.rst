@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.degree.degree_numeric
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Encapsulates a specific floating-point value to represent a degree of satisfaction within a fuzzy logic framework.
@@ -220,4 +224,3 @@ Module Contents
 
    .. py:attribute:: value
       :type:  float
-

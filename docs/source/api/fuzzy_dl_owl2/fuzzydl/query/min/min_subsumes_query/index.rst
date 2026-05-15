@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.query.min.min_subsumes_query
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A query mechanism that computes the minimum degree of subsumption between two fuzzy concepts within a knowledge base by formulating and solving a mixed-integer linear programming problem.
@@ -90,5 +94,3 @@ Module Contents
       :return: A Solution object containing the result of the reasoning task, which may be a subsumption flag, an optimization score, or an inconsistency indicator.
 
       :rtype: Solution
-
-

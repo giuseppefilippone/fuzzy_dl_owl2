@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.modified_function
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Defines a data structure for representing fuzzy datatypes that have been altered by specific linguistic modifiers.
@@ -102,4 +106,3 @@ Module Contents
 
    .. py:attribute:: _mod
       :type:  str
-

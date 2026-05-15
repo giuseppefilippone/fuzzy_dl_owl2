@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.concept.string_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Implements an atomic string concept for fuzzy description logic that encapsulates textual data as indivisible leaf nodes.
@@ -145,4 +149,3 @@ Module Contents
 
    .. py:attribute:: _name
       :type:  str
-

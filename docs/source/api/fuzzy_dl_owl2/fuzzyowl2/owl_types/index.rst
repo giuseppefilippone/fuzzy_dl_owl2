@@ -25,6 +25,10 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Core data structures and abstract interfaces for defining fuzzy logic concepts, properties, and datatypes within the FuzzyOWL2 ontology framework.
@@ -104,4 +108,3 @@ Submodules
    /api/fuzzy_dl_owl2/fuzzyowl2/owl_types/weighted_min_concept/index
    /api/fuzzy_dl_owl2/fuzzyowl2/owl_types/weighted_sum_concept/index
    /api/fuzzy_dl_owl2/fuzzyowl2/owl_types/weighted_sum_zero_concept/index
-

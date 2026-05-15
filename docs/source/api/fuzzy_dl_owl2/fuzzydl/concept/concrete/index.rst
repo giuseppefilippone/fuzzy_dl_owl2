@@ -37,6 +37,10 @@ fuzzy_dl_owl2.fuzzydl.concept.concrete
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Concrete fuzzy logic concepts operating over numerical intervals are modeled through a hierarchy of classes implementing specific membership functions and arithmetic operations.
@@ -86,4 +90,3 @@ Submodules
    /api/fuzzy_dl_owl2/fuzzydl/concept/concrete/right_concrete_concept/index
    /api/fuzzy_dl_owl2/fuzzydl/concept/concrete/trapezoidal_concrete_concept/index
    /api/fuzzy_dl_owl2/fuzzydl/concept/concrete/triangular_concrete_concept/index
-

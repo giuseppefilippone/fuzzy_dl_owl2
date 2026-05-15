@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.query.defuzzify.mom_defuzzify_query
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Implements the Mean of Maxima defuzzification strategy to calculate a crisp feature value for an individual within a fuzzy ontology.
@@ -103,5 +107,3 @@ Module Contents
       :return: A Solution object containing the calculated numeric value (Mean of Maximums) derived from fuzzy logic optimization, or None if defuzzification fails. The Solution may also indicate an inconsistent knowledge base.
 
       :rtype: Solution
-
-

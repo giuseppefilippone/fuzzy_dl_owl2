@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.choquet_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A specialized implementation of a fuzzy concept definition that utilizes the Choquet integral to aggregate multiple underlying concepts based on a specific set of weights.
@@ -102,4 +106,3 @@ Module Contents
 
    .. py:attribute:: _weights
       :type:  list[float]
-

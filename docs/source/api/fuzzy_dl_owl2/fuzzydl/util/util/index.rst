@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.util.util
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A centralized utility module that configures application logging and provides static helper methods for mathematical operations, data manipulation, and error handling within the fuzzy ontology reasoner.
@@ -23,9 +27,7 @@ Attributes
 
 .. autoapisummary::
 
-   fuzzy_dl_owl2.fuzzydl.util.util.FILENAME
-   fuzzy_dl_owl2.fuzzydl.util.util.LOG_DIR
-   fuzzy_dl_owl2.fuzzydl.util.util.TODAY
+   fuzzy_dl_owl2.fuzzydl.util.util._logging_configured
    fuzzy_dl_owl2.fuzzydl.util.util.logger
 
 
@@ -35,6 +37,15 @@ Classes
 .. autoapisummary::
 
    fuzzy_dl_owl2.fuzzydl.util.util.Util
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   fuzzy_dl_owl2.fuzzydl.util.util._ensure_logging
+   fuzzy_dl_owl2.fuzzydl.util.util.setup_logging
 
 
 Module Contents
@@ -169,13 +180,13 @@ Module Contents
 
 
 
-.. py:data:: FILENAME
-   :type:  str
+.. py:function:: _ensure_logging() -> None
 
-.. py:data:: LOG_DIR
-   :type:  str
+.. py:function:: setup_logging(log_dir: Optional[str] = None) -> None
 
-.. py:data:: TODAY
-   :type:  datetime.datetime
+.. py:data:: _logging_configured
+   :type:  bool
+   :value: False
+
 
 .. py:data:: logger

@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.concept.approximation_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A class representing logical approximation constructs that constrain individuals based on the properties of related entities through specific roles within a fuzzy description logic framework.

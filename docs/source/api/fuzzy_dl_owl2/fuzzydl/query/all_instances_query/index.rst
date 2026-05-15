@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.query.all_instances_query
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Retrieves all individuals from a knowledge base that satisfy a specified concept and calculates their corresponding fuzzy membership degrees.
@@ -156,5 +160,3 @@ Module Contents
 
    .. py:attribute:: name
       :value: 'Instances of Uninferable?'
-
-

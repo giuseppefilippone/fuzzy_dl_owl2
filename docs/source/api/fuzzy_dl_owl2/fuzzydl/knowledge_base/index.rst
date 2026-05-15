@@ -5,11 +5,23 @@ fuzzy_dl_owl2.fuzzydl.knowledge_base
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A fuzzy knowledge base that manages terminological axioms, assertional data, and role hierarchies by implementing a tableau-based reasoning algorithm that translates fuzzy logic constraints into a Mixed-Integer Linear Programming (MILP) problem. It handles complex operations such as TBox normalization and absorption, lazy unfolding, and blocking strategies to ensure termination. The system supports multiple fuzzy logic semantics, including Lukasewicz, Zadeh, and Gödel, allowing for the definition of subsumption relationships and the evaluation of truth degrees. It manages the creation and merging of individuals within a depth-first completion forest, applying inference rules to expand assertions, and translates various fuzzy constructs—such as conjunctions, disjunctions, and concrete domain restrictions—into linear constraints within the MILP model. Additionally, it provides static solvers for specific logic types (Lukasiewicz, Zadeh, Classical) to encode logical connectives and restrictions, alongside handlers for blocking and unblocking nodes in the reasoning graph.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   fuzzy_dl_owl2.fuzzydl.knowledge_base._PICKLE_ALLOWED_MODULE_PREFIXES
+
 
 Classes
 -------
@@ -23,6 +35,7 @@ Classes
    fuzzy_dl_owl2.fuzzydl.knowledge_base.KnowledgeBase
    fuzzy_dl_owl2.fuzzydl.knowledge_base.LukasiewiczSolver
    fuzzy_dl_owl2.fuzzydl.knowledge_base.ZadehSolver
+   fuzzy_dl_owl2.fuzzydl.knowledge_base._RestrictedKBUnpickler
 
 
 Module Contents
@@ -3396,8 +3409,15 @@ Module Contents
 
 
    .. py:method:: read_object_from_file(file_path: str) -> KnowledgeBase
+      :classmethod:
+
 
       Deserializes a KnowledgeBase instance from the specified file path using the pickle module. The method opens the file in binary read mode, reconstructs the object, and updates the global KNOWLEDGE_BASE_SEMANTICS constant with the logic semantics retrieved from the loaded instance. It returns the deserialized knowledge base, provided the file contains valid data; otherwise, standard file I/O or unpickling errors may occur.
+
+      WARNING: Pickle deserialization can execute arbitrary code from a
+      crafted file. Only load files you produced yourself. Untrusted classes
+      outside the allowlist in ``_PICKLE_ALLOWED_MODULE_PREFIXES`` will be
+      rejected with ``pickle.UnpicklingError``.
 
       :param file_path: Path to the file from which to load the pickled KnowledgeBase object.
       :type file_path: str
@@ -6002,3 +6022,52 @@ Module Contents
       :type milp: MILPHelper
 
 
+
+.. only:: html
+
+    .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzydl_knowledge_base__RestrictedKBUnpickler.png
+       :alt: UML Class Diagram for _RestrictedKBUnpickler
+       :align: center
+       :width: 100%
+       :class: uml-diagram
+
+       UML Class Diagram for **_RestrictedKBUnpickler**
+
+.. only:: latex
+
+    .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzydl_knowledge_base__RestrictedKBUnpickler.pdf
+       :alt: UML Class Diagram for _RestrictedKBUnpickler
+       :align: center
+       :width: 7.2cm
+       :class: uml-diagram
+
+       UML Class Diagram for **_RestrictedKBUnpickler**
+
+.. py:class:: _RestrictedKBUnpickler
+
+   Bases: :py:obj:`pickle.Unpickler`
+
+   .. autoapi-inheritance-diagram:: fuzzy_dl_owl2.fuzzydl.knowledge_base._RestrictedKBUnpickler
+      :parts: 1
+      :private-bases:
+
+
+   Restricts unpickling to project-owned modules to avoid arbitrary code execution.
+
+
+   .. py:method:: find_class(module: str, name: str)
+
+      Return an object from a specified module.
+
+      If necessary, the module will be imported. Subclasses may override
+      this method (e.g. to restrict unpickling of arbitrary classes and
+      functions).
+
+      This method is called whenever a class or a function object is
+      needed.  Both arguments passed are str objects.
+
+
+
+.. py:data:: _PICKLE_ALLOWED_MODULE_PREFIXES
+   :type:  tuple[str, Ellipsis]
+   :value: ('fuzzy_dl_owl2.', 'collections', 'sortedcontainers', 'builtins', 'networkx')

@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.concept.concrete.linear_concrete_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A fuzzy concept implementation that models a piecewise linear membership function operating on a normalized domain between zero and one.
@@ -195,4 +199,3 @@ Module Contents
       :type value: float
 
       :raises ValueError: Raised if the provided value is less than `k1`, as `k2` must be greater than or equal to `k1`.
-

@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.modifier.triangular_modifier
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A fuzzy logic modifier that applies a triangular membership function to concepts based on three defining parameters.
@@ -197,4 +201,3 @@ Module Contents
 
       :param value: The new value to assign to the c attribute.
       :type value: float
-

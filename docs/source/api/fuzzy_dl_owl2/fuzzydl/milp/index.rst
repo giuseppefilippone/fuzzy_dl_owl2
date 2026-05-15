@@ -25,6 +25,10 @@ fuzzy_dl_owl2.fuzzydl.milp
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A mathematical modeling framework that translates fuzzy description logic constructs into mixed-integer linear programming problems for optimization and consistency checking.
@@ -64,4 +68,3 @@ Submodules
    /api/fuzzy_dl_owl2/fuzzydl/milp/solution/index
    /api/fuzzy_dl_owl2/fuzzydl/milp/term/index
    /api/fuzzy_dl_owl2/fuzzydl/milp/variable/index
-

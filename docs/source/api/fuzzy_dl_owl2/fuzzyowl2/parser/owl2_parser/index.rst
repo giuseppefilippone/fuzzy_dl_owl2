@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzyowl2.parser.owl2_parser
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A specialized parser that interprets Fuzzy OWL 2 XML annotations and transforms them into a knowledge base and query objects using the pyparsing library.
@@ -220,4 +224,3 @@ Module Contents
    :return: The numeric value of the first parsed token, returned as an int if the value is an integer, otherwise as a float.
 
    :rtype: float | int
-

@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.primitive_concept_definition
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Defines a data structure for representing primitive concept definitions within a fuzzy description logic system.
@@ -253,4 +257,3 @@ Module Contents
 
    .. py:attribute:: implication
       :type:  fuzzy_dl_owl2.fuzzydl.util.constants.LogicOperatorType
-

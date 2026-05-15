@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.linear_function
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Implements a linear membership function used to calculate degrees of membership in fuzzy sets.
@@ -102,4 +106,3 @@ Module Contents
 
    .. py:attribute:: _b
       :type:  float
-

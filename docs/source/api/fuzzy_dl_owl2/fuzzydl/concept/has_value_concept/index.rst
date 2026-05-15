@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.concept.has_value_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Implements a specific type of existential restriction known as a has-value concept within a fuzzy description logic system.
@@ -189,4 +193,3 @@ Module Contents
 
       :param value: The new name to assign to the object.
       :type value: str
-

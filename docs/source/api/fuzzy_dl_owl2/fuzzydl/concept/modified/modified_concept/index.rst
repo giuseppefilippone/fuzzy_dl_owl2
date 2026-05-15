@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.concept.modified.modified_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A specialized conceptual entity that wraps a base concept with a modifier to adjust the degree of truth or satisfaction within a fuzzy description logic framework.
@@ -181,4 +185,3 @@ Module Contents
 
       :param value:
       :type value: Modifier
-

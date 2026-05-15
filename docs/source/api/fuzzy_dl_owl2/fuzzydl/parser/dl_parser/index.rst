@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.parser.dl_parser
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A comprehensive parser for Fuzzy Description Logic that utilizes the pyparsing library to transform textual definitions into a structured knowledge base and executable queries.
@@ -18,22 +22,20 @@ The software implements a robust grammar using the ``pyparsing`` library to inte
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
-Attributes
-----------
-
-.. autoapisummary::
-
-   fuzzy_dl_owl2.fuzzydl.parser.dl_parser.FILENAME
-   fuzzy_dl_owl2.fuzzydl.parser.dl_parser.LOG_DIR
-   fuzzy_dl_owl2.fuzzydl.parser.dl_parser.TODAY
-
-
 Classes
 -------
 
 .. autoapisummary::
 
    fuzzy_dl_owl2.fuzzydl.parser.dl_parser.DLParser
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   fuzzy_dl_owl2.fuzzydl.parser.dl_parser._ensure_parser_log_path
 
 
 Module Contents
@@ -798,11 +800,4 @@ Module Contents
 
 
 
-.. py:data:: FILENAME
-   :type:  str
-
-.. py:data:: LOG_DIR
-   :type:  str
-
-.. py:data:: TODAY
-   :type:  datetime.datetime
+.. py:function:: _ensure_parser_log_path() -> str

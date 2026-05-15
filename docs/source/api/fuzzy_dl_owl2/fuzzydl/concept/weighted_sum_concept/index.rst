@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.concept.weighted_sum_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A weighted sum concept that aggregates sub-concepts using specific numerical weights to form a linear combination within a fuzzy description logic system.
@@ -173,4 +177,3 @@ Module Contents
 
       :param value: The new name to assign to the object.
       :type value: str
-

@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.trapezoidal_function
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A Python implementation of a trapezoidal membership function that models fuzzy sets with a flat top region.
@@ -134,4 +138,3 @@ Module Contents
 
    .. py:attribute:: _d
       :type:  float
-

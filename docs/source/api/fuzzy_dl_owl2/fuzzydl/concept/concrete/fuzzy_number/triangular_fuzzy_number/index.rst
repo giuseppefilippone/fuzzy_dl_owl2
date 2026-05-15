@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.concept.concrete.fuzzy_number.triangular_fuzzy_number
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A Python class representing triangular fuzzy numbers that supports arithmetic operations, logical comparisons, and defuzzification.
@@ -368,4 +372,3 @@ Module Contents
 
    .. py:attribute:: K2
       :type:  float
-

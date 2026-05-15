@@ -25,6 +25,10 @@ fuzzy_dl_owl2.fuzzydl
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Implements a fuzzy description logic reasoning engine that manages knowledge bases, processes axioms and concepts, and performs inference using Mixed-Integer Linear Programming solvers.
@@ -104,4 +108,3 @@ Submodules
    /api/fuzzy_dl_owl2/fuzzydl/restriction/index
    /api/fuzzy_dl_owl2/fuzzydl/role_parent_with_degree/index
    /api/fuzzy_dl_owl2/fuzzydl/util/index
-

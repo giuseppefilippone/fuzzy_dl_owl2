@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.individual.representative_individual
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A concrete proxy that models a collection of individuals satisfying a specific fuzzy condition relative to a threshold by associating a feature with a triangular fuzzy number.
@@ -129,4 +133,3 @@ Module Contents
 
    .. py:attribute:: type
       :type:  fuzzy_dl_owl2.fuzzydl.util.constants.RepresentativeIndividualType
-

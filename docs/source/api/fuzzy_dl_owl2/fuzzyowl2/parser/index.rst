@@ -37,6 +37,10 @@ fuzzy_dl_owl2.fuzzyowl2.parser
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Specialized parsing logic transforms Fuzzy OWL 2 XML annotations and grammar-based strings into internal knowledge bases and fuzzy logic objects.
@@ -66,4 +70,3 @@ Submodules
 
    /api/fuzzy_dl_owl2/fuzzyowl2/parser/owl2_parser/index
    /api/fuzzy_dl_owl2/fuzzyowl2/parser/owl2_xml_parser/index
-

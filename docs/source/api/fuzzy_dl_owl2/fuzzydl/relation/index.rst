@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.relation
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A class representing a fuzzy role assertion that connects two individuals via a specific relationship type and a lower bound degree.
@@ -175,4 +179,3 @@ Module Contents
 
    .. py:attribute:: role_name
       :type:  str
-

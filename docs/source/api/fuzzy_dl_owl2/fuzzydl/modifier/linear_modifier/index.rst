@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.modifier.linear_modifier
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A fuzzy logic modifier that applies a configurable piecewise linear transformation to the membership degrees of concepts.
@@ -200,4 +204,3 @@ Module Contents
 
       :param value: The new value to assign to the internal c attribute.
       :type value: float
-

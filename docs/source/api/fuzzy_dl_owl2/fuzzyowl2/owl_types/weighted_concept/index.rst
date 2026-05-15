@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Defines a data structure for representing weighted concepts in the FuzzyOWL2 ontology language by associating a numerical weight with a named fuzzy concept.
@@ -102,4 +106,3 @@ Module Contents
 
    .. py:attribute:: _n
       :type:  float
-

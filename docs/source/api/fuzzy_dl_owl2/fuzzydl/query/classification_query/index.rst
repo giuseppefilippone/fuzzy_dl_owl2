@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.query.classification_query
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A specialized query implementation that triggers the classification of a knowledge base and handles potential inconsistencies by returning specific solution states.
@@ -90,5 +94,3 @@ Module Contents
       :return: A Solution object representing the outcome of the classification attempt. It indicates success with a value of 1.0 or failure due to an inconsistent knowledge base.
 
       :rtype: Solution
-
-

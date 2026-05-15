@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.query.bnp_query
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Encapsulates the calculation of the best non-fuzzy performance for a triangular fuzzy number within a query framework.
@@ -98,4 +102,3 @@ Module Contents
 
    .. py:attribute:: c
       :type:  fuzzy_dl_owl2.fuzzydl.concept.concrete.fuzzy_number.triangular_fuzzy_number.TriangularFuzzyNumber
-

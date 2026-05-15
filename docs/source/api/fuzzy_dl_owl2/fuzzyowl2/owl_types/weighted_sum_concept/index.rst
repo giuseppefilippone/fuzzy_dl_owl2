@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_sum_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A specialized class representing a weighted sum concept that aggregates multiple concept definitions within the FuzzyOWL2 framework.
@@ -86,4 +90,3 @@ Module Contents
 
    .. py:attribute:: _wc
       :type:  list[fuzzy_dl_owl2.fuzzyowl2.owl_types.concept_definition.ConceptDefinition]
-

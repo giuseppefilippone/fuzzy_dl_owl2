@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.concept.weighted_min_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A class representing a composite concept defined by a weighted minimum operation over a collection of sub-concepts within a fuzzy description logic framework.
@@ -173,4 +177,3 @@ Module Contents
 
       :param value: The new name to assign to the object.
       :type value: str
-

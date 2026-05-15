@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.concept.quasi_sugeno_integral
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Implements a Quasi-Sugeno integral operator that aggregates a collection of fuzzy concepts using specific weights.
@@ -153,4 +157,3 @@ Module Contents
 
       :param new_type: The classification or category to assign to the concept.
       :type new_type: fuzzy_dl_owl2.fuzzydl.util.constants.ConceptType
-

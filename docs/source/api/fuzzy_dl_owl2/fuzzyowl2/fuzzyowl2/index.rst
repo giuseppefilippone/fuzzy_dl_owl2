@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzyowl2.fuzzyowl2
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A translator that converts OWL2 ontologies annotated with fuzzy logic into a Fuzzy Description Logic representation for use in reasoning systems.
@@ -175,7 +179,7 @@ Module Contents
 
 
 
-   .. py:method:: __write_subclass_of_axiom(ontology: pyowl2.ontology.OWLOntology, annotated: bool = True) -> None
+   .. py:method:: __write_subclass_of_axiom(ontology: pyowl2.ontology.OWLOntology, annotated: bool = True) -> set[str]
 
       Processes subclass axioms from the provided ontology, separating them based on their associated fuzzy degree and the `annotated` flag. When `annotated` is True, the method writes axioms with degrees different from 1.0 to the output and records them as processed. Conversely, when `annotated` is False, it writes axioms with a degree of 1.0 only if they have not been previously processed, ensuring no duplication. This method relies on `__get_degree` to determine the fuzzy value and updates the internal `processed_axioms` set to track state.
 
@@ -1353,4 +1357,3 @@ Module Contents
 
    .. py:attribute:: processed_axioms
       :type:  set[str]
-

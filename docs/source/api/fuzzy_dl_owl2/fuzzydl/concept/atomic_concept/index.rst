@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.concept.atomic_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Defines a fundamental, indivisible unit within a fuzzy description logic hierarchy that serves as a leaf node for logical operations.
@@ -306,5 +310,3 @@ Module Contents
       :return: The concept resulting from the replacement operation. Returns `c` if `self` matches `a` and `c` is atomic; otherwise, returns `self`. Returns `None` if `c` is not atomic.
 
       :rtype: typing.Optional[typing.Self]
-
-

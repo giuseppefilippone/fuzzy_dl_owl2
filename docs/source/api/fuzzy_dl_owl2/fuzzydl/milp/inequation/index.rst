@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.milp.inequation
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Encapsulates mathematical inequalities of the form expression compared to zero for use in fuzzy description logic ontologies.

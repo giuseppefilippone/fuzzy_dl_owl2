@@ -37,6 +37,10 @@ fuzzy_dl_owl2.fuzzydl.concept.concrete.fuzzy_number
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Implements a mathematical framework for handling uncertain values through triangular fuzzy numbers, supporting arithmetic operations, logical comparisons, and defuzzification.
@@ -64,4 +68,3 @@ Submodules
    :maxdepth: 1
 
    /api/fuzzy_dl_owl2/fuzzydl/concept/concrete/fuzzy_number/triangular_fuzzy_number/index
-

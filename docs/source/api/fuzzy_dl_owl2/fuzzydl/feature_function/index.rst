@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.feature_function
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A class representing mathematical expressions over features that supports arithmetic operations and converts them into linear programming constraints.
@@ -181,5 +185,3 @@ Module Contents
       :return: Returns an Expression object representing the mathematical formulation of the feature function for the given individual, or None if the function type is unsupported.
 
       :rtype: typing.Optional[Expression]
-
-

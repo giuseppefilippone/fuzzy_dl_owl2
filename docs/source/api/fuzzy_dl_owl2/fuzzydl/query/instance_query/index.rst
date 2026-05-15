@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.query.instance_query
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 An abstract base class that defines a framework for querying the membership degree of a specific individual within a given concept.
@@ -79,5 +83,3 @@ Module Contents
    .. py:attribute:: obj_expr
       :type:  fuzzy_dl_owl2.fuzzydl.milp.expression.Expression
       :value: None
-
-

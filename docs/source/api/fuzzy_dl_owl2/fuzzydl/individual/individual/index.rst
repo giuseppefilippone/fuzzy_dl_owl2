@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.individual.individual
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Defines a core entity class representing a specific instance within a fuzzy description logic knowledge base, managing concept assertions, role relations, and restrictions during reasoning processes.
@@ -276,4 +280,3 @@ Module Contents
 
    .. py:attribute:: role_restrictions
       :type:  dict[str, list[fuzzy_dl_owl2.fuzzydl.restriction.restriction.Restriction]]
-

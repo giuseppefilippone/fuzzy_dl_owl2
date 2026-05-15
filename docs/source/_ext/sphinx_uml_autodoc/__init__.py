@@ -246,20 +246,11 @@ def _on_builder_inited(app: Sphinx) -> None:
         if not ok and use_pyreverse:
             ok = _pyreverse_class(fqn, src_file, base, app)
 
-        assert ok
+        if not ok:
+            logger.warning("[uml] Skipping class %s — diagram generation failed", fqn)
+            continue
 
-        # if not ok:
-        #     cls = _try_import(fqn)
-        #     if cls is not None:
-        #         try:
-        #             dot = _inspect_dot(cls, conf)
-        #             _render_vector(dot, base)
-        #             ok = True
-        #         except Exception as exc:
-        #             logger.info("[uml] inspect fallback failed for %s: %s", fqn, exc)
-
-        if ok:
-            generated.add(fqn)
+        generated.add(fqn)
 
     logger.debug(
         "[uml] Generated %d / %d PNG diagrams for the classes.",
@@ -278,20 +269,11 @@ def _on_builder_inited(app: Sphinx) -> None:
         if not ok and use_pyreverse:
             ok = _pyreverse_class(fqn, src_file, base, app, module=True)
 
-        assert ok
+        if not ok:
+            logger.warning("[uml] Skipping module %s — diagram generation failed", fqn)
+            continue
 
-        # if not ok:
-        #     cls = _try_import(fqn)
-        #     if cls is not None:
-        #         try:
-        #             dot = _inspect_dot(cls, conf)
-        #             _render_vector(dot, base)
-        #             ok = True
-        #         except Exception as exc:
-        #             logger.debug("[uml] inspect fallback failed for %s: %s", fqn, exc)
-
-        if ok:
-            generated.add(fqn)
+        generated.add(fqn)
 
     logger.debug(
         "[uml] Generated %d / %d PNG diagrams for the modules.",
@@ -1024,39 +1006,42 @@ def _fix_pdf(path: Path):
     out = path.with_suffix(".pdf")
 
     # 1) down-convert to PDF 1.5 (optional, helps version warnings)
-    subprocess.run(
-        [
-            "gs",
-            "-sDEVICE=pdfwrite",
-            "-dPDFSETTINGS=/screen",
-            "-dCompatibilityLevel=1.5",
-            "-dDownsampleColorImages=true",
-            "-dColorImageDownsampleType=/Bicubic",
-            "-dColorImageResolution=72",
-            "-dGrayImageDownsampleType=/Bicubic",
-            "-dGrayImageResolution=72",
-            "-dMonoImageDownsampleType=/Bicubic",
-            "-dMonoImageResolution=72",
-            "-sPAPERSIZE=a4",
-            "-dFIXEDMEDIA",
-            "-dPDFFitPage",
-            "-dQUIET",
-            "-dNOPAUSE",
-            "-dBATCH",
-            "-dSAFER",
-            f"-sOutputFile={tmp}",
-            str(path),
-        ],
-        check=True,
-    )
-
-    # # 2) crop to content (fixes huge MediaBox => fixes Dimension too large)
     try:
-        subprocess.run(["pdfcrop", "--verbose", str(tmp), str(out)], check=True)
+        subprocess.run(
+            [
+                "gs",
+                "-sDEVICE=pdfwrite",
+                "-dPDFSETTINGS=/screen",
+                "-dCompatibilityLevel=1.5",
+                "-dDownsampleColorImages=true",
+                "-dColorImageDownsampleType=/Bicubic",
+                "-dColorImageResolution=72",
+                "-dGrayImageDownsampleType=/Bicubic",
+                "-dGrayImageResolution=72",
+                "-dMonoImageDownsampleType=/Bicubic",
+                "-dMonoImageResolution=72",
+                "-sPAPERSIZE=a4",
+                "-dFIXEDMEDIA",
+                "-dPDFFitPage",
+                "-dQUIET",
+                "-dNOPAUSE",
+                "-dBATCH",
+                "-dSAFER",
+                f"-sOutputFile={tmp}",
+                str(path),
+            ],
+            check=True,
+            capture_output=True,
+        )
+    except (FileNotFoundError, subprocess.CalledProcessError) as exc:
+        logger.warning("[uml] Ghostscript failed for %s: %s — leaving raw PDF", path, exc)
+        return
+
+    # 2) crop to content (fixes huge MediaBox => fixes Dimension too large)
+    try:
+        subprocess.run(["pdfcrop", "--verbose", str(tmp), str(out)], check=True, capture_output=True)
     except Exception as e:
-        logger.debug("-" * 100)
-        logger.debug(e)
-        logger.debug("-" * 100)
+        logger.debug("[uml] pdfcrop failed for %s: %s", path, e)
 
     # Replace original (or instead update references to use .fixed.pdf)
     out.replace(path)

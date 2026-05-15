@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.concept.choquet_integral
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A class definition for modeling complex concepts within a fuzzy description logic system using the Choquet integral aggregation mechanism.
@@ -164,5 +168,3 @@ Module Contents
       :return: A new Concept representing the negation of a Choquet Integral constructed by replacing every occurrence of concept `a` with concept `c` in the original integral's sub-concepts.
 
       :rtype: Concept
-
-

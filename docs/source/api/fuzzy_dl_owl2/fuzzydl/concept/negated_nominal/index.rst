@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.concept.negated_nominal
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Implements a representation for the logical complement of a named individual in fuzzy description logic.
@@ -159,4 +163,3 @@ Module Contents
 
       :param value: The new name to assign to the object.
       :type value: str
-

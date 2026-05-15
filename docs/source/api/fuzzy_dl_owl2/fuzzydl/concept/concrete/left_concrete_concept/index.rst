@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.concept.concrete.left_concrete_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A Python implementation of a left shoulder fuzzy set that assigns full membership to lower values and linearly decreases to zero over a specified interval.
@@ -195,4 +199,3 @@ Module Contents
       :type value: float
 
       :raises ValueError: Raised if the provided value is less than `k1`, as `k2` must be greater than or equal to `k1`.
-

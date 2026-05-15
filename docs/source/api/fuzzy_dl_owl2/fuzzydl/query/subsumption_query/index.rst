@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.query.subsumption_query
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 An abstract base class that defines the structure for evaluating the degree to which one concept is subsumed by another within a fuzzy logic framework.
@@ -86,4 +90,3 @@ Module Contents
 
    .. py:attribute:: type
       :type:  fuzzy_dl_owl2.fuzzydl.util.constants.LogicOperatorType
-

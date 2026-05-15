@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.modified_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Encapsulates a fuzzy concept that has been modified by a specific linguistic hedge or modifier within the FuzzyOWL2 framework.
@@ -102,4 +106,3 @@ Module Contents
 
    .. py:attribute:: _mod
       :type:  str
-

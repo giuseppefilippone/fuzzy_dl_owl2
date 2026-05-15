@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.concept.interface.has_weighted_concepts_interface
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 An abstract interface that extends concept management to include associated numerical weights.
@@ -88,4 +92,3 @@ Module Contents
 
       :param value: An iterable of floating-point values representing the weights. If None, the weights are reset.
       :type value: typing.Optional[typing.Iterable[float]]
-

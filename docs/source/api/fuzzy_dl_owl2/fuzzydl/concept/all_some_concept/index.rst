@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.concept.all_some_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Implements a class for representing universal and existential quantified role restrictions within a fuzzy description logic system.

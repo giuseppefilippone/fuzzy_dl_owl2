@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzyowl2.fuzzyowl2_to_fuzzydl
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A converter that transforms ontologies defined in the FuzzyOWL2 format into the specific syntax required by the FuzzyDL reasoner.
@@ -1213,4 +1217,3 @@ Module Contents
 
    .. py:attribute:: string_datatypes
       :type:  set[str]
-

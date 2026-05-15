@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.query.max.max_satisfiable_query
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A fuzzy logic query mechanism that calculates the maximal satisfiability degree of a concept within a knowledge base using mixed-integer linear programming.
@@ -111,5 +115,3 @@ Module Contents
       :return: A Solution object representing the result of the optimization process, containing the optimal value (normalized to be non-negative) or a status indicating the knowledge base is inconsistent.
 
       :rtype: Solution
-
-

@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.concept.truth_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A Python implementation of the universal (Top) and contradictory (Bottom) concepts within a fuzzy description logic framework.

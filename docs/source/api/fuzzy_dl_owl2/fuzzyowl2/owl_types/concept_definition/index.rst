@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.concept_definition
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 An abstract base class representing concept definitions within the FuzzyOWL2 framework.
@@ -86,4 +90,3 @@ Module Contents
 
    .. py:attribute:: _type
       :type:  fuzzy_dl_owl2.fuzzyowl2.util.constants.ConceptType
-

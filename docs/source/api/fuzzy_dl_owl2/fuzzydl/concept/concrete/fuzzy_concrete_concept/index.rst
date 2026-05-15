@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.concept.concrete.fuzzy_concrete_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 An abstract base class defines fuzzy concepts operating over numerical intervals with configurable lower and upper bounds.
@@ -181,4 +185,3 @@ Module Contents
 
       :param value: The new name to assign to the object.
       :type value: str
-

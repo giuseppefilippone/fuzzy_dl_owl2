@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.domain_axiom
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Encapsulates a logical constraint that restricts the domain of a specific role to a defined concept within a fuzzy description logic ontology.
@@ -65,4 +69,3 @@ Module Contents
 
    .. py:attribute:: role
       :type:  str
-

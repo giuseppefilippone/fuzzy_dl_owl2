@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.query.defuzzify.defuzzify_query
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 An abstract base class that defines the structure for defuzzifying fuzzy logic queries by converting membership degrees into crisp values using Mixed-Integer Linear Programming.
@@ -122,5 +126,3 @@ Module Contents
    .. py:attribute:: obj_expr
       :type:  fuzzy_dl_owl2.fuzzydl.milp.expression.Expression
       :value: None
-
-

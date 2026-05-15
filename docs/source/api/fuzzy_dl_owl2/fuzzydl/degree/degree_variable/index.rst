@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.degree.degree_variable
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Defines a symbolic representation of a degree of satisfaction using an algebraic variable to enable dynamic constraint generation within a fuzzy logic system.
@@ -208,4 +212,3 @@ Module Contents
 
    .. py:attribute:: variable
       :type:  fuzzy_dl_owl2.fuzzydl.milp.variable.Variable
-

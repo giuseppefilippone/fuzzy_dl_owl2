@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.query.related_query
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 An abstract base class defines the structure for queries evaluating role assertions and membership degrees between individuals in a fuzzy description logic system.
@@ -91,5 +95,3 @@ Module Contents
    .. py:attribute:: role
       :type:  str
       :value: None
-
-

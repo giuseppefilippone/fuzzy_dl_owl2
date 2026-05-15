@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.degree.degree_expression
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A symbolic wrapper for algebraic expressions that represents non-numeric degrees within a fuzzy logic framework, enabling dynamic constraint generation and mathematical manipulation.
@@ -208,4 +212,3 @@ Module Contents
 
    .. py:attribute:: expr
       :type:  fuzzy_dl_owl2.fuzzydl.milp.expression.Expression
-

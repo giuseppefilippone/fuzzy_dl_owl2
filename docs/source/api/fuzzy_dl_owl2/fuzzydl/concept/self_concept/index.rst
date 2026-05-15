@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.concept.self_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Implements a self-referential concept construct within fuzzy description logic that requires an individual to be related to itself through a specified role.
@@ -184,4 +188,3 @@ Module Contents
 
       :param value: The new name to assign to the object.
       :type value: str
-

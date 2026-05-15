@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.triangular_function
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Implements a triangular membership function for fuzzy logic systems, characterized by three defining points.
@@ -118,4 +122,3 @@ Module Contents
 
    .. py:attribute:: _c
       :type:  float
-

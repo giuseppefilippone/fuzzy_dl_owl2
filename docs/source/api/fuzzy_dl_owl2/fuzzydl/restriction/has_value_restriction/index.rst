@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.restriction.has_value_restriction
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Defines a fuzzy logic restriction that associates a specific role with a particular individual, constrained by a lower bound degree.
@@ -86,4 +90,3 @@ Module Contents
 
    .. py:attribute:: ind_name
       :type:  str
-

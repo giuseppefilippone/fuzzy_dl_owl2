@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.concept.threshold_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A Python class representing threshold constraints applied to fuzzy logic concepts to determine satisfaction based on a numerical boundary.

@@ -5,6 +5,10 @@ fuzzy_dl_owl2.fuzzydl.concept.concrete.triangular_concrete_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Implements a fuzzy logic concept characterized by a triangular membership function to model linguistic variables within a specific domain.
@@ -213,4 +217,3 @@ Module Contents
       :type value: float
 
       :raises ValueError: Raised if the provided value is less than `k1`, as `k2` must be greater than or equal to `k1`.
-
