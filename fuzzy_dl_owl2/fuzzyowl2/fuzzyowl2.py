@@ -255,9 +255,10 @@ class FuzzyOwl2(object):
 
     def __final_write(self) -> None:
         """Sorts the lines stored in the internal list to ensure a consistent and organized output format. This method can be used after all lines have been collected to arrange them in a specific order, such as alphabetically or based on predefined criteria, before writing them to the output file. Sorting the lines can enhance readability and maintain a structured presentation of the translated fuzzy DL definitions."""
-        with open(self.output_dl, "r") as file:
-            old_output: str = file.read()
-        Util.debug(f"Old output:\n{old_output}")
+        if os.path.exists(self.output_dl):
+            with open(self.output_dl, "r") as file:
+                old_output: str = file.read()
+            Util.debug(f"Old output:\n{old_output}")
         sorted_lines: list[str] = sort_by_fuzzydl_pdf_order(self.lines)
         with open(self.output_dl, "w") as file:
             for line in sorted_lines:
@@ -368,7 +369,7 @@ class FuzzyOwl2(object):
                         facets[0] = float(str(f2.value.value)) + ConfigReader.EPSILON
                     elif f2.constraint_to_uriref() == OWLFacet.MAX_INCLUSIVE:
                         facets[1] = float(str(f2.value.value))
-                    elif f2.constraint_to_uriref() == OWLFacet.MAX_INCLUSIVE:
+                    elif f2.constraint_to_uriref() == OWLFacet.MAX_EXCLUSIVE:
                         facets[1] = float(str(f2.value.value)) - ConfigReader.EPSILON
                 return facets
         return facets
@@ -539,7 +540,7 @@ class FuzzyOwl2(object):
                 )
                 Util.debug(f"Parsed annotation -> {prop}")
                 if prop is None:
-                    return
+                    continue
                 if not isinstance(prop, ModifiedProperty):
                     raise ValueError
                 name: str = self.get_short_name(property)

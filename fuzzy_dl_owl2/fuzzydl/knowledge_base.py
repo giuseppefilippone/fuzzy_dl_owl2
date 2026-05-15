@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import contextlib
 import copy
 import pickle
+import sys
 import typing
 from collections import deque
 
@@ -124,6 +126,29 @@ from fuzzy_dl_owl2.fuzzydl.util.constants import (
 )
 from fuzzy_dl_owl2.fuzzydl.util.util import Util
 from fuzzy_dl_owl2.fuzzydl.util.utils import class_debugging
+
+
+_PICKLE_ALLOWED_MODULE_PREFIXES: tuple[str, ...] = (
+    "fuzzy_dl_owl2.",
+    "collections",
+    "sortedcontainers",
+    "builtins",
+    "networkx",
+)
+
+
+class _RestrictedKBUnpickler(pickle.Unpickler):
+    """Restricts unpickling to project-owned modules to avoid arbitrary code execution."""
+
+    def find_class(self, module: str, name: str):
+        if not any(
+            module == p or module.startswith(p + ".") or module.startswith(p)
+            for p in _PICKLE_ALLOWED_MODULE_PREFIXES
+        ):
+            raise pickle.UnpicklingError(
+                f"Refusing to unpickle untrusted class {module}.{name}"
+            )
+        return super().find_class(module, name)
 
 
 @class_debugging()
@@ -665,8 +690,13 @@ class KnowledgeBase:
         """
 
         try:
-            with open(file_name, "w") if file_name else None as f:
-                output = f.write if f else print
+            cm = (
+                open(file_name, "w")
+                if file_name
+                else contextlib.nullcontext(sys.stdout)
+            )
+            with cm as f:
+                output = f.write if file_name else print
 
                 # Fuzzy logic
                 output(f"(define-fuzzy-logic {constants.KNOWLEDGE_BASE_SEMANTICS})")
@@ -940,11 +970,17 @@ class KnowledgeBase:
         """
 
         with open(file_path, "wb") as file:
-            pickle.dump(self, file)
+            pickle.dump(self, file, protocol=pickle.HIGHEST_PROTOCOL)
 
-    def read_object_from_file(self, file_path: str) -> KnowledgeBase:
+    @classmethod
+    def read_object_from_file(cls, file_path: str) -> KnowledgeBase:
         """
         Deserializes a KnowledgeBase instance from the specified file path using the pickle module. The method opens the file in binary read mode, reconstructs the object, and updates the global KNOWLEDGE_BASE_SEMANTICS constant with the logic semantics retrieved from the loaded instance. It returns the deserialized knowledge base, provided the file contains valid data; otherwise, standard file I/O or unpickling errors may occur.
+
+        WARNING: Pickle deserialization can execute arbitrary code from a
+        crafted file. Only load files you produced yourself. Untrusted classes
+        outside the allowlist in ``_PICKLE_ALLOWED_MODULE_PREFIXES`` will be
+        rejected with ``pickle.UnpicklingError``.
 
         :param file_path: Path to the file from which to load the pickled KnowledgeBase object.
         :type file_path: str
@@ -955,8 +991,11 @@ class KnowledgeBase:
         """
 
         with open(file_path, "rb") as file:
-            kb = pickle.load(file, encoding="utf-8")
-        kb = typing.cast(KnowledgeBase, kb)
+            kb = _RestrictedKBUnpickler(file).load()
+        if not isinstance(kb, cls):
+            raise pickle.UnpicklingError(
+                f"Expected KnowledgeBase, got {type(kb).__name__}"
+            )
         constants.KNOWLEDGE_BASE_SEMANTICS = kb.get_logic()
         return kb
 

@@ -26,13 +26,23 @@ class Term:
         :type args: typing.Any
         """
 
-        assert len(args) in [1, 2]
+        if len(args) not in (1, 2):
+            raise TypeError(f"Term expects 1 or 2 args, got {len(args)}")
         if len(args) == 1:
-            assert isinstance(args[0], Variable)
+            if not isinstance(args[0], Variable):
+                raise TypeError(
+                    f"Term[0] must be Variable, got {type(args[0]).__name__}"
+                )
             self.__term_init_2(*args)
         else:
-            assert isinstance(args[0], constants.NUMBER)
-            assert isinstance(args[1], Variable)
+            if not isinstance(args[0], (int, float)):
+                raise TypeError(
+                    f"Term[0] must be numeric, got {type(args[0]).__name__}"
+                )
+            if not isinstance(args[1], Variable):
+                raise TypeError(
+                    f"Term[1] must be Variable, got {type(args[1]).__name__}"
+                )
             self.__term_init_1(*args)
 
     def __term_init_1(self, coeff: typing.Union[int, float], var: Variable) -> None:

@@ -63,6 +63,9 @@ from fuzzy_dl_owl2.fuzzydl.degree.degree import Degree
 from fuzzy_dl_owl2.fuzzydl.degree.degree_expression import DegreeExpression
 from fuzzy_dl_owl2.fuzzydl.degree.degree_numeric import DegreeNumeric
 from fuzzy_dl_owl2.fuzzydl.degree.degree_variable import DegreeVariable
+from fuzzy_dl_owl2.fuzzydl.exception.fuzzy_ontology_exception import (
+    FuzzyOntologyException,
+)
 from fuzzy_dl_owl2.fuzzydl.exception.inconsistent_ontology_exception import (
     InconsistentOntologyException,
 )
@@ -108,16 +111,16 @@ from fuzzy_dl_owl2.fuzzydl.util.constants import (
 from fuzzy_dl_owl2.fuzzydl.util.util import Util
 from fuzzy_dl_owl2.fuzzydl.util.utils import class_debugging
 
-TODAY: datetime.datetime = datetime.datetime.today()
-LOG_DIR: str = os.path.join(
-    ".", "logs", "parser", str(TODAY.year), str(TODAY.month), str(TODAY.day)
-)
-FILENAME: str = (
-    f"fuzzydl_{str(TODAY.hour).zfill(2)}-{str(TODAY.minute).zfill(2)}-{str(TODAY.second).zfill(2)}.log"
-)
-
-if not os.path.exists(LOG_DIR):
-    os.makedirs(LOG_DIR)
+def _ensure_parser_log_path() -> str:
+    today = datetime.datetime.today()
+    log_dir = os.path.join(
+        ".", "logs", "parser", str(today.year), str(today.month), str(today.day)
+    )
+    os.makedirs(log_dir, exist_ok=True)
+    filename = (
+        f"fuzzydl_{today.hour:02d}-{today.minute:02d}-{today.second:02d}.log"
+    )
+    return os.path.join(log_dir, filename)
 
 
 @class_debugging()
@@ -2724,13 +2727,13 @@ class DLParser(object):
             instring = file.read()
 
         if ConfigReader.DEBUG_PRINT:
-            return DLParser.get_grammatics().run_tests(
-                instring,
-                failure_tests=True,
-                file=open(os.path.join(LOG_DIR, FILENAME), "w"),
-            )
-        else:
-            return DLParser.get_grammatics().parse_string(instring)
+            with open(_ensure_parser_log_path(), "w") as log_file:
+                return DLParser.get_grammatics().run_tests(
+                    instring,
+                    failure_tests=True,
+                    file=log_file,
+                )
+        return DLParser.get_grammatics().parse_string(instring, parse_all=True)
 
     @staticmethod
     def load_config(*args) -> None:
@@ -2756,33 +2759,34 @@ class DLParser(object):
         :rtype: tuple[KnowledgeBase, list[Query]]
         """
 
-        try:
-            starting_time: float = time.perf_counter_ns()
-            DLParser.load_config(*args)
-            DLParser.kb = KnowledgeBase()
-            DLParser.queries_list = []
-            constants.KNOWLEDGE_BASE_SEMANTICS = FuzzyLogic.LUKASIEWICZ
+        starting_time: float = time.perf_counter_ns()
+        DLParser.load_config(*args)
+        DLParser.kb = KnowledgeBase()
+        DLParser.queries_list = []
+        constants.KNOWLEDGE_BASE_SEMANTICS = FuzzyLogic.LUKASIEWICZ
 
+        try:
             if ConfigReader.DEBUG_PRINT:
                 with open(args[0], "r") as file:
                     lines = file.readlines()
-                for i, line in enumerate(lines):
+                for line in lines:
                     line = line.strip()
                     if line == "":
                         continue
-                    if ConfigReader.DEBUG_PRINT:
-                        Util.debug(f"Line -> {line}")
+                    Util.debug(f"Line -> {line}")
                     _ = DLParser.parse_string(line)
             else:
                 _ = DLParser.parse_string_opt(args[0])
-            ending_time: float = time.perf_counter_ns() - starting_time
-            Util.info(f"Knowledge Base parsed in {(ending_time * 1e-9)}s")
-            return DLParser.kb, DLParser.queries_list
-        except FileNotFoundError as e:
-            Util.error(f"Error: File {args[0]} not found.")
+        except FileNotFoundError:
+            Util.warning(f"File {args[0]} not found.")
+            raise
         except Exception as e:
-            Util.error(e)
-            Util.error(traceback.format_exc())
+            Util.warning(traceback.format_exc())
+            raise FuzzyOntologyException(str(e)) from e
+
+        ending_time: float = time.perf_counter_ns() - starting_time
+        Util.info(f"Knowledge Base parsed in {(ending_time * 1e-9)}s")
+        return DLParser.kb, DLParser.queries_list
 
     @staticmethod
     def main(*args) -> None:

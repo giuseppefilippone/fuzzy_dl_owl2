@@ -12,8 +12,10 @@ STAR_SEPARATOR: str = "*" * 25
 NUMBER = typing.Union[int, float]
 RESULTS_PATH: str = os.path.join(".", "results")
 
-if not os.path.exists(RESULTS_PATH):
-    os.makedirs(RESULTS_PATH)
+
+def ensure_results_dir() -> str:
+    os.makedirs(RESULTS_PATH, exist_ok=True)
+    return RESULTS_PATH
 
 
 class MILPProvider(enum.StrEnum):

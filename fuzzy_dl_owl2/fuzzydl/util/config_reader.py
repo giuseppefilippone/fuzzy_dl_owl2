@@ -65,53 +65,45 @@ class ConfigReader:
         :type args: list[str]
         """
 
-        try:
-            config = configparser.ConfigParser()
-            config.read(config_file)
+        config = configparser.ConfigParser()
+        read_files = config.read(config_file)
+        if not read_files:
+            raise FileNotFoundError(f"Config file not found: {config_file}")
 
-            if len(args) > 1:
-                for i in range(0, len(args), 2):
-                    config["DEFAULT"][args[i]] = args[i + 1]
-            # else:
-            #     config["DEFAULT"] = {
-            #         "epsilon": ConfigReader.EPSILON,
-            #         "debugPrint": ConfigReader.DEBUG_PRINT,
-            #         "maxIndividuals": ConfigReader.MAX_INDIVIDUALS,
-            #         "showVersion": ConfigReader.SHOW_VERSION,
-            #         "author": False,
-            #     }
-
-            ConfigReader.DEBUG_PRINT = config.getboolean("DEFAULT", "debugPrint")
-            ConfigReader.EPSILON = config.getfloat("DEFAULT", "epsilon")
-            ConfigReader.MAX_INDIVIDUALS = config.getint("DEFAULT", "maxIndividuals")
-            ConfigReader.OWL_ANNOTATION_LABEL = config.get(
-                "DEFAULT", "owlAnnotationLabel"
+        # Caller convention: args[0] is the KB filename (consumed elsewhere).
+        # args[1:] are optional key/value override pairs.
+        overrides = args[1:]
+        if len(overrides) % 2 != 0:
+            raise ValueError(
+                f"CLI overrides must come in key/value pairs; got {len(overrides)}: {overrides}"
             )
-            ConfigReader.MILP_PROVIDER = constants.MILPProvider(
-                config.get("DEFAULT", "milpProvider").lower()
-            )
-            ConfigReader.NUMBER_DIGITS = int(
-                round(abs(math.log10(ConfigReader.EPSILON) - 1.0))
-            )
-            if ConfigReader.MILP_PROVIDER in [
-                constants.MILPProvider.MIP,
-                constants.MILPProvider.PULP,
-            ]:
-                constants.MAXVAL = (1 << 31) - 1
-                constants.MAXVAL2 = constants.MAXVAL * 2
-            elif ConfigReader.MILP_PROVIDER in [
-                constants.MILPProvider.PULP_GLPK,
-                constants.MILPProvider.PULP_HIGHS,
-                constants.MILPProvider.PULP_CPLEX,
-                # MILPProvider.SCIPY,
-            ]:
-                constants.MAXVAL = (1 << 28) - 1
-                constants.MAXVAL2 = constants.MAXVAL * 2
+        for i in range(0, len(overrides), 2):
+            config["DEFAULT"][overrides[i]] = overrides[i + 1]
 
-            if ConfigReader.DEBUG_PRINT:
-                print(f"Debugging mode = {ConfigReader.DEBUG_PRINT}")
+        ConfigReader.DEBUG_PRINT = config.getboolean("DEFAULT", "debugPrint")
+        ConfigReader.EPSILON = config.getfloat("DEFAULT", "epsilon")
+        ConfigReader.MAX_INDIVIDUALS = config.getint("DEFAULT", "maxIndividuals")
+        ConfigReader.OWL_ANNOTATION_LABEL = config.get(
+            "DEFAULT", "owlAnnotationLabel"
+        )
+        ConfigReader.MILP_PROVIDER = constants.MILPProvider(
+            config.get("DEFAULT", "milpProvider").lower()
+        )
+        ConfigReader.NUMBER_DIGITS = int(
+            round(abs(math.log10(ConfigReader.EPSILON) - 1.0))
+        )
+        if ConfigReader.MILP_PROVIDER in (
+            constants.MILPProvider.MIP,
+            constants.MILPProvider.PULP,
+        ):
+            constants.MAXVAL = (1 << 31) - 1
+        elif ConfigReader.MILP_PROVIDER in (
+            constants.MILPProvider.PULP_GLPK,
+            constants.MILPProvider.PULP_HIGHS,
+            constants.MILPProvider.PULP_CPLEX,
+        ):
+            constants.MAXVAL = (1 << 28) - 1
+        constants.MAXVAL2 = constants.MAXVAL * 2
 
-        except FileNotFoundError:
-            print(f"Error: File {config_file} not found.")
-        except Exception as e:
-            print(f"Error: {e}.")
+        if ConfigReader.DEBUG_PRINT:
+            print(f"Debugging mode = {ConfigReader.DEBUG_PRINT}")

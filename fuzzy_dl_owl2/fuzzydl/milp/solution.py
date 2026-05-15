@@ -38,13 +38,16 @@ class Solution:
         :raises ValueError: Raised if the provided argument is not a boolean or a number.
         """
 
-        assert len(args) == 1
+        if len(args) != 1:
+            raise TypeError(f"Solution expects exactly 1 arg, got {len(args)}")
         if isinstance(args[0], bool):
             self.__solution_init_1(*args)
-        elif isinstance(args[0], constants.NUMBER):
+        elif isinstance(args[0], (int, float)):
             self.__solution_init_2(*args)
         else:
-            raise ValueError
+            raise TypeError(
+                f"Solution arg must be bool or numeric, got {type(args[0]).__name__}"
+            )
 
     def __solution_init_1(self, consistent: bool) -> None:
         # Numerical value of the solution

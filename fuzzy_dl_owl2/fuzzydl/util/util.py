@@ -12,24 +12,35 @@ from fuzzy_dl_owl2.fuzzydl.exception.fuzzy_ontology_exception import (
 )
 from fuzzy_dl_owl2.fuzzydl.util.config_reader import ConfigReader
 
-TODAY: datetime.datetime = datetime.datetime.today()
-LOG_DIR: str = os.path.join(
-    ".", "logs", "reasoner", str(TODAY.year), str(TODAY.month), str(TODAY.day)
-)
-FILENAME: str = (
-    f"fuzzydl_{str(TODAY.hour).zfill(2)}-{str(TODAY.minute).zfill(2)}-{str(TODAY.second).zfill(2)}.log"
-)
+logger = logging.getLogger("fuzzy_dl_owl2.reasoner")
+logger.addHandler(logging.NullHandler())
 
-if not os.path.exists(LOG_DIR):
-    os.makedirs(LOG_DIR)
+_logging_configured: bool = False
 
-logger = logging.getLogger(__name__)
-logging.basicConfig(
-    filename=os.path.join(LOG_DIR, FILENAME),
-    filemode="w",
-    level=logging.INFO if not ConfigReader.DEBUG_PRINT else logging.DEBUG,
-    format="%(asctime)s - %(levelname)s -- %(message)s",
-)
+
+def setup_logging(log_dir: typing.Optional[str] = None) -> None:
+    global _logging_configured
+    today = datetime.datetime.today()
+    target_dir = log_dir or os.path.join(
+        ".", "logs", "reasoner", str(today.year), str(today.month), str(today.day)
+    )
+    os.makedirs(target_dir, exist_ok=True)
+    filename = (
+        f"fuzzydl_{today.hour:02d}-{today.minute:02d}-{today.second:02d}.log"
+    )
+    handler = logging.FileHandler(os.path.join(target_dir, filename), mode="w")
+    handler.setFormatter(
+        logging.Formatter("%(asctime)s - %(levelname)s -- %(message)s")
+    )
+    logger.addHandler(handler)
+    logger.setLevel(logging.DEBUG if ConfigReader.DEBUG_PRINT else logging.INFO)
+    logger.propagate = False
+    _logging_configured = True
+
+
+def _ensure_logging() -> None:
+    if not _logging_configured:
+        setup_logging()
 
 
 class Util:
@@ -49,6 +60,7 @@ class Util:
         :type message: str
         """
 
+        _ensure_logging()
         logger.info(message)
 
     @staticmethod
@@ -60,6 +72,7 @@ class Util:
         :type message: str
         """
 
+        _ensure_logging()
         logger.warning(message)
 
     @staticmethod
@@ -72,6 +85,7 @@ class Util:
         """
 
         if ConfigReader.DEBUG_PRINT:
+            _ensure_logging()
             logger.debug(message)
 
     @staticmethod
@@ -85,6 +99,7 @@ class Util:
         :raises FuzzyOntologyException: Raised to signal a general error or failure condition within the fuzzy ontology context, carrying the provided descriptive message.
         """
 
+        _ensure_logging()
         logger.error(message)
         raise FuzzyOntologyException(message)
 

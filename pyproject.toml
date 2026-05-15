@@ -15,14 +15,20 @@ rdflib = "^7.1.4"
 networkx = "^3.3"
 pyowl2 = "^1.0.5"
 pyparsing = "^3.2.3"
-setuptools = "^80.8.0"
 sortedcontainers = "^2.4.0"
 trycast = "^1.2.0"
+defusedxml = "^0.7.1"
 
-[tool.poetry.dev-dependencies]
-pytest = "^5.2"
-flake8 = "^4.0.1"
-pytest-cov = "^3.0.0"
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3"
+flake8 = "^7.1"
+pytest-cov = "^5.0"
+
+
+[[tool.poetry.source]]
+name = "pypi-mirror"
+url = "https://mirrors.aliyun.com/pypi/simple/"
+priority = "primary"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

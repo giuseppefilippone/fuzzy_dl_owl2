@@ -34,13 +34,21 @@ class ConcreteFeature:
         :raises ValueError: Raised if the number of arguments is not 1, 2, or 3, or if three arguments are provided but the second and third arguments are not both integers or both of type `constants.NUMBER`.
         """
 
-        assert len(args) in [1, 2, 3]
-
-        assert isinstance(args[0], str)
+        if len(args) not in (1, 2, 3):
+            raise TypeError(
+                f"ConcreteFeature expects 1, 2, or 3 args, got {len(args)}"
+            )
+        if not isinstance(args[0], str):
+            raise TypeError(
+                f"ConcreteFeature[0] must be str, got {type(args[0]).__name__}"
+            )
         if len(args) == 1:
             self.__concrete_feature_init_1(*args)
         elif len(args) == 2:
-            assert isinstance(args[1], bool)
+            if not isinstance(args[1], bool):
+                raise TypeError(
+                    f"ConcreteFeature[1] must be bool, got {type(args[1]).__name__}"
+                )
             self.__concrete_feature_init_2(*args)
         elif len(args) == 3:
             if isinstance(args[1], int) and isinstance(args[2], int):

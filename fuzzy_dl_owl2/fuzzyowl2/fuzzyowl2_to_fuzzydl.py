@@ -152,7 +152,7 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
         try:
             _ = float(s)
             return True
-        except:
+        except (ValueError, TypeError):
             return False
 
     def __write(self, line: str) -> None:

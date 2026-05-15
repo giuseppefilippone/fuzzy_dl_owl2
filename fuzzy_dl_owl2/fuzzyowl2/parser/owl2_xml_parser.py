@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 import traceback
 import typing
-from xml.etree import ElementTree
+from defusedxml import ElementTree
 
 from fuzzy_dl_owl2.fuzzydl.util.config_reader import ConfigReader
 from fuzzy_dl_owl2.fuzzydl.util.util import Util

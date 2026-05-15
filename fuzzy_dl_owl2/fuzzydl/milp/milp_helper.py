@@ -1284,15 +1284,15 @@ class MILPHelper:
     def __remove_nominal_variables(self) -> None:
         """This method purges nominal variables and any constraints that depend on them from the object's internal state. It iterates through the existing constraints to identify those containing nominal terms and scans the variables to determine which are nominal. Once the indices of these elements are collected, the method reconstructs the `constraints` and `variables` lists, excluding the identified items. This process mutates the object's state by reassigning these attributes, effectively removing data that is incompatible with the solver's requirements. If no nominal variables or dependent constraints are present, the lists remain unchanged."""
 
-        constraints_to_remove: list[int] = []
-        variable_to_remove: list[int] = []
+        constraints_to_remove: set[int] = set()
+        variable_to_remove: set[int] = set()
         for i, constraint in enumerate(self.constraints):
             terms: list[Term] = constraint.get_terms()
             if self.has_nominal_variable(terms):
-                constraints_to_remove.append(i)
+                constraints_to_remove.add(i)
         for i, variable in enumerate(self.variables):
             if self.is_nominal_variable(str(variable)):
-                variable_to_remove.append(i)
+                variable_to_remove.add(i)
 
         self.constraints = [
             constraint
@@ -1321,15 +1321,18 @@ class MILPHelper:
         for i in range(n):
             g.add_node(i)
 
+        # Index variables for O(1) lookup
+        var_idx: dict[Variable, int] = {v: i for i, v in enumerate(self.variables)}
+
         # Create edges
         edge: int = 0
         for constraint in self.constraints:
             terms: list[Term] = constraint.get_terms()
             if len(terms) == 0:
                 continue
-            first_var: int = self.variables.index(terms[0].get_var())
+            first_var: int = var_idx[terms[0].get_var()]
             for term in terms[1:]:
-                other_var: int = self.variables.index(term.get_var())
+                other_var: int = var_idx[term.get_var()]
                 # Edges between first and other
                 edge += 1
                 g.add_edge(first_var, other_var, number=edge)
@@ -1763,6 +1766,7 @@ class MILPHelper:
             # Optimize model
             model.optimize()
 
+            constants.ensure_results_dir()
             model.write(os.path.join(constants.RESULTS_PATH, "gurobi_model.lp"))
             model.write(os.path.join(constants.RESULTS_PATH, "gurobi_solution.json"))
 
@@ -1958,6 +1962,7 @@ class MILPHelper:
             # model.optimize(relax=ConfigReader.RELAX_MILP)
             model.optimize()
 
+            constants.ensure_results_dir()
             model.write(os.path.join(constants.RESULTS_PATH, "mip_model.lp"))
 
             Util.debug(f"Model:")
@@ -2228,7 +2233,7 @@ class MILPHelper:
                     write_solution_to_file=True,
                     write_solution_style=1,
                     solution_file=os.path.join(
-                        constants.RESULTS_PATH, "highs_solution.sol"
+                        constants.ensure_results_dir(), "highs_solution.sol"
                     ),
                     write_model_file=os.path.join(
                         constants.RESULTS_PATH, "highs_model.lp"
