@@ -20,7 +20,7 @@ python = ">=3.11, <4.0"
 rdflib = "^7.1.4"
 networkx = "^3.3"
 numpy = "^2.2"
-pyowl2 = "^1.0.7"
+pyowl2 = "^1.0.8"
 pyparsing = "^3.2.3"
 sortedcontainers = "^2.4.0"
 trycast = "^1.2.0"
@@ -41,12 +41,14 @@ generate-setup-file = false
 
 
 [[tool.poetry.source]]
-name = "pypi-mirror"
-url = "https://mirrors.aliyun.com/pypi/simple/"
+name = "pypi"
 priority = "primary"
 
+# Fallback mirror. Aliyun lags official PyPI by hours/days, so keep it
+# supplemental — freshly released deps (e.g. pyowl2) resolve from PyPI first.
 [[tool.poetry.source]]
-name = "pypi"
+name = "pypi-mirror"
+url = "https://mirrors.aliyun.com/pypi/simple/"
 priority = "supplemental"
 
 [build-system]
