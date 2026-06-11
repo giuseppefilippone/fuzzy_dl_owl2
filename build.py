@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import shutil
 import subprocess
+import sys
 from pathlib import Path
 
 from cffi import FFI
@@ -140,14 +141,26 @@ def make_lexer_exts() -> list[Extension]:
             continue
 
         output = subprocess.run(
-            ["python", (LEXER_DIR / "generate.py").as_posix(), tool],
+            [sys.executable, (LEXER_DIR / "generate.py").as_posix(), tool],
             check=False,
             capture_output=True,
             text=True,
         )
         print(output.stdout.strip())
+        if output.returncode != 0:
+            print(
+                f"build_lexer: generate.py failed for {tool} "
+                f"(exit {output.returncode}):\n{output.stderr.strip()}"
+            )
 
         src_path = LEXER_DIR / src
+        if not src_path.is_file():
+            # generate.py is the only producer of the scanner source; without
+            # it the backend cannot run, so fall through to the next candidate
+            # (or skip the lexer entirely) instead of crashing the wheel build.
+            print(f"build_lexer: {src} not present, skipping {tool}")
+            continue
+
         print(f"build_lexer: generating tokenizer from {src} ({tool})")
         subprocess.run([*cmd, src_path.as_posix()], check=True)
 

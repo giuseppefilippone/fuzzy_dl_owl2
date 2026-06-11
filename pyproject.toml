@@ -56,8 +56,16 @@ priority = "supplemental"
 [build-system]
 # build.py imports cffi (FFI), Cython.Build, and setuptools; all three must
 # be present at build time so the cythonize step and the _fdl_lexer CFFI
-# wrapper compile during `pip install .` / `poetry build`.
-requires = ["poetry-core>=1.0.0", "cython>=3.0", "setuptools>=70.0", "cffi>=1.16"]
+# wrapper compile during `pip install .` / `poetry build`. pyparsing is
+# needed because the lexer generator (tokenizer/generate.py) loads
+# util/constants.py, which imports it at module level.
+requires = [
+    "poetry-core>=1.0.0",
+    "cython>=3.0",
+    "setuptools>=70.0",
+    "cffi>=1.16",
+    "pyparsing>=3.2",
+]
 build-backend = "poetry.core.masonry.api"
 
 [tool.semantic_release]
