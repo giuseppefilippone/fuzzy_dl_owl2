@@ -8,6 +8,7 @@ resulting ``.so`` up via ``find_files_to_add``.
 
 from __future__ import annotations
 
+import os
 import shutil
 import subprocess
 import sys
@@ -82,6 +83,8 @@ CYTHON_SOURCES = (
 #     and not f.as_posix().endswith("/has_value_restriction.py")
 #     and not f.as_posix().endswith("generate_tokens.py")
 # ]
+
+CYTHON_SOURCES = [os.path.relpath(p, HERE) for p in CYTHON_SOURCES]
 
 COMPILER_DIRECTIVES = {
     "boundscheck": False,
