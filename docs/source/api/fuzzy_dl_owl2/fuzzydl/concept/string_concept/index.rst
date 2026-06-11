@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.concept.string_concept
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Implements an atomic string concept for fuzzy description logic that encapsulates textual data as indivisible leaf nodes.
+An atomic representation of string literals designed for use within a fuzzy description logic system.
 
 
 Description
 -----------
 
 
-The software extends the base concept hierarchy to provide a standardized mechanism for handling textual data, such as names or labels, as fundamental units within a fuzzy description logic system. By treating these values as indivisible leaf nodes, the implementation ensures that they cannot be decomposed into sub-concepts or associated with specific roles, thereby maintaining the structural integrity of the logic model. A critical design constraint involves the explicit prohibition of logical negation or complementation, which is enforced by raising an exception to prevent invalid semantic operations on atomic string values. Furthermore, the component supports structural integrity through immutable replacement behaviors and relies on a quoted string representation for hashing and equality comparisons, allowing it to function effectively as a key in collections.
+The software extends the base concept hierarchy to encapsulate textual data, such as names or labels, as indivisible leaf nodes within the logic framework. By design, it enforces strict semantic rules that forbid logical negation or complementation, raising an exception if such operations are attempted to maintain the integrity of the system. Structural replacement operations are supported by returning the instance itself, ensuring that the object maintains its identity throughout transformations. Identity comparisons and hashing rely on a standardized, quoted format of the internal string value, allowing the component to function consistently as a fundamental building block in broader logical expressions.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -72,9 +68,9 @@ Module Contents
 
    .. py:method:: __hash__() -> int
 
-      Calculates the hash value for the instance by delegating to the hash of its string representation. This behavior ensures that the object is hashable, allowing it to be utilized as a key in dictionaries or as a member of sets. The method relies on the `__str__` implementation of the class, meaning that any two instances producing identical string representations will yield the same hash code, which is essential for maintaining consistency with equality comparisons.
+      Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-      :return: An integer hash value derived from the string representation of the object.
+      :return: An integer hash value representing the structural identity of this object.
 
       :rtype: int
 
@@ -149,3 +145,4 @@ Module Contents
 
    .. py:attribute:: _name
       :type:  str
+

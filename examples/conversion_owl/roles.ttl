@@ -1,0 +1,23 @@
+@prefix : <http://example.org/conversion#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<http://example.org/conversion> rdf:type owl:Ontology .
+
+:hasFriend rdf:type owl:ObjectProperty .
+:hasFriend rdf:type owl:SymmetricProperty .
+
+:hasAncestor rdf:type owl:ObjectProperty .
+:hasAncestor rdf:type owl:TransitiveProperty .
+
+:hasSelf rdf:type owl:ObjectProperty .
+:hasSelf rdf:type owl:ReflexiveProperty .
+
+:hasChild rdf:type owl:ObjectProperty .
+:hasParent rdf:type owl:ObjectProperty .
+:hasChild owl:inverseOf :hasParent .
+
+:hasName rdf:type owl:DatatypeProperty .

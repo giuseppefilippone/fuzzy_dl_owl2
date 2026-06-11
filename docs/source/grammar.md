@@ -3,8 +3,10 @@
 ## String and Numbers
 
 ```python
-name    := ["][a-zA-Z_][a-zA-Z0-9_]*["]
-numbers := [+-]? [0-9]+(\.[0-9]+)
+# A name is a bare identifier. The surrounding double quotes are optional:
+# the tokenizer treats '"' as whitespace, so "foo" and foo are the same name.
+name    := ["]? [a-zA-Z0-9_><][a-zA-Z0-9_'/.:><@$!?-]* ["]?
+numbers := [+-]?[0-9]+("." [0-9]*)?([eE][+-]?[0-9]+)?
 ```
 
 ## Define the semantics of the knowledge base
@@ -144,7 +146,7 @@ restriction_function    := (
     | restriction_function [-] restriction_function
     | (restriction_function [+])+ restriction_function
 )
-restriction             := '(' ('>=' | '<=', '=') name (name | restriction_function | fuzzy_number) ')'
+restriction             := '(' ('>=' | '<=' | '=') name (name | restriction_function | fuzzy_number) ')'
 ```
 
 ### Datatype Restriction Operations
@@ -305,7 +307,7 @@ concept := (
     | '(' 'kd-implies' concept concept ')'                      # Kleene-Dienes implication
     | '(' 'all' name concept ')'                                # universal role restriction
     | '(' 'some' name concept ')'                               # existential role restriction
-    | '(' 'some' name name ')'                                  # individual value restriction
+    | '(' 'b-some' name name ')'                                # individual value restriction
     | '(' 'ua' name concept ')'                                 # upper approximation
     | '(' 'lua' name concept ')'                                # loose upper approximation
     | '(' 'tua' name concept ')'                                # tight upper approximation
@@ -315,17 +317,17 @@ concept := (
     | '(' 'self' concept ')'                                    # local reflexivity concept
     | '(' name concept ')'                                      # modifier applied to concept
     | '(' fuzzy_number ')'                                      # fuzzy number
-    | '(' '[' ('>=' | '<=') name ']' concept ')'                # threshold concept
+    | '(' '[' ('>=' | '<=') (name | numbers) ']' concept ')'    # threshold concept
     | '(' numbers concept ')'                                   # weighted concept
     | '(' 'w-sum' ('(' numbers concept ')')+ ')'                # weighted sum concept
     | '(' 'w-max' ('(' numbers concept ')')+ ')'                # weighted max concept
     | '(' 'w-min' ('(' numbers concept ')')+ ')'                # weighted min concept
     | '(' 'w-sum-zero' ('(' numbers concept ')')+ ')'           # weighted sum zero concept
-    | '(' 'owa' numbers+ concept+ ')'                           # OWA aggregation operator
+    | '(' 'owa' '(' numbers+ ')' '(' concept+ ')' ')'           # OWA aggregation operator
     | '(' 'q-owa' name concept+ ')'                             # quantifier-guided OWA
-    | '(' 'choquet' numbers+ concept+ ')'                       # Choquet integral
-    | '(' 'sugeno' numbers+ concept+ ')'                        # Sugeno integral
-    | '(' 'q-sugeno' numbers+ concept+ ')'                      # Quasi-Sugeno integral
+    | '(' 'choquet' '(' numbers+ ')' '(' concept+ ')' ')'       # Choquet integral
+    | '(' 'sugeno' '(' numbers+ ')' '(' concept+ ')' ')'        # Sugeno integral
+    | '(' 'q-sugeno' '(' numbers+ ')' '(' concept+ ')' ')'      # Quasi-Sugeno integral
     | '(' 'sigma-count' name concept '{' name+ '}' name ')'     # Sigma-count concept
 )
 ```
@@ -420,7 +422,7 @@ Role-based concept formation allows complex relationship modeling:
 
 ### Individual Value Restriction
 
-**(some $R$ $a$)** creates an individual value restriction for role $R$ and individual $a$, defined as $R^\mathcal{I}(x, a)$.
+**(b-some $R$ $a$)** creates an individual value restriction for role $R$ and individual $a$, defined as $R^\mathcal{I}(x, a)$.
 
 ### Approximation Concepts
 
@@ -711,12 +713,12 @@ queries := (
     | '(' 'min-kd-subs?' concept concept ')'
     | '(' 'max-sat?' concept name? ')'
     | '(' 'min-sat?' concept name? ')'
-    | '(' 'max-var?' name ')'
-    | '(' 'min-var?' name ')'
+    | '(' 'max-var?' expression ')'
+    | '(' 'min-var?' expression ')'
     | '(' 'defuzzify-lom?' concept name name ')'    # Defuzzify using the largest of the maxima
     | '(' 'defuzzify-mom?' concept name name ')'    # Defuzzify using the middle of the maxima
     | '(' 'defuzzify-som?' concept name name ')'    # Defuzzify using the smallest of the maxima
-    | '(' 'bnp?' name ')'                           # Computes the Best Non-Fuzzy Performance (BNP) of a fuzzy number
+    | '(' 'bnp?' fuzzy_number_expression ')'        # Computes the Best Non-Fuzzy Performance (BNP) of a fuzzy number
 )
 ```
 

@@ -25,27 +25,23 @@ fuzzy_dl_owl2.fuzzyowl2
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A translation framework that converts OWL2 ontologies annotated with fuzzy logic into the specific syntax required by Fuzzy Description Logic reasoners.
+A translation framework converts OWL2 ontologies annotated with fuzzy logic semantics into a Fuzzy Description Logic representation suitable for reasoning engines.
 
 
 Description
 -----------
 
 
-The software processes OWL2 ontology files to extract fuzzy logic semantics defined through annotations, transforming them into a format compatible with Fuzzy Description Logic reasoners. It relies on a comprehensive type system of abstract base classes and concrete implementations to model complex fuzzy constructs, such as triangular functions, linear modifiers, and aggregation operators like OWA or Sugeno integrals. Specialized parsing logic utilizing both pyparsing and standard XML analysis interprets these fuzzy elements, converting raw text or tokens into strongly typed domain objects while a central dispatch mechanism orchestrates the translation flow. Foundational utilities manage the fuzzy logic vocabulary, generate compliant XML, and organize ontology statements to ensure the output adheres to specification standards and maintains a consistent order for downstream processing.
+An inheritance-based type system models complex mathematical constructs, ranging from basic membership functions to advanced aggregation operators like Choquet and Sugeno integrals, providing the structural foundation for representing uncertainty. Specialized XML parsing logic extracts these semantic definitions from input files, instantiating corresponding Python objects that encapsulate linguistic modifiers and axiom degrees while safely handling configuration and error states. The translation process extends these base structures to map OWL entities such as classes and properties into their fuzzy logic equivalents, managing complex expressions like weighted sums and Ordered Weighted Averaging. Ultimately, utility components enforce a canonical hierarchy on the output, ensuring that the serialized syntax adheres to the specific requirements of the target reasoning engine.
 
 
 Modules
 -------
 
 
-* [``fuzzy_dl_owl2.fuzzyowl2.fuzzyowl2``] — A translator that converts OWL2 ontologies annotated with fuzzy logic into a Fuzzy Description Logic representation for use in reasoning systems.
+* [``fuzzy_dl_owl2.fuzzyowl2.fuzzyowl2``] — A translator that converts OWL2 ontologies annotated with fuzzy logic semantics into a Fuzzy Description Logic representation suitable for reasoning engines.
 * [``fuzzy_dl_owl2.fuzzyowl2.fuzzyowl2_to_fuzzydl``] — A converter that transforms ontologies defined in the FuzzyOWL2 format into the specific syntax required by the FuzzyDL reasoner.
 
 
@@ -53,9 +49,9 @@ Sub-packages
 ------------
 
 
-* [``fuzzy_dl_owl2.fuzzyowl2.owl_types``] — Core data structures and abstract interfaces for defining fuzzy logic concepts, properties, and datatypes within the FuzzyOWL2 ontology framework.
-* [``fuzzy_dl_owl2.fuzzyowl2.parser``] — Specialized parsing logic transforms Fuzzy OWL 2 XML annotations and grammar-based strings into internal knowledge bases and fuzzy logic objects.
-* [``fuzzy_dl_owl2.fuzzyowl2.util``] — Foundational utilities for managing fuzzy logic vocabulary, generating compliant XML, and organizing ontology statements according to specification standards.
+* [``fuzzy_dl_owl2.fuzzyowl2.owl_types``] — A comprehensive type system for the FuzzyOWL2 ontology framework that models fuzzy logic concepts, datatypes, properties, and aggregation operators through an inheritance-based architecture.
+* [``fuzzy_dl_owl2.fuzzyowl2.parser``] — Specialized XML parsing logic transforms FuzzyOWL2 annotations into corresponding Python data structures for fuzzy logic concepts, datatypes, and properties.
+* [``fuzzy_dl_owl2.fuzzyowl2.util``] — Foundational utilities support the parsing, construction, and canonical ordering of FuzzyOWL2 and fuzzy-DL logic.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -70,3 +66,4 @@ Submodules
    /api/fuzzy_dl_owl2/fuzzyowl2/owl_types/index
    /api/fuzzy_dl_owl2/fuzzyowl2/parser/index
    /api/fuzzy_dl_owl2/fuzzyowl2/util/index
+

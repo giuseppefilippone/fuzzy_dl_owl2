@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.util.utils
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Utility decorators are provided to facilitate debugging through method tracing and to manage deep recursion by dynamically adjusting system limits.
+A collection of utility decorators designed to facilitate debugging through method tracing and to handle deep recursion by dynamically adjusting system limits.
 
 
 Description
 -----------
 
 
-The debugging infrastructure includes a wrapper that logs method entry and exit details, such as arguments and return values, while intelligently distinguishing between static and instance methods to ensure accurate context reporting. A class-level decorator automates this instrumentation by iterating through class attributes and applying the wrapper to all functions, controlled by a global flag that enables or disables the verbose logging. Furthermore, a recursion handling mechanism intercepts stack overflow errors to progressively double the recursion limit until the operation succeeds, thereby preventing premature termination of complex logical computations while restoring the original limit upon completion.
+The software provides a suite of high-level decorators intended to instrument code for diagnostic purposes and to overcome Python's default recursion depth constraints. A debugging mechanism allows for automatic tracing of method calls within a class, logging entry arguments and return values based on a global configuration flag, while intelligently distinguishing between static and instance methods to ensure accurate argument reporting. To support algorithms that require deep call stacks, a recursion management wrapper intercepts depth limit errors, progressively increases the interpreter's recursion limit, and guarantees that the system state is restored after execution, regardless of success or failure. These tools rely on a central configuration reader to control output verbosity and integrate seamlessly with existing logging utilities to provide visibility into complex execution flows without modifying core logic.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -48,6 +44,10 @@ Module Contents
 
    This function serves as a decorator factory that generates a class-level decorator to instrument all instance methods with debugging capabilities. When applied to a class, it checks the global `FULL_CLASS_DEBUG_PRINT` flag; if this flag is true, the decorator iterates over the class's attributes to identify functions and replaces them with wrapped versions using `debugging_wrapper`. This mechanism enables automatic logging or tracing of method execution across the entire class, contingent on the global configuration state.
 
+   :return: A class decorator that optionally instruments the methods of the class it is applied to.
+
+   :rtype: typing.Callable
+
 
 .. py:function:: debugging_wrapper(cls, func)
 
@@ -58,6 +58,10 @@ Module Contents
    :param func: The method or function to be wrapped with debug logging.
    :type func: typing.Any
 
+   :return: The wrapped function, which logs entry/exit around ``func`` and returns its result unchanged.
+
+   :rtype: typing.Callable
+
 
 .. py:function:: recursion_unlimited(func: Callable)
 
@@ -65,6 +69,10 @@ Module Contents
 
    :param func: The callable to be wrapped that may raise a RecursionError; the wrapper will dynamically increase the recursion limit until the function succeeds.
    :type func: typing.Callable
+
+   :return: The wrapped callable, which retries ``func`` while raising the recursion limit and always restores the original limit afterwards.
+
+   :rtype: typing.Callable
 
 
 .. py:data:: FULL_CLASS_DEBUG_PRINT
@@ -75,3 +83,4 @@ Module Contents
 .. py:data:: RECURSION_LIMIT_CAP
    :type:  int
    :value: 1048576
+

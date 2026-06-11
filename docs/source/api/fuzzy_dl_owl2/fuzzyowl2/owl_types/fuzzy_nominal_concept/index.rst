@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.fuzzy_nominal_concept
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A class representing a fuzzy nominal concept that associates a specific individual with a degree of membership within an ontology.
+Models fuzzy nominal concepts by associating a named individual with a specific degree of membership.
 
 
 Description
 -----------
 
 
-It extends the base definition for concepts to model assertions where a named individual belongs to a concept with a specific truth value. The implementation stores a floating-point number representing the membership degree alongside a string identifier for the individual entity. By registering the entity type as FUZZY_NOMINAL during initialization, the design integrates seamlessly into the broader type system used for fuzzy description logic. Accessor methods allow the retrieval of the numerical degree and the individual name, while a string representation provides a human-readable format combining these two components.
+The implementation extends the base concept definition to handle assertions where a specific named individual is associated with a particular concept using a numerical truth value. By storing a floating-point membership degree alongside a string identifier for the individual, the logic allows for the precise modeling of fuzzy logic statements within an ontology. Internal state management ensures that the numerical degree and the individual's name are encapsulated, while accessors provide read-only retrieval of these core components. Integration with the broader framework is achieved through inheritance and type registration, enabling the system to distinguish this specific fuzzy nominal type from other concept definitions during processing.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -106,3 +102,4 @@ Module Contents
 
    .. py:attribute:: _n
       :type:  float
+

@@ -17,6 +17,19 @@ owlAnnotationLabel = fuzzyLabel
 milpProvider = mip
 ```
 
+## Setting up with .env file
+
+In place of the `CONFIG.ini` file, you can set up a `.env` file in the root directory of the project to specify the configuration settings for the FuzzyDL reasoner. The `.env` file allows you to set environment variables that will be read by the reasoner at runtime. This can be a convenient way to manage configuration settings without modifying the `CONFIG.ini` file directly. You can specify the same settings as in the `CONFIG.ini` file, such as `DEBUG_PRINT`, `EPSILON`, `MAX_INDIVIDUALS`, `OWL_ANNOTATION_LABEL`, and `MILP_PROVIDER`. Variables are case-insensitive, so you can use uppercase or lowercase letters for the variable names.
+
+Sample `.env` file:
+```
+DEBUG_PRINT=False
+EPSILON=0.001
+MAX_INDIVIDUALS=-1
+OWL_ANNOTATION_LABEL=fuzzyLabel
+MILP_PROVIDER=mip
+```
+
 ## Reasoning
 
 In this section, we will see how to use the FuzzyDL reasoner to query a knowledge base defined in the FDL language. We will define a knowledge base in an FDL file, and then we will use the `DLParser` class to parse the file and execute the queries defined in it.
@@ -62,7 +75,8 @@ In this case, the main function will parse the knowledge base and execute the qu
 The log output will be written in a file in the subdirectory `./logs/reasoner/CURRENT_YEAR/CURRENT_MONTH/CURRENT_DAY/` with a name that includes the time of the execution, for example `fuzzydl_HH-MM-SS.log`.
 
 ```python
-from fuzzy_dl_owl2.fuzzydl.parser import DLParser
+# from fuzzy_dl_owl2.fuzzydl.parser import DLParser
+from fuzzy_dl_owl2.fuzzydl.parser import DLParserFast as DLParser
 
 DLParser.main("./example.fdl")
 # "Is audi instance of SportCar ? >= 0.92"
@@ -73,9 +87,9 @@ An example of the log output is given below, where `DATETIME` is the date and ti
 ```
 DATETIME - INFO -- Knowledge Base parsed in 0.015450833s
 DATETIME - INFO -- Using Python-MIP package version 1.16rc0
-DATETIME - INFO -- Is audi instance of SportCar? >= 0.92
+DATETIME - INFO -- Is audi instance of SportCar ? >= 0.92
 DATETIME - INFO -- Time (s): 0.171397584
-DATETIME - INFO -- Is ferrari instance of SportCar? >= 1.0
+DATETIME - INFO -- Is ferrari instance of SportCar ? >= 1.0
 DATETIME - INFO -- Time (s): 0.004942084
 ```
 
@@ -84,7 +98,8 @@ DATETIME - INFO -- Time (s): 0.004942084
 In this case, the parser will parse the knowledge base and execute the query, but it will not print the result in the log output. Instead, it will return a `Solution` object that contains the result of the query, which can be printed in a more readable format. The `Solution` object has a method `is_consistent_kb()` that checks if the knowledge base is consistent, and a `__str__()` method that returns a string representation of the solution, which includes the membership degree of the instance with respect to the concept.
 
 ```python
-from fuzzy_dl_owl2.fuzzydl.parser import DLParser
+# from fuzzy_dl_owl2.fuzzydl.parser import DLParser
+from fuzzy_dl_owl2.fuzzydl.parser import DLParserFast as DLParser
 from fuzzy_dl_owl2.fuzzydl.milp.solution import Solution
 
 kb, queries = DLParser.get_kb("./example.fdl") # parse the knowledge base and get the queries
@@ -102,6 +117,34 @@ for query in queries:
     # Is audi instance of SportCar ? >= 0.92
     # Is ferrari instance of SportCar ? >= 1.0
 ```
+
+### Faster parsing with DLParserFast
+
+For large `.fdl` knowledge bases the pyparsing-based grammar of `DLParser` can dominate end-to-end runtime. The package ships a drop-in replacement, `DLParserFast`, that uses a hand-rolled tokenizer plus a deterministic recursive-descent parser. The accepted grammar is identical and every parse-action callback of the original parser is reused, so the resulting `KnowledgeBase` and query list are byte-equivalent. As pure Python it is already 5-10x faster than `DLParser`; once compiled with Cython (see *Optional: Compile the Fast Parser* in [Installation and Configuration](install_and_config.md)) it is 10-30x faster.
+
+The public API matches `DLParser` exactly, so swapping is a single-line change:
+
+```python
+from fuzzy_dl_owl2.fuzzydl.parser import DLParserFast as DLParser
+
+DLParser.main("./example.fdl")
+```
+
+or, using `get_kb` for finer-grained control:
+
+```python
+from fuzzy_dl_owl2.fuzzydl.parser import DLParserFast
+from fuzzy_dl_owl2.fuzzydl.milp.solution import Solution
+
+kb, queries = DLParserFast.get_kb("./example.fdl")
+kb.solve_kb()
+for query in queries:
+    result: Solution = query.solve(kb)
+    if result.is_consistent_kb():
+        print(f"{query}{result}")
+```
+
+`DLParserFast` and `DLParser` share class-level state (`DLParser.kb`, `DLParser.queries_list`) so the two implementations can be used interchangeably inside the same process.
 
 ## Fuzzy OWL 2
 

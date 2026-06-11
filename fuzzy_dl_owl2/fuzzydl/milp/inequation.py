@@ -6,8 +6,12 @@ from fuzzy_dl_owl2.fuzzydl.util.constants import InequalityType
 
 
 class Inequation:
-    """
-    Represents a mathematical inequality of the form `expression (>= | <= | =) 0`, typically utilized within fuzzy description logic ontologies to model the degree of satisfaction of a concept by an individual. The class encapsulates a linear expression on the left-hand side and a comparison operator, ensuring the right-hand side is always normalized to zero. Users can instantiate instances directly by providing an expression and an inequality type, or utilize static factory methods for convenience. The class provides functionality to access the underlying terms and constants, clone the object, and generate string representations, while also enforcing that the provided expression is non-empty upon initialization.
+    r"""
+    Encodes a linear constraint  $E \bowtie 0$  with  $\bowtie \in \{=, \le, \ge\}$.
+    The right-hand side is always normalised to zero; ``MILPHelper.add_new_constraint``
+    shifts the expression by a ``Degree`` when the target bound is not zero.
+
+    Factory aliases: ``GreaterThan``, ``LessThan``, ``EqualTo``.
 
     :param type: Specifies the relational operator of the inequality, determining if the expression is greater than, less than, or equal to zero.
     :type type: InequalityType
@@ -27,9 +31,9 @@ class Inequation:
         """
 
         assert exp is not None and len(exp.get_terms()) > 0
-        # Type of the inequality
+        # inequality type: =, <=, or >=
         self.type: InequalityType = i_type
-        # Expression
+        # left-hand side expression E
         self.expr: Expression = exp
 
     @staticmethod
@@ -45,69 +49,70 @@ class Inequation:
         :rtype: typing.Self
         """
 
+        # E >= 0
         return Inequation(exp, InequalityType.GREATER_THAN)
 
     @staticmethod
     def less_than(exp: Expression) -> typing.Self:
-        """
-        Constructs a new `Inequation` instance representing a strict "less than" relationship. This static factory method accepts an `Expression` object and initializes the inequality with the `LESS_THAN` type. It provides a semantic shortcut for creating inequality objects without directly specifying the inequality type in the constructor.
+        r"""
+        Factory for  $E \le 0$.
 
-        :param exp: The expression representing the right-hand side of the inequality.
+        :param exp: The expression representing the left-hand side of the inequality.
         :type exp: Expression
 
         :return: Returns a new instance representing a "less than" inequality involving the provided expression.
-
         :rtype: typing.Self
         """
 
+        # E <= 0
         return Inequation(exp, InequalityType.LESS_THAN)
 
     @staticmethod
     def equal_to(exp: Expression) -> typing.Self:
-        """
-        This static method serves as a factory for creating an `Inequation` instance that specifically represents an equality condition. It accepts a single `Expression` object and returns a new `Inequation` configured with the `InequalityType.EQUAL` type. The method performs no modification of the input expression and has no side effects, simply wrapping the provided expression in the appropriate structure.
+        r"""
+        Factory for  $E = 0$.
 
         :param exp: The expression to compare against for equality.
         :type exp: Expression
 
         :return: An `Inequation` representing that the current expression is equal to the provided expression.
-
         :rtype: typing.Self
         """
 
+        # E = 0
         return Inequation(exp, InequalityType.EQUAL)
 
     def clone(self) -> typing.Self:
-        """
-        Creates and returns a new instance that is a shallow copy of the current inequality, initialized with the same expression and type properties. This method allows for the duplication of the object without altering the original, making it useful for preserving state or branching logic. However, because the copy is shallow, any mutable objects contained within the expression or type attributes will be shared between the original and the clone, so modifications to those nested objects will affect both instances.
+        r"""
+        Returns a shallow copy  $(E, \bowtie)$.
 
         :return: A new instance of the class initialized with the same expression and type as the current object.
-
         :rtype: typing.Self
         """
 
+        # (E, bowtie)
         return Inequation(self.expr, self.type)
 
     def get_terms(self) -> list[Term]:
-        """
-        Extracts and returns the individual terms comprising the expression side of the inequation. The operation is delegated to the `get_terms` method of the internal expression object (`self.expr`), ensuring consistency with how the expression itself defines its components. The result is a list of `Term` objects, which may be empty if the expression is simplified to zero or contains no variable terms. This method does not modify the state of the inequation.
+        r"""
+        Returns the terms of the underlying expression $E$.
 
         :return: A list of Term objects representing the constituent terms of the expression.
-
         :rtype: list[Term]
         """
 
         return self.expr.get_terms()
 
     def get_constant(self) -> float:
-        """
-        Returns the constant value associated with the inequation by accessing the constant term of the internal expression and applying a negation. This operation effectively retrieves the constant component as it would appear on the opposite side of the inequality, often used to normalize the constraint or extract the right-hand side value. The method is a pure calculation with no side effects on the object's state.
+        r"""
+        Returns the right-hand side constant $-c_0$ (since the stored form is
+        $E \bowtie 0$).
 
         :return: The negative of the constant value associated with the expression.
-
         :rtype: float
         """
 
+        # stored form is E bowtie 0, so RHS constant is -c_0
         return -self.expr.get_constant()
 
     def get_type(self) -> InequalityType:
@@ -159,8 +164,8 @@ class Inequation:
 
         :rtype: int
         """
-
-        return hash(str(self))
+        # return hash(str(self))
+        return hash((hash(self.expr), hash(self.type)))
 
     def __eq__(self, value: typing.Self) -> bool:
         """
@@ -213,6 +218,6 @@ class Inequation:
         return f"{self.expr} {self.get_string_type()} 0"
 
 
-GreaterThan = Inequation.greater_then
-LessThan = Inequation.less_than
-EqualTo = Inequation.equal_to
+GreaterThan = Inequation.greater_then  # alias: E >= 0
+LessThan = Inequation.less_than  # alias: E <= 0
+EqualTo = Inequation.equal_to  # alias: E = 0

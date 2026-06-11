@@ -5,22 +5,26 @@ fuzzy_dl_owl2.fuzzydl.primitive_concept_definition
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Defines a data structure for representing primitive concept definitions within a fuzzy description logic system.
+A Python class representing a primitive concept definition within a fuzzy logic system, encapsulating the relationship between a named concept and its definition using specific implication operators and truth degrees.
 
 
 Description
 -----------
 
 
-The software models a specific type of axiom where a named concept is defined by a complex description using a fuzzy implication. It encapsulates the logical relationship by storing the identifier of the concept being defined, the complex concept expression acting as the definition, the specific fuzzy logic operator (such as Łukasiewicz or Gödel) used to interpret the implication, and a floating-point degree representing the lower bound of truth. To manage these logical constraints, the implementation provides standard accessor and mutator methods for retrieving and modifying the definition and its associated truth degree, alongside a cloning utility to generate independent copies of the instance. The design also supports structural comparison and ordering by implementing equality and relational operators based on the hash of the object's string representation, allowing the definitions to be sorted or used as keys in collections for efficient knowledge base management.
+The software models a primitive concept definition as a specific type of general concept inclusion axiom used in fuzzy description logic. It establishes a logical rule where a named concept is defined by or implies a complex fuzzy concept description, utilizing a specific fuzzy implication operator such as Łukasiewicz or Gödel to determine the connection. A float value between 0 and 1 acts as a lower bound degree, representing the extent to which the definition satisfies the concept within the knowledge base. To manage these logical relationships efficiently, the implementation provides mechanisms for cloning instances and modifying the definition or degree through accessor methods. Structural equality and ordering are supported by overriding standard comparison operators, allowing instances to be compared based on their internal state and hash values. The design prioritizes performance by precomputing the first character of implication operator names to avoid expensive enum descriptor lookups during string generation. String representations are lazily constructed and cached upon first access to minimize overhead in scenarios requiring frequent textual output, such as debugging or serialization. The hash function relies on the structural components of the definition, ensuring that objects with identical logical properties produce the same hash code.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   fuzzy_dl_owl2.fuzzydl.primitive_concept_definition._IMPL_CHAR
+
 
 Classes
 -------
@@ -108,9 +112,9 @@ Module Contents
 
    .. py:method:: __hash__() -> int
 
-      Computes the hash value for the instance based on its string representation. This implementation converts the object to a string using the `__str__` method and returns the hash of that resulting string, enabling the instance to be used as a dictionary key or stored in a set. The hash value is consistent as long as the string representation of the object remains unchanged.
+      Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-      :return: An integer hash value derived from the string representation of the object.
+      :return: An integer hash value representing the structural identity of this object.
 
       :rtype: int
 
@@ -243,6 +247,12 @@ Module Contents
 
 
 
+   .. py:attribute:: _name
+      :type:  Optional[str]
+      :value: None
+
+
+
    .. py:attribute:: defined
       :type:  str
 
@@ -257,3 +267,7 @@ Module Contents
 
    .. py:attribute:: implication
       :type:  fuzzy_dl_owl2.fuzzydl.util.constants.LogicOperatorType
+
+
+.. py:data:: _IMPL_CHAR
+   :type:  Dict[fuzzy_dl_owl2.fuzzydl.util.constants.LogicOperatorType, str]

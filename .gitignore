@@ -4,12 +4,14 @@
 **/._.DS_Store
 fuzzy_dl_owl2_tmp
 autodoc*
-/code_docs.py
-/code_stats.py
-/docstrings.json
-/docs/make_run.sh
-/run_tests.sh
-/commit.sh
+comparison_logs/
+_CONFIG.ini
+code_docs.py
+code_stats.py
+compare_parsers.py
+docstrings.json
+*.sh
+docs/**/*.sh
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -18,6 +20,7 @@ __pycache__/
 
 # C extensions
 *.so
+*.c
 
 # Virtual environments
 .env/
@@ -71,7 +74,7 @@ Pipfile.lock
 **/logs
 
 # results
-**/results
+/results
 
 # wheel files
 *.whl

@@ -1,7 +1,7 @@
 # Summary
 
-A Python class implementation modeling a right-shoulder fuzzy membership function within the FuzzyOWL2 framework.
+A Python class representing a right-shoulder fuzzy membership function used to model concepts where membership increases linearly to full certainty after a specific threshold.
 
 ## Description
 
-The implementation extends the base fuzzy datatype to represent a specific type of membership function where values greater than a defined threshold possess full membership. Mathematically, the logic dictates that values below a lower bound have zero membership, while values above an upper bound are fully included, with a linear transition occurring between these two points. Internal state management relies on storing these boundary parameters, which are accessible via getter methods and utilized to generate a standardized string representation for debugging or serialization purposes. By inheriting from the parent datatype, the component integrates seamlessly into the broader ontology framework, allowing for the definition of vague or imprecise concepts using a right-shoulder distribution.
+The implementation extends the base fuzzy datatype to encapsulate the mathematical behavior of a right-shoulder curve, which is essential for representing vague concepts where values exceeding a certain point are considered fully true. By utilizing two floating-point parameters, the logic defines a transition interval where membership degrees rise linearly from zero to one, ensuring that values below the lower bound have no membership while those above the upper bound are fully accepted. Accessor methods are provided to retrieve the specific boundary values, allowing external systems to query the configuration of the fuzzy set. A string representation is also included to facilitate debugging and logging by displaying the internal state in a human-readable format that incorporates both the specific parameters and inherited attributes.

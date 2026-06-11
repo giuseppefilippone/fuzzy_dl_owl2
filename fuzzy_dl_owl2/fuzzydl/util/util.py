@@ -19,6 +19,13 @@ _logging_configured: bool = False
 
 
 def setup_logging(log_dir: typing.Optional[str] = None) -> None:
+    """
+    Configures the module-level reasoner logger by attaching a timestamped file handler. When ``log_dir`` is omitted, a dated directory tree under ``./logs/reasoner/<year>/<month>/<day>`` is created and used; the log file itself is named from the current time. The logger level is set to ``DEBUG`` when :attr:`ConfigReader.DEBUG_PRINT` is enabled and ``INFO`` otherwise, propagation to the root logger is disabled, and a module flag is set so the configuration runs only once. Calling this more than once will attach additional handlers.
+
+    :param log_dir: Target directory for the log file; if ``None``, a dated default directory is created.
+    :type log_dir: typing.Optional[str]
+    """
+
     global _logging_configured
     today = datetime.datetime.today()
     target_dir = log_dir or os.path.join(
@@ -39,6 +46,10 @@ def setup_logging(log_dir: typing.Optional[str] = None) -> None:
 
 
 def _ensure_logging() -> None:
+    """
+    Lazily configures the reasoner logger the first time logging is requested. If :func:`setup_logging` has not yet run (tracked via the module-level ``_logging_configured`` flag), it is invoked with default settings; otherwise this is a no-op. Every logging helper on :class:`Util` calls this so that a file handler is guaranteed to exist before any record is emitted.
+    """
+
     if not _logging_configured:
         setup_logging()
 

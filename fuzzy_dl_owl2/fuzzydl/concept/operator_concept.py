@@ -96,16 +96,24 @@ class OperatorConcept(Concept, HasConceptsInterface):
     @property
     def concepts(self) -> list[Concept]:
         """
-        Updates the collection of concepts associated with the operator by accepting an iterable of Concept objects. The provided iterable is converted to a list and stored internally, ensuring that the underlying data structure is mutable and indexable. As a side effect of this assignment, the operator's name is automatically recalculated to reflect the new set of concepts.
+        Returns the list of operand concepts combined by this operator concept (e.g. the conjuncts of an AND, the disjuncts of an OR). The value is read from the private ``_concepts`` attribute without modifying the instance.
 
-        :param value: The collection of Concept objects to assign to the instance, replacing the current concepts and triggering a name update.
-        :type value: typing.Iterable[Concept]
+        :return: The operand concepts of this operator.
+
+        :rtype: list[Concept]
         """
 
         return self._concepts
 
     @concepts.setter
     def concepts(self, value: typing.Iterable[Concept]) -> None:
+        """
+        Sets the operand concepts of this operator concept. The provided iterable is materialized into a list and stored in the private ``_concepts`` attribute, and the concept's cached ``name`` is recomputed via :meth:`compute_name` to stay consistent with the new operands.
+
+        :param value: The new operand concepts, replacing the current ones.
+        :type value: typing.Iterable[Concept]
+        """
+
         self._concepts = list(value)
         self.name = self.compute_name()
 
@@ -155,7 +163,8 @@ class OperatorConcept(Concept, HasConceptsInterface):
                         changes = True
                     else:
                         i += 1
-        return OperatorConcept(c_type, sorted(concepts))
+        # return OperatorConcept(c_type, sorted(concepts))
+        return OperatorConcept(c_type, concepts)
 
     @staticmethod
     def and_(*concepts: Concept) -> Concept:
@@ -580,6 +589,17 @@ class OperatorConcept(Concept, HasConceptsInterface):
 
     @staticmethod
     def is_not_concrete(op: Concept) -> bool:
+        """
+        Checks whether the given concept is not a concrete (datatype) concept. This static method returns ``True`` when the concept's type differs from ``ConceptType.CONCRETE``, and ``False`` when it is concrete. It performs a read-only check without altering the concept.
+
+        :param op: The concept to test against the CONCRETE type.
+        :type op: Concept
+
+        :return: True if the concept is not concrete, False otherwise.
+
+        :rtype: bool
+        """
+
         return OperatorConcept.is_not_type(op, ConceptType.CONCRETE)
 
     @staticmethod
@@ -873,7 +893,8 @@ class OperatorConcept(Concept, HasConceptsInterface):
                 ):
                     return TruthConcept.get_bottom()
                 if self.type in OperatorConcept.ABSORPTION_OPERATORS:
-                    self.concepts = sorted(set(self.concepts))
+                    # self.concepts = sorted(set(self.concepts))
+                    self.concepts = list(set(self.concepts))
                 self.concepts = [c for c in self.concepts if c.type != ConceptType.TOP]
             elif OperatorConcept.is_or(self.type):
                 if (
@@ -883,7 +904,8 @@ class OperatorConcept(Concept, HasConceptsInterface):
                 ):
                     return TruthConcept.get_top()
                 if self.type in OperatorConcept.ABSORPTION_OPERATORS:
-                    self.concepts = sorted(set(self.concepts))
+                    # self.concepts = sorted(set(self.concepts))
+                    self.concepts = list(set(self.concepts))
                 self.concepts = [
                     c for c in self.concepts if c.type != ConceptType.BOTTOM
                 ]
@@ -972,7 +994,8 @@ class OperatorConcept(Concept, HasConceptsInterface):
         if self.is_complemented_atomic():
             return self
         if self.type in OperatorConcept.ABSORPTION_OPERATORS:
-            self.concepts = sorted(set(self.concepts))
+            # self.concepts = sorted(set(self.concepts))
+            self.concepts = list(set(self.concepts))
         if TruthConcept.get_top() in self.concepts and OperatorConcept.is_or(self.type):
             return TruthConcept.get_top()
         elif TruthConcept.get_bottom() in self.concepts and OperatorConcept.is_and(
@@ -991,7 +1014,14 @@ class OperatorConcept(Concept, HasConceptsInterface):
                     if OperatorConcept.is_or(self.type)
                     else TruthConcept.get_bottom()
                 )
-        self.concepts: list[Concept] = sorted(
+        # self.concepts: list[Concept] = sorted(
+        #     [
+        #         a
+        #         for a in self.concepts
+        #         if a not in [TruthConcept.get_bottom(), TruthConcept.get_top()]
+        #     ]
+        # )
+        self.concepts: list[Concept] = list(
             [
                 a
                 for a in self.concepts
@@ -1322,14 +1352,16 @@ class OperatorConcept(Concept, HasConceptsInterface):
 
     def __hash__(self) -> int:
         """
-        Computes the hash value for the instance, enabling its use as a key in dictionaries or as an element in sets. The implementation derives the hash from the string representation of the object, ensuring that instances with identical string representations produce the same hash code. This method delegates the calculation to the built-in hash function applied to the result of the object's string conversion.
+        Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-        :return: An integer hash value derived from the string representation of the object.
+        :return: An integer hash value representing the structural identity of this object.
 
         :rtype: int
         """
 
-        return hash(str(self))
+        # return hash(str(self))
+        # return id(self)
+        return hash((hash(self.type), tuple(map(hash, self.concepts)), self.name))
 
 
 # class Not(OperatorConcept):

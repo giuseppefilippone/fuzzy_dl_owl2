@@ -5,20 +5,18 @@ fuzzy_dl_owl2.fuzzydl.concept.sugeno_integral
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A composite structure representing a Sugeno integral functions as a fuzzy measure to aggregate multiple sub-concepts based on a corresponding set of numerical weights.
+A fuzzy logic implementation of the Sugeno integral operator that aggregates a collection of weighted sub-concepts into a composite concept.
 
 
 Description
 -----------
 
 
-It enforces strict validation during initialization to ensure that the number of provided weights exactly matches the number of concepts, thereby maintaining the integrity of the weighted decision structure. Beyond basic storage, the implementation supports recursive operations such as cloning the instance, retrieving all atomic concepts or roles contained within the hierarchy, and replacing specific sub-concepts with alternatives. Logical operations like negation, conjunction, and disjunction are handled through operator overloading, delegating the actual computation to a central operator utility to ensure consistency across the system. The internal state is managed through a specific interface for weighted concepts, and the object's identity is derived from a formatted string representation that encapsulates its weights and components.
+The software models the Sugeno integral as a specialized concept within a description logic framework, enabling the representation of complex, weighted decision structures by combining multiple sub-concepts with corresponding numerical values. It enforces strict data integrity during instantiation by validating that the count of weights exactly matches the count of provided concepts, ensuring the mathematical definition of the integral is preserved. By inheriting from a base concept class and implementing an interface for weighted components, the design integrates seamlessly with the broader system, allowing the integral to participate in logical operations and hierarchical traversals.
+
+Recursive analysis features allow the aggregation of all atomic concepts and roles contained within the composite structure, providing a flattened view of the logical dependencies. The implementation supports structural manipulation through cloning and replacement capabilities, which facilitate the modification of internal components without affecting the original instance. Logical operations such as negation, conjunction, and disjunction are delegated to a dedicated operator utility, ensuring consistent algebraic behavior across the fuzzy logic system. Furthermore, the object defines a unique hash value based on its weights, internal concepts, and type, making it suitable for use within hash-based collections.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -81,9 +79,9 @@ Module Contents
 
    .. py:method:: __hash__() -> int
 
-      Calculates a hash code for the current instance to support its use in hash-based collections like dictionaries and sets. This method derives the hash value by converting the object to its string representation and hashing that string. Because the hash depends on the string output, any changes to the object's state that affect its string representation will alter its hash value, which may lead to unexpected behavior if the object is used as a dictionary key after modification.
+      Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-      :return: An integer hash value derived from the string representation of the object.
+      :return: An integer hash value representing the structural identity of this object.
 
       :rtype: int
 
@@ -181,3 +179,5 @@ Module Contents
       :return: Returns a new Concept representing the negation of the Sugeno Integral resulting from replacing concept 'a' with concept 'c' in the internal concepts.
 
       :rtype: Concept
+
+

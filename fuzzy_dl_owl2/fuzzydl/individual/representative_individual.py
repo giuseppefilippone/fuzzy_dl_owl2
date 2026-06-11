@@ -24,11 +24,10 @@ class RepresentativeIndividual:
     :type ind: CreatedIndividual
     """
 
-
     def __init__(
         self,
         c_type: RepresentativeIndividualType,
-        f_name: str,
+        f_name: typing.Optional[str],
         f: TriangularFuzzyNumber,
         ind: CreatedIndividual,
     ) -> None:
@@ -39,14 +38,14 @@ class RepresentativeIndividual:
         :param c_type: The representative type of the individual.
         :type c_type: RepresentativeIndividualType
         :param f_name: Name of the feature for which the individual acts as a filler.
-        :type f_name: str
+        :type f_name: typing.Optional[str]
         :param f: The triangular fuzzy number representing the value of the feature.
         :type f: TriangularFuzzyNumber
         :param ind: The reference individual object.
         :type ind: CreatedIndividual
         """
 
-        self.f_name: str = f_name
+        self.f_name: typing.Optional[str] = f_name
         # Type of the individual
         self.type: RepresentativeIndividualType = c_type
         # Fuzzy number
@@ -65,13 +64,13 @@ class RepresentativeIndividual:
 
         return self.type
 
-    def get_feature_name(self) -> str:
+    def get_feature_name(self) -> typing.Optional[str]:
         """
         Retrieves the name of the feature represented by this instance. This method serves as a simple getter for the internal `f_name` attribute, returning its current value. It performs no computation or modification of the object's state.
 
         :return: The name of the feature.
 
-        :rtype: str
+        :rtype: typing.Optional[str]
         """
 
         return self.f_name

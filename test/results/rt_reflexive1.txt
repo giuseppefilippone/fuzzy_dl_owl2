@@ -1,0 +1,8 @@
+(define-fuzzy-logic lukasiewicz)
+
+(define-primitive-concept C *top*)
+
+(instance a (all S C) 0.8)
+
+(reflexive S)
+

@@ -42,33 +42,49 @@ class FuzzyConcreteConcept(Concept, ABC):
     @property
     def k1(self) -> float:
         """
-        Sets the value of the `k1` attribute for the instance, converting the input to a float to ensure type consistency. This method updates the private `_k1` variable, effectively modifying the internal state of the `FuzzyConcreteConcept` object. Any subsequent operations relying on this parameter will reflect the new value.
+        Returns the lower bound of the numerical interval ``[k1, k2]`` over which this concrete concept is defined. The value is held internally as a float and is read without modifying the instance.
 
-        :param value: The new value for the k1 attribute.
-        :type value: float
+        :return: The lower bound ``k1`` of the definition interval.
+
+        :rtype: float
         """
 
         return self._k1
 
     @k1.setter
     def k1(self, value: float) -> None:
+        """
+        Sets the lower bound ``k1`` of the definition interval. The provided value is cast to a float and stored in the private ``_k1`` attribute; a non-convertible value raises a ``ValueError`` or ``TypeError``.
+
+        :param value: The new lower bound, converted to a float.
+        :type value: float
+        """
+
         self._k1 = float(value)
 
     @property
     def k2(self) -> float:
         """
-        Sets the upper bound parameter k2 for the fuzzy concrete concept. This method enforces a constraint ensuring that the new value is greater than or equal to the existing k1 parameter; if k1 is larger than the provided value, a ValueError is raised. Upon successful validation, the input is converted to a float and stored in the internal state.
+        Returns the upper bound of the numerical interval ``[k1, k2]`` over which this concrete concept is defined. The value is held internally as a float and is read without modifying the instance.
 
-        :param value: The value to assign to the k2 parameter, which must be greater than or equal to k1.
-        :type value: float
+        :return: The upper bound ``k2`` of the definition interval.
 
-        :raises ValueError: Raised if the provided value is less than `k1`, as `k2` must be greater than or equal to `k1`.
+        :rtype: float
         """
 
         return self._k2
 
     @k2.setter
     def k2(self, value: float) -> None:
+        """
+        Sets the upper bound ``k2`` of the definition interval, enforcing that it is not smaller than the current ``k1``. The value is cast to a float and stored in the private ``_k2`` attribute.
+
+        :param value: The new upper bound, which must be greater than or equal to ``k1``.
+        :type value: float
+
+        :raises ValueError: if the provided value is smaller than the current ``k1``.
+        """
+
         if self.k1 > value:
             raise ValueError(
                 f"The parameter k1 = {self.k1} must be less than or equal to the parameter k2 = {value}."

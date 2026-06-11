@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.util.config_reader
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A centralized configuration manager for a fuzzy description logic reasoning engine that loads parameters from files and command-line arguments to control precision, optimization strategies, and solver selection.
+A centralized configuration manager that loads and applies settings for a fuzzy reasoning engine from INI or environment files.
 
 
 Description
 -----------
 
 
-The software establishes a single source of truth for operational parameters, defining default values for critical aspects such as the precision threshold, maximum individual generation limits, and various blocking optimizations used during reasoning. By leveraging the standard configuration parser, it reads settings from an external file and supports runtime overrides through a list of string arguments, allowing users to customize behavior without modifying the source code. During the loading process, the logic automatically derives secondary values, such as the number of precision digits based on the epsilon threshold, and dynamically updates global constants within the application to align with the numerical limits of the selected Mixed-Integer Linear Programming (MILP) solver. Error handling mechanisms are included to catch file access or parsing issues, printing diagnostic messages to standard output to aid troubleshooting while attempting to preserve a valid configuration state.
+The software establishes a set of default parameters governing the behavior of a fuzzy reasoning engine, including precision thresholds, optimization levels, and blocking strategies. It provides a flexible loading mechanism that prioritizes a specified INI configuration file but falls back to a ``.env`` file located in the current working directory if the primary source is unavailable. Input values are normalized to handle case and underscore variations, ensuring compatibility between different configuration formats, while specific overrides can be applied directly to the loaded settings. Once the parameters are loaded, the system automatically derives internal precision metrics and adjusts global numerical limits within the application to match the specific capabilities of the chosen Mixed-Integer Linear Programming solver.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -48,14 +44,14 @@ Module Contents
     .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzydl_util_config_reader_ConfigReader.pdf
        :alt: UML Class Diagram for ConfigReader
        :align: center
-       :width: 10.8cm
+       :width: 9.7cm
        :class: uml-diagram
 
        UML Class Diagram for **ConfigReader**
 
 .. py:class:: ConfigReader
 
-   A centralized configuration manager for a reasoning engine, defining default parameters that control precision, optimization levels, blocking strategies, and the selection of the Mixed-Integer Linear Programming (MILP) solver. It allows users to customize the reasoner's behavior by loading settings from a configuration file and overriding specific values via command-line arguments. When parameters are loaded, the manager automatically adjusts internal precision calculations and updates global constants within the application to match the capabilities of the selected solver provider.
+   A centralized configuration manager for a reasoning engine, defining default parameters that control precision, optimization levels, blocking strategies, and the selection of the Mixed-Integer Linear Programming (MILP) solver. It allows users to customize the reasoner's behavior by loading settings from a configuration file (INI) or, when that file is missing or unspecified, from a ``.env`` file located in the current working directory. Specific values can be overridden via command-line arguments. When parameters are loaded, the manager automatically adjusts internal precision calculations and updates global constants within the application to match the capabilities of the selected solver provider.
 
    :param ANYWHERE_DOUBLE_BLOCKING: Determines whether the anywhere double blocking optimization is applied.
    :type ANYWHERE_DOUBLE_BLOCKING: bool
@@ -79,16 +75,65 @@ Module Contents
    :type MILP_PROVIDER: constants.MILPProvider
 
 
-   .. py:method:: load_parameters(config_file: str, args: list[str]) -> None
+   .. py:method:: _read_env() -> dict[str, str] | None
       :staticmethod:
 
 
-      Reads configuration settings from the specified file and applies overrides from the provided argument list, which is interpreted as sequential key-value pairs. This method updates class-level attributes of `ConfigReader` and modifies global constants within the application's `constants` module based on the loaded settings, such as the MILP provider and epsilon value. It also calculates derived values like `NUMBER_DIGITS` and prints a debug message if enabled. The provided argument list must contain an even number of elements to form valid key-value pairs; otherwise, a generic exception is triggered. Errors during file reading or parsing are caught and printed to standard output without halting execution, potentially leaving the configuration in a partially updated state.
+      Loads the default ``.env`` discovered by python-dotenv.
 
-      :param config_file: Filesystem path to the configuration file containing default parameters.
+      python-dotenv's default ``find_dotenv()`` walks up from the *caller's
+      file* (``config_reader.py``), not from the current working directory,
+      so a ``.env`` placed in the user's working directory was previously
+      invisible. Pass ``usecwd=True`` so discovery starts at ``os.getcwd()``
+      and walks up from there.
+
+      :return: The file-only key/value mapping, or ``None`` when no ``.env``
+          file is discovered.
+
+      :rtype: dict[str, str] | None
+
+
+
+   .. py:method:: _read_ini(config_file: str) -> dict[str, str]
+      :staticmethod:
+
+
+      Reads an INI-style configuration file and returns the key/value pairs of its ``DEFAULT`` section as a plain dictionary. Parsing is delegated to :class:`configparser.ConfigParser`; if the file cannot be found or read, a ``FileNotFoundError`` is raised rather than silently returning an empty mapping.
+
+      :param config_file: Path to the INI configuration file to read.
       :type config_file: str
-      :param args: A list of strings representing key-value pairs to override configuration settings, interpreted as alternating keys and values.
-      :type args: list[str]
+
+      :raises FileNotFoundError: if the configuration file does not exist or cannot be read.
+
+      :return: The ``DEFAULT`` section entries as a ``{key: value}`` mapping.
+
+      :rtype: dict[str, str]
+
+
+
+   .. py:method:: load_parameters(config_file: str | None, **kwargs: list[str]) -> None
+      :staticmethod:
+
+
+      Loads configuration settings and applies overrides from the provided argument list.
+
+      When ``config_file`` is ``None`` or points to a non-existent path, the loader falls
+      back to a ``.env`` file located in the current working directory (``./.env``). The
+      ``.env`` file uses the standard ``KEY=VALUE`` format; keys are matched against the
+      INI configuration keys in a case- and underscore-insensitive way, so either
+      ``DEBUG_PRINT=True`` or ``debugPrint=True`` is accepted.
+
+      Overrides are supplied as keyword arguments and applied on top of the values read
+      from the INI/``.env`` source before case- and underscore-insensitive normalisation.
+
+      :param config_file: Filesystem path to the INI configuration file. If ``None`` or
+          missing, ``./.env`` is used as a fallback.
+      :type config_file: str | None
+      :param kwargs: A dictionary of key-value pairs to override configuration settings.
+      :type kwargs: dict[str, typing.Any]
+
+      :raises FileNotFoundError: if ``config_file`` is ``None`` or missing and no ``.env``
+          file can be discovered by python-dotenv.
 
 
 
@@ -106,7 +151,7 @@ Module Contents
 
    .. py:attribute:: DEBUG_PRINT
       :type:  bool
-      :value: True
+      :value: False
 
 
 
@@ -147,3 +192,5 @@ Module Contents
    .. py:attribute:: RULE_ACYCLIC_TBOXES
       :type:  bool
       :value: True
+
+

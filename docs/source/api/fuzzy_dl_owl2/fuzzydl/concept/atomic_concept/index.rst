@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.concept.atomic_concept
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Defines a fundamental, indivisible unit within a fuzzy description logic hierarchy that serves as a leaf node for logical operations.
+Defines the fundamental building block for a fuzzy description logic system, representing indivisible concepts that support logical operations.
 
 
 Description
 -----------
 
 
-A core entity representing an atomic concept functions as the most basic, indivisible element within a fuzzy description logic framework. By serving as a leaf node in the conceptual hierarchy, this component ensures that fundamental definitions are distinct from complex, composite structures, relying on a unique string identifier to establish identity and equality. Logical operations such as conjunction, disjunction, and negation are supported through operator overloading, which delegates the creation of resulting composite objects to a separate handler class rather than modifying the atomic instance directly. Additionally, the design includes a static factory mechanism for generating unique identifiers automatically, while traversal and decomposition methods consistently return the instance itself to signify that it cannot be broken down further.
+The software implements a leaf node within a conceptual hierarchy, serving as the most basic, indivisible unit of representation in a fuzzy description logic framework. Instances are identified by a string name and can be instantiated directly or generated via a factory method that ensures unique identifiers through a global counter. While the class represents a base element that cannot be decomposed further, it enables the construction of complex expressions by overloading standard logical operators such as conjunction, disjunction, and negation, which delegate the creation of composite structures to a separate operator handler. Traversal and decomposition methods consistently return the instance itself or a singleton set containing it, reflecting the nature of an atomic entity, while equality and hashing mechanisms rely strictly on the assigned name and type to maintain identity consistency across the system.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -48,7 +44,7 @@ Module Contents
     .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzydl_concept_atomic_concept_AtomicConcept.pdf
        :alt: UML Class Diagram for AtomicConcept
        :align: center
-       :width: 11.8cm
+       :width: 13.0cm
        :class: uml-diagram
 
        UML Class Diagram for **AtomicConcept**
@@ -93,9 +89,9 @@ Module Contents
 
    .. py:method:: __hash__() -> int
 
-      Computes the hash value for the instance based on the `name` attribute, allowing `AtomicConcept` objects to be used as dictionary keys or stored in sets. The method delegates the hashing operation to the `name` property, ensuring that instances with identical names produce the same hash. It is important that the `name` attribute remains immutable for the lifetime of the object, as modifying it would change the hash value and potentially corrupt hash-based collections.
+      Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-      :return: An integer representing the hash of the object's `name` attribute.
+      :return: An integer hash value representing the structural identity of this object.
 
       :rtype: int
 
@@ -310,3 +306,5 @@ Module Contents
       :return: The concept resulting from the replacement operation. Returns `c` if `self` matches `a` and `c` is atomic; otherwise, returns `self`. Returns `None` if `c` is not atomic.
 
       :rtype: typing.Optional[typing.Self]
+
+

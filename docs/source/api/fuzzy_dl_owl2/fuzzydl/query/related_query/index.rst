@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.query.related_query
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-An abstract base class defines the structure for queries evaluating role assertions and membership degrees between individuals in a fuzzy description logic system.
+An abstract base class defines a foundational interface for evaluating role assertions and determining degrees of membership between individuals in a fuzzy logic system.
 
 
 Description
 -----------
 
 
-Acting as a foundational interface, the component handles the evaluation of entailment for role assertions by focusing on the relationships between specific entities. The design supports operations that determine minimum or maximum degrees of membership, serving as a shared structure for more specific query implementations that require these calculations. By encapsulating parameters such as the specific role being examined, the subject and object individuals involved, and an expression representing the desired degree of membership, it provides a standardized way to construct and process queries regarding connection strength. This abstraction ensures that concrete implementations can inherit a consistent state management approach while defining the specific logic for resolving fuzzy relationships.
+It serves as a shared structure for specific query implementations that assess the strength or validity of connections within a logical framework, particularly focusing on operations that determine minimum or maximum degrees of membership. By encapsulating parameters such as the specific role type, the subject and object individuals involved, and an expression representing the desired degree of membership, the design standardizes how these queries are constructed and processed. The initialization process prepares the internal state by defining placeholders for the abstract role, the related individuals, and the objective expression, ensuring that subclasses inherit a consistent mechanism for handling relationship evaluations.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -48,7 +44,7 @@ Module Contents
     .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzydl_query_related_query_RelatedQuery.pdf
        :alt: UML Class Diagram for RelatedQuery
        :align: center
-       :width: 11.2cm
+       :width: 6.9cm
        :class: uml-diagram
 
        UML Class Diagram for **RelatedQuery**
@@ -95,3 +91,5 @@ Module Contents
    .. py:attribute:: role
       :type:  str
       :value: None
+
+

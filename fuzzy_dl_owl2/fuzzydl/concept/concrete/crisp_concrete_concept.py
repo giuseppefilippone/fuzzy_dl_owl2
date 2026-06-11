@@ -24,7 +24,6 @@ class CrispConcreteConcept(FuzzyConcreteConcept):
     :raises ValueError: Raised when the satisfaction interval [a, b] is invalid or not contained within the definition interval [k1, k2]. This happens if a > b, a < k1, or b > k2.
     """
 
-
     def __init__(self, name: str, k1: float, k2: float, a: float, b: float) -> None:
         """
         Initializes a new instance with a specific name and interval boundaries defined by the provided parameters. The parameters `k1` and `k2` represent the global domain limits, while `a` and `b` define the specific interval for this concept. The constructor validates that the interval is well-formed and contained within the domain, ensuring that `a` is less than or equal to `b`, `a` is greater than or equal to `k1`, and `b` is less than or equal to `k2`. If any of these constraints are violated, a `ValueError` is raised. Upon successful validation, the boundaries are stored as floating-point attributes on the instance.
@@ -66,31 +65,47 @@ class CrispConcreteConcept(FuzzyConcreteConcept):
     @property
     def a(self) -> float:
         """
-        This setter method updates the value of the property 'a' for the instance. It assigns the provided floating-point value to the internal attribute `_a`, modifying the object's internal state. While the type hint suggests the input should be a float, the implementation performs no validation, meaning any type of value can be stored.
+        Returns the lower bound of the crisp satisfaction interval ``[a, b]``, i.e. the smallest value for which the membership degree is ``1``. The value is held internally as a float and is read without modifying the instance.
 
-        :param value: The new floating-point value to assign to the internal attribute.
-        :type value: float
+        :return: The lower bound ``a`` of the satisfaction interval.
+
+        :rtype: float
         """
 
         return self._a
 
     @a.setter
     def a(self, value: float) -> None:
+        """
+        Sets the lower bound ``a`` of the crisp satisfaction interval. The provided value is stored directly in the private ``_a`` attribute without coercion, so callers are expected to pass a numeric value.
+
+        :param value: The new lower bound of the satisfaction interval.
+        :type value: float
+        """
+
         self._a = value
 
     @property
     def b(self) -> float:
         """
-        Updates the value of the attribute 'b' for the `CrispConcreteConcept` instance by assigning the provided floating-point number to the internal backing field `_b`. This method mutates the state of the object, potentially influencing any subsequent calculations or logic that relies on this specific property. While the signature indicates a float input, the implementation performs no explicit validation, meaning that passing incompatible types may lead to errors in later operations that expect a numeric value.
+        Returns the upper bound of the crisp satisfaction interval ``[a, b]``, i.e. the largest value for which the membership degree is ``1``. The value is held internally as a float and is read without modifying the instance.
 
-        :param value: The new value to assign to the b attribute.
-        :type value: float
+        :return: The upper bound ``b`` of the satisfaction interval.
+
+        :rtype: float
         """
 
         return self._b
 
     @b.setter
     def b(self, value: float) -> None:
+        """
+        Sets the upper bound ``b`` of the crisp satisfaction interval. The provided value is stored directly in the private ``_b`` attribute without coercion, so callers are expected to pass a numeric value.
+
+        :param value: The new upper bound of the satisfaction interval.
+        :type value: float
+        """
+
         self._b = value
 
     def clone(self) -> typing.Self:
@@ -172,14 +187,15 @@ class CrispConcreteConcept(FuzzyConcreteConcept):
 
     def __hash__(self) -> int:
         """
-        Returns the hash value of the object by computing the hash of its string representation. This implementation delegates the hashing logic to the result of `str(self)`, ensuring that the hash is derived from the object's textual form. Consequently, the object is hashable and can be used in collections like dictionaries and sets, though care must be taken if the string representation is mutable, as changing it would alter the hash value.
+        Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-        :return: An integer representing the hash of the object's string representation.
+        :return: An integer hash value representing the structural identity of this object.
 
         :rtype: int
         """
-
-        return hash(str(self))
+        # return hash(str(self))
+        # return id(self)
+        return hash((self.name, self.k1, self.k2, self.a, self.b, hash(self.type)))
 
     # def __str__(self) -> str:
     #     return self.get_name()

@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.concept.quasi_sugeno_integral
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Implements a Quasi-Sugeno integral operator that aggregates a collection of fuzzy concepts using specific weights.
+Defines a specialized fuzzy logic aggregation operator known as the Quasi-Sugeno integral, which combines weighted concepts into a single composite concept.
 
 
 Description
 -----------
 
 
-The implementation extends the standard Sugeno integral logic to handle a specific variant of fuzzy aggregation, requiring a strict correspondence between a list of numerical weights and a list of input concepts. By inheriting from a base integral class, it reuses core initialization logic while defining a unique type identifier and a specific string serialization format that encapsulates both the weights and the constituent concepts. Logical operations such as negation, conjunction, and disjunction are supported through operator overloading, which delegates the actual computation to a central utility class to ensure consistency across different fuzzy logic constructs. Furthermore, the design includes mechanisms for creating independent copies of the instance and recursively replacing specific concepts within the structure, facilitating complex manipulations of the fuzzy logic hierarchy without altering the original state.
+The implementation extends the base Sugeno integral functionality to handle the specific characteristics of the Quasi-Sugeno variant, ensuring that the number of provided weights matches the number of input concepts to maintain mathematical consistency. By inheriting from the parent Sugeno class, it leverages existing aggregation logic while introducing a distinct type identifier and a custom string serialization format that encapsulates the weights and constituent concepts. Logical operations such as negation, conjunction, and disjunction are supported through delegation to a central operator handler, allowing these composite concepts to participate seamlessly in broader fuzzy logic expressions. Furthermore, the design includes mechanisms for structural manipulation, such as cloning instances to preserve state and recursively replacing specific concepts within the aggregation hierarchy, which facilitates complex reasoning tasks within the fuzzy description logic framework.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -48,7 +44,7 @@ Module Contents
     .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzydl_concept_quasi_sugeno_integral_QsugenoIntegral.pdf
        :alt: UML Class Diagram for QsugenoIntegral
        :align: center
-       :width: 100%
+       :width: 11.7cm
        :class: uml-diagram
 
        UML Class Diagram for **QsugenoIntegral**
@@ -85,9 +81,9 @@ Module Contents
 
    .. py:method:: __hash__() -> int
 
-      Computes the hash value for the `QsugenoIntegral` instance, allowing it to be used as a key in dictionaries or stored in sets. The implementation derives the hash from the string representation of the object, meaning that two instances with identical string representations will yield the same hash. This method relies on the stability of the `__str__` method; if the string representation of an instance changes, its hash value will also change, which can lead to unexpected behavior if the object is used in a hash-based collection after modification.
+      Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-      :return: An integer hash value for the object, derived from its string representation.
+      :return: An integer hash value representing the structural identity of this object.
 
       :rtype: int
 
@@ -153,7 +149,3 @@ Module Contents
 
    .. py:attribute:: type
 
-      Updates the type classification of the Concept instance to the specified value. This setter method assigns the provided `ConceptType` to the internal `_type` attribute, effectively overwriting the previous type definition. The operation modifies the object's state in place and does not return a value.
-
-      :param new_type: The classification or category to assign to the concept.
-      :type new_type: fuzzy_dl_owl2.fuzzydl.util.constants.ConceptType

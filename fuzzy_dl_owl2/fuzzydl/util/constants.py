@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import enum
 import os
-import re
 import typing
 
 import pyparsing as pp
@@ -10,12 +9,20 @@ import pyparsing as pp
 SEPARATOR: str = "-" * 25
 STAR_SEPARATOR: str = "*" * 25
 NUMBER = typing.Union[int, float]
-RESULTS_PATH: str = os.path.join(".", "results")
 
 
 def ensure_results_dir() -> str:
-    os.makedirs(RESULTS_PATH, exist_ok=True)
-    return RESULTS_PATH
+    """
+    Ensures that the ``./results`` directory exists relative to the current working directory, creating it (and silently succeeding if it is already present) before returning its path. This is used to guarantee a destination folder for reasoner output files exists prior to writing.
+
+    :return: The path to the ensured ``./results`` directory.
+
+    :rtype: str
+    """
+
+    results_path: str = os.path.join(".", "results")
+    os.makedirs(results_path, exist_ok=True)
+    return results_path
 
 
 class MILPProvider(enum.StrEnum):
@@ -851,7 +858,7 @@ class InequalityType(enum.StrEnum):
         return self.value
 
 
-class VariableType(enum.StrEnum):
+class VariableType(enum.StrEnum):  # Variable
     """
     This enumeration defines the permissible domains for variables, typically within the context of mathematical optimization or modeling. It categorizes variables into distinct types such as binary, continuous, integer, and semi-continuous, each imposing specific constraints on the values the variable can assume. As a string-based enumeration, members can be used directly in string comparisons or serialization, and the class is configured to return the member's name when represented as a string.
 
@@ -1264,14 +1271,19 @@ class FuzzyDLKeyword(enum.Enum):
 
     def get_name(self) -> str:
         """
-        Retrieves and normalizes the name associated with the underlying value object. The method converts the name to lowercase and strips all occurrences of single and double quotes using a regular expression substitution. This processing ensures a consistent string representation suitable for comparison or fuzzy matching, and it does not modify the state of the object itself. Note that this method assumes `self.value` and `self.value.name` are accessible and valid strings; if these attributes are missing or lack the expected methods, an `AttributeError` will be raised.
+        Retrieves and normalizes the name associated with the underlying value object. The method converts the name to lowercase and strips all occurrences of single and double quotes. Each enum member is a singleton, so the normalized name is cached on first access; subsequent calls return the cached value without re-running the substitution.
 
         :return: The lowercased name with all single and double quotes removed.
 
         :rtype: str
         """
 
-        return re.sub(r"[\"\']+", "", self.value.name.lower())
+        cached: typing.Optional[str] = self.__dict__.get("_normalized_name")
+        if cached is not None:
+            return cached
+        normalized: str = self.value.name.lower().replace('"', "").replace("'", "")
+        self.__dict__["_normalized_name"] = normalized
+        return normalized
 
     def get_value(self) -> typing.Union[pp.CaselessKeyword, pp.Literal]:
         """
@@ -1298,15 +1310,20 @@ class FuzzyDLKeyword(enum.Enum):
         :rtype: bool
         """
 
+        # Hot path: the fast parser passes already-lowercased keyword strings,
+        # so a direct compare against the cached normalized name avoids both a
+        # method call and the redundant ``str.lower``.
+        cached = self.__dict__.get("_normalized_name")
+        if cached is None:
+            cached = self.get_name()
         if isinstance(value, str):
-            return self.get_name() == value.lower()
-        elif isinstance(value, pp.CaselessKeyword):
-            return self.get_name() == value.name.lower()
-        elif isinstance(value, pp.Literal):
-            return self.get_name() == value.name.lower()
-        elif isinstance(value, FuzzyDLKeyword):
-            return self.get_name() == value.get_name()
-        raise NotImplementedError
+            return cached == value if value.islower() else cached == value.lower()
+        if isinstance(value, (pp.CaselessKeyword, pp.Literal)):
+            return cached == value.name.lower()
+        if isinstance(value, FuzzyDLKeyword):
+            other = value.__dict__.get("_normalized_name") or value.get_name()
+            return cached == other
+        return NotImplemented
 
     def __repr__(self) -> str:
         """
@@ -1368,6 +1385,17 @@ class RestrictionType(enum.Enum):
         """
 
         return self.name
+
+
+# Pre-populate FuzzyDLKeyword's normalized-name cache so the first equality
+# comparison on each member avoids the `re.sub` / `replace` work entirely.
+# Every enum member is a singleton, so the result is stable for the process
+# lifetime.
+for _kw in FuzzyDLKeyword:
+    _kw.__dict__["_normalized_name"] = (
+        _kw.value.name.lower().replace('"', "").replace("'", "")
+    )
+del _kw
 
 
 class FuzzyLogic(enum.StrEnum):

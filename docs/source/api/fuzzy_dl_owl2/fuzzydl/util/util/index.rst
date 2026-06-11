@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.util.util
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A centralized utility module that configures application logging and provides static helper methods for mathematical operations, data manipulation, and error handling within the fuzzy ontology reasoner.
+Centralizes logging infrastructure and provides static helper methods for mathematical operations and data manipulation within the fuzzy description logic reasoner.
 
 
 Description
 -----------
 
 
-Execution begins by establishing a persistent logging infrastructure that organizes output into daily directories with timestamped filenames, ensuring that runtime events are systematically recorded. The logging verbosity is dynamically adjusted based on configuration settings, allowing the system to switch between standard information tracking and detailed debugging as needed. Core functionality is encapsulated within a static class that serves as a namespace for common operations, wrapping standard logging calls to integrate with a custom exception hierarchy for immediate error propagation. Beyond logging, the module offers precise numerical tools, such as a rounding mechanism that utilizes decimal arithmetic to enforce a specific "round half up" strategy and avoid binary floating-point inaccuracies. Additional helpers include mathematical functions for calculating logarithmic ceilings, checking for integer values, and sorting lists in-place based on string conversion to handle heterogeneous data types.
+It establishes a robust logging framework that automatically creates timestamped directories and files to track reasoner activity, ensuring that debug output is only generated when explicitly enabled via configuration settings. The core functionality is encapsulated within a static utility class that acts as a centralized namespace for common operations, abstracting away the complexity of the underlying logging library and providing consistent error handling through custom exceptions. Mathematical helpers are included to handle precise decimal rounding using specific half-up logic and to perform calculations like determining the ceiling of a base-2 logarithm, which are essential for the numerical stability and logic processing of the reasoner. By integrating directly with the global configuration reader, these utilities ensure that behavior such as rounding precision and debug verbosity remains consistent across the entire application without requiring repeated setup.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -182,7 +178,16 @@ Module Contents
 
 .. py:function:: _ensure_logging() -> None
 
+   Lazily configures the reasoner logger the first time logging is requested. If :func:`setup_logging` has not yet run (tracked via the module-level ``_logging_configured`` flag), it is invoked with default settings; otherwise this is a no-op. Every logging helper on :class:`Util` calls this so that a file handler is guaranteed to exist before any record is emitted.
+
+
 .. py:function:: setup_logging(log_dir: Optional[str] = None) -> None
+
+   Configures the module-level reasoner logger by attaching a timestamped file handler. When ``log_dir`` is omitted, a dated directory tree under ``./logs/reasoner/<year>/<month>/<day>`` is created and used; the log file itself is named from the current time. The logger level is set to ``DEBUG`` when :attr:`ConfigReader.DEBUG_PRINT` is enabled and ``INFO`` otherwise, propagation to the root logger is disabled, and a module flag is set so the configuration runs only once. Calling this more than once will attach additional handlers.
+
+   :param log_dir: Target directory for the log file; if ``None``, a dated default directory is created.
+   :type log_dir: typing.Optional[str]
+
 
 .. py:data:: _logging_configured
    :type:  bool

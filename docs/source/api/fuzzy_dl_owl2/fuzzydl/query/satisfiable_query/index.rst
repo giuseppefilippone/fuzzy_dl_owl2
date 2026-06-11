@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.query.satisfiable_query
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Establishes a foundational interface for min/max satisfiability queries that evaluate the degree to which a specific fuzzy concept is satisfied, optionally within the context of a particular individual.
+An abstract base class that defines the structure for evaluating the satisfiability of fuzzy concepts within a fuzzy description logic system.
 
 
 Description
 -----------
 
 
-The implementation provides a robust initialization mechanism that accepts a mandatory fuzzy concept and an optional individual entity, ensuring that the provided concept is not concrete before proceeding. By storing these core components—specifically the concept, the optional individual, and a placeholder for the resulting objective expression—the logic prepares the necessary state for subsequent satisfiability testing operations. Design decisions include the use of method overloading to distinguish between general concept satisfiability checks and those bound to a specific individual, thereby centralizing validation logic and preventing invalid configurations. Ultimately, the structure serves as a specialized extension of the generic query framework, tailored to support the derivation of bounds or extents of concept fulfillment in fuzzy description logic reasoning.
+Extending the base ``Query`` interface, the software provides a foundational mechanism for determining the degree to which a fuzzy concept is satisfied. It supports two distinct operational modes: evaluating the general satisfiability of a concept or assessing how well a specific individual fulfills that concept. To maintain logical integrity, the implementation enforces a strict constraint that the input concept must be non-concrete, preventing the application of satisfiability checks on specific instances. By utilizing overloaded initialization methods, the design flexibly handles the presence or absence of an individual argument while storing the necessary components—such as the concept, individual, and objective expression—required for subsequent mixed-integer linear programming evaluations.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -83,3 +79,5 @@ Module Contents
 
       :param c: The fuzzy concept to be checked for satisfiability.
       :type c: Concept
+
+

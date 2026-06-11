@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.concept.concrete.right_concrete_concept
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A specialized class models a fuzzy logic concept characterized by a "right shoulder" membership function, where the degree of truth transitions linearly from zero to one as an input value increases.
+A Python implementation of a fuzzy logic concept that utilizes a right-shoulder membership function to model values where truth increases linearly over a specific interval.
 
 
 Description
 -----------
 
 
-It is designed to represent linguistic terms that imply a threshold or increasing magnitude, such as "high temperature" or "large size," by defining a specific domain interval and a transition range. Initialization logic enforces strict geometric constraints to ensure the domain boundaries fully encompass the transition interval, guaranteeing structural validity for subsequent calculations. Core functionality involves computing membership degrees through linear interpolation for values falling within the transition range, while returning absolute truth values for inputs outside this range. Additionally, the component integrates with a broader fuzzy description logic framework by supporting standard logical operations like negation, conjunction, and disjunction through operator overloading, which delegates complex logic to a centralized operator handler.
+The software models a specific type of fuzzy set where the degree of membership transitions from zero to one as an input value increases, effectively representing concepts that become truer as a variable grows larger. The implementation relies on geometric parameters to define the domain and the transition interval, ensuring that the domain boundaries fully encapsulate the specific range where the membership ramps up. During initialization, strict validation logic enforces ordering constraints between these boundaries to guarantee structural integrity and mathematical consistency. Beyond calculating membership degrees through linear interpolation, the implementation supports standard fuzzy logic operations such as negation, conjunction, and disjunction by delegating these tasks to a central operator handler. Functionality for cloning instances and generating hash values based on the defining parameters is also included to support object identity and comparison within the broader system.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -89,9 +85,9 @@ Module Contents
 
    .. py:method:: __hash__() -> int
 
-      Calculates the hash value of the instance by hashing the string representation of the object. This allows instances of this class to be used as keys in dictionaries or elements in sets. The hash is derived directly from the output of the `__str__` method, meaning that any changes to the object's state that modify its string representation will also change its hash value, potentially affecting its behavior in hash-based collections.
+      Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-      :return: An integer representing the hash of the object, computed from its string representation.
+      :return: An integer hash value representing the structural identity of this object.
 
       :rtype: int
 
@@ -165,37 +161,28 @@ Module Contents
       :type: float
 
 
-      Sets the value of the property 'a' by converting the provided input to a float and storing it in the internal attribute '_a'. This method ensures that the underlying state is always maintained as a floating-point number, automatically handling type coercion for compatible inputs such as integers or numeric strings. If the provided value cannot be converted to a float, a TypeError or ValueError will be raised.
+      Returns the left breakpoint of this right-shoulder membership function, i.e. the point up to which the degree is ``0`` and beyond which it starts increasing linearly toward one. The value is held internally as a float and is read without modifying the instance.
 
-      :param value: The value to assign, converted to a float.
-      :type value: float
+      :return: The breakpoint ``a`` where the degree begins to rise from ``0``.
+
+      :rtype: float
 
 
    .. py:property:: b
       :type: float
 
 
-      Sets the value of the property 'b' by converting the provided input to a float and storing it in the internal attribute '_b'. This method ensures that the underlying state is always maintained as a floating-point number, regardless of the input type, provided it is convertible. If the input value cannot be parsed as a float, a ValueError or TypeError will be raised, and the object's state will remain unchanged until the exception is handled.
+      Returns the right breakpoint of this right-shoulder membership function, i.e. the point at which the degree reaches its maximum value of ``1``. The value is held internally as a float and is read without modifying the instance.
 
-      :param value: The new value to assign, which will be converted to a float.
-      :type value: float
+      :return: The breakpoint ``b`` where the degree reaches ``1``.
+
+      :rtype: float
 
 
    .. py:attribute:: k1
       :type:  float
 
-      Sets the value of the `k1` attribute for the instance, converting the input to a float to ensure type consistency. This method updates the private `_k1` variable, effectively modifying the internal state of the `FuzzyConcreteConcept` object. Any subsequent operations relying on this parameter will reflect the new value.
-
-      :param value: The new value for the k1 attribute.
-      :type value: float
-
 
    .. py:attribute:: k2
       :type:  float
 
-      Sets the upper bound parameter k2 for the fuzzy concrete concept. This method enforces a constraint ensuring that the new value is greater than or equal to the existing k1 parameter; if k1 is larger than the provided value, a ValueError is raised. Upon successful validation, the input is converted to a float and stored in the internal state.
-
-      :param value: The value to assign to the k2 parameter, which must be greater than or equal to k1.
-      :type value: float
-
-      :raises ValueError: Raised if the provided value is less than `k1`, as `k2` must be greater than or equal to `k1`.

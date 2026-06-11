@@ -14,7 +14,7 @@ from fuzzy_dl_owl2.fuzzydl.knowledge_base import KnowledgeBase
 from fuzzy_dl_owl2.fuzzydl.milp.expression import Expression
 from fuzzy_dl_owl2.fuzzydl.milp.milp_helper import MILPHelper
 from fuzzy_dl_owl2.fuzzydl.milp.solution import Solution
-from fuzzy_dl_owl2.fuzzydl.milp.variable import Variable
+from fuzzy_dl_owl2.fuzzydl.milp.variable import Variable  # Variable
 from fuzzy_dl_owl2.fuzzydl.query.max.max_satisfiable_query import MaxSatisfiableQuery
 from fuzzy_dl_owl2.fuzzydl.query.query import Query
 from fuzzy_dl_owl2.fuzzydl.relation import Relation
@@ -80,7 +80,7 @@ class DefuzzifyQuery(Query):
                 b: CreatedIndividual = typing.cast(
                     CreatedIndividual, rel_set[0].get_object_individual()
                 )
-                q: Variable = kb.milp.get_variable(b)
+                q: Variable = kb.milp.get_variable(b)  # Variable
                 self.obj_expr = self.get_obj_expression(q)
 
     def solve(self, kb: KnowledgeBase) -> typing.Optional[Solution]:
@@ -115,7 +115,7 @@ class DefuzzifyQuery(Query):
             return Solution(Solution.INCONSISTENT_KB)
 
     @abstractmethod
-    def get_obj_expression(self, variable: Variable) -> Expression:
+    def get_obj_expression(self, variable: Variable) -> Expression:  # Variable
         """
         Retrieves the objective expression associated with the specified variable for the defuzzification process. This abstract method requires subclasses to implement the logic for constructing the expression, which typically represents the target function or calculation needed to resolve the fuzzy variable into a crisp value. The implementation determines how the variable's properties are translated into a formal expression used by the query engine.
 

@@ -2,7 +2,7 @@ import typing
 
 from fuzzy_dl_owl2.fuzzydl.degree.degree import Degree
 from fuzzy_dl_owl2.fuzzydl.milp.expression import Expression
-from fuzzy_dl_owl2.fuzzydl.milp.inequation import Inequation
+from fuzzy_dl_owl2.fuzzydl.milp.inequation import Inequation  # Inequation
 from fuzzy_dl_owl2.fuzzydl.util.constants import InequalityType
 
 
@@ -76,7 +76,7 @@ class DegreeNumeric(Degree):
 
     def create_inequality_with_degree_rhs(
         self, expr: Expression, inequation_type: InequalityType
-    ) -> Inequation:
+    ) -> Inequation:  # Inequation
         """
         Constructs an inequality object that compares the provided expression against the numeric degree value stored in the current instance. The method generates the inequality by subtracting the instance's value from the input expression, effectively positioning the degree value as the right-hand side of the comparison. The specific relational operator, such as less-than or greater-than, is determined by the `inequation_type` argument.
 
@@ -90,7 +90,7 @@ class DegreeNumeric(Degree):
         :rtype: Inequation
         """
 
-        return Inequation(expr - 1.0 * self.value, inequation_type)
+        return Inequation(expr - 1.0 * self.value, inequation_type)  # Inequation
 
     def is_numeric(self) -> bool:
         """
@@ -182,6 +182,17 @@ class DegreeNumeric(Degree):
         if isinstance(d, DegreeNumeric):
             return self.value == d.get_numerical_value()
         return False
+
+    def __hash__(self) -> int:
+        """
+        Computes and returns a hash value for the instance based on its underlying numeric value. This method allows instances of `DegreeNumeric` to be used in hash-based collections like sets and dictionaries. The hash is derived from the `value` attribute, ensuring that two instances with the same numeric value will produce the same hash code. The method does not modify the state of the object.
+
+        :return: An integer hash value representing the instance.
+
+        :rtype: int
+        """
+
+        return hash(self.value)
 
     def __str__(self) -> str:
         """

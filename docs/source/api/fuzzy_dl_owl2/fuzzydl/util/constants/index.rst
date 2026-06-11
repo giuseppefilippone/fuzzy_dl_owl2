@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.util.constants
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A central configuration module that defines enumerations, type aliases, and global constants for a fuzzy description logic reasoning system.
+A collection of enumerations, type aliases, and utility functions that define the core vocabulary, operational strategies, and configuration parameters for a fuzzy description logic reasoning engine.
 
 
 Description
 -----------
 
 
-The software establishes a comprehensive schema of types and configurations required for fuzzy description logic reasoning, utilizing Python enumerations to enforce type safety across the application. It defines specific categories for mixed-integer linear programming solvers, feature data types, and complex logical operators, including various t-norms, t-conorms, and aggregation methods like Choquet and Sugeno integrals. A significant portion of the logic is dedicated to mapping the specific vocabulary of the FuzzyDL language to parsing objects, enabling the interpretation of domain-specific syntax through the ``pyparsing`` library. Additionally, the module initializes global environment settings such as result storage directories and numerical limits, ensuring consistent behavior for optimization tasks and file I/O operations throughout the system.
+The software establishes a comprehensive taxonomy for the reasoning engine by defining a wide array of enumerations that categorize logical constructs, data types, and operational strategies. These type definitions cover the spectrum of fuzzy logic operations, including specific t-norms and t-conorms, aggregation methods like Choquet and Sugeno integrals, and various blocking mechanisms used to optimize reasoning performance. To facilitate parsing and configuration, the code maps specific language keywords to parsing objects and defines supported Mixed-Integer Linear Programming solver backends, allowing the system to interface with various optimization libraries. Global constants and utility functions are provided to manage file system operations for results and to enforce numerical limits, ensuring the reasoning environment is correctly initialized and bounded before execution.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -31,7 +27,6 @@ Attributes
    fuzzy_dl_owl2.fuzzydl.util.constants.MAXVAL
    fuzzy_dl_owl2.fuzzydl.util.constants.MAXVAL2
    fuzzy_dl_owl2.fuzzydl.util.constants.NUMBER
-   fuzzy_dl_owl2.fuzzydl.util.constants.RESULTS_PATH
    fuzzy_dl_owl2.fuzzydl.util.constants.SEPARATOR
    fuzzy_dl_owl2.fuzzydl.util.constants.STAR_SEPARATOR
 
@@ -1254,7 +1249,7 @@ Module Contents
 
    .. py:method:: get_name() -> str
 
-      Retrieves and normalizes the name associated with the underlying value object. The method converts the name to lowercase and strips all occurrences of single and double quotes using a regular expression substitution. This processing ensures a consistent string representation suitable for comparison or fuzzy matching, and it does not modify the state of the object itself. Note that this method assumes `self.value` and `self.value.name` are accessible and valid strings; if these attributes are missing or lack the expected methods, an `AttributeError` will be raised.
+      Retrieves and normalizes the name associated with the underlying value object. The method converts the name to lowercase and strips all occurrences of single and double quotes. Each enum member is a singleton, so the normalized name is cached on first access; subsequent calls return the cached value without re-running the substitution.
 
       :return: The lowercased name with all single and double quotes removed.
 
@@ -2562,6 +2557,13 @@ Module Contents
 
 .. py:function:: ensure_results_dir() -> str
 
+   Ensures that the ``./results`` directory exists relative to the current working directory, creating it (and silently succeeding if it is already present) before returning its path. This is used to guarantee a destination folder for reasoner output files exists prior to writing.
+
+   :return: The path to the ensured ``./results`` directory.
+
+   :rtype: str
+
+
 .. py:data:: KNOWLEDGE_BASE_SEMANTICS
    :type:  FuzzyLogic
 
@@ -2577,9 +2579,6 @@ Module Contents
 
 .. py:data:: NUMBER
 
-.. py:data:: RESULTS_PATH
-   :type:  str
-
 .. py:data:: SEPARATOR
    :type:  str
    :value: '-------------------------'
@@ -2588,3 +2587,4 @@ Module Contents
 .. py:data:: STAR_SEPARATOR
    :type:  str
    :value: '*************************'
+

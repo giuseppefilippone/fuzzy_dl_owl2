@@ -13,6 +13,8 @@ build:
     - graphviz
     - ghostscript
     - texlive-extra-utils
+    - flex
+    - re2c
   jobs:
     pre_build:
       - rm -rf docs/source/api

@@ -1,13 +1,13 @@
 # Summary
 
-A fuzzy logic subsystem that transforms the membership degrees of concepts through configurable mathematical functions.
+A framework for applying mathematical transformations to fuzzy logic membership degrees through abstract and concrete modifier implementations.
 
 ## Description
 
-An abstract base class defines the structural blueprint for these transformations, enforcing a consistent interface that ensures all resulting values remain strictly bounded within the normalized range of zero to one. Concrete implementations utilize this foundation to apply specific geometric or algebraic rules, such as piecewise linear scaling or triangular shaping, thereby adjusting the intensity of linguistic hedges. By wrapping existing concepts and supporting standard logical operators like conjunction and disjunction, the architecture facilitates the dynamic composition of complex fuzzy expressions from these fundamental modifications.
+An abstract base class establishes the structural contract for linguistic hedges and logical operators, mandating that concrete implementations define specific mathematical logic for mapping input values to a normalized range while supporting object cloning and consistent hashing. Concrete strategies utilize this foundation to apply distinct geometric transformations, such as piecewise linear adjustments controlled by shape coefficients or triangular distributions defined by strict boundary parameters. By encapsulating base concepts within specialized wrapper objects, the architecture enables dynamic evaluation of membership values based on the specific transformation rules defined at initialization. Logical composition is facilitated through operator overloading for conjunction, disjunction, and negation, allowing complex fuzzy expressions to be constructed by combining or negating modifiers while maintaining immutability.
 
 ## Modules
 
-- [`fuzzy_dl_owl2.fuzzydl.modifier.linear_modifier`] — A fuzzy logic modifier that applies a configurable piecewise linear transformation to the membership degrees of concepts.
-- [`fuzzy_dl_owl2.fuzzydl.modifier.modifier`] — An abstract base class defines the interface for fuzzy logic modifiers that transform concepts and calculate adjusted membership degrees.
-- [`fuzzy_dl_owl2.fuzzydl.modifier.triangular_modifier`] — A fuzzy logic modifier that applies a triangular membership function to concepts based on three defining parameters.
+- [`fuzzy_dl_owl2.fuzzydl.modifier.linear_modifier`] — Implements a fuzzy logic modifier that transforms concept membership degrees using a configurable piecewise linear function.
+- [`fuzzy_dl_owl2.fuzzydl.modifier.modifier`] — An abstract base class that defines the interface for fuzzy logic modifiers capable of transforming concepts and calculating adjusted membership degrees.
+- [`fuzzy_dl_owl2.fuzzydl.modifier.triangular_modifier`] — Implements a fuzzy logic modifier that applies a triangular membership function to concepts using three distinct boundary parameters to define degrees of membership.

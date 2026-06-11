@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.concept.negated_nominal
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Implements a representation for the logical complement of a named individual in fuzzy description logic.
+Defines a class representing the logical complement of a named individual within a fuzzy description logic framework.
 
 
 Description
 -----------
 
 
-The software models the logical complement of a named individual within a fuzzy description logic system, allowing the expression of constraints that exclude specific entities from a domain. By inheriting from the base ``Concept`` class, it establishes itself as an atomic type that encapsulates an individual identifier and automatically generates a standardized string representation for the negated form. Logical operations such as conjunction and disjunction are supported through delegation to an external operator handler, enabling the construction of complex concept expressions. A strict design constraint is enforced to prevent nested negation, ensuring that attempting to complement an already negated nominal results in a specific exception to maintain logical consistency. Functionality for object cloning and hashing is provided to facilitate the use of these concepts within data structures and algorithms requiring object identity management.
+The software models a specific type of concept that represents the exclusion of a particular named individual from a domain, often utilized in range restrictions. By inheriting from the base ``Concept`` class, it establishes itself as an atomic concept type while storing the identifier of the individual being negated and generating a standardized string representation for that exclusion. Logical operations such as conjunction and disjunction are supported through delegation to an ``OperatorConcept`` utility, allowing these negated nominals to participate in complex expressions. However, the implementation enforces a strict constraint against double negation, raising an exception if an attempt is made to complement an already negated nominal, thereby preserving the integrity of the logical structure. Additionally, the implementation includes mechanisms for cloning instances and generating hash values based on structural identity to facilitate use in collections and comparisons.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -48,7 +44,7 @@ Module Contents
     .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzydl_concept_negated_nominal_NegatedNominal.pdf
        :alt: UML Class Diagram for NegatedNominal
        :align: center
-       :width: 10.0cm
+       :width: 8.4cm
        :class: uml-diagram
 
        UML Class Diagram for **NegatedNominal**
@@ -87,9 +83,9 @@ Module Contents
 
    .. py:method:: __hash__() -> int
 
-      Returns an integer hash value for the object, allowing instances to be used as dictionary keys or elements in sets. The hash is calculated by passing the string representation of the instance to the built-in hash function. This means the hash value is strictly dependent on the output of the object's string conversion method, and any exceptions raised during that conversion will propagate to the caller.
+      Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-      :return: An integer hash value computed from the string representation of the object.
+      :return: An integer hash value representing the structural identity of this object.
 
       :rtype: int
 
@@ -148,10 +144,11 @@ Module Contents
       :type: str
 
 
-      Sets the value of the `ind_name` property for the `NegatedNominal` instance. This method accepts a string argument and updates the underlying private attribute `_ind_name`, thereby modifying the object's state. It serves as the public interface for mutating the instance's name, overwriting any existing value without performing validation on the input type or content.
+      Returns the name of the individual that this negated nominal excludes, i.e. the ``a`` in the concept ``(not {a})``. The value is read from the private ``_ind_name`` attribute without modifying the instance.
 
-      :param value: The string value to assign to the ind_name attribute.
-      :type value: str
+      :return: The name of the excluded individual.
+
+      :rtype: str
 
 
    .. py:attribute:: name
@@ -159,7 +156,3 @@ Module Contents
       :value: '(not { Uninferable } )'
 
 
-      Updates the name of the Concept instance to the specified string value. This setter modifies the object's internal state by assigning the provided value to the private `_name` attribute, effectively replacing any previously stored name.
-
-      :param value: The new name to assign to the object.
-      :type value: str

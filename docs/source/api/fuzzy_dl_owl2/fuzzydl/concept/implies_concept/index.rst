@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.concept.implies_concept
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Defines a logical implication structure within a fuzzy description logic framework, supporting multiple semantic interpretations like Zadeh, Gödel, and Łukasiewicz implication.
+A Python implementation of fuzzy logical implication operators that supports various semantics such as Zadeh, Gödel, Łukasiewicz, and Kleene-Dienes within a description logic framework.
 
 
 Description
 -----------
 
 
-The software implements a specialized node for representing logical implication between two concepts, specifically tailored for fuzzy description logic systems. It supports distinct fuzzy semantics, including Zadeh and Gödel implication, while also providing static utilities to compute Łukasiewicz and Kleene-Dienes implications. Logic resolution dynamically adapts based on global configuration, allowing the system to switch between classical material implication and specific fuzzy operators depending on the current knowledge base semantics. To optimize performance and simplify logical expressions, the implementation includes boundary condition checks that reduce complex implications to simpler forms, such as returning the consequent directly when the antecedent is the top concept. The structure integrates seamlessly with the broader concept hierarchy by managing child concepts, supporting recursive operations like cloning and replacement, and overloading standard Python operators to facilitate the construction of compound logical expressions.
+The implementation revolves around defining how an antecedent concept implies a consequent concept under different fuzzy logic rules, distinguishing between direct instantiation for specific types like Zadeh and Gödel implications while providing static utility methods to compute Łukasiewicz and Kleene-Dienes implications dynamically. These computational routines include optimizations for boundary conditions, such as handling top or bottom concepts, and adapt their behavior based on whether the global knowledge base operates under classical or fuzzy semantics. Structural manipulation capabilities include recursive replacement of sub-concepts, cloning of instances, and aggregation of atomic concepts and roles from the implication's components. Furthermore, operator overloading enables the use of standard Python syntax for logical conjunctions, disjunctions, and negations, while hashing and equality checks rely on the structural identity of the concepts.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -59,7 +55,7 @@ Module Contents
     .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzydl_concept_implies_concept_ImpliesConcept.pdf
        :alt: UML Class Diagram for ImpliesConcept
        :align: center
-       :width: 100%
+       :width: 12.5cm
        :class: uml-diagram
 
        UML Class Diagram for **ImpliesConcept**
@@ -107,9 +103,9 @@ Module Contents
 
    .. py:method:: __hash__() -> int
 
-      Calculates the hash value for the instance, enabling it to be used as a dictionary key or stored in a set. The hash is derived from the object's string representation, meaning that two objects with identical string outputs will produce the same hash. Because the hash depends on the result of `str(self)`, any changes to the object's state that modify its string representation will also change its hash value.
+      Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-      :return: An integer hash value derived from the object's string representation.
+      :return: An integer hash value representing the structural identity of this object.
 
       :rtype: int
 
@@ -263,11 +259,6 @@ Module Contents
 
    .. py:attribute:: name
       :type:  str
-
-      Updates the name of the Concept instance to the specified string value. This setter modifies the object's internal state by assigning the provided value to the private `_name` attribute, effectively replacing any previously stored name.
-
-      :param value: The new name to assign to the object.
-      :type value: str
 
 
 .. py:data:: GoedelImplies

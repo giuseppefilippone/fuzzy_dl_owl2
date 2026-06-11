@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.concept.qowa_concept
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Implements a Quantified Ordered Weighted Averaging (QOWA) concept that dynamically calculates aggregation weights based on a provided fuzzy quantifier.
+Implements a quantified Ordered Weighted Averaging (OWA) concept that dynamically calculates aggregation weights based on a fuzzy quantifier.
 
 
 Description
 -----------
 
 
-The software defines a specialized fuzzy logic construct that performs aggregation over a collection of concepts by deriving weights from a linguistic quantifier rather than requiring explicit manual specification. By evaluating the membership degree of the quantifier at regular intervals across the input list, the system automatically generates a weighting scheme that reflects the semantics of the quantifier, such as "most" or "some". This design allows for dynamic adjustment of the aggregation logic, as changing the quantifier immediately recalculates the weights and updates the internal representation. To ensure compatibility with the broader fuzzy description logic framework, the implementation supports standard logical operations like conjunction, disjunction, and negation, while also providing mechanisms for structural cloning and recursive replacement of sub-concepts.
+Extending the standard Ordered Weighted Averaging mechanism, this implementation leverages a fuzzy quantifier to dynamically determine the weighting scheme for aggregating a collection of concepts. Rather than relying on manually specified weights, the logic calculates the necessary values by evaluating the membership degree of the provided quantifier across the range of input concepts, effectively translating linguistic terms like "most" or "at least half" into mathematical weights. The design integrates seamlessly with the broader fuzzy description logic framework by supporting essential logical operations such as negation, conjunction, and disjunction, which are handled through operator delegation. Structural integrity is maintained through cloning and replacement methods, ensuring that instances can be safely copied or modified within complex logical expressions without unintended side effects.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -87,9 +83,9 @@ Module Contents
 
    .. py:method:: __hash__() -> int
 
-      Computes the hash value for the instance by hashing its string representation, enabling the object to be used as a key in dictionaries or stored in sets. This implementation delegates the hashing logic to the result of the `__str__` method, ensuring that instances with identical string representations yield the same hash. Consequently, the efficiency of this operation is directly tied to the performance of the object's string conversion, and any exceptions raised during string formatting will propagate to the hash calculation.
+      Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-      :return: An integer hash value derived from the string representation of the object.
+      :return: An integer hash value representing the structural identity of this object.
 
       :rtype: int
 
@@ -170,25 +166,17 @@ Module Contents
       :value: '(q-owa Uninferable )'
 
 
-      Updates the name of the Concept instance to the specified string value. This setter modifies the object's internal state by assigning the provided value to the private `_name` attribute, effectively replacing any previously stored name.
-
-      :param value: The new name to assign to the object.
-      :type value: str
-
 
    .. py:property:: quantifier
       :type: fuzzy_dl_owl2.fuzzydl.concept.concrete.fuzzy_concrete_concept.FuzzyConcreteConcept
 
 
-      Sets the quantifier for the concept to the provided `FuzzyConcreteConcept` value. This method updates the internal `_quantifier` attribute and automatically triggers a recalculation of the concept's name by calling `compute_name`, ensuring that the display name remains consistent with the new quantifier state.
+      Returns the fuzzy quantifier (a concrete concept such as "most" or "at least half") that defines the weighting of this quantifier-guided OWA concept. The value is read from the private ``_quantifier`` attribute without modifying the instance.
 
-      :param value: The fuzzy concrete concept to assign as the quantifier.
-      :type value: FuzzyConcreteConcept
+      :return: The fuzzy quantifier driving the OWA weights.
+
+      :rtype: FuzzyConcreteConcept
 
 
    .. py:attribute:: type
 
-      Updates the type classification of the Concept instance to the specified value. This setter method assigns the provided `ConceptType` to the internal `_type` attribute, effectively overwriting the previous type definition. The operation modifies the object's state in place and does not return a value.
-
-      :param new_type: The classification or category to assign to the concept.
-      :type new_type: fuzzy_dl_owl2.fuzzydl.util.constants.ConceptType

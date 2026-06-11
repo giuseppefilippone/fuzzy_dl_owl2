@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.classification_node
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Defines a graph node entity for modeling concepts in a classification hierarchy with shared global state for names and weighted relationships.
+A graph node entity that models concepts within a classification hierarchy, managing global collections of equivalent names and weighted directed edges for a fuzzy description logic reasoner.
 
 
 Description
 -----------
 
 
-The software models individual concepts within a classification hierarchy, acting as the primary data structure for a fuzzy description logic reasoner. Instead of maintaining instance-specific data, the implementation relies on class-level attributes to store equivalent names and weighted directed edges, meaning that all instances share a single global state for the graph topology and nomenclature. This design allows the system to manage relationships such as inheritance or association by tracking input and output connections with floating-point weights, while also supporting the identification of universal and empty concepts through specific naming conventions. Functionality includes the ability to add or remove edges based on threshold values, retrieve immediate predecessors or successors, and generate string representations that account for single or multiple synonymous labels.
+Implementation relies on class-level attributes to store all names and edge weights, creating a shared global state where modifications affect the entire graph structure regardless of the specific instance used. This design facilitates the management of complex relationships, such as inheritance or association, by updating central registries for input and output edges, while also supporting the removal of connections based on specific weight thresholds. Special logic identifies universal and empty concepts through sentinel naming conventions, and the system ensures consistent identity management by deriving hash values and string representations directly from the global set of synonyms.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -231,3 +227,4 @@ Module Contents
 
    .. py:attribute:: OUTPUT_EDGES
       :type:  dict[Self, float]
+

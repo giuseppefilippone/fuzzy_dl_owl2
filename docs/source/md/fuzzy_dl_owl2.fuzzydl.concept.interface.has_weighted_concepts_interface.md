@@ -1,7 +1,7 @@
 # Summary
 
-An abstract interface that extends concept management to include associated numerical weights.
+An abstract interface extending the basic concept management contract to include support for numerical weights associated with each concept.
 
 ## Description
 
-Building upon the foundation of managing collections of concepts, this abstract base class introduces the capability to associate numerical weights with those concepts. It enforces a contract where implementing classes must handle a list of floating-point values that correspond to the managed concepts, allowing for dynamic representation of magnitude or significance. The design ensures that weights are stored internally as mutable lists or explicitly set to null, providing flexibility for scenarios where weighting is optional or conditional. By offering properties to retrieve and modify these values, the interface facilitates the seamless integration of weighted logic into complex fuzzy description logic structures.
+Building upon the foundation of managing generic concepts, this abstract class introduces the capability to associate specific numerical values or magnitudes with those concepts. It enforces a structural pattern where objects must handle a mutable list of floating-point weights, allowing for dynamic updates or the complete removal of weighting information. The design utilizes property decorators to encapsulate the internal storage of these weights, ensuring that any provided iterable is converted into a list or explicitly set to null to represent an unweighted state. By integrating this functionality directly into the inheritance hierarchy, the class facilitates the creation of complex fuzzy logic constructs where concepts contribute to a result with varying degrees of importance.

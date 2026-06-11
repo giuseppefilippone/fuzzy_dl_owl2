@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.concept.weighted_min_concept
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A class representing a composite concept defined by a weighted minimum operation over a collection of sub-concepts within a fuzzy description logic framework.
+Implements a weighted minimum concept for fuzzy description logic that aggregates a collection of sub-concepts using associated numerical weights.
 
 
 Description
 -----------
 
 
-The implementation models a specific type of fuzzy logic construct where multiple concepts are aggregated based on associated numerical weights, requiring that at least one weight is normalized to 1.0 to ensure semantic validity. By inheriting from base interfaces for concepts and weighted structures, the class provides mechanisms to validate input data, generate a unique string representation, and recursively analyze the hierarchy to extract atomic components and roles. Structural integrity is maintained through capabilities like cloning and replacing specific sub-concepts, while logical operations such as negation, conjunction, and disjunction are supported by delegating to a central operator utility. The design ensures that instances can be used effectively in hash-based collections by deriving their identity from their string representation, facilitating their use in complex reasoning tasks involving fuzzy sets and description logics.
+The software models a composite logical construct where the resulting truth value is derived from the minimum of weighted sub-concepts, a common operation in fuzzy systems. It enforces strict validation during initialization, requiring that the number of weights matches the number of concepts and that at least one weight is equal to 1.0 to ensure semantic correctness. By inheriting from specific base interfaces, the construct supports standard logical manipulations such as negation, conjunction, and disjunction, allowing it to function seamlessly within a larger description logic framework. Additionally, the implementation provides capabilities for structural analysis, including the extraction of atomic concepts and roles, recursive replacement of nested elements, and a robust hashing mechanism that relies on the internal configuration of weights and concepts to guarantee object uniqueness.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -48,7 +44,7 @@ Module Contents
     .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzydl_concept_weighted_min_concept_WeightedMinConcept.pdf
        :alt: UML Class Diagram for WeightedMinConcept
        :align: center
-       :width: 100%
+       :width: 11.7cm
        :class: uml-diagram
 
        UML Class Diagram for **WeightedMinConcept**
@@ -83,9 +79,9 @@ Module Contents
 
    .. py:method:: __hash__() -> int
 
-      Computes the hash value for the instance by hashing its string representation, enabling the object to be used in hash-based collections such as dictionaries and sets. This implementation relies on the `__str__` method to generate a unique identifier for the object, ensuring that instances with identical string representations produce the same hash code. It assumes that the string representation is stable and consistent with the object's equality comparison.
+      Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-      :return: An integer hash value computed from the string representation of the object.
+      :return: An integer hash value representing the structural identity of this object.
 
       :rtype: int
 
@@ -173,7 +169,3 @@ Module Contents
       :value: '(w-min )'
 
 
-      Updates the name of the Concept instance to the specified string value. This setter modifies the object's internal state by assigning the provided value to the private `_name` attribute, effectively replacing any previously stored name.
-
-      :param value: The new name to assign to the object.
-      :type value: str

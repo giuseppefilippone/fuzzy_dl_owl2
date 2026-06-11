@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.feature_function
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A class representing mathematical expressions over features that supports arithmetic operations and converts them into linear programming constraints.
+A polymorphic class representing mathematical expressions over features that can be recursively traversed to extract dependencies and converted into linear programming constraints.
 
 
 Description
 -----------
 
 
-Software components representing mathematical expressions over features are defined here, supporting atomic variables, constants, and arithmetic operations such as summation, subtraction, and scalar multiplication. The design utilizes a polymorphic initialization strategy where the specific structure of the expression is determined by the types of arguments provided, allowing the creation of complex hierarchical trees from simple building blocks. This intermediate representation serves as a bridge between high-level feature definitions and low-level optimization constraints. To facilitate integration with optimization solvers, the logic includes functionality to recursively traverse the expression tree and extract all dependent feature names. Furthermore, the core capability involves converting these abstract definitions into concrete linear programming expressions by resolving atomic features to specific variables within the context of a given individual. This transformation relies on external helpers to map relationships between individuals to solver variables, ensuring that the mathematical model accurately reflects the semantic structure of the defined features.
+It acts as an intermediate representation for mathematical logic involving atomic features, constants, and arithmetic operations like summation, subtraction, and scalar multiplication. The design relies on a flexible initialization strategy where the specific structure of the expression—whether it is a simple variable, a constant, or a complex composite operation—is determined by the types and quantities of arguments provided at instantiation. Internally, these expressions form a tree-like structure that allows for recursive traversal to gather all unique feature names required for evaluation. Crucially, the software bridges the gap between abstract feature definitions and concrete optimization models by translating these symbolic expressions into solver-compatible linear expressions, resolving atomic features against specific individuals and their relations within a mixed-integer linear programming context.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -185,3 +181,5 @@ Module Contents
       :return: Returns an Expression object representing the mathematical formulation of the feature function for the given individual, or None if the function type is unsupported.
 
       :rtype: typing.Optional[Expression]
+
+

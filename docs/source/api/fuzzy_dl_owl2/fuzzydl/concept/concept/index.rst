@@ -4,6 +4,24 @@ fuzzy_dl_owl2.fuzzydl.concept.concept
 .. py:module:: fuzzy_dl_owl2.fuzzydl.concept.concept
 
 
+
+.. ── LLM-GENERATED DESCRIPTION START ──
+
+A foundational framework for fuzzy description logic that defines abstract interfaces and concrete implementations for constructing, manipulating, and normalizing logical concepts.
+
+
+Description
+-----------
+
+
+The ``Thing`` class acts as an abstract base, establishing a contract for logical entities by defining methods for structural inspection, logical manipulation, and normalization. It provides default behaviors for operations like simplification and distribution, while requiring subclasses to implement core logic for cloning, negation, and equality. This design supports various logic systems, including classic, Gödel, and Łukasiewicz, by offering specific conversion methods for Conjunctive and Disjunctive Normal Forms.
+
+Building upon this base, the ``Concept`` class serves as the primary entity for representing fuzzy description logic ontologies, capable of modeling both atomic primitives and complex logical structures. It leverages Python operator overloading to enable intuitive syntax for conjunction, disjunction, and implication, allowing complex expressions to be built using standard bitwise operators. The class also handles naming conventions, automatically generating unique identifiers for anonymous concepts while ensuring equality comparisons are based on structural string representations.
+
+Together, these components create a robust system for symbolic reasoning, where the abstract base ensures consistent behavior across different logical constructs, and the concrete implementation provides the specific mechanics for fuzzy logic operations. The architecture facilitates the transformation of logical formulas into various normal forms, which is essential for automated reasoning and inference within the broader fuzzy logic application.
+
+.. ── LLM-GENERATED DESCRIPTION END ──
+
 Classes
 -------
 
@@ -31,12 +49,12 @@ Module Contents
     .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzydl_concept_concept_Concept.pdf
        :alt: UML Class Diagram for Concept
        :align: center
-       :width: 9.7cm
+       :width: 9.6cm
        :class: uml-diagram
 
        UML Class Diagram for **Concept**
 
-.. py:class:: Concept(c_type: fuzzy_dl_owl2.fuzzydl.util.constants.ConceptType = ConceptType.ATOMIC, name: str = '')
+.. py:class:: Concept(c_type: fuzzy_dl_owl2.fuzzydl.util.constants.ConceptType = ConceptType.ATOMIC, name: Optional[str] = '')
 
    Bases: :py:obj:`Thing`
 
@@ -204,7 +222,7 @@ Module Contents
 
 
    .. py:attribute:: _name
-      :type:  str
+      :type:  Optional[str]
       :value: ''
 
 
@@ -214,13 +232,14 @@ Module Contents
 
 
    .. py:property:: name
-      :type: str
+      :type: Optional[str]
 
 
-      Updates the name of the Concept instance to the specified string value. This setter modifies the object's internal state by assigning the provided value to the private `_name` attribute, effectively replacing any previously stored name.
+      Returns the name of this concept, or ``None`` for anonymous (compound) concepts that have no atomic name. The value is read from the private ``_name`` attribute without modifying the instance.
 
-      :param value: The new name to assign to the object.
-      :type value: str
+      :return: The concept's name, or ``None`` if it is anonymous.
+
+      :rtype: typing.Optional[str]
 
 
    .. py:attribute:: num_new_concepts
@@ -232,10 +251,11 @@ Module Contents
       :type: fuzzy_dl_owl2.fuzzydl.util.constants.ConceptType
 
 
-      Updates the type classification of the Concept instance to the specified value. This setter method assigns the provided `ConceptType` to the internal `_type` attribute, effectively overwriting the previous type definition. The operation modifies the object's state in place and does not return a value.
+      Returns the structural classification of this concept (e.g. atomic, complement, conjunction), stored as a :class:`ConceptType` enumeration value. This classification drives the reasoner's dispatch logic. The value is read from the private ``_type`` attribute without modifying the instance.
 
-      :param new_type: The classification or category to assign to the concept.
-      :type new_type: fuzzy_dl_owl2.fuzzydl.util.constants.ConceptType
+      :return: The concept's structural type.
+
+      :rtype: ConceptType
 
 
 .. only:: html
@@ -259,13 +279,6 @@ Module Contents
        UML Class Diagram for **Thing**
 
 .. py:class:: Thing
-
-   Bases: :py:obj:`abc.ABC`
-
-   .. autoapi-inheritance-diagram:: fuzzy_dl_owl2.fuzzydl.concept.concept.Thing
-      :parts: 1
-      :private-bases:
-
 
    This abstract base class serves as the foundational representation for logical entities, such as concepts and operators, within a formal logic system. It defines a comprehensive interface for constructing, analyzing, and transforming logical formulas, offering utilities for structural inspection (e.g., retrieving atoms, clauses, roles, and nominals) and logical manipulation (e.g., simplification, distribution, and the application of De Morgan's laws). The class supports conversion into various normal forms, including standard Conjunctive and Disjunctive Normal Forms (CNF/DNF) as well as variants for fuzzy logic systems like Gödel and Łukasiewicz. While it provides default implementations for many reduction and traversal operations, it is designed to be extended by subclasses, which are required to implement core abstract methods for cloning, negation, equality comparison, and name computation. Additionally, the class overloads standard Python operators to enable intuitive syntax for negation and ordering comparisons between logical expressions.
 
@@ -308,6 +321,16 @@ Module Contents
       :return: True if the string representation of the current object, with parentheses removed, is lexicographically greater than that of the provided value; otherwise, False.
 
       :rtype: typing.Self
+
+
+
+   .. py:method:: __hash__() -> int
+
+      Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
+
+      :return: An integer hash value representing the structural identity of this object.
+
+      :rtype: int
 
 
 
@@ -703,6 +726,5 @@ Module Contents
       :return: The instance resulting from replacing `a` with `c`, or `None` if the operation cannot be performed.
 
       :rtype: typing.Optional[typing.Self]
-
 
 

@@ -11,7 +11,6 @@ from fuzzy_dl_owl2.fuzzydl.modifier.modifier import Modifier
 class LinearlyModifiedConcept(ModifiedConcept):
     """This class models a concept whose degree of satisfaction is adjusted by a linear modifier, representing a structure of the form (modifier C). It is instantiated by providing a base concept and a specific linear modifier that scales or shifts the concept's truth value in a linear fashion. The class supports standard logical operations, including negation, conjunction, and disjunction, enabling the integration of modified concepts into complex logical expressions. Furthermore, it provides utility methods for cloning the instance and replacing sub-concepts within the underlying structure, allowing for dynamic manipulation of the concept hierarchy."""
 
-
     def __init__(self, c: Concept, mod: Modifier) -> None:
         """
         Initializes a new instance representing a concept that has been modified, presumably in a linear fashion based on the class name. The constructor requires a base `Concept` object and a `Modifier` object as arguments, which are passed directly to the superclass constructor to handle the core initialization logic. This method relies on the parent class to validate the inputs and set up the internal state, meaning any side effects or validation errors are determined by the implementation of the superclass.
@@ -92,11 +91,14 @@ class LinearlyModifiedConcept(ModifiedConcept):
 
     def __hash__(self) -> int:
         """
-        Computes the hash value for the instance by delegating to the hash of the object's string representation. This behavior allows instances of `LinearlyModifiedConcept` to be used as dictionary keys or stored in sets, provided that the string representation remains consistent for equal objects and does not change over the object's lifetime. The implementation relies on the `__str__` method to generate the input for the hash function.
+        Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-        :return: An integer hash value derived from the object's string representation.
+        :return: An integer hash value representing the structural identity of this object.
 
         :rtype: int
         """
-
-        return hash(str(self))
+        # return hash(str(self))
+        # return id(self)
+        return hash(
+            (hash(self.curr_concept), hash(self.modifier), self.name, hash(self.type))
+        )

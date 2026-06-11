@@ -1,34 +1,49 @@
 import typing
 
-import trycast
-
-from fuzzy_dl_owl2.fuzzydl.milp.term import Term
-from fuzzy_dl_owl2.fuzzydl.milp.variable import Variable
+from fuzzy_dl_owl2.fuzzydl.milp.term import Term  # Term
+from fuzzy_dl_owl2.fuzzydl.milp.variable import Variable  # Variable
 from fuzzy_dl_owl2.fuzzydl.util import constants
+
+# import trycast
 
 
 class Expression:
-    """
-    This class models a linear mathematical expression of the form $c + c_1x_1 + \dots + c_nx_n$, typically used to represent the degree of satisfaction of a concept within a fuzzy description logic ontology. It offers flexible initialization options, allowing construction from a numeric constant, a sequence of `Term` objects, another `Expression` instance, or a collection of `Variable` objects. The class supports comprehensive arithmetic manipulation through operator overloading, enabling addition, subtraction, multiplication, and division with scalars, terms, or other expressions. Furthermore, it automatically manages term consolidation; if a term is added involving a variable that already exists, the coefficients are merged rather than creating a duplicate entry.
+    r"""
+    Linear form  $E = c_0 + \sum_{i=1}^{n} c_i\,x_i$  used as the primitive
+    algebraic object in the MILP layer.  Every constraint, objective term and
+    intermediate quantity is first wrapped into an ``Expression`` and then
+    turned into an ``Inequation`` via ``MILPHelper.add_new_constraint``.
 
-    :raises ValueError: 
-    """
+    Flexible initialisation covers five signatures:
 
+    * ``Expression(c)``                → $E = c$
+    * ``Expression(c, t_1, …, t_n)``   → $E = c + \sum_i t_i$
+    * ``Expression(t_1, …, t_n)``      → $E = \sum_i t_i$
+    * ``Expression(other)``            → clone
+    * ``Expression([v_1,…,v_n])``      → $E = \sum_i 1\cdot v_i$
+
+    Operator overloading (``+``, ``-``, ``*``, ``/``, unary ``-``) is supported,
+    and ``add_term`` merges coefficients when a variable already exists.
+
+    :raises ValueError:
+    """
 
     @typing.overload
     def __init__(self, constant: constants.NUMBER) -> None: ...
 
     @typing.overload
-    def __init__(self, constant: constants.NUMBER, *terms: Term) -> None: ...
+    def __init__(self, constant: constants.NUMBER, *terms: Term) -> None: ...  # Term
 
     @typing.overload
-    def __init__(self, *terms: Term) -> None: ...
+    def __init__(self, *terms: Term) -> None: ...  # Term
 
     @typing.overload
     def __init__(self, expr: typing.Self) -> None: ...
 
     @typing.overload
-    def __init__(self, v: typing.Union[list[Variable], set[Variable]]) -> None: ...
+    def __init__(
+        self, v: typing.Union[list[Variable], set[Variable]]
+    ) -> None: ...  # Variable
 
     def __init__(self, *args) -> None:
         """
@@ -47,18 +62,21 @@ class Expression:
                 self.__expression_init_1(*args)
             elif isinstance(args[0], Expression):
                 self.__expression_init_4(*args)
-            elif trycast.trycast(typing.Union[list[Variable], set[Variable]], args[0]):
+            # elif trycast.trycast(typing.Union[list[Variable], set[Variable]], args[0]):  # Variable
+            elif isinstance(args[0], (list, set)) and all(
+                isinstance(x, Variable) for x in args[0]
+            ):  # Variable
                 self.__expression_init_5(*args)
-            elif isinstance(args[0], Term):
+            elif isinstance(args[0], Term):  # Term
                 self.__expression_init_3(*args)
             else:
                 raise ValueError
         else:
             if isinstance(args[0], constants.NUMBER) and all(
-                isinstance(a, Term) for a in args[1:]
+                isinstance(a, Term) for a in args[1:]  # Term
             ):
                 self.__expression_init_2(*args)
-            elif all(isinstance(a, Term) for a in args):
+            elif all(isinstance(a, Term) for a in args):  # Term
                 self.__expression_init_3(*args)
             else:
                 raise ValueError
@@ -72,27 +90,29 @@ class Expression:
         """
 
         assert isinstance(constant, constants.NUMBER)
-        # oefficient c
+        # E = c  (constant-only expression)
         self.constant: constants.NUMBER = constant
-        # Terms c1 * x1 + c2 * x2 + ...
-        self.terms: list[Term] = []
+        # terms c1*x1 + c2*x2 + ...
+        self.terms: list[Term] = []  # Term
 
-    def __expression_init_2(self, constant: constants.NUMBER, *terms: Term) -> None:
+    def __expression_init_2(
+        self, constant: constants.NUMBER, *terms: Term
+    ) -> None:  # Term
         """
         Initializes the expression with a specific numeric constant and a variable number of term objects. This method requires that at least one term be provided; otherwise, an assertion error is raised. It delegates the initialization of the constant component to `__expression_init_1` and stores the provided terms in the instance's internal list.
 
         :param constant: The constant additive term of the expression.
         :type constant: constants.NUMBER
-        :param terms: 
+        :param terms:
         :type terms: Term
         """
 
         assert len(terms) > 0
+        # E = c + sum_i t_i
         self.__expression_init_1(constant)
-        # Terms c1 * x1 + c2 * x2 + ...
-        self.terms: list[Term] = [t for t in terms]
+        self.terms: list[Term] = [t for t in terms]  # Term
 
-    def __expression_init_3(self, *terms: Term) -> None:
+    def __expression_init_3(self, *terms: Term) -> None:  # Term
         """
         Initializes the object by delegating to the secondary initialization method with a default scalar value of 0.0. It accepts a variable number of `Term` arguments, which are forwarded along with the zero value to configure the expression's state. This effectively creates an expression composed solely of the provided terms without an initial constant offset.
 
@@ -100,6 +120,7 @@ class Expression:
         :type terms: Term
         """
 
+        # E = sum_i t_i  (zero constant offset)
         self.__expression_init_2(0.0, *terms)
 
     def __expression_init_4(self, expr: typing.Self) -> None:
@@ -110,10 +131,11 @@ class Expression:
         :type expr: typing.Self
         """
 
+        # E = copy(expr)  (clone constant and terms)
         self.__expression_init_2(expr.constant, *expr.terms)
 
     def __expression_init_5(
-        self, v: typing.Union[list[Variable], set[Variable]]
+        self, v: typing.Union[list[Variable], set[Variable]]  # Variable
     ) -> None:
         """
         Initializes the expression as the sum of the provided variables. It accepts a list or set of Variable objects, converting each into a Term with a coefficient of 1.0 and aggregating them with a constant term of 0.0. If the input collection is empty, the expression represents a constant value of zero.
@@ -122,9 +144,10 @@ class Expression:
         :type v: typing.Union[list[Variable], set[Variable]]
         """
 
-        self.__expression_init_2(0.0, *[Term(1.0, var) for var in v])
+        # E = sum_{var in v} 1.0 * var
+        self.__expression_init_2(0.0, *[Term(1.0, var) for var in v])  # Term
 
-    def get_terms(self) -> list[Term]:
+    def get_terms(self) -> list[Term]:  # Term
         """
         Returns the list of Term objects that make up this Expression. This method provides direct access to the internal list of terms; therefore, modifying the returned list will alter the state of the Expression instance.
 
@@ -204,7 +227,7 @@ class Expression:
 
         self.constant += 1
 
-    def add_term(self, term: Term) -> None:
+    def add_term(self, term: Term) -> None:  # Term
         """
         Adds the specified term to the expression, combining it with any existing term that shares the same variable. If a term with a matching variable is already present in the expression, the method updates that term by summing its value with the new term. If no matching variable is found, the new term is appended to the expression's internal list. This method modifies the expression in place and ensures the list of terms remains non-empty after the operation.
 
@@ -212,6 +235,7 @@ class Expression:
         :type term: Term
         """
 
+        # merge coefficients if variable already present: c_i x_i + c'_i x_i = (c_i+c'_i) x_i
         for idx, t in enumerate(self.terms):
             if t.get_var() == term.get_var():
                 self.terms[idx] = t + term
@@ -220,7 +244,7 @@ class Expression:
         assert len(self.terms) > 0
 
     @staticmethod
-    def add_term_(exp: typing.Self, term: Term) -> typing.Self:
+    def add_term_(exp: typing.Self, term: Term) -> typing.Self:  # Term
         """
         Creates a new expression by appending a specific term to a provided expression instance. This static method ensures the original expression remains unmodified by first constructing a copy of the input. It then invokes the instance-level addition logic on this copy and returns the updated expression.
 
@@ -289,7 +313,7 @@ class Expression:
 
         return expr * constant
 
-    def get_constant_term(self, var: Variable) -> constants.NUMBER:
+    def get_constant_term(self, var: Variable) -> constants.NUMBER:  # Variable
         """
         Retrieves the coefficient associated with a specific variable within the expression. The method iterates through the internal list of terms to locate the target variable; if a match is found, the corresponding coefficient is returned. If the variable is not present in the expression, the method returns 0.0.
 
@@ -315,10 +339,11 @@ class Expression:
         :rtype: typing.Self
         """
 
+        # -(c_0 + sum_i c_i x_i) = -c_0 + sum_i (-c_i) x_i
         return Expression(-self.get_constant(), *[-t for t in self.get_terms()])
 
     def __add__(
-        self, value: typing.Union[int, float, typing.Self, Term]
+        self, value: typing.Union[int, float, typing.Self, Term]  # Term
     ) -> typing.Self:
         """
         Overloads the addition operator to combine the current expression with a numeric value, a `Term`, or another `Expression`. If the provided value is a number, the method returns a new `Expression` instance with the value added to the constant term, leaving the original expression unchanged. Conversely, if the value is a `Term` or an `Expression`, the method modifies the current instance in place by incorporating the terms and constant from the provided value, and returns the updated instance.
@@ -331,12 +356,15 @@ class Expression:
         :rtype: typing.Self
         """
 
+        # E + value = (c_0+value) + sum_i c_i x_i   (scalar)
         if isinstance(value, constants.NUMBER):
             return Expression(self.get_constant() + value, *self.get_terms())
-        elif isinstance(value, Term):
+        # E + term = E with merged coefficient for term.variable
+        elif isinstance(value, Term):  # Term
             result: Expression = self
             result.add_term(value)
             return result
+        # E + E' = E with merged terms and summed constants
         result: Expression = self
         for term in value.get_terms():
             result.add_term(term)
@@ -357,7 +385,9 @@ class Expression:
 
         return self + scalar
 
-    def __sub__(self, expr: typing.Union[int, float, typing.Self, Term]) -> typing.Self:
+    def __sub__(
+        self, expr: typing.Union[int, float, typing.Self, Term]
+    ) -> typing.Self:  # Term
         """
         Performs subtraction by returning the result of adding the negation of the provided operand to the current instance. The operand can be a numeric scalar, a Term, or another Expression, and the operation relies on the class's implementation of addition and unary negation. This method does not modify the original object in place; instead, it returns a new Expression representing the difference.
 
@@ -369,6 +399,7 @@ class Expression:
         :rtype: typing.Self
         """
 
+        # E - expr = E + (-expr)
         return self + (-expr)
 
     def __rsub__(self, scalar: constants.NUMBER) -> typing.Self:
@@ -397,6 +428,7 @@ class Expression:
         :rtype: typing.Self
         """
 
+        # scalar * E = (scalar*c_0) + sum_i (scalar*c_i) x_i
         return Expression(
             self.get_constant() * scalar,
             *[t * scalar for t in self.get_terms()],
@@ -439,7 +471,8 @@ class Expression:
         :rtype: int
         """
 
-        return hash(str(self))
+        # return hash(str(self))
+        return hash((self.constant, frozenset(hash(t) for t in self.terms)))
 
     def __eq__(self, value: typing.Self) -> bool:
         """
@@ -455,9 +488,11 @@ class Expression:
 
         if not isinstance(value, Expression):
             return False
-        return len(self.terms) == len(value.terms) and all(
-            term in value.terms for term in self.terms
-        )
+        if len(self.terms) != len(value.terms):
+            return False
+        a: dict = {t.get_var().name: t.get_coeff() for t in self.terms}
+        b: dict = {t.get_var().name: t.get_coeff() for t in value.terms}
+        return a == b
 
     def __ne__(self, value: typing.Self) -> bool:
         """

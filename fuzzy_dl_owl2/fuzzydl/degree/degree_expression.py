@@ -2,7 +2,7 @@ import typing
 
 from fuzzy_dl_owl2.fuzzydl.degree.degree import Degree
 from fuzzy_dl_owl2.fuzzydl.milp.expression import Expression
-from fuzzy_dl_owl2.fuzzydl.milp.inequation import Inequation
+from fuzzy_dl_owl2.fuzzydl.milp.inequation import Inequation  # Inequation
 from fuzzy_dl_owl2.fuzzydl.util.constants import InequalityType
 
 
@@ -13,7 +13,6 @@ class DegreeExpression(Degree):
     :param expr: The underlying expression that defines the value of the degree.
     :type expr: Expression
     """
-
 
     def __init__(self, expr: Expression) -> None:
         """
@@ -66,7 +65,7 @@ class DegreeExpression(Degree):
         self,
         expr: Expression,
         inequality_type: InequalityType,
-    ) -> Inequation:
+    ) -> Inequation:  # Inequation
         """
         Constructs an `Inequation` object that compares the provided expression against the current `DegreeExpression` instance, placing the instance on the right-hand side of the relationship. The method creates this inequality by subtracting the instance's internal expression from the input `expr` and passing the result to the `Inequation` constructor along with the specified `inequality_type`. This process has no side effects on the input or the current object, but it relies on the underlying expressions being compatible for subtraction.
 
@@ -80,7 +79,7 @@ class DegreeExpression(Degree):
         :rtype: Inequation
         """
 
-        return Inequation(
+        return Inequation(  # Inequation
             expr - self.expr,
             inequality_type,
         )
@@ -175,6 +174,17 @@ class DegreeExpression(Degree):
         if isinstance(d, DegreeExpression):
             return d == self.get_expression()
         return False
+
+    def __hash__(self) -> int:
+        """
+        Computes a hash value for the `DegreeExpression` instance based on its underlying expression. This method returns the hash of the internal `expr` attribute, allowing instances of `DegreeExpression` to be used in hash-based collections like sets and dictionaries. The hash value is derived solely from the expression, meaning that two `DegreeExpression` instances with equivalent expressions will produce the same hash value.
+
+        :return: An integer hash value representing the instance.
+
+        :rtype: int
+        """
+
+        return hash(self.expr)
 
     def __str__(self) -> str:
         """

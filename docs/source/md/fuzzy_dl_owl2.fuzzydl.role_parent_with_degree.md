@@ -1,7 +1,7 @@
 # Summary
 
-Models a weighted hierarchical relationship between a role and its parent by associating a specific inclusion degree with the parent identifier.
+Encapsulates a weighted relationship between a role and its parent by storing the parent's identifier and an associated degree of inclusion.
 
 ## Description
 
-Designed to support fuzzy logic reasoning, the software captures the extent to which a parent role is included within a specific hierarchy, moving beyond simple binary relationships. It encapsulates a string identifier for the parent entity alongside a floating-point value that quantifies the strength or probability of the inheritance link, typically constrained between zero and one. By providing direct access to these stored values, the logic allows external systems to evaluate complex role inheritance rules where relationships are graded rather than absolute. The absence of strict validation logic ensures flexibility for various input scenarios, relying on the calling context to enforce specific constraints on the degree or naming conventions.
+Designed to represent fuzzy inheritance or hierarchical connections where a parent role contributes to a child role with a specific weight or probability, a string identifier for the parent entity is stored alongside a floating-point value that quantifies the strength or degree of this relationship. Access to these attributes enables complex reasoning about role hierarchies where relationships are not absolute but graded, allowing the system to calculate the extent to which a parent role is included. The implementation acts as a simple container, allowing other components to query the parent name and the associated metric to determine how much influence the parent role exerts.

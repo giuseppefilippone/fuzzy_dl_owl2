@@ -20,7 +20,6 @@ class NegatedNominal(Concept):
     :raises FuzzyOntologyException: Raised when attempting to apply the negation operator to a NegatedNominal instance, as nested negation of nominals is not supported in fuzzy description logic.
     """
 
-
     def __init__(self, ind_name: str) -> None:
         """
         Initializes a new instance representing the logical negation of a nominal concept. The method accepts a string identifier for the individual to be negated and configures the instance as an atomic concept type within the parent class hierarchy. It stores the provided identifier internally and generates a formatted string representation for the object's name, explicitly wrapping the input identifier in a negation syntax. While the method assumes the input is a valid string, it does not perform validation on the content of the identifier.
@@ -36,16 +35,24 @@ class NegatedNominal(Concept):
     @property
     def ind_name(self) -> str:
         """
-        Sets the value of the `ind_name` property for the `NegatedNominal` instance. This method accepts a string argument and updates the underlying private attribute `_ind_name`, thereby modifying the object's state. It serves as the public interface for mutating the instance's name, overwriting any existing value without performing validation on the input type or content.
+        Returns the name of the individual that this negated nominal excludes, i.e. the ``a`` in the concept ``(not {a})``. The value is read from the private ``_ind_name`` attribute without modifying the instance.
 
-        :param value: The string value to assign to the ind_name attribute.
-        :type value: str
+        :return: The name of the excluded individual.
+
+        :rtype: str
         """
 
         return self._ind_name
 
     @ind_name.setter
     def ind_name(self, value: str) -> None:
+        """
+        Sets the name of the individual that this negated nominal excludes. The provided value is stored directly in the private ``_ind_name`` attribute without validation; note that the cached ``name`` of the concept is not recomputed.
+
+        :param value: The new excluded-individual name.
+        :type value: str
+        """
+
         self._ind_name = value
 
     def clone(self) -> typing.Self:
@@ -85,14 +92,16 @@ class NegatedNominal(Concept):
 
     def __hash__(self) -> int:
         """
-        Returns an integer hash value for the object, allowing instances to be used as dictionary keys or elements in sets. The hash is calculated by passing the string representation of the instance to the built-in hash function. This means the hash value is strictly dependent on the output of the object's string conversion method, and any exceptions raised during that conversion will propagate to the caller.
+        Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-        :return: An integer hash value computed from the string representation of the object.
+        :return: An integer hash value representing the structural identity of this object.
 
         :rtype: int
         """
 
-        return hash(str(self))
+        # return hash(str(self))
+        # return id(self)
+        return hash((self.ind_name, self.name, hash(self.type)))
 
     def __and__(self, value: typing.Self) -> typing.Self:
         """

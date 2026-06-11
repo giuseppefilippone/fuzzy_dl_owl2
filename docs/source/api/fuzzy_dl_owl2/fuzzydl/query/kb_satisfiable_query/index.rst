@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.query.kb_satisfiable_query
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A query implementation that determines the logical consistency and satisfiability of a fuzzy description logic knowledge base.
+A query implementation that determines the logical consistency and satisfiability of a fuzzy knowledge base by verifying if at least one valid interpretation exists for all defined axioms.
 
 
 Description
 -----------
 
 
-Extending the abstract query framework, this component provides the logic necessary to verify whether a given knowledge base contains any logical contradictions or if it admits at least one valid interpretation. The evaluation process relies on solving the assertional component of the knowledge base and performing an optimization step to validate the existence of a consistent model. To handle scenarios where the knowledge base lacks specific individuals, the implementation dynamically generates temporary entities to ensure the optimization algorithm can execute correctly. The final result is encapsulated in a solution object that either confirms satisfiability with a perfect score or explicitly marks the knowledge base as inconsistent when contradictions or exceptions are detected.
+It extends the generic query framework to provide a mechanism for validating that a knowledge base does not contain any contradictions. The core logic executes a consistency check by first solving the assertional box and then performing an optimization on a cloned instance of the knowledge base to prevent side effects on the original data. To ensure the optimization can proceed even when the base lacks specific individuals, the logic automatically generates a temporary individual if necessary. The final result is returned as a ``Solution`` object, indicating a perfect score of 1.0 for a consistent base or a specific inconsistency status if contradictions or ontology exceptions are encountered.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -48,7 +44,7 @@ Module Contents
     .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzydl_query_kb_satisfiable_query_KbSatisfiableQuery.pdf
        :alt: UML Class Diagram for KbSatisfiableQuery
        :align: center
-       :width: 11.2cm
+       :width: 9.3cm
        :class: uml-diagram
 
        UML Class Diagram for **KbSatisfiableQuery**
@@ -107,3 +103,5 @@ Module Contents
       :return: A Solution object representing the outcome of the operation. It returns a solution initialized with 1.0 if the knowledge base is consistent, or a solution marked as inconsistent if the knowledge base is invalid or an ontology exception occurs.
 
       :rtype: Solution
+
+

@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.milp.variable
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A symbolic variable class for linear expressions that manages types, bounds, and naming within mixed-integer linear programming contexts.
+Defines a symbolic variable structure used to represent degrees of satisfaction within linear expressions for fuzzy description logic ontologies.
 
 
 Description
 -----------
 
 
-Symbolic variables used within linear expressions are modeled to represent degrees of satisfaction in fuzzy description logic ontologies. The implementation encapsulates essential properties such as a unique identifier, a specific domain type, and corresponding lower and upper bounds that are automatically adjusted based on the variable's classification. By supporting various types including binary, integer, continuous, and semi-continuous, the design ensures that constraints are applied correctly without requiring manual configuration of numeric limits for every instance. Instantiation can be performed directly or through static factory methods that streamline the creation of specific variable types, while a class-level counter facilitates the automatic generation of unique sequential names. The logic includes functionality to flag specific instances as datatype fillers and supports cloning to create independent copies, which is useful for maintaining state integrity during complex manipulations. Equality and hashing operations rely on the string representation of the variable, ensuring that instances are distinguished primarily by their assigned names within hash-based collections.
+Symbolic variables are modeled to encapsulate essential properties such as a unique identifier, a specific domain type, and numeric constraints defined by lower and upper bounds. The design automatically adjusts these numeric boundaries based on the variable type, ensuring that binary and semi-continuous variables are constrained between zero and one, while continuous and integer types default to infinite ranges. To facilitate the construction of optimization models, static factory methods provide convenient interfaces for generating specific variable types, and a class-level counter enables the automatic creation of unique sequential names. Equality comparisons rely primarily on the variable's name, while hashing incorporates the full state including type and bounds to ensure consistent behavior within hash-based collections. Additionally, the implementation supports cloning for independent copies and includes flags to identify variables acting as datatype fillers within the broader fuzzy logic framework.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -99,9 +95,9 @@ Module Contents
 
    .. py:method:: __hash__() -> int
 
-      Returns the hash value for the `Variable` instance, enabling its use in hash-based collections like dictionaries and sets. The hash is calculated by converting the object to its string representation and hashing that string. Consequently, the hash value is directly tied to the output of the object's `__str__` method, meaning that any change to the object's state which alters its string representation will result in a different hash.
+      Calculates the hash value for the instance by hashing its string representation, enabling the object to be used as a key in dictionaries or as an element in sets. This implementation relies on the `__str__` method to determine the object's identity for hashing purposes. It is important to note that if the object is mutable and its string representation changes after it has been added to a hash-based collection, the hash value will change, potentially causing the object to become lost or inaccessible within that collection.
 
-      :return: An integer hash value derived from the object's string representation.
+      :return: An integer hash value derived from the string representation of the object.
 
       :rtype: int
 

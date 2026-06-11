@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.concept.threshold_concept
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A Python class representing threshold constraints applied to fuzzy logic concepts to determine satisfaction based on a numerical boundary.
+A Python class that models threshold constraints applied to fuzzy logic concepts to determine satisfaction based on numerical boundaries.
 
 
 Description
 -----------
 
 
-The software models a threshold constraint within a graded or fuzzy logic framework, evaluating whether the degree of fulfillment of a nested concept meets a specific numerical weight. It supports both positive thresholds, requiring a degree to be greater than or equal to a value, and negative thresholds, requiring a degree to be less than or equal to a value. By encapsulating a base concept, this component allows for the construction of complex logical expressions that include boundary conditions, integrating seamlessly with a broader hierarchy of logical constructs. Standard operations such as conjunction, disjunction, and negation are supported through delegation to an operator handler, while structural manipulations like cloning and recursive replacement ensure that the threshold logic can be maintained across transformations of the concept tree. The design delegates the retrieval of atomic concepts and roles to the inner concept, ensuring that the threshold wrapper acts primarily as a modifier of the satisfaction degree rather than a fundamental change to the underlying semantic structure.
+The software implements a logical construct that enforces numerical boundaries on the degree of fulfillment for a nested concept within a graded or fuzzy logic framework. By encapsulating a base concept and associating it with a specific weight, the implementation allows for the evaluation of satisfaction conditions based on whether the membership degree meets a positive or negative threshold. Design decisions include the use of static factory methods to simplify the instantiation of specific threshold directions, ensuring that the creation of positive and negative constraints remains intuitive and type-safe. The logic integrates seamlessly into a broader hierarchy by delegating complex operations such as conjunction, disjunction, and negation to a dedicated operator handler, while also providing mechanisms for structural manipulation like cloning and recursive replacement of sub-concepts. Furthermore, the implementation ensures that the retrieval of atomic components and roles is handled by the wrapped concept, maintaining a clean separation of concerns between the threshold logic and the underlying data structure.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -57,7 +53,7 @@ Module Contents
     .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzydl_concept_threshold_concept_ThresholdConcept.pdf
        :alt: UML Class Diagram for ThresholdConcept
        :align: center
-       :width: 11.9cm
+       :width: 12.7cm
        :class: uml-diagram
 
        UML Class Diagram for **ThresholdConcept**
@@ -94,9 +90,9 @@ Module Contents
 
    .. py:method:: __hash__() -> int
 
-      Computes the hash value for the instance by hashing its string representation, enabling the object to be used as a key in dictionaries or as a member of sets. The implementation delegates to the built-in hash function applied to the result of `str(self)`. Note that if the object is mutable and its string representation changes over time, the hash value will also change, which can lead to unexpected behavior if the object is modified while stored in a hash-based collection.
+      Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-      :return: An integer hash value computed from the string representation of the object.
+      :return: An integer hash value representing the structural identity of this object.
 
       :rtype: int
 
@@ -219,23 +215,17 @@ Module Contents
 
 
    .. py:attribute:: name
-      :value: '([>= Uninferable] Uninferable)'
-
-
-      Updates the name of the Concept instance to the specified string value. This setter modifies the object's internal state by assigning the provided value to the private `_name` attribute, effectively replacing any previously stored name.
-
-      :param value: The new name to assign to the object.
-      :type value: str
 
 
    .. py:property:: weight
       :type: float
 
 
-      Sets the weight of the `ThresholdConcept` instance to the specified floating-point value. This method updates the internal `_weight` attribute, effectively modifying the object's state without performing additional validation or triggering side effects beyond the assignment. It allows the weight to be redefined dynamically, accepting any float provided as an argument.
+      Returns the threshold value of this threshold concept, i.e. the cut-off degree against which the wrapped concept's membership is compared (as a positive or negative threshold). The value is read from the private ``_weight`` attribute without modifying the instance.
 
-      :param value: The new weight value.
-      :type value: float
+      :return: The threshold cut-off degree.
+
+      :rtype: float
 
 
 .. py:data:: NegThreshold

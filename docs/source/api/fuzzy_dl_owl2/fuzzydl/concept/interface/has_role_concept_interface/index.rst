@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.concept.interface.has_role_concept_interface
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-An abstract interface is established to enforce a contract for objects requiring both a functional role and a specific concept.
+An abstract interface that unifies role and concept management capabilities for fuzzy description logic entities.
 
 
 Description
 -----------
 
 
-By inheriting from multiple parent interfaces, the design combines the distinct behaviors of role management and concept handling into a unified contract. This structure mandates that any concrete implementation must provide properties for accessing and modifying a string-based role alongside a specific domain entity represented by a ``Concept`` object. The initialization process delegates directly to the parent classes, ensuring that the provided role and concept are properly stored and validated according to the rules defined in those respective interfaces. Consequently, the resulting architecture supports a flexible operational context where the relationship between a role and a concept can be dynamically managed and adapted as needed.
+It serves as a composite contract by inheriting from separate interfaces for role handling and concept handling, thereby enforcing a dual requirement on implementing classes. The design ensures that instances are initialized with both a string identifier for a role and a specific ``Concept`` object, delegating the setup logic to the respective parent classes to maintain separation of concerns. By combining these traits, the interface provides a foundation for complex logic constructs that need to define a relationship or restriction involving a specific role applied to a particular concept. As an abstract base class, it defines a structural blueprint rather than providing concrete functionality, requiring subclasses to fulfill the obligations of managing both attributes dynamically.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -48,7 +44,7 @@ Module Contents
     .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzydl_concept_interface_has_role_concept_interface_HasRoleConceptInterface.pdf
        :alt: UML Class Diagram for HasRoleConceptInterface
        :align: center
-       :width: 13.0cm
+       :width: 9.0cm
        :class: uml-diagram
 
        UML Class Diagram for **HasRoleConceptInterface**
@@ -63,3 +59,4 @@ Module Contents
 
 
    This abstract base class defines a contract for objects that must manage both a functional role and a specific concept. It combines the behaviors of role and concept handling, requiring implementations to provide properties for getting and setting a string-based role and a `Concept` object. This design allows for dynamic modification of the operational context and the associated domain entity, ensuring that the class can flexibly adapt to changes in the role it performs or the concept it represents.
+

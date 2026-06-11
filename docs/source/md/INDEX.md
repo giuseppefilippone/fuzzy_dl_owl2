@@ -1,12 +1,12 @@
 # Summary
 
-A comprehensive framework for reasoning over fuzzy ontologies that translates OWL2 annotations into a Fuzzy Description Logic engine powered by Mixed-Integer Linear Programming.
+A comprehensive framework for fuzzy description logic reasoning and interoperability that bridges abstract fuzzy logic with concrete optimization models and semantic web standards.
 
 ## Description
 
-Software bridges standard semantic web technologies with fuzzy logic by providing a translation layer that converts OWL2 ontologies annotated with fuzzy semantics into a format suitable for specialized reasoning. Input processing involves parsing XML and grammar-based strings to extract complex fuzzy constructs like triangular functions and aggregation operators, transforming them into a structured type system that represents the domain logic. Once translated, the core reasoning engine manages a central knowledge base containing concepts, individuals, and axioms, utilizing Mixed-Integer Linear Programming solvers to perform mathematical optimization for inference tasks such as concept satisfiability and instance checking. Foundational utilities support the entire workflow by handling configuration, logging, and XML generation, ensuring that the interoperability between the OWL2 representation and the internal fuzzy logic solver remains robust and compliant with specification standards.
+The core reasoning engine employs tableau-based algorithms to normalize terminologies and manage assertional data, translating complex logical axioms into Mixed-Integer Linear Programming constraints to determine truth degrees. Logical expressions are constructed through a composite object model that supports operator overloading and advanced aggregations like Choquet integrals and Ordered Weighted Averaging, enabling the representation of sophisticated uncertainty. To ensure seamless integration with semantic web technologies, a translation layer converts OWL2 ontologies annotated with fuzzy semantics into internal representations using an inheritance-based type system and specialized XML parsing logic. This architecture facilitates bidirectional data exchange, allowing the serialization of fuzzy knowledge bases into standard OWL2 structures via XML annotations while enforcing canonical hierarchies required by the target reasoning engine.
 
 ## Sub-packages
 
-- [`fuzzy_dl_owl2.fuzzydl`] — Implements a fuzzy description logic reasoning engine that manages knowledge bases, processes axioms and concepts, and performs inference using Mixed-Integer Linear Programming solvers.
-- [`fuzzy_dl_owl2.fuzzyowl2`] — A translation framework that converts OWL2 ontologies annotated with fuzzy logic into the specific syntax required by Fuzzy Description Logic reasoners.
+- [`fuzzy_dl_owl2.fuzzydl`] — A comprehensive fuzzy description logic reasoner that manages knowledge bases and performs automated reasoning by translating fuzzy axioms into Mixed-Integer Linear Programming constraints.
+- [`fuzzy_dl_owl2.fuzzyowl2`] — A translation framework converts OWL2 ontologies annotated with fuzzy logic semantics into a Fuzzy Description Logic representation suitable for reasoning engines.

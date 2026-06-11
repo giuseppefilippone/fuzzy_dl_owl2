@@ -17,7 +17,6 @@ class WeightedSumZeroConcept(Concept, HasWeightedConceptsInterface):
     :type name: typing.Any
     """
 
-
     def __init__(self, weights: list[float], concepts: list[Concept]) -> None:
         """
         Initializes a new instance representing a weighted sum of concepts where the total weight is constrained. The method requires two parallel lists: a list of floating-point weights and a list of `Concept` objects. It performs validation to ensure the lengths of these lists are identical and that the sum of the weights does not exceed 1.0, triggering an error if either condition fails. Upon successful validation, it initializes the parent classes and computes a descriptive name for the concept.
@@ -151,11 +150,14 @@ class WeightedSumZeroConcept(Concept, HasWeightedConceptsInterface):
 
     def __hash__(self) -> int:
         """
-        Computes an integer hash value for the instance, enabling its use in hash-based collections such as dictionaries and sets. The implementation derives the hash from the string representation of the object, effectively hashing the output of its `__str__` method. This implies that the hash value is consistent with the object's string form, but it also means that if the object is mutable and its string representation changes, the hash will change as well, potentially violating the invariants required for dictionary keys.
+        Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-        :return: An integer hash value derived from the string representation of the object.
+        :return: An integer hash value representing the structural identity of this object.
 
         :rtype: int
         """
-
-        return hash(str(self))
+        # return hash(str(self))
+        # return id(self)
+        return hash(
+            (tuple((hash(c), w) for c, w in zip(self.concepts, self.weights)), self.name, hash(self.type))
+        )

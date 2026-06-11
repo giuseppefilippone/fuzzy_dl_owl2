@@ -1,4 +1,5 @@
 import abc
+import typing
 
 from fuzzy_dl_owl2.fuzzydl.concept.concept import Concept
 
@@ -25,14 +26,22 @@ class HasConceptInterface(abc.ABC):
     @property
     def curr_concept(self) -> Concept:
         """
-        Sets the current concept for the object, replacing any previously stored value. This method accepts a `Concept` instance and assigns it to the internal `_curr_concept` attribute, effectively updating the object's state to reflect the new active concept.
+        Returns the single concept currently held by this object, i.e. the operand that the implementing concept wraps. The value is read from the private ``_curr_concept`` attribute without modifying the instance.
 
-        :param value: The Concept object to set as the current concept.
-        :type value: Concept
+        :return: The wrapped concept.
+
+        :rtype: Concept
         """
 
         return self._curr_concept
 
     @curr_concept.setter
     def curr_concept(self, value: Concept) -> None:
+        """
+        Sets the single concept held by this object, replacing the previously wrapped operand. The provided concept is stored directly in the private ``_curr_concept`` attribute without validation.
+
+        :param value: The new concept to wrap.
+        :type value: Concept
+        """
+
         self._curr_concept = value

@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.query.defuzzify.lom_defuzzify_query
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Implements the Largest of Maxima defuzzification strategy to determine the highest crisp value within the region of maximum membership for a specific feature.
+Implements the Largest of Maxima defuzzification strategy to convert fuzzy membership values into crisp numbers by maximizing the target variable within an optimization framework.
 
 
 Description
 -----------
 
 
-The software provides a mechanism to convert fuzzy membership values into crisp numbers by selecting the largest numerical value where the degree of membership is maximized. It operates within a fuzzy logic framework by accepting a concept definition, a specific individual entity, and a target feature name to define the scope of the calculation. To facilitate the computation, the logic integrates with a mathematical optimization engine by generating an objective expression that represents the negative of the target variable. This formulation allows the underlying solver, which typically minimizes objectives, to effectively maximize the variable and thereby identify the largest value within the plateau of maximum membership.
+Software designed to execute the Largest of Maxima (LOM) defuzzification method operates by identifying the highest numerical value within the plateau of maximum membership for a specific feature. Extending a base defuzzification handler, the logic accepts a fuzzy concept, an individual entity, and a target feature name to configure the specific parameters required for this crisp value selection. The design ensures that the resulting crisp value represents the rightmost point of the fuzzy set's maximum membership area, which is crucial for applications requiring optimistic or upper-bound estimates. Within the broader fuzzy logic and optimization framework, the component generates an objective expression that mathematically represents the negative of the target variable. This formulation allows a standard minimization solver to effectively maximize the variable, thereby locating the largest value that satisfies the maximum membership constraints. By providing a string representation that explicitly identifies the operation, the logic facilitates logging and debugging while seamlessly integrating with the underlying mixed-integer linear programming solvers to compute the final result.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -85,3 +81,5 @@ Module Contents
       :return: An Expression representing the negative of the specified variable.
 
       :rtype: Expression
+
+

@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.concept.concrete.triangular_concrete_concept
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Implements a fuzzy logic concept characterized by a triangular membership function to model linguistic variables within a specific domain.
+Implements a fuzzy logic concept using a triangular membership function to determine the degree of membership for numeric values within a defined domain.
 
 
 Description
 -----------
 
 
-The software models a specific type of fuzzy set where membership degrees follow a triangular shape, defined by a rising edge, a peak, and a falling edge. It enforces strict validation during initialization to ensure that the geometric parameters form a valid triangle and that the overall domain encompasses the active support interval. Membership evaluation relies on linear interpolation, calculating a value between zero and one based on where a specific input falls relative to the triangle's vertices. To support complex logical reasoning, the implementation delegates operations like negation, conjunction, and disjunction to a central operator handler, allowing these concepts to be combined within a broader fuzzy ontology framework.
+The software models a specific type of fuzzy set where membership degrees follow a triangular shape, rising linearly to a peak and then falling back to zero. It requires defining a domain interval alongside three specific points that determine the start, peak, and end of the triangle, enforcing strict validation to ensure the geometric constraints are met during instantiation. Central to the implementation is the calculation of membership degrees, which evaluates a given numeric value against the triangle's vertices to return a value between zero and one based on linear interpolation. To support complex fuzzy logic reasoning, the implementation overloads standard logical operators such as negation, conjunction, and disjunction, delegating these operations to a separate handler while maintaining the ability to clone instances and generate unique hash identifiers based on the defining parameters.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -93,9 +89,9 @@ Module Contents
 
    .. py:method:: __hash__() -> int
 
-      Calculates a unique integer identifier for the instance based on its string representation. By delegating to the hash of the string form, this method ensures that objects with identical string outputs produce the same hash, thereby enabling the instance to be used as a dictionary key or stored within a set. It is important to note that the stability of the hash value is contingent upon the implementation of the `__str__` method; if the string representation changes, the hash will change as well.
+      Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-      :return: An integer representing the hash of the object's string representation.
+      :return: An integer hash value representing the structural identity of this object.
 
       :rtype: int
 
@@ -173,47 +169,39 @@ Module Contents
       :type: float
 
 
-      Sets the value of the property 'a' for the TriangularConcreteConcept instance. The provided value is converted to a float and stored in the private attribute `_a`, ensuring that the internal representation is always a floating-point number. This method will raise an exception if the input cannot be cast to a float.
+      Returns the left breakpoint of the triangular membership function, i.e. the start of the support interval where the membership degree begins rising from zero toward the peak. The value is held internally as a float and is read without modifying the instance.
 
-      :param value: The new value to assign to the attribute, converted to a float.
-      :type value: float
+      :return: The lower support bound ``a`` of the triangle.
+
+      :rtype: float
 
 
    .. py:property:: b
       :type: float
 
 
-      Updates the internal state of the instance by setting the value of the property 'b'. The method accepts a single argument, which is explicitly converted to a float before being assigned to the private attribute '_b'. This conversion ensures type consistency, though it may raise a ValueError or TypeError if the provided input cannot be parsed as a float.
+      Returns the peak breakpoint of the triangular membership function, i.e. the single point where the membership degree reaches its maximum value of ``1``. The value is held internally as a float and is read without modifying the instance.
 
-      :param value: The new value to be stored, converted to a float.
-      :type value: float
+      :return: The peak ``b`` of the triangle.
+
+      :rtype: float
 
 
    .. py:property:: c
       :type: float
 
 
-      Sets the value of the property 'c' for the triangular concept instance. This method accepts a numeric input, coerces it to a float, and assigns it to the internal `_c` attribute. It modifies the object's state and may raise an exception if the input cannot be successfully converted to a floating-point number.
+      Returns the right breakpoint of the triangular membership function, i.e. the end of the support interval where the membership degree falls back to zero. The value is held internally as a float and is read without modifying the instance.
 
-      :param value: The new value for the attribute, converted to a float.
-      :type value: float
+      :return: The upper support bound ``c`` of the triangle.
+
+      :rtype: float
 
 
    .. py:attribute:: k1
       :type:  float
 
-      Sets the value of the `k1` attribute for the instance, converting the input to a float to ensure type consistency. This method updates the private `_k1` variable, effectively modifying the internal state of the `FuzzyConcreteConcept` object. Any subsequent operations relying on this parameter will reflect the new value.
-
-      :param value: The new value for the k1 attribute.
-      :type value: float
-
 
    .. py:attribute:: k2
       :type:  float
 
-      Sets the upper bound parameter k2 for the fuzzy concrete concept. This method enforces a constraint ensuring that the new value is greater than or equal to the existing k1 parameter; if k1 is larger than the provided value, a ValueError is raised. Upon successful validation, the input is converted to a float and stored in the internal state.
-
-      :param value: The value to assign to the k2 parameter, which must be greater than or equal to k1.
-      :type value: float
-
-      :raises ValueError: Raised if the provided value is less than `k1`, as `k2` must be greater than or equal to `k1`.

@@ -12,6 +12,12 @@ class TruthConcept(Concept):
     :type name: typing.Any
     """
 
+    # Cached singletons for the two truth constants. TOP/BOTTOM are immutable
+    # logical constants (no role/sub-concept state, replace() is a no-op), so a
+    # single shared instance per value is safe and avoids constructing millions
+    # of identical objects on large ontologies.
+    _TOP: typing.Optional[typing.Self] = None
+    _BOTTOM: typing.Optional[typing.Self] = None
 
     def __init__(self, c_type: ConceptType) -> None:
         """
@@ -30,15 +36,31 @@ class TruthConcept(Concept):
 
     @staticmethod
     def get_top():
-        """Returns a new instance representing the universal or "Top" concept within the logical framework. This concept typically signifies the set of all possible individuals or the most general supertype in the ontology. The method acts as a static factory, instantiating a `TruthConcept` object initialized specifically with the `ConceptType.TOP` identifier, and it has no side effects."""
+        """
+        Returns the shared singleton representing the universal ("Top") concept. The instance is created lazily on first access and cached, signifying the set of all possible individuals or the most general supertype in the ontology.
 
-        return TruthConcept(ConceptType.TOP)
+        :return: The singleton Top concept.
+
+        :rtype: TruthConcept
+        """
+
+        if TruthConcept._TOP is None:
+            TruthConcept._TOP = TruthConcept(ConceptType.TOP)
+        return TruthConcept._TOP
 
     @staticmethod
     def get_bottom():
-        """Returns a `TruthConcept` instance representing the bottom element of the conceptual hierarchy. This static method constructs a new object initialized with `ConceptType.BOTTOM`, typically signifying a contradiction or the least defined state. The operation has no side effects and does not depend on instance state."""
+        """
+        Returns the shared singleton representing the bottom element of the conceptual hierarchy (a contradiction / the least defined state). The instance is created lazily on first access and cached.
 
-        return TruthConcept(ConceptType.BOTTOM)
+        :return: The singleton Bottom concept.
+
+        :rtype: TruthConcept
+        """
+
+        if TruthConcept._BOTTOM is None:
+            TruthConcept._BOTTOM = TruthConcept(ConceptType.BOTTOM)
+        return TruthConcept._BOTTOM
 
     def is_atomic(self) -> bool:
         """
@@ -202,20 +224,21 @@ class TruthConcept(Concept):
         """
 
         if self.type == ConceptType.TOP:
-            return TruthConcept(ConceptType.BOTTOM)
+            return TruthConcept.get_bottom()
         else:
-            return TruthConcept(ConceptType.TOP)
+            return TruthConcept.get_top()
 
     def __hash__(self) -> int:
         """
-        Computes the integer hash value for the instance based on the `name` attribute. This allows `TruthConcept` objects to be used as dictionary keys or elements within sets. The implementation ensures that two instances with identical names will produce the same hash value, which is a requirement for consistent behavior in hash-based collections.
+        Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-        :return: An integer hash value derived from the object's name attribute.
+        :return: An integer hash value representing the structural identity of this object.
 
         :rtype: int
         """
-
-        return hash(self.name)
+        # return hash(str(self))
+        # return id(self)
+        return hash((self.name, hash(self.type)))
 
     def __eq__(self, value: typing.Self) -> bool:
         """

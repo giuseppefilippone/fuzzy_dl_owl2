@@ -1,22 +1,22 @@
 # Summary
 
-Concrete fuzzy logic concepts operating over numerical intervals are modeled through a hierarchy of classes implementing specific membership functions and arithmetic operations.
+A suite of concrete fuzzy logic implementations that model various membership functions and support fuzzy arithmetic operations.
 
 ## Description
 
-An abstract base class establishes the structural foundation by managing interval bounds and enforcing geometric constraints, while delegating specific membership calculations to subclasses that represent distinct mathematical shapes. Implementations include standard fuzzy set geometries such as triangular, trapezoidal, left shoulder, and right shoulder functions, alongside a crisp binary variant and a piecewise linear model operating on a normalized domain. To support complex linguistic expressions, a wrapper mechanism applies modifiers to base concepts, transforming membership degrees to represent terms like "very" or "somewhat." Logical operations such as conjunction, disjunction, and negation are handled consistently across all implementations through operator overloading that delegates to a centralized utility, ensuring seamless integration within a broader fuzzy description logic framework. Additionally, a dedicated sub-package extends this functionality to handle uncertain values via triangular fuzzy numbers, supporting interval arithmetic, logical comparisons, and defuzzification techniques.
+These components provide the mathematical foundation for representing uncertainty and imprecision by defining specific geometric shapes for membership degrees, ranging from crisp binary intervals to triangular and trapezoidal sets. The architecture relies on an abstract base class that enforces structural integrity regarding numerical intervals, allowing subclasses to implement specific algorithms for calculating truth values based on linear interpolation or geometric parameters. Beyond simple shapes, the system utilizes a wrapper pattern to apply linguistic modifiers to existing concepts, transforming membership degrees to model intensifiers or hedges within a description logic framework. Logical operations such as conjunction, disjunction, and negation are handled through delegation to a central operator framework, while a dedicated sub-package extends these capabilities to support fuzzy arithmetic and defuzzification for triangular fuzzy numbers.
 
 ## Modules
 
-- [`fuzzy_dl_owl2.fuzzydl.concept.concrete.crisp_concrete_concept`] — Defines a crisp concrete concept within a fuzzy logic framework using a binary membership function based on specific validity and satisfaction intervals.
-- [`fuzzy_dl_owl2.fuzzydl.concept.concrete.fuzzy_concrete_concept`] — An abstract base class defines fuzzy concepts operating over numerical intervals with configurable lower and upper bounds.
-- [`fuzzy_dl_owl2.fuzzydl.concept.concrete.left_concrete_concept`] — A Python implementation of a left shoulder fuzzy set that assigns full membership to lower values and linearly decreases to zero over a specified interval.
-- [`fuzzy_dl_owl2.fuzzydl.concept.concrete.linear_concrete_concept`] — A fuzzy concept implementation that models a piecewise linear membership function operating on a normalized domain between zero and one.
-- [`fuzzy_dl_owl2.fuzzydl.concept.concrete.modified_concrete_concept`] — A fuzzy concrete concept wrapper that applies a linguistic modifier to the membership degree of an underlying base concept.
-- [`fuzzy_dl_owl2.fuzzydl.concept.concrete.right_concrete_concept`] — A specialized class models a fuzzy logic concept characterized by a "right shoulder" membership function, where the degree of truth transitions linearly from zero to one as an input value increases.
-- [`fuzzy_dl_owl2.fuzzydl.concept.concrete.trapezoidal_concrete_concept`] — Implements a trapezoidal membership function for fuzzy logic concepts, defining degrees of membership based on specific geometric parameters.
-- [`fuzzy_dl_owl2.fuzzydl.concept.concrete.triangular_concrete_concept`] — Implements a fuzzy logic concept characterized by a triangular membership function to model linguistic variables within a specific domain.
+- [`fuzzy_dl_owl2.fuzzydl.concept.concrete.crisp_concrete_concept`] — A crisp concrete concept implementation that applies binary membership logic to determine if a value lies within a specified satisfaction interval.
+- [`fuzzy_dl_owl2.fuzzydl.concept.concrete.fuzzy_concrete_concept`] — An abstract base class defines the structure and behavior for fuzzy concepts operating within specific numerical intervals.
+- [`fuzzy_dl_owl2.fuzzydl.concept.concrete.left_concrete_concept`] — Implements a left shoulder fuzzy set concept where membership degrees are maximized at lower values and decrease linearly towards zero based on defined interval parameters.
+- [`fuzzy_dl_owl2.fuzzydl.concept.concrete.linear_concrete_concept`] — A concrete implementation of a fuzzy concept that utilizes a piecewise linear membership function defined over a normalized domain.
+- [`fuzzy_dl_owl2.fuzzydl.concept.concrete.modified_concrete_concept`] — A fuzzy concrete concept wrapper that applies a specific modifier to an underlying concept to transform membership degrees.
+- [`fuzzy_dl_owl2.fuzzydl.concept.concrete.right_concrete_concept`] — A Python implementation of a fuzzy logic concept that utilizes a right-shoulder membership function to model values where truth increases linearly over a specific interval.
+- [`fuzzy_dl_owl2.fuzzydl.concept.concrete.trapezoidal_concrete_concept`] — Defines a trapezoidal concrete concept that models fuzzy membership degrees using a geometric shape defined by four distinct parameters.
+- [`fuzzy_dl_owl2.fuzzydl.concept.concrete.triangular_concrete_concept`] — Implements a fuzzy logic concept using a triangular membership function to determine the degree of membership for numeric values within a defined domain.
 
 ## Sub-packages
 
-- [`fuzzy_dl_owl2.fuzzydl.concept.concrete.fuzzy_number`] — Implements a mathematical framework for handling uncertain values through triangular fuzzy numbers, supporting arithmetic operations, logical comparisons, and defuzzification.
+- [`fuzzy_dl_owl2.fuzzydl.concept.concrete.fuzzy_number`] — A concrete implementation of triangular fuzzy numbers that supports fuzzy arithmetic, logical operations, and defuzzification.

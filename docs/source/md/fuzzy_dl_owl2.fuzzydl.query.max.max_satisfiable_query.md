@@ -1,7 +1,7 @@
 # Summary
 
-A fuzzy logic query mechanism that calculates the maximal satisfiability degree of a concept within a knowledge base using mixed-integer linear programming.
+Determines the maximal degree to which a fuzzy concept is satisfiable within a given knowledge base using mixed-integer linear programming.
 
 ## Description
 
-Extending the base satisfiability query, this component performs optimization to seek the highest truth value a concept can achieve. The implementation supports both general satisfiability, where a new individual is generated, and instance checking, where a specific individual is provided. During preprocessing, the logic inspects the concept for complex constructs like universal quantifiers to enable dynamic blocking strategies within the knowledge base. Execution involves cloning the knowledge base to preserve the original state, formulating an objective function to maximize the relevant variable, and solving the resulting mixed-integer linear program. Exception handling ensures that inconsistent ontologies result in specific status indicators rather than runtime failures.
+Extending the base satisfiability logic, this component performs optimization to identify the highest possible truth value for a specific fuzzy concept within a knowledge base. It supports both general satisfiability, where a new individual is synthesized, and instance checking, which evaluates the concept against a specific existing entity. The reasoning process formulates a mixed-integer linear programming problem that maximizes the degree variable associated with the concept, while the preprocessing stage dynamically adjusts blocking strategies if complex logical constructs like universal quantifiers are detected. To ensure data integrity, the execution flow clones the knowledge base before resolving the ABox and running the optimization, handling potential ontology inconsistencies by returning a distinct status rather than raising an error.

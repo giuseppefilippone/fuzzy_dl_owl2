@@ -1,0 +1,8 @@
+(define-primitive-concept Animal *top*)
+(define-primitive-concept Person *top*)
+
+(instance Alice Person 1.0)
+(instance Bob Animal 1.0)
+
+(related Alice Bob hasFriend 1.0)
+

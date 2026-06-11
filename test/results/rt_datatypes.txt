@@ -1,0 +1,11 @@
+(define-fuzzy-logic lukasiewicz)
+
+(define-fuzzy-concept Young left-shoulder(0.0, 100.0, 25.0, 35.0))
+
+(functional age)
+
+(define-primitive-concept Person *top*)
+
+(instance john (some age Young) 0.5)
+(instance john Person 1.0)
+

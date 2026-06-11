@@ -18,7 +18,6 @@ class WeightedConcept(Concept, HasConceptInterface):
     :type name: typing.Any
     """
 
-
     def __init__(self, weight: float, c: Concept) -> None:
         """
         Initializes a new instance representing a concept with an associated numerical weight. The constructor accepts a floating-point weight and an existing `Concept` object to be wrapped. It configures the instance by calling the parent `Concept` initializer with the `WEIGHTED` type tag and the `HasConceptInterface` mixin to store the reference to the provided concept. Finally, it stores the weight internally and automatically generates a display name based on the instance's state.
@@ -38,16 +37,24 @@ class WeightedConcept(Concept, HasConceptInterface):
     @property
     def weight(self) -> float:
         """
-        Sets the weight of the concept to the specified floating-point value. This method acts as the setter for the `weight` property, directly updating the internal `_weight` attribute. Modifying this value changes the object's state, potentially influencing any downstream logic or calculations that depend on the concept's weight.
+        Returns the weight applied to the wrapped concept, i.e. the scalar factor by which this weighted concept scales the membership degree of its inner concept in a weighted aggregation. The value is read from the private ``_weight`` attribute without modifying the instance.
 
-        :param value: The new weight to assign to the object.
-        :type value: float
+        :return: The weight applied to the wrapped concept.
+
+        :rtype: float
         """
 
         return self._weight
 
     @weight.setter
     def weight(self, value: float) -> None:
+        """
+        Sets the weight applied to the wrapped concept. The provided value is stored directly in the private ``_weight`` attribute without validation.
+
+        :param value: The new weight to apply to the wrapped concept.
+        :type value: float
+        """
+
         self._weight = value
 
     def clone(self) -> typing.Self:
@@ -153,11 +160,14 @@ class WeightedConcept(Concept, HasConceptInterface):
 
     def __hash__(self) -> int:
         """
-        Computes the hash value for the `WeightedConcept` instance, making the object hashable and suitable for use as a dictionary key or set element. The implementation calculates the hash based on the string representation of the object, effectively delegating to the `__str__` method. This implies that the hash value is intrinsically linked to the textual output of the instance, and any changes to the string representation will result in a different hash.
+        Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-        :return: An integer hash value derived from the object's string representation.
+        :return: An integer hash value representing the structural identity of this object.
 
         :rtype: int
         """
-
-        return hash(str(self))
+        # return hash(str(self))
+        # return id(self)
+        return hash(
+            (self.weight, hash(self.curr_concept), self.name, hash(self.type))
+        )

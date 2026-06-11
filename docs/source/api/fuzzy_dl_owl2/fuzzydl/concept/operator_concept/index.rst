@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.concept.operator_concept
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A Python implementation of logical operators for fuzzy description logic that supports multiple semantics, including classical, Lukasiewicz, and Gödel logic, while providing mechanisms for expression simplification and normalization.
+A central implementation of logical operators—conjunctions, disjunctions, and negations—within a fuzzy description logic system that supports multiple semantic interpretations like classical, Łukasiewicz, and Gödel logic.
 
 
 Description
 -----------
 
 
-The software defines a comprehensive system for representing and manipulating logical operators within a fuzzy description logic framework, specifically handling conjunctions, disjunctions, and negations across various semantic interpretations such as classical, Lukasiewicz, and Gödel logic. Through a central class structure, it enables the dynamic construction of complex logical expressions using static factory methods that adapt to the current knowledge base semantics or allow for explicit specification of fuzzy variants. Beyond mere construction, the implementation provides robust capabilities for logical simplification and normalization, applying transformations like De Morgan's laws, double negation elimination, and operator distribution to convert expressions into Conjunctive or Disjunctive Normal Forms. It further integrates with quantifier logic by merging related restrictions and supports syntactic sugar through operator overloading, allowing for intuitive logical operations while maintaining internal consistency through recursive reduction and type checking utilities.
+This composite structure enables the construction of complex logical expressions by managing collections of child concepts and applying specific fuzzy logic rules based on global configuration or explicit selection. The implementation provides extensive capabilities for logical normalization and simplification, automatically applying transformations such as De Morgan's laws, double negation elimination, and distribution to convert expressions into Conjunctive or Disjunctive Normal Forms. To maintain structural integrity and efficiency, the logic recursively processes the concept tree to merge quantifiers, reduce redundant operands, and handle truth values, while also offering syntactic convenience through operator overloading for intuitive logical operations.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -62,7 +58,7 @@ Module Contents
     .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzydl_concept_operator_concept_OperatorConcept.pdf
        :alt: UML Class Diagram for OperatorConcept
        :align: center
-       :width: 5.8cm
+       :width: 8.3cm
        :class: uml-diagram
 
        UML Class Diagram for **OperatorConcept**
@@ -130,9 +126,9 @@ Module Contents
 
    .. py:method:: __hash__() -> int
 
-      Computes the hash value for the instance, enabling its use as a key in dictionaries or as an element in sets. The implementation derives the hash from the string representation of the object, ensuring that instances with identical string representations produce the same hash code. This method delegates the calculation to the built-in hash function applied to the result of the object's string conversion.
+      Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-      :return: An integer hash value derived from the string representation of the object.
+      :return: An integer hash value representing the structural identity of this object.
 
       :rtype: int
 
@@ -963,29 +959,20 @@ Module Contents
       :type: list[fuzzy_dl_owl2.fuzzydl.concept.concept.Concept]
 
 
-      Updates the collection of concepts associated with the operator by accepting an iterable of Concept objects. The provided iterable is converted to a list and stored internally, ensuring that the underlying data structure is mutable and indexable. As a side effect of this assignment, the operator's name is automatically recalculated to reflect the new set of concepts.
+      Returns the list of operand concepts combined by this operator concept (e.g. the conjuncts of an AND, the disjuncts of an OR). The value is read from the private ``_concepts`` attribute without modifying the instance.
 
-      :param value: The collection of Concept objects to assign to the instance, replacing the current concepts and triggering a name update.
-      :type value: typing.Iterable[Concept]
+      :return: The operand concepts of this operator.
+
+      :rtype: list[Concept]
 
 
    .. py:attribute:: name
       :value: '(and )'
 
 
-      Updates the name of the Concept instance to the specified string value. This setter modifies the object's internal state by assigning the provided value to the private `_name` attribute, effectively replacing any previously stored name.
-
-      :param value: The new name to assign to the object.
-      :type value: str
-
 
    .. py:attribute:: type
       :type:  fuzzy_dl_owl2.fuzzydl.util.constants.ConceptType
-
-      Updates the type classification of the Concept instance to the specified value. This setter method assigns the provided `ConceptType` to the internal `_type` attribute, effectively overwriting the previous type definition. The operation modifies the object's state in place and does not return a value.
-
-      :param new_type: The classification or category to assign to the concept.
-      :type new_type: fuzzy_dl_owl2.fuzzydl.util.constants.ConceptType
 
 
 .. py:data:: And

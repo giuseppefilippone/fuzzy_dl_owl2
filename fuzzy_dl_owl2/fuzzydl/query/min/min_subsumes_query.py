@@ -14,11 +14,11 @@ from fuzzy_dl_owl2.fuzzydl.individual.individual import Individual
 from fuzzy_dl_owl2.fuzzydl.knowledge_base import KnowledgeBase
 from fuzzy_dl_owl2.fuzzydl.milp.expression import Expression
 from fuzzy_dl_owl2.fuzzydl.milp.solution import Solution
-from fuzzy_dl_owl2.fuzzydl.milp.term import Term
-from fuzzy_dl_owl2.fuzzydl.milp.variable import Variable
+from fuzzy_dl_owl2.fuzzydl.milp.term import Term  # Term
+from fuzzy_dl_owl2.fuzzydl.milp.variable import Variable  # Variable
 from fuzzy_dl_owl2.fuzzydl.query.subsumption_query import SubsumptionQuery
 from fuzzy_dl_owl2.fuzzydl.util.config_reader import ConfigReader
-from fuzzy_dl_owl2.fuzzydl.util.constants import LogicOperatorType, VariableType
+from fuzzy_dl_owl2.fuzzydl.util.constants import LogicOperatorType, VariableType  # Variable
 
 
 class MinSubsumesQuery(SubsumptionQuery):
@@ -61,15 +61,15 @@ class MinSubsumesQuery(SubsumptionQuery):
         else:  # LogicOperatorType.KLEENE_DIENES
             conc: Concept = OperatorConcept.goedel_or(-self.c2, self.c1)
 
-        q: Variable = kb.milp.get_new_variable(VariableType.SEMI_CONTINUOUS)
+        q: Variable = kb.milp.get_new_variable(VariableType.SEMI_CONTINUOUS)  # Variable
         kb.old_01_variables += 1
-        self.obj_expr: Expression = Expression(Term(1.0, q))
+        self.obj_expr: Expression = Expression(Term(1.0, q))  # Term
 
         # a: not c or d >= 1-q
         kb.add_assertion(
             ind,
             -conc,
-            DegreeExpression.get_degree(Expression(1.0, Term(-1.0, q))),
+            DegreeExpression.get_degree(Expression(1.0, Term(-1.0, q))),  # Term
         )
         kb.solve_assertions()
 

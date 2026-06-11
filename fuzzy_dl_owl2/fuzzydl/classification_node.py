@@ -184,7 +184,8 @@ class ClassificationNode:
         :rtype: int
         """
 
-        return hash(str(self))
+        # return hash(str(self))
+        return hash(tuple(name for name in ClassificationNode.EQUIVALENT_NAMES))
 
     def __repr__(self) -> str:
         """

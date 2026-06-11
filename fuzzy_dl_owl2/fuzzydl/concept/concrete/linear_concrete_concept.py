@@ -23,7 +23,6 @@ class LinearConcreteConcept(FuzzyConcreteConcept):
     :type _b: float
     """
 
-
     def __init__(self, name: str, k1: float, k2: float, a: float, b: float) -> None:
         """
         Initializes the instance by setting up the defining parameters for a linear concrete concept. This constructor accepts a string identifier and four numerical coefficients (k1, k2, a, b) that govern the linear behavior. It enforces specific constraints to ensure mathematical validity: the value of k1 must not exceed a, and the value of b must be less than or equal to 1.0. If these constraints are violated, the method triggers an error via the utility module. Upon successful validation, the parameters are converted to floats and stored as instance attributes, and the parent class is initialized with the provided name.
@@ -54,31 +53,47 @@ class LinearConcreteConcept(FuzzyConcreteConcept):
     @property
     def a(self) -> float:
         """
-        Sets the value of the coefficient 'a' for the linear concept. This method accepts a value, converts it to a float, and assigns it to the internal attribute `_a`. It ensures type consistency by forcing the storage format to be a float, which may raise a `ValueError` or `TypeError` if the input is not a valid number. Modifying this property updates the internal state of the object, which may influence subsequent calculations or behaviors relying on this coefficient.
+        Returns the x-coordinate of the knee of this piecewise-linear membership function, i.e. the threshold on the normalized domain at which the slope of the ramp changes. The value is held internally as a float and is read without modifying the instance.
 
-        :param value: The new value to assign to the internal attribute, converted to a float.
-        :type value: float
+        :return: The knee position ``a`` of the linear function.
+
+        :rtype: float
         """
 
         return self._a
 
     @a.setter
     def a(self, value: float) -> None:
+        """
+        Sets the x-coordinate of the knee ``a`` of this piecewise-linear membership function. The provided value is cast to a float and stored in the private ``_a`` attribute; a non-convertible value raises a ``ValueError`` or ``TypeError``.
+
+        :param value: The new knee position, converted to a float.
+        :type value: float
+        """
+
         self._a = float(value)
 
     @property
     def b(self) -> float:
         """
-        Updates the internal state of the instance by assigning a new value to the underlying attribute. The input is coerced to a floating-point number before storage to ensure type consistency, regardless of whether the original input was an integer or a numeric string. This setter modifies the private attribute `_b` and will propagate standard exceptions if the provided value cannot be converted to a float.
+        Returns the membership degree reached at the knee ``a`` of this piecewise-linear function, i.e. the y-coordinate of the breakpoint that fixes the slope of the two linear segments. The value is held internally as a float and is read without modifying the instance.
 
-        :param value: The new value for the 'b' attribute, converted to a float.
-        :type value: float
+        :return: The membership degree ``b`` at the knee.
+
+        :rtype: float
         """
 
         return self._b
 
     @b.setter
     def b(self, value: float) -> None:
+        """
+        Sets the membership degree ``b`` reached at the knee of this piecewise-linear function. The provided value is cast to a float and stored in the private ``_b`` attribute; a non-convertible value raises a ``ValueError`` or ``TypeError``.
+
+        :param value: The new degree at the knee, converted to a float.
+        :type value: float
+        """
+
         self._b = float(value)
 
     def clone(self) -> typing.Self:
@@ -164,14 +179,17 @@ class LinearConcreteConcept(FuzzyConcreteConcept):
 
     def __hash__(self) -> int:
         """
-        Computes the hash value for the instance based on its string representation, enabling the object to be used as a key in dictionaries or as a member of sets. The implementation delegates to the built-in hash function applied to the result of `str(self)`, meaning the hash value is intrinsically linked to the object's string output. Consequently, if the object is mutable and its string representation changes during its lifetime, the hash value will also change, which violates the standard contract for hashable objects and can lead to errors if the instance is used as a dictionary key after modification. Furthermore, the efficiency of this operation depends on the computational cost of generating the string representation.
+        Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-        :return: An integer hash value computed from the string representation of the object.
+        :return: An integer hash value representing the structural identity of this object.
 
         :rtype: int
         """
-
-        return hash(str(self))
+        # return hash(str(self))
+        # return id(self)
+        return hash(
+            (self.name, self.k1, self.k2, self.a, self.b, hash(self.type))
+        )
 
     # def __str__(self) -> str:
     #     return self.get_name()

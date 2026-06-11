@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.concept.interface.has_concepts_interface
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-An abstract base class that defines a standard interface for objects requiring a mutable collection of concepts.
+An abstract base class that standardizes the storage and management of a collection of conceptual entities within the fuzzy description logic system.
 
 
 Description
 -----------
 
 
-Designed to serve as a foundational component for various structures within the fuzzy description logic system, the class enforces a consistent pattern for handling groups of conceptual entities. By accepting any iterable of concepts during initialization, the implementation automatically converts the input into a concrete list, ensuring that the internal state is decoupled from the original source and stored in a mutable sequence. Access to the underlying collection is managed through a property interface, which allows derived classes to retrieve the current list of concepts or replace it entirely with a new collection. This design standardizes how different components store and manipulate concept data, promoting code reuse and ensuring that all derived classes handle concept collections in a uniform manner.
+Designed to serve as a reusable building block for complex structures, the class handles the initialization of a collection of conceptual entities by accepting any iterable and converting it into a mutable list. This conversion ensures that the internal state remains consistent and decoupled from the original input source, preventing unintended side effects from external modifications to the provided iterable. Access to the stored collection is managed through a property interface, which allows for both retrieval and dynamic replacement of the underlying list while maintaining encapsulation. Subclasses can leverage this functionality to focus on specific logic operations without needing to implement boilerplate code for managing groups of concepts, such as operands in logical expressions.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -76,7 +72,9 @@ Module Contents
       :type: list[fuzzy_dl_owl2.fuzzydl.concept.concept.Concept]
 
 
-      Replaces the internal collection of concepts with the provided iterable of Concept objects. The method converts the input iterable into a list before assignment, ensuring that the underlying `_concepts` attribute stores a concrete, mutable sequence. This operation overwrites any previously stored concepts rather than appending to them.
+      Returns the list of concepts held by this object, i.e. the operands that the implementing concept combines. The value is read from the private ``_concepts`` attribute without modifying the instance.
 
-      :param value: An iterable of Concept objects to assign to the internal concepts list.
-      :type value: typing.Iterable[Concept]
+      :return: The wrapped operand concepts.
+
+      :rtype: list[Concept]
+

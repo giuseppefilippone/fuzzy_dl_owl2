@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fuzzy-dl-owl2"
-version = "1.0.17"
+version = "1.0.18"
 description = "A python porting of the Fuzzy Description Language (see https://www.umbertostraccia.it/cs/software/fuzzyDL/fuzzyDL.html) and the Fuzzy OWL 2 framework (see https://www.umbertostraccia.it/cs/software/FuzzyOWL/index.html)."
 license = "CC-BY-SA-4.0"
 readme = "README.md"
@@ -8,21 +8,36 @@ repository = "https://github.com/giuseppefilippone/fuzzy_dl_owl2"
 documentation = "https://fuzzy-dl-owl2.readthedocs.io/en/latest/"
 authors = ["Giuseppe Filippone <filipponegiuseppe94@gmail.com>"]
 
+# Force-include Cython-compiled extensions in the wheel even though
+# `*.so` is in .gitignore (poetry-core honors .gitignore by default).
+include = [
+    { path = "fuzzy_dl_owl2/**/*.so", format = "wheel" },
+    { path = "fuzzy_dl_owl2/**/*.pyd", format = "wheel" },
+]
+
 [tool.poetry.dependencies]
 python = ">=3.11, <4.0"
-owlready2 = "^0.47"
 rdflib = "^7.1.4"
 networkx = "^3.3"
-pyowl2 = "^1.0.6"
+numpy = "^2.2"
+pyowl2 = "^1.0.7"
 pyparsing = "^3.2.3"
 sortedcontainers = "^2.4.0"
 trycast = "^1.2.0"
 defusedxml = "^0.7.1"
+python-dotenv = "^1.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3"
 flake8 = "^7.1"
 pytest-cov = "^5.0"
+
+# Compile the fast recursive-descent parser
+# (fuzzy_dl_owl2.fuzzydl.parser.dl_parser_fast) into a native extension
+# whenever the wheel is built (pip install ., poetry build, etc.).
+[tool.poetry.build]
+script = "build.py"
+generate-setup-file = false
 
 
 [[tool.poetry.source]]
@@ -30,8 +45,15 @@ name = "pypi-mirror"
 url = "https://mirrors.aliyun.com/pypi/simple/"
 priority = "primary"
 
+[[tool.poetry.source]]
+name = "pypi"
+priority = "supplemental"
+
 [build-system]
-requires = ["poetry-core>=1.0.0"]
+# build.py imports cffi (FFI), Cython.Build, and setuptools; all three must
+# be present at build time so the cythonize step and the _fdl_lexer CFFI
+# wrapper compile during `pip install .` / `poetry build`.
+requires = ["poetry-core>=1.0.0", "cython>=3.0", "setuptools>=70.0", "cffi>=1.16"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.semantic_release]

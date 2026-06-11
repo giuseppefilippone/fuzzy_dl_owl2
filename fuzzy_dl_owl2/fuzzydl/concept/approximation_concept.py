@@ -348,14 +348,17 @@ class ApproximationConcept(Concept, HasRoleConceptInterface):
 
     def __hash__(self) -> int:
         """
-        Computes the integer hash value for the object by delegating to the hash of its string representation. This enables the instance to be used as a key in dictionaries or as an element in sets, assuming the object is immutable or its string representation does not change. The specific hash value is determined by the `__str__` method, so any modifications to the object that alter its string output will result in a different hash, potentially affecting its behavior in hash-based collections.
+        Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-        :return: An integer hash value computed from the object's string representation.
+        :return: An integer hash value representing the structural identity of this object.
 
         :rtype: int
         """
-
-        return hash(str(self))
+        # return hash(str(self))
+        # return id(self)
+        return hash(
+            (hash(self.curr_concept), hash(self.type), self.role)
+        )
 
 
 LowerApprox = ApproximationConcept.lower_approx

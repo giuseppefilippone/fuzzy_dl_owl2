@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.concept.modified.triangularly_modified_concept
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A specialized fuzzy logic concept that applies a triangular modifier to a base concept to non-linearly transform its degree of satisfaction.
+A specialized class representing a fuzzy logic concept that has been transformed by a triangular modifier to adjust its membership degree.
 
 
 Description
 -----------
 
 
-The software defines a specific type of fuzzy logic entity where a base concept is transformed by a triangular modifier, altering how membership values are calculated in a non-linear fashion. By inheriting from a generic modified concept base, it integrates into a broader hierarchy of fuzzy description logic elements, allowing for complex expressions involving conjunctions, disjunctions, and negations. Logical operations are handled by delegating to a central operator utility, ensuring consistent behavior across different concept types while keeping the implementation focused on the specific modification logic. Structural manipulation capabilities include cloning the entity and recursively replacing internal sub-concepts, with the replacement logic specifically returning the negated result of the updated structure. Hashing relies on the string representation of the object to facilitate its use within collections like sets and dictionaries.
+The implementation extends the general framework for modified concepts to specifically handle triangular transformations, which are used to non-linearly adjust the degree of membership or satisfaction of a base concept. By associating a specific modifier with a conceptual entity, the structure allows for the dynamic alteration of fuzzy logic values while maintaining the integrity of the original concept hierarchy. Logical operations such as negation, conjunction, and disjunction are supported through delegation to a central operator handler, enabling these modified concepts to participate in complex logical expressions. Furthermore, the design includes mechanisms for cloning the instance and recursively replacing sub-concepts, with the replacement process specifically applying a logical negation to the updated structure to ensure consistent behavior during manipulation. Hashing is implemented based on the internal attributes to facilitate the use of these objects within collections that require unique identification.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -48,7 +44,7 @@ Module Contents
     .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzydl_concept_modified_triangularly_modified_concept_TriangularlyModifiedConcept.pdf
        :alt: UML Class Diagram for TriangularlyModifiedConcept
        :align: center
-       :width: 11.8cm
+       :width: 8.9cm
        :class: uml-diagram
 
        UML Class Diagram for **TriangularlyModifiedConcept**
@@ -80,9 +76,9 @@ Module Contents
 
    .. py:method:: __hash__() -> int
 
-      Computes the integer hash value for the instance, allowing it to be used as a key in dictionaries or stored in sets. The implementation generates the hash by converting the object to its string representation and hashing that result, meaning the hash value is entirely dependent on the output of the `__str__` method. Consequently, the consistency of the hash relies on the stability of the string representation; if the object is mutable and its string form changes, the hash value will change, potentially violating the contract required for hashable objects.
+      Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-      :return: An integer hash value derived from the string representation of the object.
+      :return: An integer hash value representing the structural identity of this object.
 
       :rtype: int
 
@@ -133,3 +129,5 @@ Module Contents
       :return: A new Concept representing the result of replacing concept `a` with concept `c` within the current concept, preserving the existing modification context and applying a negation.
 
       :rtype: Concept
+
+

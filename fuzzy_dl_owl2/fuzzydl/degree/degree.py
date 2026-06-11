@@ -2,7 +2,7 @@ import typing
 from abc import ABC, abstractmethod
 
 from fuzzy_dl_owl2.fuzzydl.milp.expression import Expression
-from fuzzy_dl_owl2.fuzzydl.milp.inequation import Inequation
+from fuzzy_dl_owl2.fuzzydl.milp.inequation import Inequation  # Inequation
 from fuzzy_dl_owl2.fuzzydl.util.constants import InequalityType
 
 
@@ -76,7 +76,7 @@ class Degree(ABC):
         self,
         expression: Expression,
         inequation_type: InequalityType,
-    ) -> Inequation:
+    ) -> Inequation:  # Inequation
         """
         Generates an inequality object where the provided expression forms the left-hand side and the degree represented by this instance forms the right-hand side. The specific comparison operator is determined by the supplied `InequalityType`, allowing for the creation of constraints such as 'expression < degree' or 'expression >= degree'. Since this is an abstract method, subclasses must provide the concrete implementation for how the degree is represented within the resulting `Inequation`.
 

@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzyowl2.util.sort_dl_lines
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Implements a sorting mechanism for fuzzyDL statements that arranges them according to the specific syntax order presented in the official PDF documentation.
+Sorts fuzzy-DL statements according to a specific syntax hierarchy derived from the official language documentation.
 
 
 Description
 -----------
 
 
-The software relies on a comprehensive list of regular expressions that mirror the sequential appearance of commands in the fuzzyDL reference manual, ensuring that generated or processed code adheres to a standardized visual structure. By matching input strings against these compiled patterns, the logic assigns a specific rank to each statement, allowing for a primary sort based on documentation order and a secondary sort based on the string content itself. Once sorted, the results are grouped by their assigned rank, and a customizable separator is inserted between distinct groups to visually distinguish different categories of fuzzyDL commands. Statements that do not match any known pattern are assigned a high priority value, effectively pushing them to the end of the output while maintaining the overall organization of recognized elements.
+The software defines a comprehensive list of regular expressions that correspond to the specific sequence of commands presented in the fuzzy-DL reference manual, ensuring that generated or processed code adheres to this canonical structure. By matching input statements against these compiled patterns, the logic assigns a numerical rank to each line, effectively classifying commands like concept definitions, role properties, and queries into their correct positions. Once ranked, the statements are sorted primarily by this rank and secondarily by their content, with the added capability to insert a separator string between distinct groups of command types. Unrecognized statements that do not match any defined pattern are automatically relegated to the end of the output to maintain stability without disrupting the known order.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -45,16 +41,32 @@ Module Contents
 
 .. py:function:: find_fuzzydl_pdf_order_index(text: str) -> int
 
-   Find the index of the first regex in FUZZYDL_PDF_ORDER that matches s.
-   If no entry matches, return a large number so the item sorts at the end.
+   Finds the index of the first regex in :data:`FUZZYDL_PDF_ORDER_RE` that
+   matches *text*. If no entry matches, returns a large number (``10**9``)
+   so the item sorts at the end.
+
+   :param text: The fuzzy-DL statement to classify.
+   :type text: str
+
+   :return: The PDF-order index, or ``10**9`` if unrecognised.
+
+   :rtype: int
 
 
 .. py:function:: sort_by_fuzzydl_pdf_order(values: collections.abc.Iterable[str], *, group_separator: str = '') -> list[str]
 
-   Sort fuzzyDL statements by PDF order index, group equal-index items,
-   and insert `group_separator` after each group.
+   Sorts fuzzy-DL statements by PDF order index, groups equal-index items,
+   and inserts *group_separator* after each group. Unknown statements are
+   placed at the end.
 
-   Unknown statements are placed at the end.
+   :param values: The fuzzy-DL statements to sort.
+   :type values: Iterable[str]
+   :param group_separator: String inserted after each group of equal-index items.
+   :type group_separator: str
+
+   :return: The sorted statements with group separators inserted.
+
+   :rtype: list[str]
 
 
 .. py:data:: FUZZYDL_PDF_ORDER

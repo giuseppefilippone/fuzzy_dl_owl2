@@ -12,7 +12,7 @@ from fuzzy_dl_owl2.fuzzydl.exception.fuzzy_ontology_exception import (
 
 
 class TriangularConcreteConcept(FuzzyConcreteConcept):
-    """
+    r"""
     This class implements a fuzzy logic concept characterized by a triangular membership function, defining how strongly a specific value belongs to the concept. It operates within a defined domain interval `[k1, k2]` and establishes a core satisfaction interval `[a, c]`, where the membership degree rises linearly from the lower bound `a` to a peak of 1.0 at `b`, then decreases linearly to the upper bound `c`. Users can instantiate this class with specific boundary parameters to model linguistic variables or fuzzy sets, and subsequently evaluate the membership degree of any given numeric value using the `get_membership_degree` method. The class enforces strict validation to ensure the parameters form a valid triangle and that the definition interval encompasses the satisfaction interval, raising an exception if these constraints are violated.
 
     :param k1: The lower bound of the domain interval [k1, k2] over which the concept is defined.
@@ -29,11 +29,10 @@ class TriangularConcreteConcept(FuzzyConcreteConcept):
     :raises FuzzyOntologyException: Raised if the provided parameters do not satisfy the constraints for a valid triangular function, specifically if the satisfaction interval bounds are not ordered ($a \le b \le c$) or if the definition interval $[k_1, k_2]$ does not fully encompass the satisfaction interval $[a, c]$ (i.e., $k_1 > a$ or $k_2 < c$).
     """
 
-
     def __init__(
         self, name: str, k1: float, k2: float, a: float, b: float, c: float
     ) -> None:
-        """
+        r"""
         Initializes a new instance representing a triangular fuzzy concept with the specified name and parameters. The method validates the geometric constraints of the triangle, ensuring that the defining points satisfy $a \le b \le c$. Additionally, it enforces that the lower boundary $k1$ is less than or equal to $a$ and the upper boundary $k2$ is greater than or equal to $c$. If any of these conditions are violated, a `FuzzyOntologyException` is raised. Upon successful validation, the method stores these values as instance attributes, converting the triangle vertices to floats, and invokes the parent class initializer to set the concept's name.
 
         :param name: Identifier for the triangular fuzzy set instance.
@@ -75,46 +74,70 @@ class TriangularConcreteConcept(FuzzyConcreteConcept):
     @property
     def a(self) -> float:
         """
-        Sets the value of the property 'a' for the TriangularConcreteConcept instance. The provided value is converted to a float and stored in the private attribute `_a`, ensuring that the internal representation is always a floating-point number. This method will raise an exception if the input cannot be cast to a float.
+        Returns the left breakpoint of the triangular membership function, i.e. the start of the support interval where the membership degree begins rising from zero toward the peak. The value is held internally as a float and is read without modifying the instance.
 
-        :param value: The new value to assign to the attribute, converted to a float.
-        :type value: float
+        :return: The lower support bound ``a`` of the triangle.
+
+        :rtype: float
         """
 
         return self._a
 
     @a.setter
     def a(self, value: float) -> None:
+        """
+        Sets the left breakpoint ``a`` of the triangular membership function. The provided value is cast to a float and stored in the private ``_a`` attribute; passing a value that cannot be converted to a float raises a ``ValueError`` or ``TypeError``.
+
+        :param value: The new lower support bound, converted to a float.
+        :type value: float
+        """
+
         self._a = float(value)
 
     @property
     def b(self) -> float:
         """
-        Updates the internal state of the instance by setting the value of the property 'b'. The method accepts a single argument, which is explicitly converted to a float before being assigned to the private attribute '_b'. This conversion ensures type consistency, though it may raise a ValueError or TypeError if the provided input cannot be parsed as a float.
+        Returns the peak breakpoint of the triangular membership function, i.e. the single point where the membership degree reaches its maximum value of ``1``. The value is held internally as a float and is read without modifying the instance.
 
-        :param value: The new value to be stored, converted to a float.
-        :type value: float
+        :return: The peak ``b`` of the triangle.
+
+        :rtype: float
         """
 
         return self._b
 
     @b.setter
     def b(self, value: float) -> None:
+        """
+        Sets the peak breakpoint ``b`` of the triangular membership function (the point where the degree equals ``1``). The provided value is cast to a float and stored in the private ``_b`` attribute; a non-convertible value raises a ``ValueError`` or ``TypeError``.
+
+        :param value: The new peak, converted to a float.
+        :type value: float
+        """
+
         self._b = float(value)
 
     @property
     def c(self) -> float:
         """
-        Sets the value of the property 'c' for the triangular concept instance. This method accepts a numeric input, coerces it to a float, and assigns it to the internal `_c` attribute. It modifies the object's state and may raise an exception if the input cannot be successfully converted to a floating-point number.
+        Returns the right breakpoint of the triangular membership function, i.e. the end of the support interval where the membership degree falls back to zero. The value is held internally as a float and is read without modifying the instance.
 
-        :param value: The new value for the attribute, converted to a float.
-        :type value: float
+        :return: The upper support bound ``c`` of the triangle.
+
+        :rtype: float
         """
 
         return self._c
 
     @c.setter
     def c(self, value: float) -> None:
+        """
+        Sets the right breakpoint ``c`` of the triangular membership function. The provided value is cast to a float and stored in the private ``_c`` attribute; a non-convertible value raises a ``ValueError`` or ``TypeError``.
+
+        :param value: The new upper support bound, converted to a float.
+        :type value: float
+        """
+
         self._c = float(value)
 
     def clone(self) -> typing.Self:
@@ -200,14 +223,17 @@ class TriangularConcreteConcept(FuzzyConcreteConcept):
 
     def __hash__(self) -> int:
         """
-        Calculates a unique integer identifier for the instance based on its string representation. By delegating to the hash of the string form, this method ensures that objects with identical string outputs produce the same hash, thereby enabling the instance to be used as a dictionary key or stored within a set. It is important to note that the stability of the hash value is contingent upon the implementation of the `__str__` method; if the string representation changes, the hash will change as well.
+        Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-        :return: An integer representing the hash of the object's string representation.
+        :return: An integer hash value representing the structural identity of this object.
 
         :rtype: int
         """
-
-        return hash(str(self))
+        # return hash(str(self))
+        # return id(self)
+        return hash(
+            (self.k1, self.k2, hash(self.a), hash(self.b), hash(self.c))
+        )
 
     # def __str__(self) -> str:
     #     return self.get_name()

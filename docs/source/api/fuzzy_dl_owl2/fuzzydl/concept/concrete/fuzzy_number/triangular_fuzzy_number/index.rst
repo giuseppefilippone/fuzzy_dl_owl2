@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.concept.concrete.fuzzy_number.triangular_fuzzy_number
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A Python class representing triangular fuzzy numbers that supports arithmetic operations, logical comparisons, and defuzzification.
+A concrete implementation of a triangular fuzzy number that supports fuzzy arithmetic, logical operations, and defuzzification.
 
 
 Description
 -----------
 
 
-The software models uncertain values using a triangular membership function defined by three distinct parameters: a lower bound, a peak value where membership is absolute, and an upper bound. Instances can be created with or without a specific identifier, and the implementation relies on inheritance from a concrete concept base to manage the underlying data structure while enforcing strict type validation during initialization. Arithmetic capabilities are provided through operator overloading, allowing for addition, subtraction, multiplication, and division that generate new instances based on interval arithmetic principles rather than modifying the original objects. Beyond basic math, the implementation integrates with an operator concept handler to perform logical conjunctions, disjunctions, and negations, while also offering utilities to calculate a defuzzified crisp value known as the Best Non-Fuzzy Performance (BNP). Class-level attributes allow for the definition of a global range or universe of discourse, affecting how these numbers are identified and bounded across the system.
+Triangular fuzzy numbers are modeled using three distinct parameters that define the lower bound, the peak, and the upper bound of a membership function, allowing for the representation of uncertain or imprecise values. The implementation enables standard arithmetic operations such as addition, subtraction, multiplication, and division by applying interval arithmetic rules to these parameters, ensuring that the results are new instances with correctly calculated bounds. Logical operations like conjunction and disjunction are supported through delegation to an operator concept handler, allowing these numbers to participate in broader fuzzy logic expressions within the system. Functionality for defuzzification is provided to convert the fuzzy representation into a single crisp value, often used for performance evaluation or comparison, while utility methods determine if an instance effectively represents a crisp value or requires cloning for independent manipulation.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -48,7 +44,7 @@ Module Contents
     .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzydl_concept_concrete_fuzzy_number_triangular_fuzzy_number_TriangularFuzzyNumber.pdf
        :alt: UML Class Diagram for TriangularFuzzyNumber
        :align: center
-       :width: 11.1cm
+       :width: 12.5cm
        :class: uml-diagram
 
        UML Class Diagram for **TriangularFuzzyNumber**
@@ -112,9 +108,9 @@ Module Contents
 
    .. py:method:: __hash__() -> int
 
-      Computes an integer hash value for the instance, allowing it to be used as a key in dictionaries and a member of sets. The implementation derives the hash from the object's string representation, meaning that two instances with identical string representations will yield the same hash. This method relies on the stability and uniqueness of the `__str__` implementation to maintain the invariant that equal objects must have equal hash values.
+      Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-      :return: An integer hash value computed from the string representation of the object.
+      :return: An integer hash value representing the structural identity of this object.
 
       :rtype: int
 
@@ -372,3 +368,4 @@ Module Contents
 
    .. py:attribute:: K2
       :type:  float
+

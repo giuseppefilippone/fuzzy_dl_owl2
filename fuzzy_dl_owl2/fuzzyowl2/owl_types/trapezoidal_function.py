@@ -17,7 +17,7 @@ class TrapezoidalFunction(FuzzyDatatype):
 
 
     def __init__(self, a: float, b: float, c: float, d: float) -> None:
-        """
+        r"""
         Initializes a new instance of the trapezoidal function by defining the four key parameters that determine its shape. The arguments `a`, `b`, `c`, and `d` correspond to the x-coordinates of the trapezoid's vertices, typically representing the start of the rise, the start of the plateau, the end of the plateau, and the end of the fall. This constructor stores these values as internal attributes to configure the function's behavior, assuming the caller provides values that adhere to the logical ordering $a \le b \le c \le d$ to form a valid trapezoid.
 
         :param a: The first numerical value used to initialize the object's state.

@@ -1,14 +1,12 @@
 from __future__ import annotations
 
 import contextlib
-import copy
 import pickle
 import sys
 import typing
 from collections import deque
 
-import networkx as nx
-import trycast
+# import trycast
 from sortedcontainers import SortedSet
 
 from fuzzy_dl_owl2.fuzzydl.assertion.assertion import Assertion
@@ -89,6 +87,7 @@ from fuzzy_dl_owl2.fuzzydl.exception.inconsistent_ontology_exception import (
 )
 from fuzzy_dl_owl2.fuzzydl.feature_function import FeatureFunction
 from fuzzy_dl_owl2.fuzzydl.general_concept_inclusion import GeneralConceptInclusion
+from fuzzy_dl_owl2.fuzzydl.graph import DiGraph
 from fuzzy_dl_owl2.fuzzydl.individual.created_individual import CreatedIndividual
 from fuzzy_dl_owl2.fuzzydl.individual.individual import Individual
 from fuzzy_dl_owl2.fuzzydl.individual.representative_individual import (
@@ -127,7 +126,6 @@ from fuzzy_dl_owl2.fuzzydl.util.constants import (
 from fuzzy_dl_owl2.fuzzydl.util.util import Util
 from fuzzy_dl_owl2.fuzzydl.util.utils import class_debugging
 
-
 _PICKLE_ALLOWED_MODULE_PREFIXES: tuple[str, ...] = (
     "fuzzy_dl_owl2.",
     "collections",
@@ -141,6 +139,21 @@ class _RestrictedKBUnpickler(pickle.Unpickler):
     """Restricts unpickling to project-owned modules to avoid arbitrary code execution."""
 
     def find_class(self, module: str, name: str):
+        """
+        Resolves a class during unpickling while restricting which modules are allowed, guarding against arbitrary code execution from untrusted pickle streams. The requested module is checked against the project's allow-list (:data:`_PICKLE_ALLOWED_MODULE_PREFIXES`); only when it matches is resolution delegated to the standard :meth:`pickle.Unpickler.find_class`. Any module outside the allow-list is rejected.
+
+        :param module: The fully-qualified module name of the class to resolve.
+        :type module: str
+        :param name: The qualified class name to resolve within ``module``.
+        :type name: str
+
+        :raises pickle.UnpicklingError: if ``module`` is not in the allowed-module allow-list.
+
+        :return: The resolved class object.
+
+        :rtype: type
+        """
+
         if not any(
             module == p or module.startswith(p + ".") or module.startswith(p)
             for p in _PICKLE_ALLOWED_MODULE_PREFIXES
@@ -335,6 +348,9 @@ class KnowledgeBase:
         # DL language
         self.language: str = ""
 
+        # TBox information string, used for debugging and statistics
+        self.t_box_information: typing.Optional[str] = None
+
         # MILP problem manager
         self.milp: MILPHelper = MILPHelper()
 
@@ -519,35 +535,49 @@ class KnowledgeBase:
         kb: KnowledgeBase = self.clone_without_abox()
 
         # Clone assertions
-        kb.assertions = [ass.clone() for ass in self.assertions]
+        # kb.assertions = [ass.clone() for ass in self.assertions]
+        kb.assertions = list(self.assertions)
 
         # Clone individuals
         kb.individuals = {i: indiv.clone() for i, indiv in self.individuals.items()}
 
         # Cloner nominal nodes
-        kb.labels_with_nodes = copy.deepcopy(self.labels_with_nodes)
+        # kb.labels_with_nodes = copy.deepcopy(self.labels_with_nodes)
+        kb.labels_with_nodes = dict(self.labels_with_nodes)
 
         # Clone milp
         kb.milp = self.milp.clone()
 
         # Clone blocking
+        # kb.blocked_assertions = {
+        #     k: [a.clone() for a in ass] for k, ass in self.blocked_assertions.items()
+        # }
         kb.blocked_assertions = {
-            k: [a.clone() for a in ass] for k, ass in self.blocked_assertions.items()
+            k: list(ass) for k, ass in self.blocked_assertions.items()
         }
+        # kb.blocked_exist_assertions = {
+        #     k: [a.clone() for a in ass]
+        #     for k, ass in self.blocked_exist_assertions.items()
+        # }
         kb.blocked_exist_assertions = {
-            k: [a.clone() for a in ass]
-            for k, ass in self.blocked_exist_assertions.items()
+            k: list(ass) for k, ass in self.blocked_exist_assertions.items()
         }
-        kb.directly_blocked_children = copy.deepcopy(self.directly_blocked_children)
+        # kb.directly_blocked_children = copy.deepcopy(self.directly_blocked_children)
+        kb.directly_blocked_children = dict(self.directly_blocked_children)
         kb.num_defined_concepts = self.num_defined_concepts
         kb.num_defined_individuals = self.num_defined_individuals
-        kb.r_successors = copy.deepcopy(self.r_successors)
-        kb.x_prime_individuals = copy.deepcopy(self.x_prime_individuals)
-        kb.y_prime_individuals = copy.deepcopy(self.y_prime_individuals)
+        # kb.r_successors = copy.deepcopy(self.r_successors)
+        # kb.x_prime_individuals = copy.deepcopy(self.x_prime_individuals)
+        # kb.y_prime_individuals = copy.deepcopy(self.y_prime_individuals)
+        kb.r_successors = dict(self.r_successors)
+        kb.x_prime_individuals = dict(self.x_prime_individuals)
+        kb.y_prime_individuals = dict(self.y_prime_individuals)
 
         # Clone data used by DL parser
-        kb.tmp_features = copy.deepcopy(self.tmp_features)
-        kb.truth_constants = copy.deepcopy(self.truth_constants)
+        # kb.tmp_features = copy.deepcopy(self.tmp_features)
+        # kb.truth_constants = copy.deepcopy(self.truth_constants)
+        kb.tmp_features = list(self.tmp_features)
+        kb.truth_constants = dict(self.truth_constants)
 
         # Clone statistics
         kb.max_depth = self.max_depth
@@ -555,7 +585,8 @@ class KnowledgeBase:
         kb.num_relations = self.num_relations
         kb.old_01_variables = self.old_01_variables
         kb.old_binary_variables = self.old_binary_variables
-        kb.rules_applied = copy.deepcopy(self.rules_applied)
+        # kb.rules_applied = copy.deepcopy(self.rules_applied)
+        kb.rules_applied = dict(self.rules_applied)
 
         return kb
 
@@ -570,115 +601,168 @@ class KnowledgeBase:
 
         kb: KnowledgeBase = KnowledgeBase()
 
+        kb.t_box_information = self.t_box_information
+
         kb.ABOX_EXPANDED = self.ABOX_EXPANDED
-        kb.abstract_roles = copy.deepcopy(self.abstract_roles)
+        # kb.abstract_roles = copy.deepcopy(self.abstract_roles)
+        kb.abstract_roles = set(self.abstract_roles)
         kb.acyclic_tbox = self.acyclic_tbox
-        kb.applied_trans_role_rules = copy.deepcopy(self.applied_trans_role_rules)
+        # kb.applied_trans_role_rules = copy.deepcopy(self.applied_trans_role_rules)
+        kb.applied_trans_role_rules = list(self.applied_trans_role_rules)
 
-        kb.atomic_concepts = {k: c.clone() for k, c in self.atomic_concepts.items()}
+        # kb.atomic_concepts = {k: c.clone() for k, c in self.atomic_concepts.items()}
+        kb.atomic_concepts = dict(self.atomic_concepts)
 
-        kb.axioms_A_equiv_C = {
-            k: set([c.clone() for c in cs]) for k, cs in self.axioms_A_equiv_C.items()
-        }
+        # kb.axioms_A_equiv_C = {
+        #     k: set([c.clone() for c in cs]) for k, cs in self.axioms_A_equiv_C.items()
+        # }
+        kb.axioms_A_equiv_C = {k: set(cs) for k, cs in self.axioms_A_equiv_C.items()}
 
-        kb.axioms_A_is_a_B = {
-            k: set([pcd.clone() for pcd in pcds])
-            for k, pcds in self.axioms_A_is_a_B.items()
-        }
+        # kb.axioms_A_is_a_B = {
+        #     k: set([pcd.clone() for pcd in pcds])
+        #     for k, pcds in self.axioms_A_is_a_B.items()
+        # }
+        kb.axioms_A_is_a_B = {k: set(pcds) for k, pcds in self.axioms_A_is_a_B.items()}
 
-        kb.axioms_A_is_a_C = {
-            k: set([pcd.clone() for pcd in pcds])
-            for k, pcds in self.axioms_A_is_a_C.items()
-        }
+        # kb.axioms_A_is_a_C = {
+        #     k: set([pcd.clone() for pcd in pcds])
+        #     for k, pcds in self.axioms_A_is_a_C.items()
+        # }
+        kb.axioms_A_is_a_C = {k: set(pcds) for k, pcds in self.axioms_A_is_a_C.items()}
 
-        kb.axioms_C_equiv_D = [ce.clone() for ce in self.axioms_C_equiv_D]
+        # kb.axioms_C_equiv_D = [ce.clone() for ce in self.axioms_C_equiv_D]
+        kb.axioms_C_equiv_D = list(self.axioms_C_equiv_D)
 
-        kb.axioms_C_is_a_A = {
-            k: set([gci.clone() for gci in gcis])
-            for k, gcis in self.axioms_C_is_a_A.items()
-        }
+        # kb.axioms_C_is_a_A = {
+        #     k: set([gci.clone() for gci in gcis])
+        #     for k, gcis in self.axioms_C_is_a_A.items()
+        # }
+        kb.axioms_C_is_a_A = {k: set(gcis) for k, gcis in self.axioms_C_is_a_A.items()}
 
-        kb.axioms_C_is_a_D = {
-            k: set([gci.clone() for gci in gcis])
-            for k, gcis in self.axioms_C_is_a_D.items()
-        }
+        # kb.axioms_C_is_a_D = {
+        #     k: set([gci.clone() for gci in gcis])
+        #     for k, gcis in self.axioms_C_is_a_D.items()
+        # }
+        kb.axioms_C_is_a_D = {k: set(gcis) for k, gcis in self.axioms_C_is_a_D.items()}
 
         kb.blocking_dynamic = self.blocking_dynamic
         kb.blocking_type = self.blocking_type
         kb.CLASSIFIED = self.CLASSIFIED
 
         # Clone data used by DL parser
-        kb.tmp_features = copy.deepcopy(self.tmp_features)
-        kb.truth_constants = copy.deepcopy(self.truth_constants)
+        # kb.tmp_features = copy.deepcopy(self.tmp_features)
+        # kb.truth_constants = copy.deepcopy(self.truth_constants)
+        kb.tmp_features = list(self.tmp_features)
+        kb.truth_constants = dict(self.truth_constants)
 
+        # kb.concept_individual_list = {
+        #     k: SortedSet([c.clone() for c in v])
+        #     for k, v in self.concept_individual_list.items()
+        # }
         kb.concept_individual_list = {
-            k: SortedSet([c.clone() for c in v])
-            for k, v in self.concept_individual_list.items()
+            k: SortedSet(v) for k, v in self.concept_individual_list.items()
         }
 
-        kb.concrete_concepts = {k: c.clone() for k, c in self.concrete_concepts.items()}
+        # kb.concrete_concepts = {k: c.clone() for k, c in self.concrete_concepts.items()}
+        kb.concrete_concepts = dict(self.concrete_concepts)
 
-        kb.concrete_features = {k: f.clone() for k, f in self.concrete_features.items()}
+        # kb.concrete_features = {k: f.clone() for k, f in self.concrete_features.items()}
+        kb.concrete_features = dict(self.concrete_features)
 
         kb.concrete_fuzzy_concepts = self.concrete_fuzzy_concepts
 
-        kb.concrete_roles = copy.deepcopy(self.concrete_roles)
-        kb.disjoint_variables = copy.deepcopy(self.disjoint_variables)
+        # kb.concrete_roles = copy.deepcopy(self.concrete_roles)
+        # kb.disjoint_variables = copy.deepcopy(self.disjoint_variables)
+        kb.concrete_roles = set(self.concrete_roles)
+        kb.disjoint_variables = dict(self.disjoint_variables)
 
+        # kb.domain_restrictions = {
+        #     k: set([c.clone() for c in v]) for k, v in self.domain_restrictions.items()
+        # }
         kb.domain_restrictions = {
-            k: set([c.clone() for c in v]) for k, v in self.domain_restrictions.items()
+            k: set(v) for k, v in self.domain_restrictions.items()
         }
 
-        kb.exist_assertions = [a.clone() for a in self.exist_assertions]
+        # kb.exist_assertions = [a.clone() for a in self.exist_assertions]
+        kb.exist_assertions = list(self.exist_assertions)
 
-        kb.functional_roles = copy.deepcopy(self.functional_roles)
+        # kb.functional_roles = copy.deepcopy(self.functional_roles)
+        kb.functional_roles = set(self.functional_roles)
 
-        kb.fuzzy_numbers = {k: f.clone() for k, f in self.fuzzy_numbers.items()}
+        # kb.fuzzy_numbers = {k: f.clone() for k, f in self.fuzzy_numbers.items()}
+        kb.fuzzy_numbers = dict(self.fuzzy_numbers)
 
-        kb.inverse_functional_roles = copy.deepcopy(self.inverse_functional_roles)
-        kb.inverse_roles = copy.deepcopy(self.inverse_roles)
+        # kb.inverse_functional_roles = copy.deepcopy(self.inverse_functional_roles)
+        # kb.inverse_roles = copy.deepcopy(self.inverse_roles)
+        kb.inverse_functional_roles = set(self.inverse_functional_roles)
+        kb.inverse_roles = dict(self.inverse_roles)
         kb.KB_LOADED = self.KB_LOADED
         kb.KB_UNSAT = self.KB_UNSAT
         kb.language = self.language
         kb.lazy_unfondable = self.lazy_unfondable
         kb.milp.show_vars = self.milp.show_vars.clone()
 
-        kb.modifiers = {k: m.clone() for k, m in self.modifiers.items()}
+        # kb.modifiers = {k: m.clone() for k, m in self.modifiers.items()}
+        kb.modifiers = dict(self.modifiers)
 
-        kb.number_of_concepts = copy.deepcopy(self.number_of_concepts)
-        kb.number_of_roles = copy.deepcopy(self.number_of_roles)
-        kb.order = copy.deepcopy(self.order)
+        # kb.number_of_concepts = copy.deepcopy(self.number_of_concepts)
+        # kb.number_of_roles = copy.deepcopy(self.number_of_roles)
+        # kb.order = copy.deepcopy(self.order)
+        kb.number_of_concepts = dict(self.number_of_concepts)
+        kb.number_of_roles = dict(self.number_of_roles)
+        kb.order = dict(self.order)
 
-        kb.positive_concrete_value_assertions = [
-            a.clone() for a in self.positive_concrete_value_assertions
-        ]
+        # kb.positive_concrete_value_assertions = [
+        #     a.clone() for a in self.positive_concrete_value_assertions
+        # ]
+        kb.positive_concrete_value_assertions = list(
+            self.positive_concrete_value_assertions
+        )
 
-        kb.processed_assertions = copy.deepcopy(self.processed_assertions)
+        # kb.processed_assertions = copy.deepcopy(self.processed_assertions)
+        kb.processed_assertions = set(self.processed_assertions)
 
-        kb.range_restrictions = {
-            k: set([c.clone() for c in v]) for k, v in self.range_restrictions.items()
-        }
+        # kb.range_restrictions = {
+        #     k: set([c.clone() for c in v]) for k, v in self.range_restrictions.items()
+        # }
+        kb.range_restrictions = {k: set(v) for k, v in self.range_restrictions.items()}
 
-        kb.reflexive_roles = copy.deepcopy(self.reflexive_roles)
-        kb.roles_with_all_parents = copy.deepcopy(self.roles_with_all_parents)
-        kb.roles_with_parents = copy.deepcopy(self.roles_with_parents)
-        kb.roles_with_trans_children = copy.deepcopy(self.roles_with_trans_children)
+        # kb.reflexive_roles = copy.deepcopy(self.reflexive_roles)
+        # kb.roles_with_all_parents = copy.deepcopy(self.roles_with_all_parents)
+        # kb.roles_with_parents = copy.deepcopy(self.roles_with_parents)
+        # kb.roles_with_trans_children = copy.deepcopy(self.roles_with_trans_children)
+        kb.reflexive_roles = set(self.reflexive_roles)
+        kb.roles_with_all_parents = dict(self.roles_with_all_parents)
+        kb.roles_with_parents = dict(self.roles_with_parents)
+        kb.roles_with_trans_children = dict(self.roles_with_trans_children)
         kb.rule_acyclic_tbox = self.rule_acyclic_tbox
         kb.show_language = self.show_language
-        kb.similarity_relations = copy.deepcopy(self.similarity_relations)
-        kb.subsumption_flags = copy.deepcopy(self.subsumption_flags)
-        kb.symmetric_roles = copy.deepcopy(self.symmetric_roles)
-        kb.t_definitions = {k: c.clone() for k, c in self.t_definitions.items()}
-        kb.t_disjoints = copy.deepcopy(self.t_disjoints)
+        # kb.similarity_relations = copy.deepcopy(self.similarity_relations)
+        # kb.subsumption_flags = copy.deepcopy(self.subsumption_flags)
+        # kb.symmetric_roles = copy.deepcopy(self.symmetric_roles)
+        kb.similarity_relations = set(self.similarity_relations)
+        kb.subsumption_flags = dict(self.subsumption_flags)
+        kb.symmetric_roles = set(self.symmetric_roles)
+        # kb.t_definitions = {k: c.clone() for k, c in self.t_definitions.items()}
+        kb.t_definitions = dict(self.t_definitions)
+        # kb.t_disjoints = copy.deepcopy(self.t_disjoints)
+        kb.t_disjoints = dict(self.t_disjoints)
+        # kb.temp_relations_list = {
+        #     k: [r.clone() for r in v] for k, v in self.temp_relations_list.items()
+        # }
         kb.temp_relations_list = {
-            k: [r.clone() for r in v] for k, v in self.temp_relations_list.items()
+            k: list(v) for k, v in self.temp_relations_list.items()
         }
-        kb.t_G = [gci.clone() for gci in self.t_G]
-        kb.t_inclusions = {
-            k: set([pcd.clone() for pcd in v]) for k, v in self.t_inclusions.items()
-        }
-        kb.transitive_roles = copy.deepcopy(self.transitive_roles)
-        kb.t_synonyms = copy.deepcopy(self.t_synonyms)
+        # kb.t_G = [gci.clone() for gci in self.t_G]
+        kb.t_G = list(self.t_G)
+        # kb.t_inclusions = {
+        #     k: set([pcd.clone() for pcd in v]) for k, v in self.t_inclusions.items()
+        # }
+        kb.t_inclusions = {k: set(v) for k, v in self.t_inclusions.items()}
+        # kb.transitive_roles = copy.deepcopy(self.transitive_roles)
+        # kb.t_synonyms = copy.deepcopy(self.t_synonyms)
+        kb.transitive_roles = set(self.transitive_roles)
+        kb.t_synonyms = dict(self.t_synonyms)
         return kb
 
     def save_to_file(self, file_name: str) -> None:
@@ -984,6 +1068,8 @@ class KnowledgeBase:
 
         :param file_path: Path to the file from which to load the pickled KnowledgeBase object.
         :type file_path: str
+
+        :raises pickle.UnpicklingError: if the deserialized object is not a `KnowledgeBase`, or if the stream references a class outside the `_PICKLE_ALLOWED_MODULE_PREFIXES` allow-list.
 
         :return: The KnowledgeBase object deserialized from the specified file.
 
@@ -1299,11 +1385,15 @@ class KnowledgeBase:
         if deg.is_numeric() and deg.is_number_zero():
             return
         if self.is_assertion_processed(new_ass):
-            Util.debug(f"Assertion (without the degree): {new_ass} already processed")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(
+                    f"Assertion (without the degree): {new_ass} already processed"
+                )
             # Add xNewAss >= lowerBound
             self.milp.add_new_constraint(new_ass)
         else:
-            Util.debug(f"Adding assertion: {new_ass}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"Adding assertion: {new_ass}")
             self.num_assertions += 1
             self.assertions.append(new_ass)
             c: Concept = new_ass.get_concept()
@@ -1313,7 +1403,8 @@ class KnowledgeBase:
                 ind: CreatedIndividual = typing.cast(CreatedIndividual, ind)
                 ind.concept_list.add(aux)
                 ind.directly_blocked = CreatedIndividualBlockingType.UNCHECKED
-                Util.debug(f"Mark node.directly_blocked = {ind.name} as unchecked")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Mark node.directly_blocked = {ind.name} as unchecked")
                 self.add_individual_to_concept(aux, ind)
 
     def __add_assertion_2(self, a: Individual, c: Concept, n: Degree) -> None:
@@ -1366,13 +1457,12 @@ class KnowledgeBase:
         if not isinstance(ind, CreatedIndividual):
             return
 
-        self.concept_individual_list[concept_id] = self.concept_individual_list.get(
-            concept_id, SortedSet()
-        ) | SortedSet([ind])
+        self.concept_individual_list.setdefault(concept_id, SortedSet()).add(ind)
 
-        Util.debug(
-            f"List of individual for concept ID: {concept_id} descr : {self.get_concept_from_number(concept_id)} : {self.concept_individual_list[concept_id]}"
-        )
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(
+                f"List of individual for concept ID: {concept_id} descr : {self.get_concept_from_number(concept_id)} : {self.concept_individual_list[concept_id]}"
+            )
 
     def add_relation(
         self, ind_A: Individual, role: str, ind_B: Individual, degree: Degree
@@ -1410,9 +1500,12 @@ class KnowledgeBase:
         :type concept_name_2: str
         """
 
-        self.t_synonyms[concept_name_1] = self.t_synonyms.get(
-            concept_name_1, set()
-        ) | set([concept_name_2])
+        # self.t_synonyms[concept_name_1] = self.t_synonyms.get(
+        #     concept_name_1, set()
+        # ) | set([concept_name_2])
+        if concept_name_1 not in self.t_synonyms:
+            self.t_synonyms[concept_name_1] = set()
+        self.t_synonyms[concept_name_1].add(concept_name_2)
         self.get_concept(concept_name_1)
 
     def define_synonyms(self, concept_name_1: str, concept_name_2: str) -> None:
@@ -1466,21 +1559,174 @@ class KnowledgeBase:
             size += 1
         return A_t_C
 
-    def add_tdef_links(
-        self, g: nx.DiGraph, A_t_C: dict[str, int], use_tdr: bool
-    ) -> bool:
-        """
-        This method constructs a dependency graph by adding edges to the provided directed graph `g` based on the TBox definitions stored in the knowledge base. It iterates through each defined concept, mapping concept names to integer identifiers using the `A_t_C` dictionary, and creates directed edges from the defined concept to the atomic concepts used in its definition. During this process, the method checks for immediate cycles by verifying if a dependent concept is a synonym of the defined concept; if detected, it returns `True`. If the `use_tdr` flag is set, the method also processes domain and range axioms, potentially adding further edges and checking for cycles. The graph `g` is modified in-place, and the method returns `True` if a cycle is identified through synonyms or domain/range axioms, otherwise returning `False`, though a `False` result does not guarantee the absence of cycles in the broader context.
+    # --- Original nx.DiGraph-based methods (commented out for reference) ---
+    # def add_tdef_links(
+    #     self, g: nx.DiGraph, A_t_C: dict[str, int], use_tdr: bool
+    # ) -> bool:
+    #     """
+    #     This method constructs a dependency graph by adding edges to the provided directed graph `g` based on the TBox definitions stored in the knowledge base. It iterates through each defined concept, mapping concept names to integer identifiers using the `A_t_C` dictionary, and creates directed edges from the defined concept to the atomic concepts used in its definition. During this process, the method checks for immediate cycles by verifying if a dependent concept is a synonym of the defined concept; if detected, it returns `True`. If the `use_tdr` flag is set, the method also processes domain and range axioms, potentially adding further edges and checking for cycles. The graph `g` is modified in-place, and the method returns `True` if a cycle is identified through synonyms or domain/range axioms, otherwise returning `False`, though a `False` result does not guarantee the absence of cycles in the broader context.
+    #
+    #     :param g: The directed graph to which edges representing concept definitions are added.
+    #     :type g: nx.DiGraph
+    #     :param A_t_C: Mapping of atomic concept names to integer node identifiers.
+    #     :type A_t_C: dict[str, int]
+    #     :param use_tdr: Indicates whether to consider domain and range axioms when adding links.
+    #     :type use_tdr: bool
+    #
+    #     :return: True if a cycle is detected due to synonyms or domain/range axioms while adding definition links; False otherwise. Note that a return value of False does not guarantee the graph is acyclic.
+    #
+    #     :rtype: bool
+    #     """
+    #
+    #     for a in self.t_definitions:
+    #         v1: int = A_t_C.get(a)
+    #         c: Concept = self.t_definitions[a]
+    #         for b in c.get_atomic_concepts():
+    #             b_name: str = str(b)
+    #             name_set: set[str] = self.t_synonyms.get(a)
+    #             if name_set is not None and b_name in name_set:
+    #                 return True
+    #             v2: int = A_t_C.get(b_name)
+    #             g.add_edge(v1, v2)
+    #         # Consider domain and range axioms
+    #         if use_tdr and self.add_tdr_links(g, A_t_C, c.get_roles(), v1):
+    #             return True
+    #     return False
+    #
+    # def add_tinc_links(
+    #     self, g: nx.DiGraph, A_t_C: dict[str, int], use_tdr: bool
+    # ) -> bool:
+    #     """
+    #     Populates the provided directed graph with edges representing terminological inclusions defined in the knowledge base. For each atomic concept involved in an inclusion, the method retrieves the corresponding node identifier from the provided mapping and creates directed edges to the atomic concepts found within the inclusion's definition. During this process, it specifically checks for cycles arising from synonym relationships; if an included concept is identified as a synonym of the source concept, the method immediately returns True. Additionally, if the `use_tdr` flag is enabled, the method incorporates domain and range axioms by invoking `add_tdr_links` and propagates any cycle detection result from that call. The graph is modified in place, and while a return value of True confirms the existence of cycles due to synonyms or domain/range axioms, a return value of False does not guarantee the graph is acyclic.
+    #
+    #     :param g: The directed graph to which edges representing concept inclusions are added.
+    #     :type g: nx.DiGraph
+    #     :param A_t_C: Mapping of atomic concept names to their corresponding integer node identifiers in the graph.
+    #     :type A_t_C: dict[str, int]
+    #     :param use_tdr: Determines whether domain and range axioms are considered when adding links.
+    #     :type use_tdr: bool
+    #
+    #     :return: True if a cycle is detected via synonym relationships or domain/range axioms during the addition of inclusion links; False otherwise. Note that a False return does not guarantee the graph is acyclic.
+    #
+    #     :rtype: bool
+    #     """
+    #
+    #     for a in self.t_inclusions:
+    #         v1: int = A_t_C.get(a)
+    #         for pcd in self.t_inclusions[a]:
+    #             c: Concept = pcd.get_definition()
+    #             for b in c.get_atomic_concepts():
+    #                 b_name: str = str(b)
+    #                 name_set: typing.Optional[set[str]] = self.t_synonyms.get(a)
+    #                 if name_set is not None and b_name in name_set:
+    #                     return True
+    #                 v2: int = A_t_C.get(b_name)
+    #                 g.add_edge(v1, v2)
+    #             # Consider domain and range axioms
+    #             if use_tdr and self.add_tdr_links(g, A_t_C, c.get_roles(), v1):
+    #                 return True
+    #     return False
+    #
+    # def add_tdr_links(
+    #     self, g: nx.DiGraph, A_t_C: dict[str, int], used_roles: set[str], v: int
+    # ) -> bool:
+    #     """
+    #     Populates the provided directed graph `g` with edges representing dependencies derived from domain and range restrictions associated with the concept `v`. The method expands the set of `used_roles` to include all parent roles within the role hierarchy, then iterates through these roles to identify relevant restrictions. For every atomic concept found within these domain and range restrictions, a directed edge is added from `v` to the corresponding node in the graph. Additionally, the method checks for a specific cycle condition involving 't_synonyms'; if a restriction is identified as a synonym of an atomic concept it restricts, the method returns `True` immediately. If the process completes without detecting this condition, it returns `False`, although this result does not guarantee that the graph is cycle-free.
+    #
+    #     :param g: The directed graph to which edges representing domain and range restrictions are added.
+    #     :type g: nx.DiGraph
+    #     :param A_t_C: Mapping of atomic concept names to their corresponding integer identifiers.
+    #     :type A_t_C: dict[str, int]
+    #     :param used_roles: The set of role identifiers to be processed for domain and range restrictions.
+    #     :type used_roles: set[str]
+    #     :param v: The integer identifier of the concept acting as the source node for the edges to be added.
+    #     :type v: int
+    #
+    #     :return: True if a cycle involving t_synonyms was detected during the link addition process; False otherwise. Note that a return value of False does not guarantee the graph is acyclic.
+    #
+    #     :rtype: bool
+    #     """
+    #
+    #     # roles_to_be_checked: set[str] = copy.deepcopy(used_roles)
+    #     roles_to_be_checked: set[str] = set(used_roles)
+    #     for used_role in used_roles:
+    #         roles_to_be_checked.add(used_role)
+    #         parents: dict[str, float] = self.roles_with_all_parents.get(used_role)
+    #         if parents is not None:
+    #             roles_to_be_checked.update(set(list(parents.keys())))
+    #
+    #     for s in roles_to_be_checked:
+    #         restrictions: set[Concept] = set()
+    #         aux: set[Concept] = self.domain_restrictions.get(s)
+    #         if aux is not None:
+    #             restrictions.update(aux)
+    #         aux: set[Concept] = self.range_restrictions.get(s)
+    #         if aux is not None:
+    #             restrictions.update(aux)
+    #
+    #         for d in restrictions:
+    #             for used_concept in d.get_atomic_concepts():
+    #                 name_set: set[str] = self.t_synonyms.get(str(d))
+    #                 if name_set is not None and str(used_concept) in name_set:
+    #                     return True
+    #                 # Add link to graph
+    #                 w: int = A_t_C.get(str(used_concept))
+    #                 g.add_edge(v, w)
+    #     return False
+    #
+    # @staticmethod
+    # def _digraph_has_cycle(g: nx.DiGraph) -> bool:
+    #     """Iterative 3-color DFS cycle detection on an nx.DiGraph."""
+    #     WHITE, GRAY, BLACK = 0, 1, 2
+    #     color: dict = {}
+    #     adj: dict = {n: list(g.successors(n)) for n in g}
+    #     for node in adj:
+    #         if color.get(node, WHITE) != WHITE:
+    #             continue
+    #         stack: list = [(node, 0)]
+    #         color[node] = GRAY
+    #         while stack:
+    #             v, idx = stack[len(stack) - 1]
+    #             neighbors = adj[v]
+    #             if idx < len(neighbors):
+    #                 stack[len(stack) - 1] = (v, idx + 1)
+    #                 w = neighbors[idx]
+    #                 c = color.get(w, WHITE)
+    #                 if c == GRAY:
+    #                     return True
+    #                 if c == WHITE:
+    #                     color[w] = GRAY
+    #                     stack.append((w, 0))
+    #             else:
+    #                 stack.pop()
+    #                 color[v] = BLACK
+    #     return False
+    #
+    # def is_tbox_acyclic(self) -> bool:
+    #     g: nx.DiGraph = nx.DiGraph()
+    #     A_t_C: dict[str, int] = self.get_A_t_C()
+    #     if self.add_tinc_links(g, A_t_C, True):
+    #         return False
+    #     if self.add_tdef_links(g, A_t_C, True):
+    #         return False
+    #     try:
+    #         _ = nx.find_cycle(g, orientation="original")
+    #         return False
+    #     except nx.NetworkXNoCycle:
+    #         return True
+    # --- End original methods ---
 
-        :param g: The directed graph to which edges representing concept definitions are added.
-        :type g: nx.DiGraph
+    def add_tdef_links(self, g: DiGraph, A_t_C: dict[str, int], use_tdr: bool) -> bool:
+        """
+        Constructs dependency edges based on TBox definitions.
+
+        :param g: DiGraph to which edges are added.
+        :type g: DiGraph
         :param A_t_C: Mapping of atomic concept names to integer node identifiers.
         :type A_t_C: dict[str, int]
-        :param use_tdr: Indicates whether to consider domain and range axioms when adding links.
+        :param use_tdr: Whether to consider domain and range axioms.
         :type use_tdr: bool
-
-        :return: True if a cycle is detected due to synonyms or domain/range axioms while adding definition links; False otherwise. Note that a return value of False does not guarantee the graph is acyclic.
-
+        :return: True if a cycle is detected via synonyms or domain/range axioms.
         :rtype: bool
         """
 
@@ -1499,21 +1745,17 @@ class KnowledgeBase:
                 return True
         return False
 
-    def add_tinc_links(
-        self, g: nx.DiGraph, A_t_C: dict[str, int], use_tdr: bool
-    ) -> bool:
+    def add_tinc_links(self, g: DiGraph, A_t_C: dict[str, int], use_tdr: bool) -> bool:
         """
-        Populates the provided directed graph with edges representing terminological inclusions defined in the knowledge base. For each atomic concept involved in an inclusion, the method retrieves the corresponding node identifier from the provided mapping and creates directed edges to the atomic concepts found within the inclusion's definition. During this process, it specifically checks for cycles arising from synonym relationships; if an included concept is identified as a synonym of the source concept, the method immediately returns True. Additionally, if the `use_tdr` flag is enabled, the method incorporates domain and range axioms by invoking `add_tdr_links` and propagates any cycle detection result from that call. The graph is modified in place, and while a return value of True confirms the existence of cycles due to synonyms or domain/range axioms, a return value of False does not guarantee the graph is acyclic.
+        Populates graph with edges representing terminological inclusions.
 
-        :param g: The directed graph to which edges representing concept inclusions are added.
-        :type g: nx.DiGraph
-        :param A_t_C: Mapping of atomic concept names to their corresponding integer node identifiers in the graph.
+        :param g: DiGraph to which edges are added.
+        :type g: DiGraph
+        :param A_t_C: Mapping of atomic concept names to integer node identifiers.
         :type A_t_C: dict[str, int]
-        :param use_tdr: Determines whether domain and range axioms are considered when adding links.
+        :param use_tdr: Whether to consider domain and range axioms.
         :type use_tdr: bool
-
-        :return: True if a cycle is detected via synonym relationships or domain/range axioms during the addition of inclusion links; False otherwise. Note that a False return does not guarantee the graph is acyclic.
-
+        :return: True if a cycle is detected via synonym relationships or domain/range axioms.
         :rtype: bool
         """
 
@@ -1534,26 +1776,25 @@ class KnowledgeBase:
         return False
 
     def add_tdr_links(
-        self, g: nx.DiGraph, A_t_C: dict[str, int], used_roles: set[str], v: int
+        self, g: DiGraph, A_t_C: dict[str, int], used_roles: set[str], v: int
     ) -> bool:
         """
-        Populates the provided directed graph `g` with edges representing dependencies derived from domain and range restrictions associated with the concept `v`. The method expands the set of `used_roles` to include all parent roles within the role hierarchy, then iterates through these roles to identify relevant restrictions. For every atomic concept found within these domain and range restrictions, a directed edge is added from `v` to the corresponding node in the graph. Additionally, the method checks for a specific cycle condition involving 't_synonyms'; if a restriction is identified as a synonym of an atomic concept it restricts, the method returns `True` immediately. If the process completes without detecting this condition, it returns `False`, although this result does not guarantee that the graph is cycle-free.
+        Adds edges from domain and range restrictions to the graph.
 
-        :param g: The directed graph to which edges representing domain and range restrictions are added.
-        :type g: nx.DiGraph
-        :param A_t_C: Mapping of atomic concept names to their corresponding integer identifiers.
+        :param g: DiGraph to which edges are added.
+        :type g: DiGraph
+        :param A_t_C: Mapping of atomic concept names to integer identifiers.
         :type A_t_C: dict[str, int]
-        :param used_roles: The set of role identifiers to be processed for domain and range restrictions.
+        :param used_roles: Role identifiers to process.
         :type used_roles: set[str]
-        :param v: The integer identifier of the concept acting as the source node for the edges to be added.
+        :param v: Source node identifier.
         :type v: int
-
-        :return: True if a cycle involving t_synonyms was detected during the link addition process; False otherwise. Note that a return value of False does not guarantee the graph is acyclic.
-
+        :return: True if a cycle involving t_synonyms was detected.
         :rtype: bool
         """
 
-        roles_to_be_checked: set[str] = copy.deepcopy(used_roles)
+        # roles_to_be_checked: set[str] = copy.deepcopy(used_roles)
+        roles_to_be_checked: set[str] = set(used_roles)
         for used_role in used_roles:
             roles_to_be_checked.add(used_role)
             parents: dict[str, float] = self.roles_with_all_parents.get(used_role)
@@ -1565,7 +1806,7 @@ class KnowledgeBase:
             aux: set[Concept] = self.domain_restrictions.get(s)
             if aux is not None:
                 restrictions.update(aux)
-            aux = self.range_restrictions.get(s)
+            aux: set[Concept] = self.range_restrictions.get(s)
             if aux is not None:
                 restrictions.update(aux)
 
@@ -1581,14 +1822,13 @@ class KnowledgeBase:
 
     def is_tbox_acyclic(self) -> bool:
         """
-        Determines whether the TBox component of the knowledge base is acyclic by analyzing the dependencies formed by TBox inclusions and TBox definitions. The method constructs a directed graph representing the relationships between atomic concepts, checking for cycles both during the graph construction phase and upon completion. If a cycle is detected at any point, the method returns False; otherwise, it returns True. This validation ensures that concept definitions do not contain circular dependencies, which is often a prerequisite for specific reasoning tasks.
+        Determines whether the TBox is acyclic.
 
-        :return: True if the union of terminological inclusions and definitions is acyclic, False if a cycle is detected.
-
+        :return: True if the TBox is acyclic, False if a cycle is detected.
         :rtype: bool
         """
 
-        g: nx.DiGraph = nx.DiGraph()
+        g: DiGraph = DiGraph()
         # Application mapping every atomic concept into an integer number
         A_t_C: dict[str, int] = self.get_A_t_C()
         # Add links to the graph because of t_inclusions and t_definitions
@@ -1597,11 +1837,7 @@ class KnowledgeBase:
         if self.add_tdef_links(g, A_t_C, True):
             return False
         # Check whether the graph has a cycle
-        try:
-            _ = nx.find_cycle(g, orientation="original")
-            return False
-        except nx.NetworkXNoCycle:
-            return True
+        return not g.has_cycle()
 
     def define_atomic_concept(
         self,
@@ -1634,13 +1870,9 @@ class KnowledgeBase:
 
         conc_def = PrimitiveConceptDefinition(concept_name, conc, implication, n)
         if conc.is_atomic():
-            self.axioms_A_is_a_B[concept_name] = self.axioms_A_is_a_B.get(
-                concept_name, set()
-            ) | set([conc_def])
+            self.axioms_A_is_a_B.setdefault(concept_name, set()).add(conc_def)
         else:
-            self.axioms_A_is_a_C[concept_name] = self.axioms_A_is_a_C.get(
-                concept_name, set()
-            ) | set([conc_def])
+            self.axioms_A_is_a_C.setdefault(concept_name, set()).add(conc_def)
 
     def gci_transform_define_atomic_concept(
         self,
@@ -1673,14 +1905,9 @@ class KnowledgeBase:
             concept_name, conc, implication, n
         )
         if conc.is_atomic():
-            self.axioms_A_is_a_B[concept_name] = self.axioms_A_is_a_B.get(
-                concept_name, set()
-            ) | set([conc_def])
+            self.axioms_A_is_a_B.setdefault(concept_name, set()).add(conc_def)
         else:
-            self.axioms_to_do_tmp_A_is_a_C[concept_name] = (
-                self.axioms_to_do_tmp_A_is_a_C.get(concept_name, set())
-                | set([conc_def])
-            )
+            self.axioms_to_do_tmp_A_is_a_C.setdefault(concept_name, set()).add(conc_def)
 
     def is_redundant_A_is_a_C(
         self,
@@ -1711,7 +1938,13 @@ class KnowledgeBase:
         if conc.type == ConceptType.TOP:
             return True
 
-        if concept_name == str(conc) and implication != LogicOperatorType.KLEENE_DIENES:
+        # Fast path: an atomic concept's str() is just its name, so compare the
+        # name directly and skip building the string repr (this runs once per
+        # concept-definition axiom — millions of times on large ontologies).
+        same_name: bool = (
+            concept_name == conc.name if conc.is_atomic() else concept_name == str(conc)
+        )
+        if same_name and implication != LogicOperatorType.KLEENE_DIENES:
             return True
 
         if conc.type in (
@@ -1829,9 +2062,10 @@ class KnowledgeBase:
                 # Remove A isA B
                 self.remove_A_is_a_B(a, pcd1)
                 self.remove_A_is_a_B(b, pcd2)
-                Util.debug(
-                    f"{constants.SEPARATOR}Synonym absorption from axioms_A_is_a_B: {a} = {b}"
-                )
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(
+                        f"{constants.SEPARATOR}Synonym absorption from axioms_A_is_a_B: {a} = {b}"
+                    )
                 return True
             for pcd3 in hs3:
                 if (
@@ -1853,9 +2087,10 @@ class KnowledgeBase:
                 if len(hs3) == 0:
                     del self.t_inclusions[b]
 
-                Util.debug(
-                    f"{constants.SEPARATOR}Synonym absorption from t_inc: {a} = {b}"
-                )
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(
+                        f"{constants.SEPARATOR}Synonym absorption from t_inc: {a} = {b}"
+                    )
                 return True
         return False
 
@@ -1909,7 +2144,8 @@ class KnowledgeBase:
                 # Remove A isa B from t_inclusions
                 self.remove_A_is_a_X(a, pcd1, self.t_inclusions)
                 self.remove_A_is_a_B(b, pcd2)
-                Util.debug(f"Synonym absorption from axioms_A_is_a_B: {a} = {b}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Synonym absorption from axioms_A_is_a_B: {a} = {b}")
                 return True
             for pcd3 in hs3:
                 if (
@@ -1926,7 +2162,8 @@ class KnowledgeBase:
                 # Remove A isa B
                 self.remove_A_is_a_X(a, pcd1, self.t_inclusions)
                 self.remove_A_is_a_X(b, pcd3, self.t_inclusions)
-                Util.debug(f"Synonym absorption from t_inc: {a} = {b}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Synonym absorption from t_inc: {a} = {b}")
                 return True
             for pcd4 in hs4:
                 if (
@@ -1943,7 +2180,10 @@ class KnowledgeBase:
                 # Remove A isa B
                 self.remove_A_is_a_X(a, pcd1, self.axioms_to_do_A_is_a_B)
                 self.remove_A_is_a_X(b, pcd4, self.axioms_to_do_A_is_a_B)
-                Util.debug(f"Synonym absorption from axioms_to_do_A_is_a_B: {a} = {b}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(
+                        f"Synonym absorption from axioms_to_do_A_is_a_B: {a} = {b}"
+                    )
                 return True
         return False
 
@@ -1955,7 +2195,8 @@ class KnowledgeBase:
         :type disjoint_concepts: list[str]
         """
 
-        Util.debug(f"Disjoint axioms: {disjoint_concepts}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Disjoint axioms: {disjoint_concepts}")
         for i, c1 in enumerate(disjoint_concepts):
             self.get_concept(c1)
             for c2 in disjoint_concepts[i + 1 :]:
@@ -1982,7 +2223,7 @@ class KnowledgeBase:
 
         assert len(args) in [1, 2]
         if len(args) == 1:
-            assert isinstance(args[0], typing.Sequence) and all(
+            assert isinstance(args[0], list) and all(
                 isinstance(a, Concept) for a in args[0]
             )
             self.__add_concepts_disjoint_1(*args)
@@ -2004,7 +2245,8 @@ class KnowledgeBase:
         :type disjoint_concepts: list[Concept]
         """
 
-        Util.debug(f"Disjoint axioms: {disjoint_concepts}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Disjoint axioms: {disjoint_concepts}")
         for i, c1 in enumerate(disjoint_concepts):
             for c2 in disjoint_concepts[i + 1 :]:
                 self.add_concepts_disjoint(c1, c2)
@@ -2021,7 +2263,10 @@ class KnowledgeBase:
 
         if c1 == c2:
             return
-        self.t_disjoints[c1] = self.t_disjoints.get(c1, set()) | set([c2])
+        # self.t_disjoints[c1] = self.t_disjoints.get(c1, set()) | set([c2])
+        if c1 not in self.t_disjoints:
+            self.t_disjoints[c1] = set()
+        self.t_disjoints[c1].add(c2)
 
     def __add_concepts_disjoint_3(self, c: Concept, d: Concept) -> None:
         """
@@ -2312,10 +2557,16 @@ class KnowledgeBase:
         :type inv_role: str
         """
 
-        self.inverse_roles[role] = self.inverse_roles.get(role, set()) | set([inv_role])
-        self.inverse_roles[inv_role] = self.inverse_roles.get(inv_role, set()) | set(
-            [role]
-        )
+        # self.inverse_roles[role] = self.inverse_roles.get(role, set()) | set([inv_role])
+        if role not in self.inverse_roles:
+            self.inverse_roles[role] = set()
+        self.inverse_roles[role].add(inv_role)
+        # self.inverse_roles[inv_role] = self.inverse_roles.get(inv_role, set()) | set(
+        #     [role]
+        # )
+        if inv_role not in self.inverse_roles:
+            self.inverse_roles[inv_role] = set()
+        self.inverse_roles[inv_role].add(role)
         if role in self.inverse_functional_roles:
             self.functional_roles.add(inv_role)
         if inv_role in self.inverse_functional_roles:
@@ -2388,9 +2639,12 @@ class KnowledgeBase:
 
         if conc == TruthConcept.get_top():
             return
-        self.range_restrictions[role] = self.range_restrictions.get(role, set()) | set(
-            [conc]
-        )
+        # self.range_restrictions[role] = self.range_restrictions.get(role, set()) | set(
+        #     [conc]
+        # )
+        if role not in self.range_restrictions:
+            self.range_restrictions[role] = set()
+        self.range_restrictions[role].add(conc)
 
     def role_domain(self, role: str, conc: Concept) -> None:
         """
@@ -2404,9 +2658,12 @@ class KnowledgeBase:
 
         if conc == TruthConcept.get_top():
             return
-        self.domain_restrictions[role] = self.domain_restrictions.get(
-            role, set()
-        ) | set([conc])
+        # self.domain_restrictions[role] = self.domain_restrictions.get(
+        #     role, set()
+        # ) | set([conc])
+        if role not in self.domain_restrictions:
+            self.domain_restrictions[role] = set()
+        self.domain_restrictions[role].add(conc)
 
     def solve_inverse_roles(self) -> None:
         """Orchestrates the resolution of inverse role axioms by systematically updating the internal state of the knowledge base. It delegates the generation of inclusion axioms, the handling of transitivity for inverse roles, and the establishment of role relations to specific helper methods. This process ensures that all logical constraints and structural relationships involving inverse roles are correctly applied and stored within the knowledge base."""
@@ -2456,7 +2713,8 @@ class KnowledgeBase:
     def form_inv_role_inc_axioms(self) -> None:
         """Computes and adds role inclusion axioms for inverse roles based on the existing role hierarchy. For every known inclusion where a child role is a subrole of a parent role, this method checks if both roles have defined inverses. If they do, it infers that the inverse of the parent role is a subrole of the inverse of the child role, preserving the weight associated with the original relationship. The process runs iteratively until a fixed point is reached, ensuring that all transitive inferences are captured and the internal state of the knowledge base is updated with these new relationships."""
 
-        to_do: dict[str, dict[str, float]] = copy.deepcopy(self.roles_with_parents)
+        # to_do: dict[str, dict[str, float]] = copy.deepcopy(self.roles_with_parents)
+        to_do: dict[str, dict[str, float]] = dict(self.roles_with_parents)
         no_more_role_inclusions: bool = len(to_do) == 0
         while not no_more_role_inclusions:
             no_more_role_inclusions = True
@@ -2480,7 +2738,8 @@ class KnowledgeBase:
                                 )
                             )
             to_do.clear()
-            to_do: dict = copy.deepcopy(roles_with_parents_tmp)
+            # to_do: dict = copy.deepcopy(roles_with_parents_tmp)
+            to_do: dict = dict(roles_with_parents_tmp)
             if no_more_role_inclusions:
                 continue
             no_more_role_inclusions = True
@@ -2493,7 +2752,8 @@ class KnowledgeBase:
     def form_inv_trans_roles(self) -> None:
         """Computes the closure of transitive roles with respect to inverse relationships, ensuring that if a role is transitive, its inverse is also marked as transitive. The method performs a fixpoint iteration, starting with the currently defined transitive roles and repeatedly checking for defined inverses. For each transitive role, any inverse roles that are not already in the transitive set are added, and the process repeats for these new roles until no further updates can be made. This operation modifies the `transitive_roles` attribute in place and gracefully handles cases where inverse mappings are missing or roles have already been processed."""
 
-        to_do: set[str] = copy.deepcopy(self.transitive_roles)
+        # to_do: set[str] = copy.deepcopy(self.transitive_roles)
+        to_do: set[str] = set(self.transitive_roles)
         no_more_roles: bool = len(to_do) == 0
         while not no_more_roles:
             no_more_roles = True
@@ -2567,9 +2827,10 @@ class KnowledgeBase:
         parents: dict[str, float] = self.roles_with_all_parents.get(role_c)
         if parents is not None:
             for role_p, n in parents.items():
-                Util.debug(
-                    f"Adding new relations, since {role_p} is an ancestor of {r.get_role_name()} with degree {n}"
-                )
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(
+                        f"Adding new relations, since {role_p} is an ancestor of {r.get_role_name()} with degree {n}"
+                    )
                 # Lukasiewicz semantics
                 if constants.KNOWLEDGE_BASE_SEMANTICS == FuzzyLogic.LUKASIEWICZ:
                     deg: Degree = r.get_degree()
@@ -2672,8 +2933,24 @@ class KnowledgeBase:
     def add_relation_with_role_parent_in_lukasiewicz(
         self, r: Relation, role_p: str, n: float
     ) -> None:
-        """
-        This method incorporates a new relation into the knowledge base where the specified role acts as a parent, utilizing Lukasiewicz fuzzy logic semantics to determine the resulting truth degree. It computes the degree of the new relation by applying the Lukasiewicz t-norm to the original relation's degree and the provided threshold value. If the original relation possesses a numeric degree, the calculation is performed directly using floating-point arithmetic; otherwise, the method introduces auxiliary variables and linear constraints into the underlying Mixed-Integer Linear Programming (MILP) model to algebraically represent the t-norm operation. This process modifies the MILP model's state and updates internal variable counters before adding the derived relation to the knowledge base.
+        r"""
+        Role inclusion under Łukasiewicz semantics:
+        $x_{(a,b):R_p} = x_{(a,b):R} \otimes_L n$.
+
+        Numeric degree: computed directly as  $\max(0,\; n-1+deg)$.
+        Variable degree: reified with auxiliary variables $y_n$ (binary) and
+        $\text{new}_l$ (continuous) via the Big-M system
+
+        .. math::
+            \begin{aligned}
+            x &= deg \\
+            \text{new}_l &\le 1 - y_n \\
+            x + y_n - 1 &\le \text{new}_l \\
+            x + y_n - 1 &\ge \text{new}_l \\
+            n - 1 + y_n &\le \text{new}_l
+            \end{aligned}
+
+        which yields  $\text{new}_l = \max(0,\; x+n-1)$.
 
         :param r: The relation providing the subject, object, and initial degree for the new relation added to the parent role.
         :type r: Relation
@@ -2696,29 +2973,37 @@ class KnowledgeBase:
         else:
             self.old_01_variables += 2
             self.old_binary_variables += 1
+            # x = deg
             x: Variable = self.milp.get_new_variable(VariableType.SEMI_CONTINUOUS)
 
             # Add x l-and n
+            # new_l = max(0, x + n - 1)
             new_l: Variable = self.milp.get_new_variable(VariableType.SEMI_CONTINUOUS)
+            # binary auxiliary y_n for reification
             yn: Variable = self.milp.get_new_variable(VariableType.BINARY)
 
+            # x = deg
             self.milp.add_new_constraint(
                 Expression(Term(1.0, x)), InequalityType.EQUAL, deg
             )
+            # new_l <= 1 - y_n
             self.milp.add_new_constraint(
                 Expression(1.0, Term(-1.0, yn)),
                 InequalityType.GREATER_THAN,
                 DegreeVariable.get_degree(new_l),
             )
+            # new_l = x + y_n + n - 1
             self.milp.add_new_constraint(
                 Expression(-1.0 + n, Term(1.0, x), Term(1.0, yn)),
                 InequalityType.EQUAL,
                 DegreeVariable.get_degree(new_l),
             )
+            # x + y_n <= 1
             self.milp.add_new_constraint(
                 Expression(-1.0, Term(1.0, x), Term(1.0, yn)),
                 InequalityType.LESS_THAN,
             )
+            # y_n <= 1 - n
             self.milp.add_new_constraint(
                 Expression(-1.0 + n, Term(1.0, yn)), InequalityType.LESS_THAN
             )
@@ -2802,8 +3087,19 @@ class KnowledgeBase:
     def solve_lukasiewicz_gci(
         self, ind: Individual, gci: GeneralConceptInclusion
     ) -> None:
-        """
-        Encodes a General Concept Inclusion (GCI) axiom into the internal Mixed Integer Linear Programming (MILP) model using Lukasiewicz fuzzy logic semantics for a specific individual. The method processes the GCI $C \sqsubseteq_l D$ by generating linear constraints that enforce the relationship between the membership degrees of the individual in concepts $C$ and $D$. It handles specific structural simplifications: if the subsumed concept is Top, it asserts the subsumer; if the subsumer is Bottom, it asserts the negation of the subsumed concept; and if both are Bottom, it introduces an inconsistency constraint. In the general case, it applies the Lukasiewicz implication constraint $1 - C(a) + D(a) \ge l$, utilizing a specialized crisp constraint when the degree is exactly 1.0. This operation modifies the MILP model by adding new constraints and assertions, and updates internal counters related to variable usage.
+        r"""
+        GCI  $C \sqsubseteq_L D$  encoded as the Lukasiewicz implication
+
+        .. math::
+            1 - C(a) + D(a) \ge l
+
+        which in MILP variables is  $x_{a:\neg C} + x_{a:D} \ge l$.
+        Special cases:
+
+        * ``Top \sqsubseteq D``       → assert  $a:D \ge l$
+        * ``C \sqsubseteq Bottom``    → assert  $a:\neg C \ge l$
+        * degree $l = 1.0$ (crisp)   → emit  $x_{a:\neg C} \le x_{a:D}$
+          (optimisation that avoids the implication concept)
 
         :param ind: The individual entity to which the General Concept Inclusion is applied, serving as the subject for the generated assertions and constraints.
         :type ind: Individual
@@ -2814,8 +3110,10 @@ class KnowledgeBase:
         c: Concept = gci.get_subsumed()
         d: Concept = gci.get_subsumer()
         l: Degree = gci.get_degree()
-        Util.debug(f"{constants.SEPARATOR}Applying GCI{constants.SEPARATOR}")
-        Util.debug(f"{d} l-subsumes {c} >= {l}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"{constants.SEPARATOR}Applying GCI{constants.SEPARATOR}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"{d} l-subsumes {c} >= {l}")
 
         if c.type == ConceptType.TOP:
             if d.type == ConceptType.BOTTOM:
@@ -2834,7 +3132,9 @@ class KnowledgeBase:
                 new_ass: Assertion = Assertion(ind, not_c, l)
                 self.add_assertion(new_ass)
             else:
+                # x_{a: not C}
                 x_ind_is_not_c: Variable = self.milp.get_variable(ind, not_c)
+                # x_{a: D}
                 x_ind_is_d: Variable = self.milp.get_variable(ind, d)
 
                 self.add_assertion(
@@ -2847,7 +3147,7 @@ class KnowledgeBase:
                     and typing.cast(DegreeNumeric, l).get_numerical_value() == 1.0
                 ):
                     self.old_01_variables += 1
-                    # xIndIsC <= xIndIsD
+                    # x_{a: not C} <= x_{a: D}
                     self.milp.add_new_constraint(
                         Expression(
                             1.0,
@@ -2858,17 +3158,25 @@ class KnowledgeBase:
                     )
                 else:
                     self.old_01_variables += 2
-                    # 1 - x1 + x2 >= L
+                    # x_{a: not C} + x_{a: D} >= L
                     self.milp.add_new_constraint(
                         Expression(Term(1.0, x_ind_is_not_c), Term(1.0, x_ind_is_d)),
                         InequalityType.GREATER_THAN,
                         l,
                     )
-        Util.debug(f"{constants.SEPARATOR}GCI completed{constants.SEPARATOR}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"{constants.SEPARATOR}GCI completed{constants.SEPARATOR}")
 
     def solve_goedel_gci(self, ind: Individual, gci: GeneralConceptInclusion) -> None:
-        """
-        This method processes a General Concept Inclusion (GCI) for a specific individual by translating the logical constraint into mathematical assertions or linear inequalities based on Gödel fuzzy logic semantics. It handles edge cases such as when the subsumed concept is the universal concept (Top) or the subsumer is the empty concept (Bottom), adding specific assertions or inconsistency constraints to the underlying MILP model. For general concept pairs, it checks if the required degree is 1.0 (crisp logic); if so, it applies an optimization by adding a linear inequality constraint to the MILP model and incrementing the counter for 0-1 variables. Otherwise, it constructs a Gödel implication concept and adds a corresponding assertion to the knowledge base.
+        r"""
+        GCI  $C \sqsubseteq_G D$  under Gödel semantics.
+        Special cases:
+
+        * ``Top \sqsubseteq D``       → assert  $a:D \ge l$
+        * ``C \sqsubseteq Bottom``    → assert  $a:\neg C \ge l$
+        * degree $l = 1.0$ (crisp)   → emit
+          $x_{a:\neg C} + x_{a:D} \ge 1$  (equivalently  $C(a) \le D(a)$)
+        * otherwise                  → assert  $a : (C \Rightarrow_G D) \ge l$
 
         :param ind: The individual instance to which the General Concept Inclusion is applied, serving as the subject for the generated assertions.
         :type ind: Individual
@@ -2878,8 +3186,10 @@ class KnowledgeBase:
 
         c: Concept = gci.get_subsumed()
         d: Concept = gci.get_subsumer()
-        Util.debug(f"{constants.SEPARATOR}Applying GCI{constants.SEPARATOR}")
-        Util.debug(f"{d} g-subsumes {c} >= {gci.get_degree()}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"{constants.SEPARATOR}Applying GCI{constants.SEPARATOR}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"{d} g-subsumes {c} >= {gci.get_degree()}")
         l: Degree = gci.get_degree()
 
         if c.type == ConceptType.TOP:
@@ -2899,7 +3209,9 @@ class KnowledgeBase:
                 new_ass: Assertion = Assertion(ind, not_c, l)
                 self.add_assertion(new_ass)
             else:
+                # x_{a: not C}
                 x_ind_is_not_c: Variable = self.milp.get_variable(ind, not_c)
+                # x_{a: D}
                 x_ind_is_d: Variable = self.milp.get_variable(ind, d)
                 self.add_assertion(
                     ind, not_c, DegreeVariable.get_degree(x_ind_is_not_c)
@@ -2911,7 +3223,7 @@ class KnowledgeBase:
                     and typing.cast(DegreeNumeric, l).get_numerical_value() == 1.0
                 ):
                     self.old_01_variables += 1
-                    # xIndIsC <= xIndIsD
+                    # x_{a: not C} <= x_{a: D}
                     self.milp.add_new_constraint(
                         Expression(
                             1.0,
@@ -2924,7 +3236,8 @@ class KnowledgeBase:
                     c_impl_d: Concept = ImpliesConcept.goedel_implies(c, d)
                     # a : C g-implies D >= L
                     self.add_assertion(Assertion(ind, c_impl_d, l))
-        Util.debug(f"{constants.SEPARATOR}GCI completed{constants.SEPARATOR}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"{constants.SEPARATOR}GCI completed{constants.SEPARATOR}")
 
     def solve_kleene_dienes_gci(
         self, ind: Individual, gci: GeneralConceptInclusion
@@ -2941,16 +3254,19 @@ class KnowledgeBase:
         c: Concept = gci.get_subsumed()
         d: Concept = gci.get_subsumer()
         c_impl_d: Concept = ImpliesConcept.kleene_dienes_implies(c, d)
-        Util.debug(f"{constants.SEPARATOR}Applying GCI{constants.SEPARATOR}")
-        Util.debug(f"{d} kd-subsumes {c} >= {gci.get_degree()}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"{constants.SEPARATOR}Applying GCI{constants.SEPARATOR}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"{d} kd-subsumes {c} >= {gci.get_degree()}")
         if c.type == ConceptType.TOP:
             self.add_assertion(Assertion(ind, d, gci.get_degree()))
         else:
             self.add_assertion(Assertion(ind, c_impl_d, gci.get_degree()))
-        Util.debug(f"{constants.SEPARATOR}GCI completed{constants.SEPARATOR}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"{constants.SEPARATOR}GCI completed{constants.SEPARATOR}")
 
     def solve_zadeh_gci(self, ind: Individual, gci: GeneralConceptInclusion) -> None:
-        """
+        r"""
         This method enforces a General Concept Inclusion (GCI) for a specific individual using Zadeh fuzzy logic semantics by translating the logical relationship into a constraint within a Mixed-Integer Linear Programming (MILP) model. It ensures that the membership degree of the individual in the subsumer concept is greater than or equal to its membership in the subsumed concept, effectively implementing the fuzzy implication $C(x) \le D(x)$. If the subsumed concept is the universal concept (TOP), the method handles this edge case by directly asserting that the individual belongs to the subsumer concept with a degree of 1.0. As side effects, the method increments the internal counter of binary variables, adds assertions to the knowledge base, and registers a new inequality constraint with the MILP solver.
 
         :param ind: The individual instance to which the General Concept Inclusion is applied.
@@ -2961,8 +3277,10 @@ class KnowledgeBase:
 
         c: Concept = gci.get_subsumed()
         d: Concept = gci.get_subsumer()
-        Util.debug(f"{constants.SEPARATOR}Applying GCI{constants.SEPARATOR}")
-        Util.debug(f"{d} z-subsumes {c}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"{constants.SEPARATOR}Applying GCI{constants.SEPARATOR}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"{d} z-subsumes {c}")
         if c.type == ConceptType.TOP:
             self.add_assertion(Assertion(ind, d, DegreeNumeric.get_degree(1.0)))
         else:
@@ -2977,7 +3295,8 @@ class KnowledgeBase:
                 Expression(1.0, Term(-1.0, x_ind_is_not_c), Term(-1.0, x_ind_is_d)),
                 InequalityType.LESS_THAN,
             )
-        Util.debug(f"{constants.SEPARATOR}GCI completed{constants.SEPARATOR}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"{constants.SEPARATOR}GCI completed{constants.SEPARATOR}")
 
     def solve_reflexive_role(self, role: str) -> None:
         """
@@ -3091,10 +3410,12 @@ class KnowledgeBase:
 
         # Positive restrictions
         for ass in self.positive_concrete_value_assertions:
-            Util.debug(
-                f"{constants.SEPARATOR}Processing Positive Datatype Assertion{constants.SEPARATOR}"
-            )
-            Util.debug(f"{ass}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(
+                    f"{constants.SEPARATOR}Processing Positive Datatype Assertion{constants.SEPARATOR}"
+                )
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"{ass}")
             if (
                 ass.get_individual().is_blockable()
                 and CreatedIndividualHandler.is_blocked(
@@ -3116,7 +3437,8 @@ class KnowledgeBase:
                 DatatypeReasoner.apply_at_least_value_rule(ass, self)
             elif ass.get_type() == ConceptType.EXACT_VALUE:
                 DatatypeReasoner.apply_exact_value_rule(ass, self)
-            Util.debug(f"{constants.SEPARATOR}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"{constants.SEPARATOR}")
 
         self.positive_concrete_value_assertions.clear()
 
@@ -3131,10 +3453,12 @@ class KnowledgeBase:
                 )
                 restrics: list[Assertion] = a.concrete_role_restrictions.get(f_name, [])
                 for ass in restrics:
-                    Util.debug(
-                        f"{constants.SEPARATOR}Processing Negative Datatype Assertion{constants.SEPARATOR}"
-                    )
-                    Util.debug(f"{ass}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(
+                            f"{constants.SEPARATOR}Processing Negative Datatype Assertion{constants.SEPARATOR}"
+                        )
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(f"{ass}")
                     self.get_correct_version_of_individual(ass)
 
                     # Check type of the assertion
@@ -3145,7 +3469,8 @@ class KnowledgeBase:
                         self.rule_complemented_at_least_datatype_restriction(b, ass)
                     elif OperatorConcept.is_not_exact_value(ass.get_concept()):
                         self.rule_complemented_exact_datatype_restriction(b, ass)
-                    Util.debug(f"{constants.SEPARATOR * 2}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(f"{constants.SEPARATOR * 2}")
 
     def solve_functional_roles(self) -> None:
         """Iterates through all defined functional roles and individuals within the knowledge base to enforce functional role constraints. For each individual that has not already been merged, it invokes the merge logic to ensure that the individual has at most one filler for the given functional role. This process modifies the internal state of the knowledge base by merging individuals to satisfy the axioms, effectively reducing the number of distinct entities where functional role violations exist."""
@@ -3196,7 +3521,8 @@ class KnowledgeBase:
             a, b = b, a
 
         a_name, b_name = str(a), str(b)
-        Util.debug(f"Merging individual {b_name} into {a_name}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Merging individual {b_name} into {a_name}")
         # To do: nominal variables needed only if language contains "B"
 
         # Unique Name Assumption
@@ -3411,7 +3737,8 @@ class KnowledgeBase:
         if a not in self.t_definitions:
             self.add_axiom_to_inc(a, pcd)
             self.remove_A_is_a_X(a, pcd, atomic)
-            Util.debug(f"Absorbed axioms_A_is_a_C CA0, FA0: {pcd}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"Absorbed axioms_A_is_a_C CA0, FA0: {pcd}")
             return True
         return False
 
@@ -3456,9 +3783,10 @@ class KnowledgeBase:
                 self.add_axiom_to_inc(str(conc2.concepts[0]), cp)
                 self.add_axiom_to_do_A_is_a_X(str(conc2.concepts[0]), cp)
                 self.remove_C_is_a_X(key, tau, atomic)
-                Util.debug(
-                    f"Absorbed axioms_C_is_a_D CA1, FA1: {conc2.concepts[0]} ==> {-conc1}"
-                )
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(
+                        f"Absorbed axioms_C_is_a_D CA1, FA1: {conc2.concepts[0]} ==> {-conc1}"
+                    )
                 return True
 
         # CA2, FA2.1
@@ -3494,9 +3822,10 @@ class KnowledgeBase:
                     self.add_axiom_to_inc(str(new_c1), cp)
                     self.add_axiom_to_do_A_is_a_X(str(new_c1), cp)
                     self.remove_C_is_a_X(key, tau, atomic)
-                    Util.debug(
-                        f"Absorbed axioms_C_is_a_D CA2, FA2.1: {new_c1} ==> {new_c2}"
-                    )
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(
+                            f"Absorbed axioms_C_is_a_D CA2, FA2.1: {new_c1} ==> {new_c2}"
+                        )
                     return True
 
         # CA3, FA3
@@ -3514,10 +3843,14 @@ class KnowledgeBase:
         ):
             conc1: OperatorConcept = typing.cast(OperatorConcept, conc1)
             vc: list[Concept] = [c.clone() for c in conc1.concepts]
-            Util.debug(f"{constants.SEPARATOR}test CA3, FA3{constants.SEPARATOR}")
-            Util.debug(f"VC -> {vc}")
-            Util.debug(f"Conc1 -> {conc1}")
-            Util.debug(f"Conc1 size -> {len(conc1.concepts)}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"{constants.SEPARATOR}test CA3, FA3{constants.SEPARATOR}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"VC -> {vc}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"Conc1 -> {conc1}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"Conc1 size -> {len(conc1.concepts)}")
             for j, ci in enumerate(conc1.concepts):
                 if not (ci.is_atomic() and str(ci) not in self.t_definitions):
                     continue
@@ -3548,7 +3881,8 @@ class KnowledgeBase:
                 self.add_axiom_to_inc(str(ci), cp)
                 self.add_axiom_to_do_A_is_a_X(str(ci), cp)
                 self.remove_C_is_a_X(key, tau, atomic)
-                Util.debug(f"Absorbed axioms_C_is_a_D CA3, FA3: {ci} ==> {new_c1}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Absorbed axioms_C_is_a_D CA3, FA3: {ci} ==> {new_c1}")
                 return True
 
         # FA2.2
@@ -3569,9 +3903,10 @@ class KnowledgeBase:
                 self.add_axiom_to_inc(str(conc2.concepts[0]), cp)
                 self.add_axiom_to_do_A_is_a_X(str(conc2.concepts[0]), cp)
                 self.remove_C_is_a_X(key, tau, atomic)
-                Util.debug(
-                    f"Absorbed axioms_C_is_a_D FA2.2: {conc2.concepts[0]} ==> {g_imp}"
-                )
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(
+                        f"Absorbed axioms_C_is_a_D FA2.2: {conc2.concepts[0]} ==> {g_imp}"
+                    )
                 return True
         return False
 
@@ -3634,7 +3969,8 @@ class KnowledgeBase:
                 c: Concept = ImpliesConcept.goedel_implies(conc1, conc2)
                 self.role_domain(role, c)
                 self.remove_A_is_a_C(key, tau)
-                Util.debug(f"Absorbed: domain {role}, {c}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Absorbed: domain {role}, {c}")
                 return True
 
             # RE3
@@ -3651,7 +3987,8 @@ class KnowledgeBase:
                 )
                 self.role_domain(role, c)
                 self.remove_A_is_a_C(key, tau)
-                Util.debug(f"Absorbed: domain {role}, {c}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Absorbed: domain {role}, {c}")
                 return True
         return False
 
@@ -3693,7 +4030,8 @@ class KnowledgeBase:
 
             self.role_domain(conc1.role, conc2)
             self.remove_C_is_a_X(key, tau, atomic)
-            Util.debug(f"Absorbed: domain {conc1.role}, {conc2}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"Absorbed: domain {conc1.role}, {conc2}")
             return True
 
         # RB2
@@ -3714,7 +4052,8 @@ class KnowledgeBase:
                 c_range: Concept = NegatedNominal(str(has_value.value))
             self.role_range(role, c_range)
             self.remove_C_is_a_X(key, tau, atomic)
-            Util.debug(f"Absorbed: range {role}, {c_range}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"Absorbed: range {role}, {c_range}")
             return True
 
         # RE1
@@ -3723,7 +4062,8 @@ class KnowledgeBase:
             c: Concept = ImpliesConcept.goedel_implies(conc1, conc2)
             self.role_domain(conc1.role, c)
             self.remove_C_is_a_X(key, tau, atomic)
-            Util.debug(f"Absorbed: domain {conc1.role}, {c}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"Absorbed: domain {conc1.role}, {c}")
             return True
 
         if (
@@ -3745,7 +4085,8 @@ class KnowledgeBase:
                 c: Concept = ImpliesConcept.goedel_implies(conc1, conc2)
                 self.role_domain(role, c)
                 self.remove_C_is_a_X(key, tau, atomic)
-                Util.debug(f"Absorbed: domain {role}, {c}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Absorbed: domain {role}, {c}")
                 return True
 
             # RE3
@@ -3778,14 +4119,16 @@ class KnowledgeBase:
                     )
                 self.role_domain(role, g_imp_concept)
                 self.remove_C_is_a_X(key, tau, atomic)
-                Util.debug(f"Absorbed: domain {role}, {g_imp_concept}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Absorbed: domain {role}, {g_imp_concept}")
                 return True
 
         # RE4
         # test as for CA3, FA3
-        Util.debug(
-            f"Test RE4 conditions: type1 = {type_c1} : type inclusion = {implication_type}"
-        )
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(
+                f"Test RE4 conditions: type1 = {type_c1} : type inclusion = {implication_type}"
+            )
         if (
             type_c1 == ConceptType.AND
             or type_c1 == ConceptType.LUKASIEWICZ_AND
@@ -3826,7 +4169,8 @@ class KnowledgeBase:
                     # Build the domain axiom according to RE4
                     self.role_domain(ci.role, new_c1)
                     self.remove_C_is_a_X(key, tau, atomic)
-                    Util.debug(f"Absorbed RE4: domain {ci.role}, {new_c1}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(f"Absorbed RE4: domain {ci.role}, {new_c1}")
                     return True
         return False
 
@@ -3893,7 +4237,8 @@ class KnowledgeBase:
                 self.gci_transformation_add_axiom_to_C_is_a_X(
                     ci, conc1, degree, implication_type
                 )
-                Util.debug(f"Absorbed CT1, FT1: {conc1} ==> {ci}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Absorbed CT1, FT1: {conc1} ==> {ci}")
             return True
 
         # CT2, FT2
@@ -3905,12 +4250,14 @@ class KnowledgeBase:
                     self.gci_transform_define_atomic_concept(
                         str(ci), conc2, implication_type, n
                     )
-                    Util.debug(f"Absorbed CT2, FT2: {ci} ==> {conc2}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(f"Absorbed CT2, FT2: {ci} ==> {conc2}")
                     continue
                 self.gci_transformation_add_axiom_to_C_is_a_X(
                     conc2, ci, degree, implication_type
                 )
-                Util.debug(f"Absorbed CT2, FT2: {ci} ==> {conc2}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Absorbed CT2, FT2: {ci} ==> {conc2}")
             return True
         return False
 
@@ -3938,7 +4285,8 @@ class KnowledgeBase:
             for ci in conc2.concepts:
                 # a => ci implicationType n
                 self.gci_transform_define_atomic_concept(a, ci, implication_type, n)
-                Util.debug(f"Absorbed CT1, FT1: {a} ==> {ci}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Absorbed CT1, FT1: {a} ==> {ci}")
             return True
         return False
 
@@ -3967,7 +4315,7 @@ class KnowledgeBase:
             o: Individual = self.get_individual(str(conc2.value))
             iv: set[str] = self.inverse_roles.get(r)
             if iv is not None:
-                inv_r: str = next(iv)
+                inv_r: str = next(iter(iv))
             else:
                 inv_r: str = f"{r}{Concept.SPECIAL_STRING}inverse"
                 self.add_inverse_roles(r, inv_r)
@@ -4034,11 +4382,15 @@ class KnowledgeBase:
                 self.add_axiom_to_C_is_a_X(
                     conc1, conc2, degree, logic_type, is_c1_atomic
                 )
-                Util.debug(f"Axiom {conc1} subsumes {conc2} has the degree updated.")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(
+                        f"Axiom {conc1} subsumes {conc2} has the degree updated."
+                    )
             else:
-                Util.debug(
-                    f"Axiom {conc1} subsumes {conc2} is been already processed hence ignored."
-                )
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(
+                        f"Axiom {conc1} subsumes {conc2} is been already processed hence ignored."
+                    )
             return
         self.add_axiom_to_C_is_a_X(conc1, conc2, degree, logic_type, is_c1_atomic)
 
@@ -4117,13 +4469,19 @@ class KnowledgeBase:
         )
         key: str = str(new_gci.get_subsumed())
         if conc1.is_atomic():
-            self.axioms_to_do_tmp_C_is_a_A[key] = self.axioms_to_do_tmp_C_is_a_A.get(
-                key, set()
-            ) | set([new_gci])
+            # self.axioms_to_do_tmp_C_is_a_A[key] = self.axioms_to_do_tmp_C_is_a_A.get(
+            #     key, set()
+            # ) | set([new_gci])
+            if key not in self.axioms_to_do_tmp_C_is_a_A:
+                self.axioms_to_do_tmp_C_is_a_A[key] = set()
+            self.axioms_to_do_tmp_C_is_a_A[key].add(new_gci)
         else:
-            self.axioms_to_do_tmp_C_is_a_D[key] = self.axioms_to_do_tmp_C_is_a_D.get(
-                key, set()
-            ) | set([new_gci])
+            # self.axioms_to_do_tmp_C_is_a_D[key] = self.axioms_to_do_tmp_C_is_a_D.get(
+            #     key, set()
+            # ) | set([new_gci])
+            if key not in self.axioms_to_do_tmp_C_is_a_D:
+                self.axioms_to_do_tmp_C_is_a_D[key] = set()
+            self.axioms_to_do_tmp_C_is_a_D[key].add(new_gci)
 
     def add_axiom_to_C_is_a_X(
         self,
@@ -4184,9 +4542,7 @@ class KnowledgeBase:
             conc1, conc2, degree, logic_type
         )
         key: str = str(new_gci.get_subsumed())
-        self.axioms_C_is_a_D[key] = self.axioms_C_is_a_D.get(key, set()) | set(
-            [new_gci]
-        )
+        self.axioms_C_is_a_D.setdefault(key, set()).add(new_gci)
 
     def implies(
         self,
@@ -4231,7 +4587,7 @@ class KnowledgeBase:
 
         parents: dict[str, float] = self.roles_with_all_parents.get(subsumed)
         if parents is not None:
-            d: float = parents.get(subsumer)
+            d: typing.Optional[float] = parents.get(subsumer)
             if d is not None:
                 return d
         return 0.0
@@ -4338,7 +4694,8 @@ class KnowledgeBase:
             else:
                 return
 
-        Util.debug(f"Add: {subsumed} ==> {subsumer}, {n}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Add: {subsumed} ==> {subsumer}, {n}")
 
     @typing.overload
     def role_subsumes_bool(self, subsumer: str, subsumed: str, n: float) -> bool: ...
@@ -4373,7 +4730,16 @@ class KnowledgeBase:
         if len(args) == 3:
             return self.__role_subsumes_bool_1(*args)
         elif len(args) == 4:
-            trycast.checkcast(dict[str, dict[str, float]], args[3])
+            # trycast.checkcast(dict[str, dict[str, float]], args[3])
+            assert isinstance(args[3], dict) and all(
+                isinstance(k, str)
+                and isinstance(v, dict)
+                and all(
+                    isinstance(kk, str) and isinstance(vv, float)
+                    for kk, vv in v.items()
+                )
+                for k, v in args[3].items()
+            )
             return self.__role_subsumes_bool_2(*args)
         else:
             raise ValueError
@@ -4406,7 +4772,8 @@ class KnowledgeBase:
                 parents[subsumer] = n
             else:
                 return False
-        Util.debug(f"Add: {subsumed} ==> {subsumer}, {n}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Add: {subsumed} ==> {subsumer}, {n}")
         return True
 
     def __role_subsumes_bool_2(
@@ -4445,7 +4812,8 @@ class KnowledgeBase:
                 parents[subsumer] = n
             else:
                 return False
-        Util.debug(f"Add tmp: {subsumed} ==> {subsumer}, {n}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Add tmp: {subsumed} ==> {subsumer}, {n}")
         return True
 
     def unblock_children(self, ancestor: str) -> None:
@@ -4503,7 +4871,8 @@ class KnowledgeBase:
             already_applied = True
         else:
             self.applied_trans_role_rules.append(rule)
-        Util.debug(f"Checking rule applied {rule} is {already_applied}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Checking rule applied {rule} is {already_applied}")
         return already_applied
 
     def add_datatype_restriction(
@@ -4615,7 +4984,8 @@ class KnowledgeBase:
         if self.concrete_fuzzy_concepts:
             self.language += "(D)"
 
-        Util.debug(f"Expressivity = {self.language}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Expressivity = {self.language}")
 
         self.milp.set_nominal_variables(
             "B" in self.language or self.has_functional_abstract_roles()
@@ -4695,84 +5065,99 @@ class KnowledgeBase:
     def compute_blocking_type(self) -> None:
         """Determines the appropriate blocking strategy for the reasoning process based on the structural characteristics of the ontology and specific configuration flags. This method updates the instance attributes `blocking_type` and `blocking_dynamic` to reflect the selected strategy, which can range from no blocking to various forms of subset, set, or double blocking. The logic evaluates the presence of inverse, functional, and transitive roles, as well as the acyclicity and dependencies of the TBox, to decide on the most efficient valid blocking type. If optimizations are disabled, it defaults to Double Blocking. Furthermore, it calculates whether the blocking must be dynamic, typically required when inverse roles or domain restrictions are present."""
 
-        Util.debug(f"{constants.SEPARATOR}Blocking Type{constants.SEPARATOR}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"{constants.SEPARATOR}Blocking Type{constants.SEPARATOR}")
         if ConfigReader.OPTIMIZATIONS == 0:
             self.blocking_type = BlockingDynamicType.DOUBLE_BLOCKING
             self.blocking_dynamic = True
-            Util.debug("No optimization: DOUBLE_BLOCKING + dynamicblocking")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug("No optimization: DOUBLE_BLOCKING + dynamicblocking")
             return
         if len(self.inverse_roles) == 0 or len(self.functional_roles) == 0:
             if len(self.t_G) == 0 and self.is_tbox_acyclic():
                 self.blocking_type = BlockingDynamicType.NO_BLOCKING
-                Util.debug("NO_BLOCKING")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug("NO_BLOCKING")
             else:
                 self.blocking_dynamic = (
                     len(self.inverse_roles) != 0 or len(self.domain_restrictions) != 0
                 )
-                Util.debug(f"Dynamic Blocking = {self.blocking_dynamic}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Dynamic Blocking = {self.blocking_dynamic}")
                 if len(self.transitive_roles) == 0 and len(self.functional_roles) == 0:
                     if ConfigReader.ANYWHERE_SIMPLE_BLOCKING:
                         if not self.blocking_dynamic:
                             self.blocking_type = (
                                 BlockingDynamicType.ANYWHERE_SUBSET_BLOCKING
                             )
-                            Util.debug("ANYWHERE_SUBSET_BLOCKING")
+                            if ConfigReader.DEBUG_PRINT:
+                                Util.debug("ANYWHERE_SUBSET_BLOCKING")
                         else:
                             self.blocking_type = (
                                 BlockingDynamicType.ANYWHERE_SET_BLOCKING
                             )
-                            Util.debug("ANYWHERE_SET_BLOCKING")
+                            if ConfigReader.DEBUG_PRINT:
+                                Util.debug("ANYWHERE_SET_BLOCKING")
                     else:
                         self.blocking_type = BlockingDynamicType.SUBSET_BLOCKING
-                        Util.debug("SUBSET_BLOCKING")
+                        if ConfigReader.DEBUG_PRINT:
+                            Util.debug("SUBSET_BLOCKING")
                 elif ConfigReader.ANYWHERE_SIMPLE_BLOCKING:
                     self.blocking_type = BlockingDynamicType.ANYWHERE_SET_BLOCKING
-                    Util.debug("ANYWHERE_SET_BLOCKING")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug("ANYWHERE_SET_BLOCKING")
                 else:
                     self.blocking_type = BlockingDynamicType.SET_BLOCKING
-                    Util.debug("SET_BLOCKING")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug("SET_BLOCKING")
         elif not ConfigReader.ANYWHERE_DOUBLE_BLOCKING:
             self.blocking_type = BlockingDynamicType.DOUBLE_BLOCKING
             self.blocking_dynamic = True
-            Util.debug(f"DOUBLE_BLOCKING + dynamicblocking")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"DOUBLE_BLOCKING + dynamicblocking")
         else:
             self.blocking_type = BlockingDynamicType.ANYWHERE_DOUBLE_BLOCKING
             self.blocking_dynamic = True
-            Util.debug(f"ANYWHERE PAIRWISE BLOCKING + dynamicblocking")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"ANYWHERE PAIRWISE BLOCKING + dynamicblocking")
 
     def convert_strings_into_integers(self) -> None:
         """This method transforms string-based data restrictions into integer-based ones to facilitate processing, typically for optimization solvers. It operates by sorting the unique strings found in the temporary string list and assigning them sequential integer identifiers. If strings are present, it updates any concrete features currently typed as `STRING` to `INTEGER`, adjusting their value ranges to accommodate the new encoding, and replaces the string values in the associated concept assertions with their corresponding integer identifiers. Additionally, it registers these mappings with the internal MILP solver and clears the temporary string storage lists upon completion. If the temporary string list is empty or uninitialized, the method performs no action."""
 
-        if self.temp_string_list != None:
-            # Sort strings
-            self.temp_string_list = sorted(self.temp_string_list)
-            # Get set of strings in assertions
-            num_strings: int = 0
-            if len(self.temp_string_list) > 0:
-                num_strings += 1
-                previous: str = self.temp_string_list[0]
-                self.order[previous] = int(num_strings)
-                for current in self.temp_string_list[1:]:
-                    if previous != current:
-                        num_strings += 1
-                        self.order[current] = num_strings
-                    previous = current
-            # If there are strings
-            if num_strings > 0:
-                # Change the type of the concrete features from String to Integer
-                for t in self.concrete_features.values():
-                    if t.get_type() == ConcreteFeatureType.STRING:
-                        t.set_type(ConcreteFeatureType.INTEGER)
-                        t.set_range(0, num_strings + 1)
-                # Replace string s_i with order(s_i)
-                for con in self.temp_string_concept_list:
-                    assert isinstance(con, HasValueInterface)
-                    old_value: str = str(con.value)
-                    aux: int = self.order.get(old_value)
-                    con.value = aux
-                    self.milp.add_string_value(old_value, aux - 1)
-            self.temp_string_list = None
-            self.temp_string_concept_list = None
+        if self.temp_string_list is None:
+            return
+
+        # Sort strings
+        self.temp_string_list = sorted(self.temp_string_list)
+        # Get set of strings in assertions
+        num_strings: int = 0
+        if len(self.temp_string_list) > 0:
+            num_strings += 1
+            previous: str = self.temp_string_list[0]
+            self.order[previous] = int(num_strings)
+            for current in self.temp_string_list[1:]:
+                if previous != current:
+                    num_strings += 1
+                    self.order[current] = num_strings
+                previous = current
+
+        # If there are strings
+        if num_strings > 0:
+            # Change the type of the concrete features from String to Integer
+            for t in self.concrete_features.values():
+                if t.get_type() == ConcreteFeatureType.STRING:
+                    t.set_type(ConcreteFeatureType.INTEGER)
+                    t.set_range(0, num_strings + 1)
+            # Replace string s_i with order(s_i)
+            for con in self.temp_string_concept_list:
+                assert isinstance(con, HasValueInterface)
+                old_value: str = str(con.value)
+                aux: int = self.order.get(old_value)
+                con.value = aux
+                self.milp.add_string_value(old_value, aux - 1)
+
+        self.temp_string_list = None
+        self.temp_string_concept_list = None
 
     @typing.overload
     def restrict_range(self, x_b: Variable, k1: float, k2: float) -> None: ...
@@ -4789,6 +5174,9 @@ class KnowledgeBase:
         :param args: Variable-length arguments defining the target variable, bounds, and an optional condition. Accepts either (x_b, k1, k2) or (x_b, x_f, k1, k2), where x_f determines if the restriction is active.
         :type args: typing.Any
         """
+
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Restricting range with arguments: {args}")
 
         assert len(args) in [3, 4]
         assert isinstance(args[0], Variable)
@@ -4898,7 +5286,9 @@ class KnowledgeBase:
         return self.get_new_individual(None, None)
 
     def __get_new_individual_2(
-        self, parent: Individual, f_name: str
+        self,
+        parent: typing.Optional[Individual],
+        f_name: typing.Optional[str],
     ) -> CreatedIndividual:
         """
         This method orchestrates the creation and immediate registration of a new individual entity within the knowledge base, utilizing a specified parent individual and role name. It delegates the core instantiation logic to a common code routine, ensuring the new entity is properly initialized relative to its parent. A significant side effect of this operation is the modification of the internal state, as the newly created individual is automatically added to the knowledge base's collection using its string representation as an identifier before being returned.
@@ -4918,7 +5308,9 @@ class KnowledgeBase:
         return b
 
     def get_new_individual_common_code(
-        self, parent: Individual, f_name: str
+        self,
+        parent: typing.Optional[Individual],
+        f_name: typing.Optional[str],
     ) -> CreatedIndividual:
         """
         Creates a new `CreatedIndividual` instance linked to the specified parent via the provided role name, assigning it a unique identifier based on an internal counter. This method updates internal knowledge base state, including role successors and the maximum depth, but explicitly avoids adding the new individual to the main collection of individuals. It is designed to handle the common logic of individual instantiation and metadata updates without permanently registering the entity within the knowledge base.
@@ -4967,19 +5359,27 @@ class KnowledgeBase:
 
         while len(self.exist_assertions) > 0:
             ass: Assertion = self.exist_assertions[0]
-            Util.debug(
-                f"{constants.SEPARATOR}Processing Existential Assertion{constants.SEPARATOR}"
-            )
-            Util.debug(f"{ass}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(
+                    f"{constants.SEPARATOR}Processing Existential Assertion{constants.SEPARATOR}"
+                )
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"{ass}")
             if self.is_assertion_processed(ass):
-                Util.debug(f"Assertion (without the degree): {ass} already processed.")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(
+                        f"Assertion (without the degree): {ass} already processed."
+                    )
                 del self.exist_assertions[0]
             else:
                 if ass.get_individual().is_blockable():
                     subject: CreatedIndividual = typing.cast(
                         CreatedIndividual, ass.get_individual()
                     )
-                    Util.debug(f"Testing if created individual {subject} is blocked.")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(
+                            f"Testing if created individual {subject} is blocked."
+                        )
                     if CreatedIndividualHandler.is_blocked(subject, self):
                         name: str = str(ass.get_individual())
                         self.blocked_exist_assertions[name] = (
@@ -4992,7 +5392,8 @@ class KnowledgeBase:
                         f"Error: Maximal number of individuals created: {self.num_defined_individuals}"
                     )
                 else:
-                    Util.debug("NO blocking")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug("NO blocking")
                     self.rule_some(ass)
                 self.mark_process_assertion(ass)
                 del self.exist_assertions[0]
@@ -5013,7 +5414,10 @@ class KnowledgeBase:
         self.solve_functional_roles()
 
         self.preprocess_tbox()
-        self.print_tbox()
+
+        if ConfigReader.DEBUG_PRINT:
+            self.print_tbox()
+
         self.compute_blocking_type()
 
         self.KB_LOADED = True
@@ -5116,27 +5520,32 @@ class KnowledgeBase:
         # We will exit only after solving all assertions
         while True:
             for ass in self.assertions:
-                Util.debug(
-                    f"{constants.SEPARATOR}Processing assertion{constants.SEPARATOR}"
-                )
-                Util.debug(f"{ass}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(
+                        f"{constants.SEPARATOR}Processing assertion{constants.SEPARATOR}"
+                    )
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"{ass}")
                 deg: Degree = ass.get_lower_limit()
                 if deg.is_numeric() and deg.is_number_zero():
                     self.mark_process_assertion(ass)
-                    Util.debug(
-                        f"{constants.SEPARATOR}Assertion completed{constants.SEPARATOR}"
-                    )
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(
+                            f"{constants.SEPARATOR}Assertion completed{constants.SEPARATOR}"
+                        )
                     continue
 
                 # Use right version of the individual (needed when we clone the KB or merge individuals)
                 self.get_correct_version_of_individual(ass)
                 if ass.get_individual().is_blockable():
-                    Util.debug(
-                        f"Direct Blocking status {typing.cast(CreatedIndividual, ass.get_individual()).directly_blocked}"
-                    )
-                    Util.debug(
-                        f"Indirect Blocking status {typing.cast(CreatedIndividual, ass.get_individual()).indirectly_blocked}"
-                    )
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(
+                            f"Direct Blocking status {typing.cast(CreatedIndividual, ass.get_individual()).directly_blocked}"
+                        )
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(
+                            f"Indirect Blocking status {typing.cast(CreatedIndividual, ass.get_individual()).indirectly_blocked}"
+                        )
 
                 # If the individual is indirectly blocked we skip the assertion
                 if (
@@ -5146,9 +5555,10 @@ class KnowledgeBase:
                     )
                 ):
                     name: str = str(ass.get_individual())
-                    Util.debug(
-                        "Skipping assertion (it has an indirectly blocked individual)"
-                    )
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(
+                            "Skipping assertion (it has an indirectly blocked individual)"
+                        )
                     self.blocked_assertions[name] = self.blocked_assertions.get(
                         name, []
                     ) + [ass]
@@ -5157,9 +5567,10 @@ class KnowledgeBase:
                 # Add xAss >= lowerBound
                 self.milp.add_new_constraint(ass)
                 if self.is_assertion_processed(ass):
-                    Util.debug(
-                        f"Assertion (without the degree): {ass} already processed."
-                    )
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(
+                            f"Assertion (without the degree): {ass} already processed."
+                        )
                     continue
 
                 ind: Individual = ass.get_individual()
@@ -5315,9 +5726,10 @@ class KnowledgeBase:
 
                 self.mark_process_assertion(ass)
                 ind.add_concept(ci)
-                Util.debug(
-                    f"{constants.SEPARATOR}Assertion completed{constants.SEPARATOR}"
-                )
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(
+                        f"{constants.SEPARATOR}Assertion completed{constants.SEPARATOR}"
+                    )
             self.assertions.clear()
 
             # Solve one some rule
@@ -5454,8 +5866,15 @@ class KnowledgeBase:
     def solve_choquet_integral_assertion(
         self, ind: Individual, c: ChoquetIntegral
     ) -> None:
-        """
-        Encodes the logic for a Choquet integral concept assertion into the underlying Mixed-Integer Linear Programming (MILP) model for a specific individual. It begins by retrieving the degree variables for the component concepts associated with the individual and ensures these sub-assertions are added to the model. To satisfy the sorting requirement of the Choquet integral, the method introduces auxiliary binary variables to generate an ordered permutation of the component degrees. It then constructs a linear expression based on the Choquet integral formula, applying the provided weights to the sorted variables. Finally, it adds a constraint to the MILP model that equates this calculated expression to the degree variable of the individual with respect to the Choquet integral concept itself.
+        r"""
+        Choquet integral  $\mathsf{Ch}_w(C_1,\dots,C_n)$  for individual $a$.
+
+        Let $y_1 \ge y_2 \ge \dots \ge y_n$ be the sorted values of
+        $x_i = x_{a:C_i}$ (via ``get_ordered_permutation``).  The integral is
+        encoded as the equality
+
+        .. math::
+            w_1 y_1 + \sum_{i=2}^{n} (w_i - w_{i-1}) y_i = x_{a:\mathsf{Ch}}
 
         :param ind: The individual entity for which the Choquet integral assertion is being solved.
         :type ind: Individual
@@ -5472,21 +5891,25 @@ class KnowledgeBase:
             self.add_assertion(ind, ci, DegreeVariable.get_degree(x[i]))
 
         # y1 > y2 > ... > yn
+        # permutation matrix z_{ij}
         z: list[list[Variable]] = [
             [self.milp.get_new_variable(VariableType.BINARY) for _ in range(n)]
             for _ in range(n)
         ]
+        # sorted degrees y_1 >= ... >= y_n
         y: list[Variable] = self.milp.get_ordered_permutation(x, z)
 
-        # y1 w1 + \sum^{n}_{i=2} yi (wi - wi-1) = x_{ind:CI}
+        # w_1 y_1 + sum_{i=2}^{n} (w_i - w_{i-1}) y_i = x_{a: Ch}
         exp: Expression = Expression(0.0)
         exp.add_term(Term(c.weights[0], y[0]))
         for k in range(1, n):
             exp.add_term(Term(c.weights[k] - c.weights[k - 1], y[k]))
 
+        # x_{a: Ch}
         degree: DegreeVariable = DegreeVariable.get_degree(
             self.milp.get_variable(ind, c)
         )
+        # exp = degree
         self.milp.add_new_constraint(exp, InequalityType.EQUAL, degree)
 
     def solve_choquet_integral_complemented_assertion(
@@ -5534,8 +5957,26 @@ class KnowledgeBase:
     def solve_owa_assertion(
         self, ind: Individual, c: typing.Union[OwaConcept, QowaConcept]
     ) -> None:
-        """
-        Translates a fuzzy logic Ordered Weighted Averaging (OWA) concept assertion into a set of constraints within the underlying Mixed-Integer Linear Programming (MILP) model. It retrieves the membership variables for the individual across the sub-concepts defined in the OWA operator and ensures that these sub-concepts are asserted. Depending on the system configuration, the method either constructs an explicit ordering of the variables to apply weights or utilizes an optimized algebraic reformulation involving pairwise minimum operations to avoid sorting. In both cases, it adds a new equality constraint to the solver that links the degree of the OWA concept to the aggregated degrees of its constituent concepts.
+        r"""
+        OWA aggregation  $\mathsf{OWA}_w(C_1,\dots,C_n)$  for individual $a$.
+
+        *Standard path* (``OPTIMIZATIONS == 0``): sort the inputs
+        $x_i = x_{a:C_i}$ into $y_1 \ge y_2 \ge \dots \ge y_n$ and enforce
+
+        .. math::
+            \sum_{i=1}^{n} w_i y_i = x_{a:\mathsf{OWA}}
+
+        *Optimised path*: reformulates the OWA via pairwise minima
+        (Yager’s algebraic identity) to avoid the sorting MILP:
+
+        .. math::
+            \begin{aligned}
+            a &= \frac{1}{n} - \frac{w_n - w_1}{2} \\
+            b &= \frac{w_n - w_1}{n-1} \\
+            x_{a:\mathsf{OWA}} &= a\sum_i x_i + b\sum_{j<k} \min(x_j, x_k)
+            \end{aligned}
+
+        where every $\min$ is reified with ``ZadehSolver.and_equation``.
 
         :param ind: The specific individual entity for which the OWA concept assertion is being solved.
         :type ind: Individual
@@ -5552,16 +5993,18 @@ class KnowledgeBase:
                 x.append(self.milp.get_variable(ind, ci))
                 self.add_assertion(ind, ci, DegreeVariable.get_degree(x[i]))
 
-            # y1 > y2 > ... > yn
+            # sorted degrees y_1 >= ... >= y_n
             y: list[Variable] = self.milp.get_ordered_permutation(x)
 
-            # \sum_{i} wi * yi = x_{ind:OWA}
+            # sum_{i} w_i y_i = x_{a: OWA}
             exp: Expression = Expression()
             for j in range(n):
                 exp.add_term(Term(c.weights[j], y[j]))
+            # x_{a: OWA}
             degree: DegreeVariable = DegreeVariable.get_degree(
                 self.milp.get_variable(ind, c)
             )
+            # exp = degree
             self.milp.add_new_constraint(exp, InequalityType.EQUAL, degree)
         else:
             n: int = len(c.concepts)
@@ -5569,7 +6012,7 @@ class KnowledgeBase:
             wn: float = c.weights[n - 1]
             a: float = 1.0 / n - (wn - w1) / 2.0
             exp: Expression = Expression()
-            # (1/n - (w_n - w_1)/2) \sum^n_{i=1} x_i
+            # (1/n - (w_n - w_1)/2) sum_{i=1}^{n} x_i
             x: list[Variable] = []
             for i in range(n):
                 ci: Concept = c.concepts[i]
@@ -5577,18 +6020,21 @@ class KnowledgeBase:
                 self.add_assertion(ind, ci, DegreeVariable.get_degree(x[i]))
                 exp.add_term(Term(a, x[i]))
 
-            # (w_n - w_1) / (n-1) \sum_{i,j} \min\{ x_i, x_j \}
+            # (w_n - w_1)/(n-1) sum_{j<k} min(x_j, x_k)
             b: float = (wn - w1) / (n - 1)
             for j in range(n - 1):
                 for k in range(j + 1, n):
+                    # min_{jk} = min(x_j, x_k)
                     min_var: Variable = self.milp.get_new_variable(
                         VariableType.SEMI_CONTINUOUS
                     )
                     ZadehSolver.and_equation(min_var, x[j], x[k], self.milp)
                     exp.add_term(Term(b, min_var))
+            # x_{a: OWA}
             degree: DegreeVariable = DegreeVariable.get_degree(
                 self.milp.get_variable(ind, c)
             )
+            # exp = degree
             self.milp.add_new_constraint(exp, InequalityType.EQUAL, degree)
 
     def solve_owa_complemented_assertion(
@@ -5632,8 +6078,23 @@ class KnowledgeBase:
     def solve_sugeno_integral_assertion(
         self, ind: Individual, concept: typing.Union[SugenoIntegral, QsugenoIntegral]
     ) -> None:
-        """
-        Encodes the mathematical definition of a Sugeno Integral or Quantified Sugeno Integral into the underlying Mixed-Integer Linear Programming (MILP) model to determine the degree of truth for a specific individual. It recursively processes the sub-concepts comprising the integral, establishing their degrees and corresponding MILP variables, and then constructs auxiliary variables and constraints to simulate the fuzzy logic operations required for the calculation. The method handles the sorting of sub-concept values, aligns them with the integral's weights, computes the minimum between each value and the cumulative weight, and finally determines the maximum of these minima to set the degree of the integral concept. Depending on the specific type of integral provided, it utilizes either Zadeh or Lukasiewicz logic for the intermediate aggregation steps, thereby modifying the MILP model state without returning a direct value.
+        r"""
+        Sugeno integral  $\mathsf{SI}_w(C_1,\dots,C_n)$  for individual $a$.
+
+        1. Sort sub-concept degrees  $x_i = x_{a:C_i}$  into
+           $y_1 \ge y_2 \ge \dots \ge y_n$.
+        2. Ordered weights  $ow_j$  are pinned to  $w_k$  via Big-M constraints
+           using the permutation matrix $z$:
+
+           .. math::
+               ow_j \ge (1-z_{kj})w_k,\qquad ow_j \le z_{kj}+w_k
+        3. Accumulate  $a_1 = ow_1$,  $a_i = ow_i \oplus a_{i-1}$  (Łukasiewicz or).
+        4. Conjoin  $c_i = y_i \otimes a_i$.  ``QsugenoIntegral`` uses Łukasiewicz
+           ``and_equation``; ``SugenoIntegral`` uses Zadeh ``and_equation``.
+        5. Link to the result with binary switches $b_i$:
+
+           .. math::
+               b_i + c_i \ge x_{a:\mathsf{SI}},\qquad \sum_{i=1}^{n} b_i = n-1
 
         :param ind: The individual entity for which the Sugeno integral assertion is being evaluated and solved.
         :type ind: Individual
@@ -5641,7 +6102,7 @@ class KnowledgeBase:
         :type concept: typing.Union[SugenoIntegral, QsugenoIntegral]
         """
 
-        # New n variables x_i
+        # New n variables x_i = x_{a: C_i}
         n: int = len(concept.concepts)
         x: list[Variable] = []
         for i in range(n):
@@ -5649,19 +6110,20 @@ class KnowledgeBase:
             x.append(self.milp.get_variable(ind, ci))
             self.add_assertion(ind, ci, DegreeVariable.get_degree(x[i]))
 
-        # y1 > y2 > ... > yn
+        # sorted degrees y_1 >= ... >= y_n
         z: list[list[Variable]] = [
             [self.milp.get_new_variable(VariableType.BINARY) for _ in range(n)]
             for _ in range(n)
         ]
         y: list[Variable] = self.milp.get_ordered_permutation(x, z)
+        # ordered weights ow_j
         ow: list[Variable] = [
             self.milp.get_new_variable(VariableType.SEMI_CONTINUOUS) for _ in range(n)
         ]
 
         for k in range(n):
             for i in range(n):
-                # ow_j \geq (1 - z_{ij}) w_i
+                # ow_j >= (1 - z_{ij}) w_i
                 self.milp.add_new_constraint(
                     Expression(
                         -concept.weights[k],
@@ -5670,7 +6132,7 @@ class KnowledgeBase:
                     ),
                     InequalityType.GREATER_THAN,
                 )
-                # ow_j \leq z_{ij} + w_i
+                # ow_j <= z_{ij} + w_i
                 self.milp.add_new_constraint(
                     Expression(
                         -concept.weights[k], Term(-1.0, z[k][i]), Term(1.0, ow[i])
@@ -5678,6 +6140,7 @@ class KnowledgeBase:
                     InequalityType.LESS_THAN,
                 )
 
+        # accumulated weights a_i
         a: list[Variable] = [
             self.milp.get_new_variable(VariableType.SEMI_CONTINUOUS) for _ in range(n)
         ]
@@ -5686,40 +6149,42 @@ class KnowledgeBase:
             Expression(Term(1.0, a[0]), Term(-1.0, ow[0])), InequalityType.EQUAL
         )
 
-        # a_i = ow_i \oplus a_{i-1}
+        # a_i = ow_i \oplus_L a_{i-1}
         for m in range(1, n):
             vx: list[Variable] = [ow[m], a[m - 1]]
             LukasiewiczSolver.or_equation(vx, a[m], self.milp)
 
-        # New n variables c_i
+        # c_i = y_i \otimes a_i
         c: list[Variable] = [
             self.milp.get_new_variable(VariableType.SEMI_CONTINUOUS) for _ in range(n)
         ]
 
         if isinstance(concept, QsugenoIntegral):
             for i in range(n):
-                # c_i = y_i \otimes a_i
+                # c_i = y_i \otimes_L a_i
                 LukasiewiczSolver.and_equation(c[i], y[i], a[i], self.milp)
         elif isinstance(concept, SugenoIntegral):
             for i in range(n):
-                # c_i = y_i \otimes a_i
+                # c_i = y_i \otimes_Z a_i
                 ZadehSolver.and_equation(c[i], y[i], a[i], self.milp)
 
-        # if bi = 0, then ci >= x_{ind:SI}
+        # if b_i = 0 then c_i >= x_{a: SI}
         degree: DegreeVariable = DegreeVariable.get_degree(
             self.milp.get_variable(ind, concept)
         )
+        # binary switches b_i
         b: list[Variable] = [
             self.milp.get_new_variable(VariableType.BINARY) for _ in range(n)
         ]
         for i in range(n):
+            # b_i + c_i >= x_{a: SI}
             self.milp.add_new_constraint(
                 Expression(Term(1.0, b[i]), Term(1.0, c[i])),
                 InequalityType.GREATER_THAN,
                 degree,
             )
 
-        # \sum bi = n-1
+        # sum_{i=1}^{n} b_i = n - 1
         exp: Expression = Expression()
         for i in range(n):
             exp.add_term(Term(1.0, b[i]))
@@ -5829,8 +6294,13 @@ class KnowledgeBase:
     def solve_w_max_assertion(
         self, ind: Individual, concept: WeightedMaxConcept
     ) -> None:
-        """
-        Encodes the constraints necessary to evaluate a weighted maximum concept assertion for a specific individual within the underlying Mixed-Integer Linear Programming (MILP) model. The method computes the membership degree as the maximum of the minimum values between each sub-concept's membership degree and its associated weight, effectively implementing the logic $\max_i \min(\mu_{C_i}(ind), w_i)$. It recursively ensures that all constituent sub-concepts are asserted and resolved before introducing auxiliary variables and logical constraints to represent the aggregation.
+        r"""
+        Weighted maximum  $\max_i \min(x_{a:C_i}, w_i)$.
+
+        Each intermediate  $\min_i$  is reified with ``ZadehSolver.and_equation``
+        (treating the constant weight as a variable bound).  The final maximum
+        over the  $\min_i$  variables is reified with
+        ``ZadehSolver.or_equation``.
 
         :param ind: The individual entity for which the weighted max concept assertion is being solved.
         :type ind: Individual
@@ -5838,16 +6308,18 @@ class KnowledgeBase:
         :type concept: fuzzy_dl_owl2.fuzzydl.concept.weighted_max_concept.WeightedMaxConcept
         """
 
+        # x_{a: WMax}
         x_A_in_WS: Variable = self.milp.get_variable(ind, concept)
-        # min_i = \min \{ w_{i}, x_i \}
+        # min_i = min(w_i, x_{a: C_i})
         min_vars: list[Variable] = []
         for ci, weight in zip(concept.concepts, concept.weights):
             xi: Variable = self.milp.get_variable(ind, ci)
             self.add_assertion(ind, ci, DegreeVariable.get_degree(xi))
+            # min_i
             min_var: Variable = self.milp.get_new_variable(VariableType.SEMI_CONTINUOUS)
             ZadehSolver.and_equation(min_var, xi, weight, self.milp)
             min_vars.append(min_var)
-        # max of the min_i = x:
+        # x_{a: WMax} = max_i min_i
         ZadehSolver.or_equation(min_vars, x_A_in_WS, self.milp)
 
     def solve_w_max_complemented_assertion(
@@ -5883,8 +6355,13 @@ class KnowledgeBase:
     def solve_w_min_assertion(
         self, ind: Individual, concept: WeightedMinConcept
     ) -> None:
-        """
-        This method translates a weighted minimum concept assertion into a set of constraints within the underlying Mixed-Integer Linear Programming (MILP) model. It calculates the degree of membership for the given individual by determining the minimum value across a series of intermediate calculations, where each intermediate value represents the maximum of the sub-concept's degree and the complement of its associated weight. The process involves creating new auxiliary variables for the MILP solver and recursively ensuring that all nested sub-concepts are properly asserted before establishing the final logical constraints.
+        r"""
+        Weighted minimum  $\min_i \max(x_{a:C_i}, 1-w_i)$.
+
+        Each intermediate  $\max_i$  is reified with ``ZadehSolver.or_equation``
+        (bound  $1-w_i$  is supplied as a constant argument).  The final
+        minimum over the  $\max_i$  variables is reified with
+        ``ZadehSolver.and_equation``.
 
         :param ind: The individual entity for which the weighted min concept assertion is being evaluated and solved.
         :type ind: Individual
@@ -5892,16 +6369,18 @@ class KnowledgeBase:
         :type concept: fuzzy_dl_owl2.fuzzydl.concept.weighted_min_concept.WeightedMinConcept
         """
 
+        # x_{a: WMin}
         x_A_in_WS: Variable = self.milp.get_variable(ind, concept)
-        # max_i = \max \{ 1 - w_{i}, x_i \}
+        # max_i = max(1 - w_i, x_{a: C_i})
         max_vars: list[Variable] = []
         for ci, weight in zip(concept.concepts, concept.weights):
             xi: Variable = self.milp.get_variable(ind, ci)
             self.add_assertion(ind, ci, DegreeVariable.get_degree(xi))
+            # max_i
             max_var: Variable = self.milp.get_new_variable(VariableType.SEMI_CONTINUOUS)
             ZadehSolver.or_equation(max_var, xi, 1.0 - weight, self.milp)
             max_vars.append(max_var)
-        # min of the max_i = x:
+        # x_{a: WMin} = min_i max_i
         ZadehSolver.and_equation(max_vars, x_A_in_WS, self.milp)
 
     def solve_w_min_complemented_assertion(
@@ -5937,8 +6416,10 @@ class KnowledgeBase:
     def solve_w_sum_assertion(
         self, ind: Individual, concept: WeightedSumConcept
     ) -> None:
-        """
-        This method enforces the logic of a weighted sum concept for a specific individual by integrating the necessary constraints into the MILP model. It processes the component concepts and their associated weights, ensuring that assertions for these sub-concepts are recursively added to the knowledge base. The core operation involves creating a linear equality constraint that equates the degree of the individual's membership in the weighted sum concept to the sum of the weighted degrees of membership in its constituent concepts.
+        r"""
+        Weighted sum  $x_{a:WS} = \sum_{i=1}^{n} w_i \, x_{a:C_i}$.
+
+        Emitted as a single linear equality; no auxiliary variables are needed.
 
         :param ind: The specific individual for which the weighted sum concept assertion is being solved.
         :type ind: Individual
@@ -5946,12 +6427,15 @@ class KnowledgeBase:
         :type concept: fuzzy_dl_owl2.fuzzydl.concept.weighted_sum_concept.WeightedSumConcept
         """
 
+        # x_{a: WS}
         x_A_in_WS: Variable = self.milp.get_variable(ind, concept)
+        # sum_{i} w_i x_{a: C_i}
         terms: list[Term] = []
         for ci, weight in zip(concept.concepts, concept.weights):
             xi: Variable = self.milp.get_variable(ind, ci)
             terms.append(Term(weight, xi))
             self.add_assertion(ind, ci, DegreeVariable.get_degree(xi))
+        # sum_{i} w_i x_{a: C_i} = x_{a: WS}
         self.milp.add_new_constraint(
             Expression(*terms),
             InequalityType.EQUAL,
@@ -5991,8 +6475,20 @@ class KnowledgeBase:
     def solve_w_sum_zero_assertion(
         self, ind: Individual, concept: WeightedSumZeroConcept
     ) -> None:
-        """
-        Encodes the logical constraints for a WeightedSumZeroConcept assertion applied to a specific Individual into the underlying Mixed-Integer Linear Programming (MILP) model. The method recursively processes the sub-concepts and their associated weights, ensuring that assertions for these sub-concepts are added to the model. It introduces auxiliary binary and semi-continuous variables to construct a set of linear constraints that approximate the fuzzy logic rule, specifically linking the truth value of the assertion to the weighted sum of its components while enforcing a dependency on the minimum truth value of those components. Finally, the method updates the solver state with these constraints and marks the rule as complemented.
+        r"""
+        Weighted-sum-with-zero concept.
+
+        Let  $z = \min_i x_{a:C_i}$  and  $y = \neg_G z$.  The encoding is:
+
+        .. math::
+            \begin{aligned}
+            x_{a:WSZ} &\le 1 - y \\
+            x_{a:WSZ} &\ge \sum_i w_i x_{a:C_i} - y \\
+            x_{a:WSZ} &\le \sum_i w_i x_{a:C_i} + y
+            \end{aligned}
+
+        Effectively: if any  $x_{a:C_i}=0$  then  $x_{a:WSZ}=0$;
+        otherwise  $x_{a:WSZ}=\sum_i w_i x_{a:C_i}$.
 
         :param ind: The individual entity for which the weighted sum zero concept assertion is being solved.
         :type ind: Individual
@@ -6000,36 +6496,40 @@ class KnowledgeBase:
         :type concept: fuzzy_dl_owl2.fuzzydl.concept.weighted_sum_zero_concept.WeightedSumZeroConcept
         """
 
+        # x_{a: WSZ}
+        x_A_in_ws: Variable = self.milp.get_variable(ind, concept)
+        # binary auxiliary y = not_G z
+        y: Variable = self.milp.get_new_variable(VariableType.BINARY)
+        # z = min_i x_{a: C_i}
+        z: Variable = self.milp.get_new_variable(VariableType.SEMI_CONTINUOUS)
         terms: list[Term] = []
         vx: list[Variable] = []
-        x_A_in_ws: Variable = self.milp.get_variable(ind, concept)
-        y: Variable = self.milp.get_new_variable(VariableType.BINARY)
-        z: Variable = self.milp.get_new_variable(VariableType.SEMI_CONTINUOUS)
         for ci, weight in zip(concept.concepts, concept.weights):
             xi: Variable = self.milp.get_variable(ind, ci)
             self.add_assertion(ind, ci, DegreeVariable.get_degree(xi))
+            # z <= x_{a: C_i}
             self.milp.add_new_constraint(
                 Expression(Term(1.0, z), Term(-1.0, xi)), InequalityType.LESS_THAN
             )
             vx.append(xi)
             terms.append(Term(weight, xi))
         terms.append(Term(-1.0, x_A_in_ws))
-        # z = min { x_{v:C_i} }   for all i
+        # z = min_i x_{a: C_i}
         ZadehSolver.and_equation(vx, z, self.milp)
         # y = not_G z
         ZadehSolver.goedel_not_equation(y, z, self.milp)
-        # xAinWS \leq  1-y
+        # x_{a: WSZ} <= 1 - y
         self.milp.add_new_constraint(
             Expression(-1.0, Term(1.0, y), Term(1.0, x_A_in_ws)),
             InequalityType.LESS_THAN,
         )
 
-        # xAinWS \geq  w_1 x_{v:C_1} + \dots + w_n x_{v:C_n} - y
+        # x_{a: WSZ} >= sum_i w_i x_{a: C_i} - y
         exp1: Expression = Expression(*terms)
         exp1.add_term(Term(-1.0, y))
         self.milp.add_new_constraint(exp1, InequalityType.LESS_THAN)
 
-        # xAinWS \leq  w_1 x_{v:C_1} + \dots + w_n x_{v:C_n} + y
+        # x_{a: WSZ} <= sum_i w_i x_{a: C_i} + y
         exp2: Expression = Expression(*terms)
         exp2.add_term(Term(1.0, y))
         self.milp.add_new_constraint(exp2, InequalityType.GREATER_THAN)
@@ -6134,8 +6634,18 @@ class KnowledgeBase:
     def __add_crisp_concrete_concept_equations(
         self, concept: CrispConcreteConcept, x_c: Variable, x_ass: Variable
     ) -> None:
-        """
-        Encodes the logical constraints for a crisp concrete concept into the underlying Mixed-Integer Linear Programming (MILP) model by establishing a relationship between the concept's value and its assertion status. This method introduces three auxiliary binary variables to partition the solution space into three mutually exclusive regions based on the concept variable `x_c`: a lower region where `x_c` is strictly less than the lower threshold `a`, a middle region where `x_c` lies between `a` and `b`, and an upper region where `x_c` is strictly greater than the upper threshold `b`. The assertion variable `x_ass` is constrained to be 1 only when `x_c` falls within the middle region `[a, b]`, and 0 otherwise. The formulation utilizes the concept's global bounds `k1` and `k2` to deactivate irrelevant constraints via a Big-M approach and employs a small epsilon value to strictly enforce inequalities at the boundaries. As a side effect, this method modifies the MILP model by adding the new binary variables and the necessary linear constraints.
+        r"""
+        Crisp (rectangular) membership function on the concrete domain.
+
+        Three mutually exclusive binary regions  $y_1+y_2+y_3=1$:
+
+        .. math::
+            \begin{array}{c|c|c}
+            \text{region} & x_C \text{ bounds} & x_{ass} \\ \hline
+            y_1=1 & k_1 \le x_C < a   & 0 \\
+            y_2=1 & a \le x_C \le b    & 1 \\
+            y_3=1 & b < x_C \le k_2 & 0
+            \end{array}
 
         :param concept: The crisp concrete concept definition providing the threshold values (k1, a, b, k2) required to formulate the piecewise linear constraints.
         :type concept: CrispConcreteConcept
@@ -6145,8 +6655,11 @@ class KnowledgeBase:
         :type x_ass: Variable
         """
 
+        # binary region indicator y1 (x_C < a)
         y1: Variable = self.milp.get_new_variable(VariableType.BINARY)
+        # binary region indicator y2 (a <= x_C <= b)
         y2: Variable = self.milp.get_new_variable(VariableType.BINARY)
+        # binary region indicator y3 (x_C > b)
         y3: Variable = self.milp.get_new_variable(VariableType.BINARY)
 
         # y1 + y2 + y3 = 1
@@ -6249,8 +6762,18 @@ class KnowledgeBase:
     def __add_left_concrete_concept_equations(
         self, concept: LeftConcreteConcept, x_c: Variable, x_ass: Variable
     ) -> None:
-        """
-        Encodes the logical constraints for a left concrete concept assertion into the underlying Mixed-Integer Linear Programming (MILP) model by introducing auxiliary binary variables and linear inequalities. It establishes a piecewise relationship between the concrete concept variable and the assertion variable, defining three mutually exclusive regimes: one where the assertion is definitively true, one where it is definitively false, and a transitional region where the assertion value is interpolated. The method adds these constraints to the model to ensure that the assertion variable accurately reflects the state of the concrete concept based on the thresholds and bounds specified in the concept definition.
+        r"""
+        Left-shoulder membership function: rises from 0 to 1.
+
+        Three mutually exclusive binary regions  $y_1+y_2+y_3=1$:
+
+        .. math::
+            \begin{array}{c|c|c}
+            \text{region} & x_C \text{ bounds} & x_{ass} \\ \hline
+            y_1=1 & k_1 \le x_C \le a & 1 \\
+            y_2=1 & a \le x_C \le b  & \text{linear interpolation} \\
+            y_3=1 & b \le x_C \le k_2 & 0
+            \end{array}
 
         :param concept: The left concrete concept assertion providing the parameters (a, b, k1, k2) required to formulate the MILP constraints.
         :type concept: LeftConcreteConcept
@@ -6261,8 +6784,11 @@ class KnowledgeBase:
         """
 
         # y1 + y2 + y3 = 1
+        # binary region indicator y1 (x_C <= a, x_ass = 1)
         y1: Variable = self.milp.get_new_variable(VariableType.BINARY)
+        # binary region indicator y2 (a <= x_C <= b, linear)
         y2: Variable = self.milp.get_new_variable(VariableType.BINARY)
+        # binary region indicator y3 (x_C >= b, x_ass = 0)
         y3: Variable = self.milp.get_new_variable(VariableType.BINARY)
         self.milp.add_new_constraint(
             Expression(Term(1.0, y1), Term(1.0, y2), Term(1.0, y3)),
@@ -6356,8 +6882,16 @@ class KnowledgeBase:
     def __add_linear_concrete_concept_equations(
         self, concept: LinearConcreteConcept, x_A_is_C: Variable, x_ass: Variable
     ) -> None:
-        """
-        Encodes the logical constraints for a linear concrete concept assertion into the underlying Mixed-Integer Linear Programming (MILP) model. This method introduces an auxiliary binary variable to handle the disjunctive conditions defined by the concept's threshold `a` and boundaries `k1` and `k2`. It establishes a system of six linear inequalities that link the concrete domain variable `x_A_is_C` with the assertion variable `x_ass`, ensuring that the assertion's value is consistent with the linear relationship defined by the concept's slope `b` and intercepts. The constraints effectively model the piecewise logic where the concrete value falls either below or above the threshold, thereby determining the state of the assertion variable.
+        r"""
+        Piecewise-linear membership function with a single threshold $a$.
+
+        Binary variable $y$ selects the active half-plane:
+
+        .. math::
+            \begin{aligned}
+            y=0:\quad & x_C \le a, \quad & b\,x_C - (a-k_1)x_{ass} = b\,k_1 \\
+            y=1:\quad & x_C \ge a, \quad & (1-b)\,x_C - (k_2-a)x_{ass} = a - b\,k_2
+            \end{aligned}
 
         :param concept: The linear concrete concept assertion providing the coefficients and thresholds necessary to formulate the MILP constraints.
         :type concept: LinearConcreteConcept
@@ -6367,6 +6901,7 @@ class KnowledgeBase:
         :type x_ass: Variable
         """
 
+        # binary selector y (x_C <= a vs x_C >= a)
         y: Variable = self.milp.get_variable(VariableType.BINARY)
         # if y=0:		xc <= a,		b xc  - (a - k1) xass  = b k1
         # if y=1:		xc >= a,		(1 - b) xc -  (k2 - a) xass =  a - b k2
@@ -6443,8 +6978,18 @@ class KnowledgeBase:
     def __add_right_concrete_concept_equations(
         self, concept: RightConcreteConcept, x_c: Variable, x_ass: Variable
     ) -> None:
-        """
-        This method encodes the logical constraints for a right concrete concept assertion into the underlying Mixed-Integer Linear Programming (MILP) model. It establishes a relationship between a concrete concept variable and an assertion variable based on thresholds defined in the provided concept object. To model this piecewise logic, the method introduces three auxiliary binary variables that act as mutually exclusive switches, enforcing exactly one of three distinct operational regimes. These regimes define specific bounds on the concept variable and determine the value of the assertion variable, effectively creating a conditional mapping where the assertion is forced to zero in the lower region, one in the upper region, and follows a linear interpolation in the transition region. The primary side effect is the addition of these new variables and their associated linear constraints to the MILP solver.
+        r"""
+        Right-shoulder membership function: falls from 1 to 0.
+
+        Three mutually exclusive binary regions  $y_1+y_2+y_3=1$:
+
+        .. math::
+            \begin{array}{c|c|c}
+            \text{region} & x_C \text{ bounds} & x_{ass} \\ \hline
+            y_1=1 & k_1 \le x_C \le a & 0 \\
+            y_2=1 & a \le x_C \le b  & \text{linear interpolation} \\
+            y_3=1 & b \le x_C \le k_2 & 1
+            \end{array}
 
         :param concept: The right concrete concept assertion defining the thresholds and logic used to construct the constraints linking the concept variable to the assertion variable.
         :type concept: RightConcreteConcept
@@ -6454,8 +6999,11 @@ class KnowledgeBase:
         :type x_ass: Variable
         """
 
+        # binary region indicator y1 (x_C <= a, x_ass = 0)
         y1: Variable = self.milp.get_new_variable(VariableType.BINARY)
+        # binary region indicator y2 (a <= x_C <= b, linear)
         y2: Variable = self.milp.get_new_variable(VariableType.BINARY)
+        # binary region indicator y3 (x_C >= b, x_ass = 1)
         y3: Variable = self.milp.get_new_variable(VariableType.BINARY)
 
         # y1 + y2 + y3 = 1
@@ -6552,8 +7100,20 @@ class KnowledgeBase:
     def __add_trapezoidal_concrete_concept_equations(
         self, concept: TrapezoidalConcreteConcept, x_c: Variable, x_ass: Variable
     ) -> None:
-        """
-        Encodes the relationship between a concrete variable and its assertion variable within the internal Mixed-Integer Linear Programming (MILP) model using a trapezoidal membership function. The method introduces five auxiliary binary variables to partition the domain into five distinct regions: the left tail, the rising slope, the core, the falling slope, and the right tail. By enforcing that exactly one binary variable is active, it applies specific linear constraints to set the assertion variable to 0 in the tails, 1 in the core, or a linear interpolation on the slopes, depending on the value of the concrete variable relative to the trapezoid's parameters. This process modifies the MILP model by adding the necessary variables and constraints.
+        r"""
+        Trapezoidal membership function on the concrete domain.
+
+        Five mutually exclusive binary regions  $\sum_{i=1}^{5} y_i = 1$:
+
+        .. math::
+            \begin{array}{c|c|c}
+            \text{region} & x_C \text{ bounds} & x_{ass} \\ \hline
+            y_1=1 & k_1 \le x_C \le a & 0 \\
+            y_2=1 & a  \le x_C \le b & \text{linear interpolation} \\
+            y_3=1 & b  \le x_C \le c & 1 \\
+            y_4=1 & c  \le x_C \le d & \text{linear interpolation} \\
+            y_5=1 & d  \le x_C \le k_2 & 0
+            \end{array}
 
         :param concept: The trapezoidal concrete concept assertion providing the parameters ($k_1, a, b, c, d, k_2$) used to construct the linear constraints.
         :type concept: TrapezoidalConcreteConcept
@@ -6563,10 +7123,15 @@ class KnowledgeBase:
         :type x_ass: Variable
         """
 
+        # binary region indicator y1 (x_C <= a, x_ass = 0)
         y1: Variable = self.milp.get_new_variable(VariableType.BINARY)
+        # binary region indicator y2 (a <= x_C <= b, linear rising)
         y2: Variable = self.milp.get_new_variable(VariableType.BINARY)
+        # binary region indicator y3 (b <= x_C <= c, x_ass = 1)
         y3: Variable = self.milp.get_new_variable(VariableType.BINARY)
+        # binary region indicator y4 (c <= x_C <= d, linear falling)
         y4: Variable = self.milp.get_new_variable(VariableType.BINARY)
+        # binary region indicator y5 (x_C >= d, x_ass = 0)
         y5: Variable = self.milp.get_new_variable(VariableType.BINARY)
 
         # y1 + y2 + y3 + y4 + y5 = 1
@@ -6729,8 +7294,19 @@ class KnowledgeBase:
     def __add_triangular_concrete_concept_equations(
         self, concept: TriangularConcreteConcept, x_c: Variable, x_ass: Variable
     ) -> None:
-        """
-        Encodes the logical constraints for a triangular concrete concept assertion into the underlying Mixed-Integer Linear Programming (MILP) model. This method creates four auxiliary binary variables to select the active segment of the triangular function, corresponding to the lower tail, rising edge, falling edge, and upper tail. It establishes a system of linear inequalities that relate the concrete variable `x_c` to the assertion variable `x_ass`, ensuring that `x_ass` accurately reflects the piecewise linear membership degree defined by the concept's parameters (k1, a, b, c, k2). The constraints enforce that the assertion is zero in the tail regions and scales linearly within the core region. As a side effect, this method modifies the MILP model by adding these new variables and constraints.
+        r"""
+        Triangular membership function on the concrete domain.
+
+        Four mutually exclusive binary regions  $\sum_{i=1}^{4} y_i = 1$:
+
+        .. math::
+            \begin{array}{c|c|c}
+            \text{region} & x_C \text{ bounds} & x_{ass} \\ \hline
+            y_1=1 & k_1 \le x_C \le a & 0 \\
+            y_2=1 & a  \le x_C \le b & \text{linear interpolation (rising)} \\
+            y_3=1 & b  \le x_C \le c & \text{linear interpolation (falling)} \\
+            y_4=1 & c  \le x_C \le k_2 & 0
+            \end{array}
 
         :param concept: The triangular concrete concept assertion providing the parameters and boundaries used to construct the MILP constraints.
         :type concept: TriangularConcreteConcept
@@ -6740,9 +7316,13 @@ class KnowledgeBase:
         :type x_ass: Variable
         """
 
+        # binary region indicator y1 (x_C <= a, x_ass = 0)
         y1: Variable = self.milp.get_new_variable(VariableType.BINARY)
+        # binary region indicator y2 (a <= x_C <= b, linear rising)
         y2: Variable = self.milp.get_new_variable(VariableType.BINARY)
+        # binary region indicator y3 (b <= x_C <= c, linear falling)
         y3: Variable = self.milp.get_new_variable(VariableType.BINARY)
+        # binary region indicator y4 (x_C >= c, x_ass = 0)
         y4: Variable = self.milp.get_new_variable(VariableType.BINARY)
 
         # y1 + y2 + y3 + y4 = 1
@@ -6877,8 +7457,18 @@ class KnowledgeBase:
     def solve_linear_modifier_assertion(
         self, ind: Individual, con: Concept, modifier: LinearModifier
     ) -> None:
-        """
-        Encodes the logical constraints of a linear modifier assertion into the underlying Mixed-Integer Linear Programming (MILP) model, establishing a mathematical relationship between the degree to which an individual belongs to a base concept and the degree to which it belongs to a modified version of that concept. The method handles both standard concepts and pre-modified concrete concepts, ensuring the base concept is asserted before applying the modifier logic. It introduces a binary variable to the MILP solver to model a piecewise linear constraint, ensuring that the truth values of the base and modified assertions adhere to the specific linear transformation defined by the modifier's parameters.
+        r"""
+        Linear modifier with parameters $(a,b)$.
+
+        Binary variable $y$ partitions the domain into two linear segments:
+
+        .. math::
+            \begin{aligned}
+            y=0:\quad & x_C \le a,       && x_C = \tfrac{a}{b}\,x_{mod} \\
+            y=1:\quad & x_C \ge a,       && (1-b)\,x_C = (1-a)\,x_{mod} + (a-b)
+            \end{aligned}
+
+        where $x_C$ is the base-concept degree and $x_{mod}$ the modified degree.
 
         :param ind: The individual entity acting as the subject of the assertion, for which membership variables are retrieved and constrained.
         :type ind: Individual
@@ -6904,13 +7494,15 @@ class KnowledgeBase:
             )
             x_A_is_mod_C: Variable = self.milp.get_variable(ind, modified)
 
+        # binary partition y (x_AisC <= a vs x_AisC >= a)
         y: Variable = self.milp.get_new_variable(VariableType.BINARY)
-        # If y = 0, xAisC <= a, xAisC = a/b xAisModC
+        # If y = 0, x_AisC <= a, x_AisC = a/b x_AisModC
         self.milp.add_new_constraint(
             Expression(Term(1.0, x_A_is_C), Term(-1.0, y)),
             InequalityType.LESS_THAN,
             modifier.a,
         )
+        # x_AisC - (a/b) x_AisModC + (a/b) y >= 0
         self.milp.add_new_constraint(
             Expression(
                 Term(-modifier.a / modifier.b, x_A_is_mod_C),
@@ -6919,6 +7511,7 @@ class KnowledgeBase:
             ),
             InequalityType.GREATER_THAN,
         )
+        # x_AisC - (a/b) x_AisModC - y <= 0
         self.milp.add_new_constraint(
             Expression(
                 Term(-modifier.a / modifier.b, x_A_is_mod_C),
@@ -6927,11 +7520,12 @@ class KnowledgeBase:
             ),
             InequalityType.LESS_THAN,
         )
-        # If y = 1, xAisC >= a, (1-b) xAisC = (1-a) xAisModC + (a-b)
+        # If y = 1, x_AisC >= a, (1-b) x_AisC = (1-a) x_AisModC + (a-b)
         self.milp.add_new_constraint(
             Expression(Term(1.0, x_A_is_C), Term(-modifier.a, y)),
             InequalityType.GREATER_THAN,
         )
+        # (1-b) x_AisC + (a-1) x_AisModC + (b-a+2) y <= 2
         self.milp.add_new_constraint(
             Expression(
                 Term(modifier.a - 1.0, x_A_is_mod_C),
@@ -6941,6 +7535,7 @@ class KnowledgeBase:
             InequalityType.LESS_THAN,
             2.0,
         )
+        # (1-b) x_AisC + (a-1) x_AisModC + (b-a-2) y >= -2
         self.milp.add_new_constraint(
             Expression(
                 Term(modifier.a - 1.0, x_A_is_mod_C),
@@ -6957,8 +7552,21 @@ class KnowledgeBase:
         concept: Concept,
         modifier: TriangularModifier,
     ) -> None:
-        """
-        Encodes the logical constraints for a triangular modifier assertion within the Mixed-Integer Linear Programming (MILP) model associated with the knowledge base. This method establishes the relationship between an individual's membership degree in a base concept and its membership in a triangularly modified version of that concept, handling both standard concepts and modified concrete concepts by retrieving or creating the appropriate variables. The implementation introduces four binary auxiliary variables to model the piecewise linear structure of the triangular modifier, defined by parameters a, b, and c, thereby enforcing the specific fuzzy logic rules across the rising, peak, and falling segments of the membership function. As a side effect, this method adds new variables and constraints to the MILP solver and records the assertion within the knowledge base.
+        r"""
+        Triangular modifier with parameters $(a,b,c)$.
+
+        Four mutually exclusive binary regions  $y_1+y_2+y_3+y_4=1$:
+
+        .. math::
+            \begin{array}{c|c|c}
+            \text{region} & x_C \text{ bounds} & x_{mod} \\ \hline
+            y_1=1 & 0 \le x_C \le a & 0 \\
+            y_2=1 & a \le x_C \le b   & \text{linear interpolation} \\
+            y_3=1 & b \le x_C \le c   & \text{linear interpolation} \\
+            y_4=1 & c \le x_C \le 1  & 0
+            \end{array}
+
+        where $x_C$ is the base-concept degree and $x_{mod}$ the modified degree.
 
         :param individual: The entity or object instance serving as the subject of the assertion being solved.
         :type individual: Individual
@@ -6983,9 +7591,13 @@ class KnowledgeBase:
             self.add_assertion(individual, concept, DegreeVariable.get_degree(x_A_is_C))
             x_A_is_mod_C: Variable = self.milp.get_variable(individual, modified)
 
+        # binary region indicator y1 (x_AisC <= a, x_AisModC = 0)
         y1: Variable = self.milp.get_new_variable(VariableType.BINARY)
+        # binary region indicator y2 (a <= x_AisC <= b, linear rising)
         y2: Variable = self.milp.get_new_variable(VariableType.BINARY)
+        # binary region indicator y3 (b <= x_AisC <= c, linear falling)
         y3: Variable = self.milp.get_new_variable(VariableType.BINARY)
+        # binary region indicator y4 (x_AisC >= c, x_AisModC = 0)
         y4: Variable = self.milp.get_new_variable(VariableType.BINARY)
 
         # y1 + y2 + y3 + y4 = 1
@@ -7129,7 +7741,8 @@ class KnowledgeBase:
                 self.milp.add_new_constraint(
                     Expression.add_constant(sum_vars, -1.0), InequalityType.LESS_THAN
                 )
-                Util.debug(f"Rule_n2: {sum_vars} <= 1")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Rule_n2: {sum_vars} <= 1")
 
     def rule_n3(self) -> None:
         """Iterates through the mapping of labels to their associated nodes to enforce a selection constraint within the MILP model. For any label that is linked to multiple nodes, this method retrieves the nominal variables corresponding to those nodes and adds an equality constraint requiring their sum to equal one. This ensures that exactly one node is selected for the given label, effectively implementing a one-hot encoding constraint for multi-node labels. The method modifies the internal MILP model by adding these constraints and does not return a value."""
@@ -7143,7 +7756,8 @@ class KnowledgeBase:
                 exp: Expression = Expression(v)
                 exp.set_constant(-1.0)
                 self.milp.add_new_constraint(exp, InequalityType.EQUAL)
-                Util.debug(f"Rule_n3: {exp}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Rule_n3: {exp}")
 
     def rule_ass_nom(self, a: Individual, c: Concept, v: str) -> None:
         """
@@ -7165,7 +7779,8 @@ class KnowledgeBase:
         # Add the assertion "v" is c
         self.add_assertion(i, c, DegreeVariable.get_degree(v_is_c))
         # vIs{a} => v:C >= a:C
-        Util.debug(f"Adding equation {v_is_a} => {v_is_c} >= {a_is_c}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Adding equation {v_is_a} => {v_is_c} >= {a_is_c}")
         ZadehSolver.zadeh_implies_leq_equation(a_is_c, v_is_a, v_is_c, self.milp)
 
     def exists_primite_concept_definition(
@@ -7213,7 +7828,10 @@ class KnowledgeBase:
         pcds: set[PrimitiveConceptDefinition] = self.t_inclusions.get(a)
         if pcds is not None and self.exists_primite_concept_definition(pcds, pcd):
             return
-        self.t_inclusions[a] = self.t_inclusions.get(a, set()) | set([pcd])
+        # self.t_inclusions[a] = self.t_inclusions.get(a, set()) | set([pcd])
+        if a not in self.t_inclusions:
+            self.t_inclusions[a] = set()
+        self.t_inclusions[a].add(pcd)
 
     def add_axiom_to_do_A_is_a_X(self, a: str, pcd: PrimitiveConceptDefinition) -> None:
         """
@@ -7237,13 +7855,19 @@ class KnowledgeBase:
         if pcds is not None and self.exists_primite_concept_definition(pcds, pcd):
             return
         if c.is_atomic():
-            self.axioms_to_do_A_is_a_B[a] = self.axioms_to_do_A_is_a_B.get(
-                a, set()
-            ) | set([pcd])
+            # self.axioms_to_do_A_is_a_B[a] = self.axioms_to_do_A_is_a_B.get(
+            #     a, set()
+            # ) | set([pcd])
+            if a not in self.axioms_to_do_A_is_a_B:
+                self.axioms_to_do_A_is_a_B[a] = set()
+            self.axioms_to_do_A_is_a_B[a].add(pcd)
         else:
-            self.axioms_to_do_A_is_a_C[a] = self.axioms_to_do_A_is_a_C.get(
-                a, set()
-            ) | set([pcd])
+            # self.axioms_to_do_A_is_a_C[a] = self.axioms_to_do_A_is_a_C.get(
+            #     a, set()
+            # ) | set([pcd])
+            if a not in self.axioms_to_do_A_is_a_C:
+                self.axioms_to_do_A_is_a_C[a] = set()
+            self.axioms_to_do_A_is_a_C[a].add(pcd)
 
     def add_axiom_to_A_is_a_C(
         self,
@@ -7270,7 +7894,10 @@ class KnowledgeBase:
         pcds: set[PrimitiveConceptDefinition] = pcd_dict.get(a)
         if pcds is not None and self.exists_primite_concept_definition(pcds, pcd):
             return
-        pcd_dict[a] = pcd_dict.get(a, set()) | set([pcd])
+        # pcd_dict[a] = pcd_dict.get(a, set()) | set([pcd])
+        if a not in pcd_dict:
+            pcd_dict[a] = set()
+        pcd_dict[a].add(pcd)
 
     def add_axiom_to_A_equiv_C(self, a: str, conc: Concept) -> None:
         """
@@ -7288,7 +7915,10 @@ class KnowledgeBase:
             if c == conc:
                 return
         if conc not in hs:
-            self.axioms_A_equiv_C[a] = hs | set([conc])
+            # self.axioms_A_equiv_C[a] = hs | set([conc])
+            if a not in self.axioms_A_equiv_C:
+                self.axioms_A_equiv_C[a] = set()
+            self.axioms_A_equiv_C[a].add(conc)
 
     def add_axioms_to_tg(self) -> None:
         """Processes the pending equivalence axioms stored in `axioms_A_equiv_C` and `axioms_C_equiv_D` and adds them to the TBox as equivalent concept definitions. The method iterates through the first collection to define equivalences between atomic concepts and their associated lists, and through the second collection to define equivalences between concept pairs. After registering these axioms, the method clears both internal collections, consuming the pending axioms and altering the instance state."""
@@ -7368,7 +7998,8 @@ class KnowledgeBase:
                 self.remove_A_is_a_X(a, pcd, False)
                 # Remove C => A
                 self.remove_C_is_a_A(aux, gci)
-                Util.debug(f"Definition Absorbed: {a} = {conc}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Definition Absorbed: {a} = {conc}")
                 return True
         if self.t_inclusions.get(a) is not None:
             for pcd in self.t_inclusions.get(a, set()):
@@ -7392,7 +8023,8 @@ class KnowledgeBase:
                 self.remove_A_is_a_X(a, pcd, self.t_inclusions)
                 # Remove C => A
                 self.remove_C_is_a_A(aux, gci)
-                Util.debug(f"Definition Absorbed: {a} = {conc}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Definition Absorbed: {a} = {conc}")
                 return True
         return False
 
@@ -7439,7 +8071,8 @@ class KnowledgeBase:
                 self.remove_A_is_a_X(a, pcd, self.t_inclusions)
                 # Remove C => A
                 self.remove_C_is_a_A(str(conc), gci)
-                Util.debug(f"Definition Absorbed: {a} = {conc}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Definition Absorbed: {a} = {conc}")
                 return True
         return False
 
@@ -7471,7 +8104,13 @@ class KnowledgeBase:
         assert isinstance(args[1], PrimitiveConceptDefinition)
         if isinstance(args[2], bool):
             self.__remove_A_is_a_X_2(*args)
-        elif trycast.checkcast(dict[str, set[PrimitiveConceptDefinition]], args[2]):
+        # elif trycast.checkcast(dict[str, set[PrimitiveConceptDefinition]], args[2]):
+        elif isinstance(args[2], dict) and all(
+            isinstance(k, str)
+            and isinstance(v, set)
+            and all(isinstance(x, PrimitiveConceptDefinition) for x in v)
+            for k, v in args[2].items()
+        ):
             self.__remove_A_is_a_X_1(*args)
         else:
             raise ValueError
@@ -7594,9 +8233,10 @@ class KnowledgeBase:
     def gci_transformations_A_is_a_C(self) -> None:
         """This method processes the queue of pending axioms representing subclass relationships where a concept A is a sub-concept of C. It iterates through these axioms, attempting to apply a General Concept Inclusion (GCI) transformation to each one. If the transformation is unsuccessful, the axiom is permanently added to the knowledge base's main collection of "A is a C" axioms. The method ensures that axioms which cannot be transformed further are retained, while potentially modifying the internal state of the knowledge base through the transformation process."""
 
-        Util.debug(
-            f"{constants.SEPARATOR}gci_transformations_A_is_a_C{constants.SEPARATOR}"
-        )
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(
+                f"{constants.SEPARATOR}gci_transformations_A_is_a_C{constants.SEPARATOR}"
+            )
         for pcds in self.axioms_to_do_A_is_a_C.values():
             for tau in list(pcds):
                 if not self.gci_transformation(tau):
@@ -7607,9 +8247,10 @@ class KnowledgeBase:
     def gci_transformations_C_is_a_A(self) -> None:
         """Iterates through the collection of pending General Concept Inclusion (GCI) axioms representing subsumption relationships of the form 'C is a A'. For each axiom, it attempts to apply a specific transformation logic via the `gci_transformation` method; if the transformation is unsuccessful, the axiom is re-added to the knowledge base's storage for 'C is a A' relationships. This process modifies the internal state of the object by consuming the input list of axioms and potentially repopulating the axiom set based on the success or failure of the transformation."""
 
-        Util.debug(
-            f"{constants.SEPARATOR}gci_transformations_C_is_a_A{constants.SEPARATOR}"
-        )
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(
+                f"{constants.SEPARATOR}gci_transformations_C_is_a_A{constants.SEPARATOR}"
+            )
         for gcis in self.axioms_to_do_C_is_a_A.values():
             for tau in list(gcis):
                 if not self.gci_transformation(tau, True):
@@ -7623,9 +8264,10 @@ class KnowledgeBase:
     def gci_transformations_C_is_a_D(self) -> None:
         """Processes the set of pending 'C is a D' axioms by attempting to apply General Concept Inclusion (GCI) transformations to each entry. For every axiom, it invokes a transformation helper; if the helper indicates that the transformation was not applied, the axiom is re-registered using its subsumer, subsumed, degree, and type attributes. The method iterates over a copy of the axiom lists to prevent iteration errors caused by modifications to the underlying collections and logs debug information to mark the start of the process."""
 
-        Util.debug(
-            f"{constants.SEPARATOR}gci_transformations_C_is_a_D{constants.SEPARATOR}"
-        )
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(
+                f"{constants.SEPARATOR}gci_transformations_C_is_a_D{constants.SEPARATOR}"
+            )
         for gcis in self.axioms_to_do_C_is_a_D.values():
             for tau in list(gcis):
                 if self.gci_transformation(tau, False):
@@ -7640,11 +8282,28 @@ class KnowledgeBase:
     def partition_loop_A_is_a_B(self) -> None:
         """Iterates through the collection of axioms defining "is-a" relationships to perform concept absorption. To prevent issues arising from modifying the collection during iteration, the method processes a cloned copy of the axioms rather than the original data structure. For each axiom, it attempts to integrate the concept using synonym absorption specific to "is-a" relationships, and if that is unsuccessful, it falls back to general concept absorption. This process updates the internal state of the knowledge base by refining or merging concepts based on the defined taxonomic relationships."""
 
-        cp: dict[str, set[PrimitiveConceptDefinition]] = {
-            k: [c.clone() for c in v] for k, v in self.axioms_A_is_a_B.items()
-        }
+        # the outer dict is a NEW mapping but
+        # the inner sets are shared with ``axioms_A_is_a_B``. As an earlier
+        # absorption empties the underlying set / drops the key, later outer
+        # iterations observe the current state and naturally skip stale
+        # entries. The previous code cloned every pcd which decoupled the
+        # snapshot from the live set and re-presented already-absorbed
+        # axioms to ``concept_absorption`` -> ``remove_A_is_a_B`` -> crash
+        # with KeyError / 'NoneType has no attribute remove'.
+        # ---- previous (buggy, deep-clone) implementation ----
+        # cp: dict[str, set[PrimitiveConceptDefinition]] = {
+        #     k: [c.clone() for c in v] for k, v in self.axioms_A_is_a_B.items()
+        # }
+        # for pcds_tmp in cp.values():
+        #     pcds: set[PrimitiveConceptDefinition] = set([c.clone() for c in pcds_tmp])
+        #     for tau in pcds:
+        #         if not self.synonym_absorption_A_is_a_B(
+        #             tau
+        #         ) and not self.concept_absorption(tau, True):
+        #             continue
+        cp: dict[str, set[PrimitiveConceptDefinition]] = dict(self.axioms_A_is_a_B)
         for pcds_tmp in cp.values():
-            pcds: set[PrimitiveConceptDefinition] = set([c.clone() for c in pcds_tmp])
+            pcds: set[PrimitiveConceptDefinition] = set(pcds_tmp)
             for tau in pcds:
                 if not self.synonym_absorption_A_is_a_B(
                     tau
@@ -7654,11 +8313,22 @@ class KnowledgeBase:
     def partition_loop_to_do_A_is_a_B(self) -> None:
         """Iterates through the pending axioms of the form "A is a B" stored in the knowledge base to perform synonym absorption. To ensure data integrity during processing, the method creates a deep copy of the axioms before iterating over them. For each concept definition, it invokes the synonym absorption logic; if the process fails for a specific concept, it is skipped. Upon completion of the loop, the original collection of pending axioms is cleared, indicating that they have been processed."""
 
-        cp: dict[str, set[PrimitiveConceptDefinition]] = {
-            k: [c.clone() for c in v] for k, v in self.axioms_to_do_A_is_a_B.items()
-        }
+        # See partition_loop_A_is_a_B for the rationale behind the shallow
+        # snapshot.
+        # ---- previous (buggy, deep-clone) implementation ----
+        # cp: dict[str, set[PrimitiveConceptDefinition]] = {
+        #     k: [c.clone() for c in v] for k, v in self.axioms_to_do_A_is_a_B.items()
+        # }
+        # for pcds_tmp in cp.values():
+        #     pcds: set[PrimitiveConceptDefinition] = set([c.clone() for c in pcds_tmp])
+        #     for tau in pcds:
+        #         if not self.synonym_absorption_to_do_A_is_a_B(tau):
+        #             continue
+        cp: dict[str, set[PrimitiveConceptDefinition]] = dict(
+            self.axioms_to_do_A_is_a_B
+        )
         for pcds_tmp in cp.values():
-            pcds: set[PrimitiveConceptDefinition] = set([c.clone() for c in pcds_tmp])
+            pcds: set[PrimitiveConceptDefinition] = set(pcds_tmp)
             for tau in pcds:
                 if not self.synonym_absorption_to_do_A_is_a_B(tau):
                     continue
@@ -7667,11 +8337,21 @@ class KnowledgeBase:
     def partition_loop_A_is_a_C(self) -> None:
         """Executes the partitioning logic for axioms of the form "A is a C" by attempting to absorb concepts and roles into the knowledge base. The method operates on a cloned copy of the axioms to ensure the integrity of the iteration process, preventing issues that might arise from modifying the collection while traversing it. For each axiom, it invokes `concept_absorption` and `role_absorption`; if both operations fail to process the axiom, the iteration proceeds to the next candidate. This process modifies the internal state of the knowledge base but returns no value."""
 
-        cp: dict[str, set[PrimitiveConceptDefinition]] = {
-            k: [c.clone() for c in v] for k, v in self.axioms_A_is_a_C.items()
-        }
+        # See partition_loop_A_is_a_B for the rationale.
+        # ---- previous (buggy, deep-clone) implementation ----
+        # cp: dict[str, set[PrimitiveConceptDefinition]] = {
+        #     k: [c.clone() for c in v] for k, v in self.axioms_A_is_a_C.items()
+        # }
+        # for pcds_tmp in cp.values():
+        #     pcds: set[PrimitiveConceptDefinition] = set([c.clone() for c in pcds_tmp])
+        #     for tau in pcds:
+        #         if not self.concept_absorption(tau, False) and not self.role_absorption(
+        #             tau
+        #         ):
+        #             continue
+        cp: dict[str, set[PrimitiveConceptDefinition]] = dict(self.axioms_A_is_a_C)
         for pcds_tmp in cp.values():
-            pcds: set[PrimitiveConceptDefinition] = set([c.clone() for c in pcds_tmp])
+            pcds: set[PrimitiveConceptDefinition] = set(pcds_tmp)
             for tau in pcds:
                 if not self.concept_absorption(tau, False) and not self.role_absorption(
                     tau
@@ -7681,11 +8361,21 @@ class KnowledgeBase:
     def partition_loop_to_do_A_is_a_C(self) -> None:
         """Iterates through the pending axioms of the form "A is a C" to perform definition absorption. The method operates on cloned copies of the primitive concept definitions to prevent interference during iteration, invoking `definition_absorption_to_do` for each item. As a side effect, it clears the internal dictionary of pending axioms once the processing loop is finished, effectively resetting the queue for this specific axiom type."""
 
-        cp: dict[str, set[PrimitiveConceptDefinition]] = {
-            k: [c.clone() for c in v] for k, v in self.axioms_to_do_A_is_a_C.items()
-        }
+        # See partition_loop_A_is_a_B for the rationale.
+        # ---- previous (buggy, deep-clone) implementation ----
+        # cp: dict[str, set[PrimitiveConceptDefinition]] = {
+        #     k: [c.clone() for c in v] for k, v in self.axioms_to_do_A_is_a_C.items()
+        # }
+        # for pcds_tmp in cp.values():
+        #     pcds: set[PrimitiveConceptDefinition] = set([c.clone() for c in pcds_tmp])
+        #     for tau in pcds:
+        #         if not self.definition_absorption_to_do(tau):
+        #             continue
+        cp: dict[str, set[PrimitiveConceptDefinition]] = dict(
+            self.axioms_to_do_A_is_a_C
+        )
         for pcds_tmp in cp.values():
-            pcds: set[PrimitiveConceptDefinition] = set([c.clone() for c in pcds_tmp])
+            pcds: set[PrimitiveConceptDefinition] = set(pcds_tmp)
             for tau in pcds:
                 if not self.definition_absorption_to_do(tau):
                     continue
@@ -7694,11 +8384,23 @@ class KnowledgeBase:
     def partition_loop_C_is_a_A(self) -> None:
         """Iterates over a copy of the axioms representing subclass relationships (C is a A) to attempt their absorption into the knowledge base. For each axiom, the method sequentially tries concept absorption, definition absorption, and role absorption. If none of these strategies successfully process the axiom, the loop proceeds to the next one; otherwise, the side effects of the successful absorption modify the knowledge base's internal state."""
 
-        cp: dict[str, set[GeneralConceptInclusion]] = {
-            k: [c.clone() for c in v] for k, v in self.axioms_C_is_a_A.items()
-        }
+        # See partition_loop_A_is_a_B for the rationale.
+        # ---- previous (buggy, deep-clone) implementation ----
+        # cp: dict[str, set[GeneralConceptInclusion]] = {
+        #     k: [c.clone() for c in v] for k, v in self.axioms_C_is_a_A.items()
+        # }
+        # for gcis_tmp in cp.values():
+        #     gcis: set[GeneralConceptInclusion] = set([c.clone() for c in gcis_tmp])
+        #     for tau in gcis:
+        #         if (
+        #             not self.concept_absorption(tau, True)
+        #             and not self.definition_absorption(tau)
+        #             and not self.role_absorption(tau, True)
+        #         ):
+        #             continue
+        cp: dict[str, set[GeneralConceptInclusion]] = dict(self.axioms_C_is_a_A)
         for gcis_tmp in cp.values():
-            gcis: set[GeneralConceptInclusion] = set([c.clone() for c in gcis_tmp])
+            gcis: set[GeneralConceptInclusion] = set(gcis_tmp)
             for tau in gcis:
                 if (
                     not self.concept_absorption(tau, True)
@@ -7710,11 +8412,21 @@ class KnowledgeBase:
     def partition_loop_C_is_a_D(self) -> None:
         """This method processes axioms asserting that a concept C is a subclass of concept D by iterating through a cloned snapshot of the stored axioms to ensure safe traversal. For each General Concept Inclusion (GCI) in the set, it attempts to absorb the axiom using either concept absorption or role absorption strategies. If neither absorption method successfully integrates the axiom, the loop proceeds to the next item without modifying the state for that specific axiom."""
 
-        cp: dict[str, set[GeneralConceptInclusion]] = {
-            k: [c.clone() for c in v] for k, v in self.axioms_C_is_a_D.items()
-        }
+        # See partition_loop_A_is_a_B for the rationale.
+        # ---- previous (buggy, deep-clone) implementation ----
+        # cp: dict[str, set[GeneralConceptInclusion]] = {
+        #     k: [c.clone() for c in v] for k, v in self.axioms_C_is_a_D.items()
+        # }
+        # for gcis_tmp in cp.values():
+        #     gcis: set[GeneralConceptInclusion] = set([c.clone() for c in gcis_tmp])
+        #     for tau in gcis:
+        #         if not self.concept_absorption(tau, False) and not self.role_absorption(
+        #             tau, False
+        #         ):
+        #             continue
+        cp: dict[str, set[GeneralConceptInclusion]] = dict(self.axioms_C_is_a_D)
         for gcis_tmp in cp.values():
-            gcis: set[GeneralConceptInclusion] = set([c.clone() for c in gcis_tmp])
+            gcis: set[GeneralConceptInclusion] = set(gcis_tmp)
             for tau in gcis:
                 if not self.concept_absorption(tau, False) and not self.role_absorption(
                     tau, False
@@ -7735,18 +8447,46 @@ class KnowledgeBase:
         # disjoints
         # LU
 
+        if ConfigReader.DEBUG_PRINT:
+            incl_tmp: int = len(self.axioms_A_is_a_B) + len(self.axioms_A_is_a_C)
+            equiv_tmp: int = len(self.axioms_A_equiv_C) + len(self.t_synonyms)
+            gci_tmp: int = (
+                len(self.axioms_C_is_a_A)
+                + len(self.axioms_C_is_a_D)
+                + len(self.axioms_C_equiv_D)
+            )
+
+            self.t_box_information = f"\nclasses = {len(self.atomic_concepts)}\n"
+            self.t_box_information += (
+                f"object properties = {len(self.abstract_roles)}\n"
+            )
+            self.t_box_information += f"data properties = {len(self.concrete_roles)}\n"
+            self.t_box_information += f"individuals = {len([i for i in self.individuals.values() if not isinstance(i, CreatedIndividual)])}\n"
+            self.t_box_information += f"axioms_A_is_a_C = {incl_tmp}\n"
+            self.t_box_information += f"axioms_A_equiv_C = {equiv_tmp}\n"
+            self.t_box_information += (
+                f"domain restrictions = {self.get_number_of_domain_restrictions()}\n"
+            )
+            self.t_box_information += (
+                f"range restrictions = {self.get_number_of_range_restrictions()}\n"
+            )
+            self.t_box_information += f"GCIs = {gci_tmp}\n"
+            self.t_box_information += f"disjoint concepts = {len(self.t_disjoints)}"
+
         # 1. No optimizations: add every TBox axiom to tG
         # no_abs: bool = True
         no_abs: bool = False
         if ConfigReader.OPTIMIZATIONS == 0 or no_abs:
-            Util.debug("No Absorption...")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug("No Absorption...")
             self.represent_tbox_with_gcis()
             return
 
         # Phase 0
         # Check if TBOX already lazy unfoldable
         if self.is_lazy_unfoldable():
-            Util.debug("Already lazy unfoldable")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug("Already lazy unfoldable")
             self.lazy_unfoldable = True
             # Copy axioms_A_equiv_C into t_definitions
             for a, hs in self.axioms_A_equiv_C.items():
@@ -7868,7 +8608,8 @@ class KnowledgeBase:
     def exit_condition(self) -> None:
         """Processes all stored General Concept Inclusions (GCIs) to finalize the knowledge base structure by converting them into a specific graph representation. It iterates through the internal collections of axioms categorized as 'A is a B', 'A is a C', 'C is a A', and 'C is a D', delegating the transformation of each item to the appropriate helper method. This operation results in the modification of the internal graph `tG`, adding the transformed axioms in the form `*top* isA (C -> D)`. If the internal axiom collections are empty, the method executes without effect."""
 
-        Util.debug(f"{constants.SEPARATOR}Exit condition{constants.SEPARATOR}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"{constants.SEPARATOR}Exit condition{constants.SEPARATOR}")
 
         # Convert all GCIs in axioms_A_is_a_B
         for pcds in self.axioms_A_is_a_B.values():
@@ -8182,7 +8923,8 @@ class KnowledgeBase:
         """
 
         constants.KNOWLEDGE_BASE_SEMANTICS = logic
-        Util.debug(f"Fuzzy logic: {logic}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Fuzzy logic: {logic}")
 
     def get_logic(self) -> FuzzyLogic:
         """
@@ -8294,9 +9036,11 @@ class KnowledgeBase:
         # 2. A = B (syn)
         syns: set[str] = self.t_synonyms.get(a_name)
         if syns is not None:
-            Util.debug(f"Lazy unfolding for synonyms: {a_name}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"Lazy unfolding for synonyms: {a_name}")
             for syn in syns:
-                Util.debug(f"Synonym with: {syn}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Synonym with: {syn}")
                 concept: Concept = self.atomic_concepts.get(syn)
                 ind_c: Variable = self.milp.get_variable(ind, concept)
                 self.add_assertion(ind, concept, DegreeVariable.get_degree(ind_c))
@@ -8318,10 +9062,12 @@ class KnowledgeBase:
         # 4. Disjoint axioms
         disj_concs: set[str] = self.t_disjoints.get(a_name)
         if disj_concs is not None:
-            Util.debug(f"Lazy unfolding Disjoint axioms: {a_name}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"Lazy unfolding Disjoint axioms: {a_name}")
             hs2: set[str] = self.disjoint_variables.get(a_name, set())
             for name in disj_concs:
-                Util.debug(f"Disjoint with: {name}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Disjoint with: {name}")
                 # Add v : name
                 self.old_binary_variables += 1
                 var_disj: Variable = self.milp.get_variable(ind, name)
@@ -9018,8 +9764,18 @@ class KnowledgeBase:
     def rule_threshold_common(
         self, x_a_in_c: Variable, x_a_in_tc: Variable, y: Variable
     ) -> None:
-        """
-        This method adds three linear constraints to the internal Mixed-Integer Linear Programming (MILP) model to enforce the logical relationship between a concept membership variable, a threshold concept variable, and a binary selector variable. The constraints are formulated such that if the binary variable is active (1), the threshold concept variable is forced to equal the concept variable; if the binary variable is inactive (0), the threshold concept variable is forced to zero. This mechanism is used to model the conditional activation of a threshold concept within the knowledge base, modifying the optimization problem's feasible region.
+        r"""
+        Big-M reification of the threshold switch:
+
+        .. math::
+            \begin{aligned}
+            x_{a:TC} &\le x_{a:C} + (1-y) \\
+            x_{a:TC} + (1-y) &\ge x_{a:C} \\
+            x_{a:TC} &\le y
+            \end{aligned}
+
+        Effectively  $x_{a:TC} = x_{a:C} \cdot y$  (product of a continuous and a
+        binary variable).
 
         :param x_a_in_c: The variable representing the degree to which the individual belongs to the concept.
         :type x_a_in_c: Variable
@@ -9029,17 +9785,17 @@ class KnowledgeBase:
         :type y: Variable
         """
 
-        # x_{v:[\geq x] \; C} \leq x_{v:C} + (1-y)
+        # x_{a:TC} <= x_{a:C} + (1 - y)
         self.milp.add_new_constraint(
             Expression(-1.0, Term(1.0, x_a_in_tc), Term(-1.0, x_a_in_c), Term(1.0, y)),
             InequalityType.LESS_THAN,
         )
-        # x_{v:[\leq x] \; C} + (1-y) \geq x_{v:C}
+        # x_{a:TC} + (1 - y) >= x_{a:C}
         self.milp.add_new_constraint(
             Expression(1.0, Term(1.0, x_a_in_tc), Term(-1.0, x_a_in_c), Term(-1.0, y)),
             InequalityType.GREATER_THAN,
         )
-        # x_{v:[\geq x] \; C} \leq y
+        # x_{a:TC} <= y
         self.milp.add_new_constraint(
             Expression(Term(1.0, x_a_in_tc), Term(-1.0, y)), InequalityType.LESS_THAN
         )
@@ -9774,8 +10530,21 @@ class KnowledgeBase:
     def __solve_cardinality(
         self, x_sigma: Variable, i1: Individual, O: list[Individual], r: str, C: Concept
     ) -> None:
-        """
-        This method constructs the constraints required to compute the sigma count (cardinality) of a set defined by a specific role and concept. It iterates through the list of candidate individuals `O`, processing only those for which a relation variable exists between the subject `i1` and the candidate via the role `r`. For each valid candidate, it creates a new variable representing the logical conjunction of the relation's truth value and the candidate's membership in the concept `C`, adding the appropriate fuzzy logic constraints (Lukasiewicz or Zadeh) to the solver. The method has the side effect of populating the MILP solver with these new variables and equations, ultimately linking the target variable `x_sigma` to the sum of the calculated conjunctions.
+        r"""
+        Sigma-count (fuzzy cardinality) of the set
+        $\{ i_2 \in O \mid (i_1,i_2):r \text{ and } i_2:C \}$.
+
+        For each known $r$-filler $i_2 \in O$:
+
+        .. math::
+            x_{\wedge}^{(i_2)} = x_{(i_1,i_2):r} \otimes x_{i_2:C}
+
+        reified with ``LukasiewiczSolver.and_equation`` or
+        ``ZadehSolver.and_equation`` (4-argument call with ``self.milp``).
+        The final count is linked via
+
+        .. math::
+            \sum_{i_2} x_{\wedge}^{(i_2)} = x_{\sigma}
 
         :param x_sigma: Free variable representing the sigma count of the conjunctions between the relation and concept membership for the candidate individuals.
         :type x_sigma: Variable
@@ -9794,28 +10563,33 @@ class KnowledgeBase:
         for i2 in O:
             # Only for known r-fillers, the relation must already exist!
             if self.milp.exists_variable(i1, i2, r):
+                # x_{(i1,i2):r}
                 x_ass: Variable = self.milp.get_variable(i1, i2, r)
+                # x_{i2:C}
                 xw_in_C: Variable = self.milp.get_variable(i2, C)
+                # x_and = x_{(i1,i2):r} \otimes x_{i2:C}
                 x_and: Variable = self.milp.get_new_variable(
                     VariableType.SEMI_CONTINUOUS
                 )
 
                 xw_in_Ci.append(x_and)
 
-                # xAnd = xwInC \otimes xAss
+                # x_and = xw_in_C \otimes x_ass
                 if constants.KNOWLEDGE_BASE_SEMANTICS == FuzzyLogic.LUKASIEWICZ:
-                    LukasiewiczSolver.and_equation(x_and, xw_in_C, x_ass)
+                    LukasiewiczSolver.and_equation(x_and, xw_in_C, x_ass, self.milp)
                 else:
-                    ZadehSolver.and_equation(x_and, xw_in_C, x_ass)
+                    ZadehSolver.and_equation(x_and, xw_in_C, x_ass, self.milp)
 
-        # xSigma = cardinality(xwInCi)
+        # x_sigma = sum_i x_and^{(i)}
         self.__add_sigma_count_equation(x_sigma, xw_in_Ci)
 
     def __add_sigma_count_equation(
         self, x_sigma: Variable, xw_in_Ci: list[Variable]
     ) -> None:
-        """
-        This method constructs and adds a linear equality constraint to the internal MILP model to enforce a sigma count relationship. It creates an expression representing the sum of the variables in `xw_in_Ci` and constrains this sum to be equal to the degree of the `x_sigma` variable. If the provided list of variables is empty, the method exits without adding any constraints.
+        r"""
+        Sigma-count aggregation  $\sum_i x_{\wedge}^{(i)} = x_{\sigma}$.
+
+        Emitted as a single linear equality; no auxiliary variables are needed.
 
         :param x_sigma: The variable representing the sum or count of the concept variables, used as the target value for the constraint.
         :type x_sigma: Variable
@@ -9826,6 +10600,7 @@ class KnowledgeBase:
         n: int = len(xw_in_Ci)
         if n <= 0:
             return
+        # sum_i x_{\wedge}^{(i)} = x_sigma
         terms: list[Term] = [None] * n
         for i in range(n):
             terms[i] = Term(1.0, xw_in_Ci[i])
@@ -9837,6 +10612,14 @@ class KnowledgeBase:
 
     def show_statistics(self) -> None:
         """Prints a comprehensive summary of the knowledge base's internal state and processing metrics to the debug output. The report categorizes information into sections detailing the processed TBox (such as synonyms, definitions, inclusions, and domain/range restrictions), the Tableau (including the number of individuals, assertions, and maximal forest depth), and the specific reasoning rules applied during the session. Additionally, it displays statistics regarding variables used in the old calculus. This method is read-only and serves as a diagnostic tool to inspect the composition and reasoning history of the knowledge base."""
+
+        if not ConfigReader.DEBUG_PRINT:
+            return
+
+        if self.t_box_information is not None:
+            Util.debug("Original Fuzzy Ontology:")
+            self.compute_language()
+            Util.debug(self.t_box_information.strip())
 
         Util.debug("Processed TBox:")
         Util.debug(f"\t\tA = B: {len(self.t_synonyms)}")
@@ -10034,7 +10817,8 @@ class KnowledgeBase:
         """
 
         n: int = self.milp.get_number_for_assertion(ass)
-        Util.debug(f"Add assertion to processed_assertions: {n}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Add assertion to processed_assertions: {n}")
         self.processed_assertions.add(n)
 
     def is_assertion_processed(self, ass: Assertion) -> bool:
@@ -10129,6 +10913,9 @@ class KnowledgeBase:
     def print_tbox(self) -> None:
         """Outputs a detailed, formatted representation of the TBox (Terminological Box) component of the knowledge base to the debug stream. This method iterates over internal data structures to display concept inclusions, definitions, synonyms, domain and range restrictions, disjointness axioms, and general concept inclusions. The output is organized into labeled sections with specific formatting, such as indentation and separators, to enhance readability. While the method does not modify the state of the knowledge base, it generates side effects by logging information via the `Util.debug` utility. Additionally, the logic for displaying synonyms includes a filter to prevent duplicate entries based on string comparison."""
 
+        if not ConfigReader.DEBUG_PRINT:
+            return
+
         Util.debug(f"{constants.STAR_SEPARATOR}TBox{constants.STAR_SEPARATOR}")
         Util.debug("tInc:")
         for hs in self.t_inclusions.values():
@@ -10201,10 +10988,14 @@ class DatatypeReasoner:
 
         if t.type == ConcreteFeatureType.BOOLEAN:
             return None
+        bounds: list[float] = []
         if t.get_type() == ConcreteFeatureType.INTEGER:
-            return [float(t.get_k1()), float(t.get_k2())]
+            bounds = [float(t.get_k1()), float(t.get_k2())]
         else:
-            return [t.get_k1(), t.get_k2()]
+            bounds = [t.get_k1(), t.get_k2()]
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug("Bounds for feature {}: {}".format(t.get_name(), bounds))
+        return bounds
 
     @staticmethod
     def get_created_individual_and_variables(
@@ -10686,7 +11477,6 @@ class DatatypeReasoner:
         :param type: Specifies the inequality relation (e.g., less than, greater than) to enforce on the assertion's value during constraint generation.
         :type type: InequalityType
         """
-
         a: Individual = ass.get_individual()
         c: Concept = ass.get_concept()
 
@@ -11248,7 +12038,8 @@ class DatatypeReasoner:
                 array: set[str] = fun.get_features()
                 for feature in array:
                     if a.role_relations.get(feature) is None:
-                        Util.debug(f"No fillers for feature {feature}")
+                        if ConfigReader.DEBUG_PRINT:
+                            Util.debug(f"No fillers for feature {feature}")
                         return
                 deg: DegreeExpression = DegreeExpression(fun.to_expression(a, kb.milp))
                 DatatypeReasoner.write_not_feature_equation(
@@ -11333,8 +12124,21 @@ class DatatypeReasoner:
 
 @class_debugging()
 class LukasiewiczSolver:
-    """
-    This class provides a static interface for solving fuzzy logic assertions by applying the Lukasiewicz t-norm and t-conorm within a Mixed-Integer Linear Programming (MILP) framework. It translates high-level fuzzy description logic constructs—such as conjunctions, disjunctions, and existential or universal restrictions—into a set of linear constraints and variables that are added to a provided knowledge base. Users typically invoke methods like `solve_and`, `solve_or`, `solve_some`, or `solve_all` by passing a specific assertion and the target knowledge base; the class then handles the internal logic of creating necessary variables, managing role relations, and generating the specific equations required to model the fuzzy logic operations accurately. The implementation accounts for complex scenarios such as transitive roles, role hierarchies, and functional roles, ensuring that the generated constraints correctly reflect the semantics of the Lukasiewicz logic.
+    r"""
+    Static solver that encodes Łukasiewicz fuzzy operators as MILP linear constraints.
+
+    Operators implemented:
+
+    .. math::
+        \begin{aligned}
+        x \otimes_L y &= \max(0,\; x+y-1) && \text{(t-norm / and)} \\
+        x \oplus_L y &= \min(1,\; x+y)   && \text{(t-conorm / or)} \\
+        x \Rightarrow_L y &= \min(1,\; 1-x+y) && \text{(implication)} \\
+        \neg_L x &= 1-x                 && \text{(negation)}
+        \end{aligned}
+
+    Each operator is reified via Big-M linearisations that introduce auxiliary
+    binary variables when necessary.
 
     :raises ValueError: Raised when the arguments provided to the equation methods do not match the expected types, specifically when a required argument is neither a Variable nor a numeric constant.
     """
@@ -11410,7 +12214,7 @@ class LukasiewiczSolver:
 
     @staticmethod
     def solve_some(ass: Assertion, kb: KnowledgeBase) -> None:
-        """
+        r"""
         Encodes the semantics of an existential restriction fuzzy assertion ($a: \exists R.C$) into the Mixed-Integer Linear Programming (MILP) model associated with the knowledge base. The method identifies or creates a filler individual $b$ such that $a$ is related to $b$ via role $R$ and $b$ is an instance of concept $C$. It enforces the fuzzy logic constraint that the truth degree of the original assertion is less than or equal to the Lukasiewicz t-norm of the truth degrees of the relation $(a, b): R$ and the assertion $b: C$. Special handling is provided for functional roles, which reuse existing related individuals, and for inverse roles, which are processed by creating corresponding relations with equal degrees. This operation modifies the knowledge base by adding new individuals, assertions, relations, and MILP constraints.
 
         :param ass: The fuzzy assertion to be solved, containing the subject individual and the existential restriction concept.
@@ -11454,7 +12258,9 @@ class LukasiewiczSolver:
         kb.solve_role_inclusion_axioms(a, r)
 
         # For every inverse role
-        list_inverse_roles: list[str] = kb.inverse_roles.get(ass.get_concept().role, [])
+        list_inverse_roles: set[str] = kb.inverse_roles.get(
+            ass.get_concept().role, set()
+        )
         for inv_role in list_inverse_roles:
             var: Variable = kb.milp.get_variable(b, ass.get_individual(), inv_role)
             # (b,a):inv(R) >= l
@@ -11576,8 +12382,17 @@ class LukasiewiczSolver:
 
     @staticmethod
     def and_equation(*args) -> None:
-        """
-        This static method acts as a dispatcher to enforce the Lukasiewicz logical AND operation within a Mixed-Integer Linear Programming (MILP) context by adding specific constraints to the model. It supports multiple argument patterns: a sequence of input variables with a designated result variable, or a pair of input variables combined with a third operand that is either a numeric constant or another variable. In all cases, a `MILPHelper` object must be provided to handle the constraint generation. The method performs strict validation on the number and types of arguments, raising errors if the input does not match the expected signatures for the underlying constraint logic.
+        r"""
+        Dispatcher for the Łukasiewicz t-norm  $z = x_1 \otimes_L x_2 \otimes_L \dots$
+        encoded as MILP linear constraints.
+
+        Supported signatures:
+
+        * ``and_equation([x_1,…,x_n], z, milp)``   → $z = x_1 \otimes_L \dots \otimes_L x_n$
+        * ``and_equation(z, x_1, x_2, milp)``       → $z = x_1 \otimes_L x_2$  (two variables)
+        * ``and_equation(z, x_1, c, milp)``        → $z = x_1 \otimes_L c$  (variable + constant)
+
+        Big-M linearisation is used for every min/max operator.
 
         :param args: A variable-length argument list specifying the operands and solver context for the AND constraint. Valid signatures include a sequence of input variables and a result variable, or two input variables combined with a numeric constant or a third variable, followed by a MILP helper.
         :type args: typing.Any
@@ -11587,7 +12402,7 @@ class LukasiewiczSolver:
 
         assert len(args) in [3, 4]
         if len(args) == 3:
-            assert isinstance(args[0], typing.Sequence) and all(
+            assert isinstance(args[0], list) and all(
                 isinstance(a, Variable) for a in args[0]
             )
             assert isinstance(args[1], Variable)
@@ -11618,19 +12433,21 @@ class LukasiewiczSolver:
         :type milp: MILPHelper
         """
 
+        # auxiliary binary y
         y: Variable = milp.get_new_variable(VariableType.BINARY)
         N: int = len(x)
+        # sum x_i - z - (n-1) <= 0
         exp: Expression = Expression(x)
         exp.add_term(Term(-1.0, z))
         exp.set_constant(1.0 - N)
-        # \sum_{i=1}^{n} x_i - (n-1) \leq z
+        # sum_{i=1}^{n} x_i - (n-1) <= z
         milp.add_new_constraint(exp, InequalityType.LESS_THAN)
-        # y \leq 1-z
+        # y <= 1 - z
         milp.add_new_constraint(
             Expression(1.0, Term(-1.0, z), Term(-1.0, y)),
             InequalityType.GREATER_THAN,
         )
-        # \sum_{i=1}^{n} x_i - (n-1)  \geq z - (n-1) y
+        # sum_{i=1}^{n} x_i - (n-1) >= z - (n-1) y
         exp2: Expression = Expression(exp)
         exp2.add_term(Term(N - 1.0, y))
         milp.add_new_constraint(exp2, InequalityType.GREATER_THAN)
@@ -11639,7 +12456,7 @@ class LukasiewiczSolver:
     def __and_equation_2(
         z: Variable, x1: Variable, x2: float, milp: MILPHelper
     ) -> None:
-        """
+        r"""
         This method encodes the logical AND operation $z = x_1 \land x_2$ within the Mixed-Integer Linear Programming (MILP) framework, specifically for the case where the second operand $x_2$ is a constant float. It implements the Łukasiewicz t-norm formulation, which mathematically corresponds to $z = \max(0, x_1 + x_2 - 1)$, by introducing an auxiliary binary variable to linearize the relationship. The method modifies the MILP helper instance by adding this new variable and appending the necessary inequality constraints to enforce the logical equivalence.
 
         :param z: The variable to be constrained to the result of the logical AND operation between x1 and x2.
@@ -11652,18 +12469,19 @@ class LukasiewiczSolver:
         :type milp: MILPHelper
         """
 
+        # auxiliary binary y
         y: Variable = milp.get_new_variable(VariableType.BINARY)
-        # x1 + x2 - 1 \leq z
+        # x1 + x2 - 1 <= z
         milp.add_new_constraint(
             Expression(1.0 - x2, Term(-1.0, x1), Term(1.0, z)),
             InequalityType.GREATER_THAN,
         )
-        # x1 + x2 - 1 \geq z - y
+        # x1 + x2 - 1 >= z - y
         milp.add_new_constraint(
             Expression(1.0 - x2, Term(-1.0, x1), Term(1.0, z), Term(-1.0, y)),
             InequalityType.LESS_THAN,
         )
-        # z \leq 1 - y
+        # z <= 1 - y
         milp.add_new_constraint(
             Expression(-1.0, Term(1.0, z), Term(1.0, y)),
             InequalityType.LESS_THAN,
@@ -11673,7 +12491,7 @@ class LukasiewiczSolver:
     def __and_equation_3(
         z: Variable, x1: Variable, x2: Variable, milp: MILPHelper
     ) -> None:
-        """
+        r"""
         Encodes the logical AND operation $z = x_1 \land x_2$ into the MILP model by introducing a new auxiliary binary variable and adding three linear constraints to the helper instance. This method modifies the model in place to enforce the relationship, ensuring that $z$ is 1 if and only if both $x_1$ and $x_2$ are 1. The formulation relies on the auxiliary variable to define the feasible region of the logical operation.
 
         :param z: The variable to be constrained to the result of the logical AND operation between x1 and x2.
@@ -11686,13 +12504,14 @@ class LukasiewiczSolver:
         :type milp: MILPHelper
         """
 
+        # auxiliary binary y
         y: Variable = milp.get_new_variable(VariableType.BINARY)
-        # x1 + x2 - 1 \leq z
+        # x1 + x2 - 1 <= z
         milp.add_new_constraint(
             Expression(1.0, Term(-1.0, x1), Term(-1.0, x2), Term(1.0, z)),
             InequalityType.GREATER_THAN,
         )
-        # x1 + x2 - 1 \geq z - y
+        # x1 + x2 - 1 >= z - y
         milp.add_new_constraint(
             Expression(
                 1.0,
@@ -11703,7 +12522,7 @@ class LukasiewiczSolver:
             ),
             InequalityType.LESS_THAN,
         )
-        # z \leq 1 - y
+        # z <= 1 - y
         milp.add_new_constraint(
             Expression(-1.0, Term(1.0, z), Term(1.0, y)),
             InequalityType.LESS_THAN,
@@ -11726,11 +12545,14 @@ class LukasiewiczSolver:
         :type milp: MILPHelper
         """
 
+        # auxiliary binary y
         y: Variable = milp.get_new_variable(VariableType.BINARY)
+        # z + y <= 1
         milp.add_new_constraint(
             Expression(1.0, Term(-1.0, z), Term(-1.0, y)),
             InequalityType.GREATER_THAN,
         )
+        # x1 + x2 - z + y >= 0
         milp.add_new_constraint(
             Expression(-1.0, Term(1.0, x1), Term(1.0, x2), Term(-1.0, z), Term(1.0, y)),
             InequalityType.GREATER_THAN,
@@ -11750,7 +12572,7 @@ class LukasiewiczSolver:
 
     @staticmethod
     def and_geq_equation(*args) -> None:
-        """
+        r"""
         Adds a constraint to the MILP model representing the inequality $z \ge x_1 \land x_2$, where $z$ is the result variable and $x_1, x_2$ are the operands. The method accepts a result variable, a first operand variable, a second operand (which can be either a variable or a numeric constant), and a MILP helper instance. It dispatches to specific internal implementations to generate the appropriate linear constraints based on whether the second operand is a variable or a constant. The method raises a ValueError if the second operand is of an unsupported type and asserts that the first and last arguments are of the correct types.
 
         :param args: A sequence of four elements defining the logical constraint: the result variable, the first operand variable, the second operand (either a variable or a numeric constant), and the MILP helper instance.
@@ -11774,7 +12596,7 @@ class LukasiewiczSolver:
     def __and_geq_equation_1(
         z: Variable, x1: Variable, x2: Variable, milp: MILPHelper
     ) -> None:
-        """
+        r"""
         This static method enforces the first linear inequality required to model the logical conjunction $z = x_1 \land x_2$ within a Mixed-Integer Linear Programming (MILP) framework. It adds a constraint to the provided `MILPHelper` instance ensuring that the result variable $z$ is not less than the sum of the input variables $x_1$ and $x_2$ minus one ($z \ge x_1 + x_2 - 1$). This constraint specifically prevents $z$ from being false (0) when both inputs are true (1), effectively establishing the lower bound for the AND operation, while the upper bounds are typically handled by separate constraints.
 
         :param z: The output variable representing the result of the logical AND operation.
@@ -11787,6 +12609,7 @@ class LukasiewiczSolver:
         :type milp: MILPHelper
         """
 
+        # z >= x1 + x2 - 1
         milp.add_new_constraint(
             Expression(-1.0, Term(-1.0, z), Term(1.0, x1), Term(1.0, x2)),
             InequalityType.LESS_THAN,
@@ -11809,6 +12632,7 @@ class LukasiewiczSolver:
         :type milp: MILPHelper
         """
 
+        # z >= x1 + x2 - 1
         milp.add_new_constraint(
             Expression(-1.0 + x2, Term(-1.0, z), Term(1.0, x1)),
             InequalityType.LESS_THAN,
@@ -11816,8 +12640,18 @@ class LukasiewiczSolver:
 
     @staticmethod
     def or_equation(x: list[Variable], z: Variable, milp: MILPHelper) -> None:
-        """
-        Adds linear constraints to the MILP model to enforce the logical condition that the variable `z` represents the OR operation of the variables in list `x`. This ensures that `z` is 1 if and only if at least one variable in `x` is 1, and `z` is 0 if all variables in `x` are 0. The method introduces an auxiliary binary variable to linearize the relationship and modifies the `milp` helper by adding the new variable and the necessary inequality constraints.
+        r"""
+        Łukasiewicz t-conorm  $z = x_1 \oplus_L x_2 \oplus_L \dots$
+        encoded as MILP linear constraints.
+
+        Introduces an auxiliary binary variable $y$ and enforces:
+
+        .. math::
+            \begin{aligned}
+            \sum_i x_i &\ge z \\
+            y &\le z \\
+            \sum_i x_i &\le z + (n-1)\,y
+            \end{aligned}
 
         :param x: A list of variables representing the operands of the logical OR operation.
         :type x: list[Variable]
@@ -11827,20 +12661,21 @@ class LukasiewiczSolver:
         :type milp: MILPHelper
         """
 
+        # auxiliary binary y
         y: Variable = milp.get_new_variable(VariableType.BINARY)
         N: int = len(x)
 
-        # \sum_{i=1}^{n} x_i \geq z
+        # sum_{i=1}^{n} x_i >= z
         exp: Expression = Expression(x)
         exp.add_term(Term(-1.0, z))
         milp.add_new_constraint(exp, InequalityType.GREATER_THAN)
 
-        # y \leq z
+        # y <= z
         milp.add_new_constraint(
             Expression(Term(1.0, y), Term(-1.0, z)), InequalityType.LESS_THAN
         )
 
-        # \sum_{i=1}^{n} x_i \leq z + (n-1) y
+        # sum_{i=1}^{n} x_i <= z + (n-1) y
         exp2: Expression = Expression(exp)
         exp2.add_term(Term(1.0 - N, y))
         milp.add_new_constraint(exp2, InequalityType.LESS_THAN)
@@ -11848,8 +12683,23 @@ class LukasiewiczSolver:
 
 @class_debugging()
 class ZadehSolver:
-    """
-    This class serves as a static solver for translating fuzzy logic assertions into Mixed-Integer Linear Programming (MILP) constraints, primarily operating under Zadeh fuzzy logic semantics. It provides a suite of methods to model fundamental logical operations—such as conjunction, disjunction, negation, and various forms of implication (including Zadeh, Goedel, and Kleene-Dienes)—by mapping them to linear inequalities and introducing auxiliary binary variables where necessary. The solver interacts directly with a `KnowledgeBase` and an `MILPHelper` to populate the optimization model, handling both simple logical connectives and complex quantifiers like existential and universal restrictions. Users typically invoke the high-level `solve_and`, `solve_or`, `solve_some`, and `solve_all` methods to process assertions against a knowledge base, while the lower-level equation methods are utilized to construct the specific mathematical relationships required by the underlying solver.
+    r"""
+    Static solver that encodes Zadeh (Gödel min/max + Kleene–Dienes) fuzzy
+    operators as MILP linear constraints.
+
+    Operators implemented:
+
+    .. math::
+        \begin{aligned}
+        x \otimes_Z y &= \min(x,y)              && \text{(Zadeh / Gödel t-norm)} \\
+        x \oplus_Z y &= \max(x,y)              && \text{(Zadeh / Gödel t-conorm)} \\
+        x \Rightarrow_{KD} y &= \max(1-x,\; y) && \text{(Kleene–Dienes implication)} \\
+        x \Rightarrow_G y &= \begin{cases}1 & x \le y \\ y & \text{otherwise}\end{cases}
+                                              && \text{(Gödel implication)} \\
+        x \Rightarrow_Z y &= \max(1-x,\; \min(x,y)) && \text{(Zadeh implication)} \\
+        \neg_G x &= \begin{cases}1 & x=0 \\ 0 & \text{otherwise}\end{cases}
+                                              && \text{(Gödel negation)}
+        \end{aligned}
 
     :raises ValueError: Raised when the arguments provided to the overloaded equation methods (such as `and_equation`, `and_geq_equation`, or `zadeh_implies_equation`) do not match the expected type signatures for any supported operation.
     """
@@ -11903,8 +12753,20 @@ class ZadehSolver:
 
     @staticmethod
     def and_equation(*args) -> None:
-        """
-        Computes and enforces the logical AND operation within a Mixed-Integer Linear Programming (MILP) context by adding constraints to the provided solver helper. This static method serves as a dispatcher that validates the input arguments—accepting either 3 or 4 arguments where the final argument must be a `MILPHelper` instance—and delegates the constraint generation to specific private helper methods based on the types of the preceding inputs. Supported input patterns include lists of variables, pairs of variables, variables combined with terms, or variables combined with numeric constants. The method modifies the state of the `MILPHelper` object to reflect the new constraints and raises a `ValueError` if the argument types do not conform to the expected patterns.
+        r"""
+        Dispatcher for the Zadeh (Gödel) t-norm  $z = \min(x_1, x_2, \dots)$
+        encoded as MILP linear constraints.
+
+        Supported signatures:
+
+        * ``and_equation([x_1,…,x_n], z, milp)``   → $z = \min(x_1,\dots,x_n)$
+        * ``and_equation(z, x_1, x_2, milp)``       → $z = \min(x_1, x_2)$
+        * ``and_equation(z, x_1, c, milp)``         → $z = \min(x_1, c)$
+        * ``and_equation(z, x_1, t, milp)``         → $z = \min(x_1, t)$  (``Term``)
+        * ``and_equation(x_1, x_2, milp)``          → crisp disjointness
+          $x_1 + x_2 \le 1$ (two-variable Zadeh AND for disjointness)
+
+        Every minimum is reified via Big-M linearisations.
 
         :param args: Operands for the AND operation and the MILP solver helper, provided as a variable-length list. Valid configurations include three arguments (a list of variables, a variable or term, and a helper) or four arguments (two variables, a variable or number, and a helper).
         :type args: typing.Any
@@ -11941,7 +12803,7 @@ class ZadehSolver:
 
     @staticmethod
     def __and_equation_1(x: list[Variable], z: Variable, milp: MILPHelper) -> None:
-        """
+        r"""
         Encodes the logical constraint $z = x_1 \land x_2 \land \dots \land x_n$ into the Mixed-Integer Linear Programming (MILP) model provided. This method acts as a wrapper around the general `and_equation` function, passing the list of input variables and the output variable `z` formatted as a Term with a coefficient of 1.0. It modifies the `milp` object by adding the necessary linear inequalities to enforce that the result variable `z` is true only when all variables in the input list `x` are true.
 
         :param x: A list of variables representing the operands of the logical AND operation.
@@ -11968,17 +12830,17 @@ class ZadehSolver:
         """
 
         N: int = len(x)
-        M: float = Util.log2(N)
-        # z \leq x_i
+        M: int = Util.log2(N)
+        # z <= x_i
         for xi in x:
             milp.add_new_constraint(
                 Expression(t, Term(-1.0, xi)), InequalityType.LESS_THAN
             )
-        # y \in {0,1}
+        # auxiliary binaries y_j for logarithmic encoding
         y: list[Variable] = [
             milp.get_new_variable(VariableType.BINARY) for _ in range(M)
         ]
-        # x_{i} \leq z + \sum_{j=1}^{m} e_{ij}
+        # x_i <= z + sum_j e_{ij}
         for i, xi in enumerate(x):
             dividendo: int = i
             exp: Expression = Expression(t, Term(-1.0, xi))
@@ -11991,7 +12853,7 @@ class ZadehSolver:
                 dividendo //= 2
             milp.add_new_constraint(exp, InequalityType.GREATER_THAN)
 
-        # \sum_{j=1}^{m} 2^{j-1} y_{j} \leq n-1
+        # sum_{j=1}^{m} 2^{j-1} y_j <= n - 1
         exp2: Expression = Expression(1.0 - N)
         k: float = 1.0
         for m in range(M):
@@ -12003,7 +12865,7 @@ class ZadehSolver:
     def __and_equation_3(
         z: Variable, x1: Variable, x2: float, milp: MILPHelper
     ) -> None:
-        """
+        r"""
         Encodes the logical AND operation $z = x_1 \land x_2$ into the Mixed-Integer Linear Programming (MILP) model, specifically for the scenario where the second operand $x_2$ is a constant float value. This method linearizes the non-linear logical relationship by introducing an auxiliary binary variable and adding four linear inequality constraints to the MILP helper. The constraints ensure that the result variable $z$ is bounded above by both inputs and that the inputs are bounded below by $z$ combined with the auxiliary variable, thereby enforcing the AND condition. As a side effect, this method modifies the state of the provided `MILPHelper` instance by registering the new auxiliary variable and appending the necessary constraints to the model.
 
         :param z: The variable representing the result of the logical AND operation between x1 and x2.
@@ -12016,19 +12878,20 @@ class ZadehSolver:
         :type milp: MILPHelper
         """
 
+        # auxiliary binary y
         y: Variable = milp.get_new_variable(VariableType.BINARY)
-        # x_1 \leq x_2
+        # z <= x1
         milp.add_new_constraint(
             Expression(Term(1.0, z), Term(-1.0, x1)), InequalityType.LESS_THAN
         )
-        # x_1 \leq x_3
+        # z <= x2
         milp.add_new_constraint(Expression(Term(1.0, z)), InequalityType.LESS_THAN, x2)
-        # x_2 \leq x_1 + y
+        # x1 <= z + y
         milp.add_new_constraint(
             Expression(Term(1.0, x1), Term(-1.0, z), Term(-1.0, y)),
             InequalityType.LESS_THAN,
         )
-        # x_3 \leq x_1 + (1-y)
+        # x2 <= z + (1 - y)
         milp.add_new_constraint(
             Expression(-1.0 + x2, Term(-1.0, z), Term(1.0, y)),
             InequalityType.LESS_THAN,
@@ -12038,7 +12901,7 @@ class ZadehSolver:
     def __and_equation_4(
         z: Variable, x1: Variable, x2: Variable, milp: MILPHelper
     ) -> None:
-        """
+        r"""
         Encodes the logical AND operation $z = x_1 \land x_2$ into the MILP model using a specific linearization formulation that relies on an auxiliary binary variable. This method introduces a new binary variable $y$ and adds four linear inequality constraints to the MILP helper to enforce the relationship: $z \le x_1$, $z \le x_2$, $x_1 \le z + y$, and $x_2 \le z + 1 - y$. These constraints ensure that $z$ takes the value 1 only when both $x_1$ and $x_2$ are 1, provided the input variables are binary. The operation modifies the `milp` object by registering the new variable and appending the constraints, and it returns None.
 
         :param z: The variable representing the result of the logical AND operation between x1 and x2.
@@ -12051,21 +12914,22 @@ class ZadehSolver:
         :type milp: MILPHelper
         """
 
+        # auxiliary binary y
         y: Variable = milp.get_new_variable(VariableType.BINARY)
-        # x_1 \leq x_2
+        # z <= x1
         milp.add_new_constraint(
             Expression(Term(1.0, z), Term(-1.0, x1)), InequalityType.LESS_THAN
         )
-        # x_1 \leq x_3
+        # z <= x2
         milp.add_new_constraint(
             Expression(Term(1.0, z), Term(-1.0, x2)), InequalityType.LESS_THAN
         )
-        # x_2 \leq x_1 + y
+        # x1 <= z + y
         milp.add_new_constraint(
             Expression(Term(1.0, x1), Term(-1.0, z), Term(-1.0, y)),
             InequalityType.LESS_THAN,
         )
-        # x_3 \leq x_1 + (1-y)
+        # x2 <= z + (1 - y)
         milp.add_new_constraint(
             Expression(-1.0, Term(1.0, x2), Term(-1.0, z), Term(1.0, y)),
             InequalityType.LESS_THAN,
@@ -12084,10 +12948,13 @@ class ZadehSolver:
         :type milp: MILPHelper
         """
 
+        # auxiliary binary y
         y: Variable = milp.get_new_variable(VariableType.BINARY)
+        # x1 <= y
         milp.add_new_constraint(
             Expression(Term(-1.0, y), Term(1.0, x1)), InequalityType.LESS_THAN
         )
+        # x1 + x2 <= 1 - y
         milp.add_new_constraint(
             Expression(1.0, Term(-1.0, y), Term(-1.0, x2)),
             InequalityType.GREATER_THAN,
@@ -12097,7 +12964,7 @@ class ZadehSolver:
     def and_negated_equation(
         z: Variable, x1: Variable, x2: float, milp: MILPHelper
     ) -> None:
-        """
+        r"""
         Encodes the logical relationship z = (1 - x1) AND x2 into the Mixed-Integer Linear Programming (MILP) model by adding linear constraints and an auxiliary binary variable. This method ensures that the binary variable z is 1 if and only if x1 is 0 and the float parameter x2 is 1, effectively linearizing the logical AND operation for the solver. It modifies the MILPHelper instance in place by creating a new binary variable and appending four inequality constraints that enforce the equivalence between the logical expression and the variable z.
 
         :param z: The variable representing the result of the logical expression $(1 - x_1) \land x_2$.
@@ -12110,20 +12977,21 @@ class ZadehSolver:
         :type milp: MILPHelper
         """
 
+        # auxiliary binary y
         y: Variable = milp.get_new_variable(VariableType.BINARY)
-        # x_1 \leq (1 - x_2)
+        # z <= 1 - x1
         milp.add_new_constraint(
             Expression(-1.0, Term(1.0, z), Term(1.0, x1)),
             InequalityType.LESS_THAN,
         )
-        # x_1 \leq x_3
+        # z <= x2
         milp.add_new_constraint(Expression(Term(1.0, z)), InequalityType.LESS_THAN, x2)
-        # (1 - x_2) \leq x_1 + y
+        # 1 - x1 <= z + y
         milp.add_new_constraint(
             Expression(1.0, Term(-1.0, x1), Term(-1.0, z), Term(-1.0, y)),
             InequalityType.LESS_THAN,
         )
-        # x_3 \leq x_1 + (1-y)
+        # x2 <= z + (1 - y)
         milp.add_new_constraint(
             Expression(-1.0 + x2, Term(-1.0, z), Term(1.0, y)),
             InequalityType.LESS_THAN,
@@ -12133,7 +13001,7 @@ class ZadehSolver:
     def and_leq_equation(
         z: Variable, x1: Variable, x2: Variable, milp: MILPHelper
     ) -> None:
-        """
+        r"""
         Adds constraints to the provided MILP model to enforce that the variable `z` is less than or equal to the logical AND of `x1` and `x2`, interpreted as the minimum of the two inputs. This is achieved by appending two linear inequalities, $z \le x_1$ and $z \le x_2$, to the model, effectively bounding `z` from above by the smaller of the two operands. The method modifies the `MILPHelper` instance in place by registering these constraints and returns nothing.
 
         :param z: The variable representing the result of the logical AND operation, constrained to be less than or equal to both x1 and x2.
@@ -12146,9 +13014,11 @@ class ZadehSolver:
         :type milp: MILPHelper
         """
 
+        # z <= x1
         milp.add_new_constraint(
             Expression(Term(-1.0, x1), Term(1.0, z)), InequalityType.LESS_THAN
         )
+        # z <= x2
         milp.add_new_constraint(
             Expression(Term(-1.0, x2), Term(1.0, z)), InequalityType.LESS_THAN
         )
@@ -12167,7 +13037,7 @@ class ZadehSolver:
 
     @staticmethod
     def and_geq_equation(*args) -> None:
-        """
+        r"""
         Adds constraints to a Mixed-Integer Linear Programming (MILP) model to enforce the inequality $z \ge x_1 \land x_2$, where $z$ is the result variable and $x_1, x_2$ are the operands. This static method validates the input arguments and delegates the constraint generation to specialized internal methods based on the type of the second operand; it handles cases where the operand is a `Variable` or a numeric constant differently. The method modifies the MILP model via the provided `MILPHelper` instance and raises an `AssertionError` for incorrect argument counts or types, or a `ValueError` if the second operand is neither a variable nor a number.
 
         :param args: A tuple containing the result variable, the first operand variable, the second operand (either a variable or a numeric constant), and the MILP helper instance.
@@ -12204,13 +13074,14 @@ class ZadehSolver:
         :type milp: MILPHelper
         """
 
+        # auxiliary binary y
         y: Variable = milp.get_new_variable(VariableType.BINARY)
-        # If y = 0, z >= x1
+        # z + y >= x1
         milp.add_new_constraint(
             Expression(Term(1.0, y), Term(1.0, z), Term(-1.0, x1)),
             InequalityType.GREATER_THAN,
         )
-        # If y = 1, z >= x2
+        # z + (1 - y) >= x2
         milp.add_new_constraint(
             Expression(1.0, Term(-1.0, y), Term(1.0, z), Term(-1.0, x2)),
             InequalityType.GREATER_THAN,
@@ -12220,7 +13091,7 @@ class ZadehSolver:
     def __and_geq_equation_2(
         z: Variable, x1: Variable, x2: float, milp: MILPHelper
     ) -> None:
-        """
+        r"""
         Adds linear constraints to the MILP model to enforce the inequality $z \ge x_1 \land x_2$, interpreting the AND operation as the minimum of the operands. To linearize this logical condition, the method introduces a new binary auxiliary variable which allows the solver to select the active constraint, effectively ensuring that $z$ is greater than or equal to the smaller of $x_1$ and $x_2$. This process modifies the MILP helper by adding the new variable and the associated inequality constraints to the model.
 
         :param z: The variable representing the result of the AND operation.
@@ -12233,13 +13104,14 @@ class ZadehSolver:
         :type milp: MILPHelper
         """
 
+        # auxiliary binary y
         y: Variable = milp.get_new_variable(VariableType.BINARY)
-        # If y = 0, z >= x1
+        # z + y >= x1
         milp.add_new_constraint(
             Expression(Term(1.0, y), Term(1.0, z), Term(-1.0, x1)),
             InequalityType.GREATER_THAN,
         )
-        # If y = 1, z >= x2
+        # z + (1 - y) >= x2
         milp.add_new_constraint(
             Expression(1.0, Term(-1.0, y), Term(1.0, z)),
             InequalityType.GREATER_THAN,
@@ -12310,7 +13182,7 @@ class ZadehSolver:
         ZadehSolver.and_leq_equation(x_ass, c_var, r_var, kb.milp)
         kb.solve_role_inclusion_axioms(a, r)
         # For every inverse role
-        list_inverse_roles: list[str] = kb.inverse_roles.get(concept.role, [])
+        list_inverse_roles: set[str] = kb.inverse_roles.get(concept.role, set())
         for inv_role in list_inverse_roles:
             # (b,a):inv(R) >= l
             IndividualHandler.add_relation(
@@ -12407,7 +13279,7 @@ class ZadehSolver:
     def kleene_dienes_implies_equation(
         z: Variable, x1: Variable, x2: Variable, milp: MILPHelper
     ) -> None:
-        """
+        r"""
         Enforces the constraint that the variable `z` is less than or equal to the Kleene-Dienes implication of `x1` and `x2`, which is defined as $\max(1 - x_1, x_2)$. This method linearizes the non-linear maximum operation by introducing a new binary auxiliary variable into the MILP model, which acts as a switch to select the active term of the implication. Consequently, it adds two linear inequality constraints to the provided MILP helper instance to define the relationship between `z`, `x1`, `x2`, and the auxiliary variable. Note that this implementation only restricts `z` from above, meaning `z` may be strictly less than the implication value depending on the broader optimization context.
 
         :param z: The variable representing the result of the Kleene-Dienes implication operation.
@@ -12420,13 +13292,14 @@ class ZadehSolver:
         :type milp: MILPHelper
         """
 
+        # auxiliary binary y
         y: Variable = milp.get_new_variable(VariableType.BINARY)
-        # If y=0: x2  \geq  z
+        # x2 + y >= z
         milp.add_new_constraint(
             Expression(Term(1.0, x2), Term(1.0, y), Term(-1.0, z)),
             InequalityType.GREATER_THAN,
         )
-        # If y=1: 1 - x1 \geq  z
+        # 1 - x1 + (1 - y) >= z
         milp.add_new_constraint(
             Expression(2.0, Term(-1.0, y), Term(-1.0, z), Term(-1.0, x1)),
             InequalityType.GREATER_THAN,
@@ -12449,28 +13322,29 @@ class ZadehSolver:
         :type milp: MILPHelper
         """
 
+        # auxiliary binary y
         y: Variable = milp.get_new_variable(VariableType.BINARY)
-        # 2y + x1 \geq x2 + \epsilon
+        # 2y + x1 >= x2 + epsilon
         milp.add_new_constraint(
             Expression(Term(2.0, y), Term(1.0, x1), Term(-1.0, x2)),
             InequalityType.GREATER_THAN,
             ConfigReader.EPSILON,
         )
-        # y + x2 \geq z
+        # y + x2 >= z
         milp.add_new_constraint(
             Expression(Term(1.0, y), Term(1.0, x2), Term(-1.0, z)),
             InequalityType.GREATER_THAN,
         )
-        # x2 \leq z + y
+        # x2 <= z + y
         milp.add_new_constraint(
             Expression(Term(1.0, x2), Term(-1.0, z), Term(-1.0, y)),
             InequalityType.LESS_THAN,
         )
-        # z \geq y
+        # z >= y
         milp.add_new_constraint(
             Expression(Term(1.0, z), Term(-1.0, y)), InequalityType.GREATER_THAN
         )
-        # x1 \leq x2 + (1 - y)
+        # x1 <= x2 + (1 - y)
         milp.add_new_constraint(
             Expression(-1.0, Term(1.0, x1), Term(-1.0, x2), Term(1.0, y)),
             InequalityType.LESS_THAN,
@@ -12527,8 +13401,9 @@ class ZadehSolver:
         :type milp: MILPHelper
         """
 
+        # auxiliary binary y
         y: Variable = milp.get_new_variable(VariableType.BINARY)
-        # 2y + x1 \geq x2 + \epsilon
+        # 2y + x1 >= x2 + epsilon
         milp.add_new_constraint(
             Expression(Term(2.0, y), Term(1.0, x1), Term(-1.0, x2)),
             InequalityType.GREATER_THAN,
@@ -12538,7 +13413,7 @@ class ZadehSolver:
         milp.add_new_constraint(
             Expression(Term(1.0, z), Term(-1.0, y)), InequalityType.EQUAL
         )
-        # x1 \leq x2 + (1 - y)
+        # x1 <= x2 + (1 - y)
         milp.add_new_constraint(
             Expression(-1.0, Term(1.0, x1), Term(-1.0, x2), Term(1.0, y)),
             InequalityType.LESS_THAN,
@@ -12561,8 +13436,9 @@ class ZadehSolver:
         :type milp: MILPHelper
         """
 
+        # auxiliary binary y
         y: Variable = milp.get_new_variable(VariableType.BINARY)
-        # 2y + x1 \geq x2 + \epsilon
+        # 2y + x1 >= x2 + epsilon
         milp.add_new_constraint(
             Expression(Term(2.0, y), Term(1.0, x1), Term(-1.0, x2)),
             InequalityType.GREATER_THAN,
@@ -12570,7 +13446,7 @@ class ZadehSolver:
         )
         # z = y
         milp.add_new_constraint(Expression(z, Term(-1.0, y)), InequalityType.EQUAL)
-        # x1 \leq x2 + (1 - y)
+        # x1 <= x2 + (1 - y)
         milp.add_new_constraint(
             Expression(-1.0, Term(1.0, x1), Term(-1.0, x2), Term(1.0, y)),
             InequalityType.LESS_THAN,
@@ -12580,7 +13456,7 @@ class ZadehSolver:
     def zadeh_implies_leq_equation(
         z: Variable, x1: Variable, x2: Variable, milp: MILPHelper
     ) -> None:
-        """
+        r"""
         Adds a linear constraint to the MILP model to enforce that the variable `z` is less than or equal to the result of the Zadeh implication operation between `x1` and `x2`. The method implements the inequality $z \le 1 - x_1 + x_2$, which accurately models the upper bound of the implication under the assumption that `x1` is a binary variable. This operation modifies the `milp` helper instance by registering the new constraint, thereby restricting the solution space of the optimization problem.
 
         :param z: The variable representing the result of the Z-implication operation.
@@ -12593,6 +13469,7 @@ class ZadehSolver:
         :type milp: MILPHelper
         """
 
+        # z <= 1 - x1 + x2
         milp.add_new_constraint(
             Expression(1.0, Term(-1.0, x1), Term(1.0, x2), Term(-1.0, z)),
             InequalityType.GREATER_THAN,
@@ -12614,12 +13491,12 @@ class ZadehSolver:
         if y.get_type() != VariableType.BINARY:
             y.set_type(VariableType.BINARY)
 
-        # y \leq 1 - z
+        # y <= 1 - z
         milp.add_new_constraint(
             Expression(-1.0, Term(1.0, z), Term(1.0, y)),
             InequalityType.LESS_THAN,
         )
-        # z + y \geq \epsilon
+        # z + y >= epsilon
         milp.add_new_constraint(
             Expression(-ConfigReader.EPSILON, Term(1.0, z), Term(1.0, y)),
             InequalityType.GREATER_THAN,
@@ -12637,7 +13514,7 @@ class ZadehSolver:
 
     @staticmethod
     def or_equation(*args) -> None:
-        """
+        r"""
         Encodes the logical OR operation as a set of linear constraints within a Mixed-Integer Linear Programming (MILP) model, allowing the solver to represent the relationship $z = x_1 \lor x_2 \lor \dots$. This static method acts as a dispatcher that validates the input arguments and delegates to the appropriate internal implementation based on the number of arguments provided. It supports two distinct signatures: a three-argument form accepting a list of input variables, a result variable, and a MILP helper, and a four-argument form accepting two input variables, a numeric constant, and a MILP helper. The method modifies the MILP model by adding constraints through the helper object and returns None. It raises an AssertionError if the arguments do not conform to the expected types or counts.
 
         :param args: Arguments for the OR operation, provided as either a list of input variables, the result variable, and a MILP helper, or as two input variables, a numeric constant, and a MILP helper.
@@ -12674,21 +13551,22 @@ class ZadehSolver:
         :type milp: MILPHelper
         """
 
+        # auxiliary binary y
         y: Variable = milp.get_new_variable(VariableType.BINARY)
-        # z  \geq x1
+        # z >= x1
         milp.add_new_constraint(
             Expression(Term(1.0, z), Term(-1.0, x1)), InequalityType.GREATER_THAN
         )
-        # z \geq x2
+        # z >= x2
         milp.add_new_constraint(
             Expression(Term(1.0, z)), InequalityType.GREATER_THAN, x2
         )
-        # x1 + y \geq z
+        # x1 + y >= z
         milp.add_new_constraint(
             Expression(Term(1.0, x1), Term(1.0, y), Term(-1.0, z)),
             InequalityType.GREATER_THAN,
         )
-        # x_2 + (1-y) \geq z
+        # x2 + (1 - y) >= z
         milp.add_new_constraint(
             Expression(1.0 + x2, Term(-1.0, y), Term(-1.0, z)),
             InequalityType.GREATER_THAN,
@@ -12696,7 +13574,7 @@ class ZadehSolver:
 
     @staticmethod
     def __or_equation_2(x: list[Variable], z: Variable, milp: MILPHelper) -> None:
-        """
+        r"""
         This static method implements a logarithmic formulation to model the logical OR operation $z = x_1 \lor x_2 \lor \dots \lor x_N$ within a Mixed-Integer Linear Programming (MILP) context. It adds constraints to the provided `MILPHelper` instance to ensure the result variable `z` is true if and only if at least one variable in the input list `x` is true. The method introduces a set of new binary auxiliary variables to the model, which allows the number of constraints to scale logarithmically with the size of the input list, offering efficiency gains over standard linear formulations for large $N$. As a side effect, this method modifies the `milp` object by creating these auxiliary variables and appending the new constraints to the solver. Note that the implementation assumes the input list is non-empty, as it calculates the logarithm of the list length.
 
         :param x: A list of decision variables representing the operands of the logical OR operation.
@@ -12708,17 +13586,17 @@ class ZadehSolver:
         """
 
         N: int = len(x)
-        M: float = Util.log2(N)
-        # z \geq x_i
+        M: int = Util.log2(N)
+        # z >= x_i
         for xi in x:
             milp.add_new_constraint(
                 Expression(Term(1.0, z), Term(-1.0, xi)), InequalityType.GREATER_THAN
             )
-        # y \in {0,1}
+        # auxiliary binaries y_j for logarithmic encoding
         y: list[Variable] = [
             milp.get_new_variable(VariableType.BINARY) for _ in range(int(M))
         ]
-        # x_{i} + \sum_{j=1}^{m} e_{ij} \geq z
+        # x_i + sum_j e_{ij} >= z
         for i, xi in enumerate(x):
             remainder: int = i
             exp: Expression = Expression(Term(-1.0, z), Term(1.0, xi))
@@ -12732,7 +13610,7 @@ class ZadehSolver:
             i += 1
             milp.add_new_constraint(exp, InequalityType.GREATER_THAN)
 
-        # \sum_{j=1}^{m} 2^{j-1} y_{j} \leq n-1
+        # sum_{j=1}^{m} 2^{j-1} y_j <= n - 1
         exp2: Expression = Expression(1.0 - N)
         k: float = 1.0
         for m in range(int(M)):
@@ -12744,7 +13622,7 @@ class ZadehSolver:
     def or_negated_equation(
         z: Variable, x1: Variable, x2: float, milp: MILPHelper
     ) -> None:
-        """
+        r"""
         Encodes the logical relationship $z = (1 - x_1) \lor x_2$ into the provided MILP model by adding linear constraints. This ensures that the variable $z$ is equivalent to the maximum of $(1 - x_1)$ and the constant $x_2$. The implementation introduces a new auxiliary binary variable to the model to handle the disjunction logic and adds four specific inequality constraints to enforce the correct upper and lower bounds on $z$. The method modifies the MILP helper in place by registering these new variables and constraints.
 
         :param z: The variable representing the result of the logical operation (1 - x1) OR x2.
@@ -12757,22 +13635,23 @@ class ZadehSolver:
         :type milp: MILPHelper
         """
 
+        # auxiliary binary y
         y: Variable = milp.get_new_variable(VariableType.BINARY)
 
-        # z  \geq (1 - x1)
+        # z >= 1 - x1
         milp.add_new_constraint(
             Expression(1.0, Term(1.0, z), Term(1.0, x1)), InequalityType.GREATER_THAN
         )
-        # z  \geq x2
+        # z >= x2
         milp.add_new_constraint(
             Expression(Term(1.0, z)), InequalityType.GREATER_THAN, x2
         )
-        # (1 - x1) + y \geq z
+        # 1 - x1 + y >= z
         milp.add_new_constraint(
             Expression(1.0, Term(-1.0, x1), Term(1.0, y), Term(-1.0, z)),
             InequalityType.GREATER_THAN,
         )
-        # x_2 + (1-y) \geq z
+        # x2 + (1 - y) >= z
         milp.add_new_constraint(
             Expression(
                 1.0 + x2,
@@ -12921,13 +13800,15 @@ class IndividualHandler:
                         add_new_rel = False
                         rels[i] = rel
                         ind.role_relations[role_name] = rels
-                    Util.debug(
-                        f"Relation {ind.name}, {b} through role {role_name} has already been processed hence ignored"
-                    )
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(
+                            f"Relation {ind.name}, {b} through role {role_name} has already been processed hence ignored"
+                        )
                     break
         # If not, add new relation to the list
         if add_new_rel:
-            Util.debug(f"Adding ({ind}, {b}): {role_name}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"Adding ({ind}, {b}): {role_name}")
             kb.num_relations += 1
             rels.append(rel)
             ind.role_relations[role_name] = rels
@@ -13031,7 +13912,8 @@ class IndividualHandler:
         :type kb: KnowledgeBase
         """
 
-        Util.debug(f"Simple Unblock children of {ind.name}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Simple Unblock children of {ind.name}")
         if ind.name in kb.directly_blocked_children:
             kb.unblock_children(ind.name)
 
@@ -13150,7 +14032,8 @@ class IndividualHandler:
         # Apply new restriction to all the existing relations via roleName
         rels: list[Relation] = ind.role_relations.get(role_name, [])
         for r in rels:
-            Util.debug(f"Adding universal restriction {restrict} to relation {r}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"Adding universal restriction {restrict} to relation {r}")
             IndividualHandler.solve_relation_restriction(r, restrict, kb)
 
     @staticmethod
@@ -13183,7 +14066,9 @@ class CreatedIndividualHandler:
     """This class serves as a utility handler for individuals dynamically generated during the reasoning process within a fuzzy knowledge base, primarily focusing on the implementation of blocking strategies to ensure algorithm termination. It provides static methods to determine if an individual is directly or indirectly blocked based on various configurations such as subset, set, or pairwise blocking, comparing concept labels against ancestors or other nodes in the completion forest. Furthermore, it manages the unblocking procedure, which involves resetting the status of blocked nodes and re-queuing their associated assertions for processing. Beyond blocking logic, the class is responsible for updating role successor lists and retrieving or creating representative individuals for concrete features involving fuzzy numbers."""
 
     @staticmethod
-    def update_role_successors(name: str, role_name: str, kb: KnowledgeBase) -> None:
+    def update_role_successors(
+        name: str, role_name: typing.Optional[str], kb: KnowledgeBase
+    ) -> None:
         """
         Appends the specified individual name to the list of successors associated with the given role name within the provided knowledge base. If the role name is not None, the method ensures the role exists in the `r_successors` mapping—initializing a new list if necessary—and adds the individual to it. This operation modifies the knowledge base in place and triggers debug logging to reflect the updated state of the successor list.
 
@@ -13197,17 +14082,19 @@ class CreatedIndividualHandler:
 
         # update list of R-successors
         if role_name is not None:
-            Util.debug("Update list of role-successors")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug("Update list of role-successors")
             kb.r_successors[role_name] = kb.r_successors.get(role_name, []) + [name]
-            Util.debug(
-                f"R-successor list -> {role_name} : {kb.r_successors[role_name]}"
-            )
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(
+                    f"R-successor list -> {role_name} : {kb.r_successors[role_name]}"
+                )
 
     @staticmethod
     def get_representative(
         current_individual: CreatedIndividual,
         type: InequalityType,
-        f_name: str,
+        f_name: typing.Optional[str],
         f: TriangularFuzzyNumber,
         kb: KnowledgeBase,
     ) -> CreatedIndividual:
@@ -13219,7 +14106,7 @@ class CreatedIndividualHandler:
         :param type: Specifies the inequality direction (e.g., GREATER_EQUAL, LESS_EQUAL) used to define the representative individual relative to the fuzzy number.
         :type type: InequalityType
         :param f_name: Name of the feature for which the representative individual serves as a filler.
-        :type f_name: str
+        :type f_name: typing.Optional[str]
         :param f: The fuzzy number value used as the threshold to define the representative individual based on the specified inequality type.
         :type f: TriangularFuzzyNumber
         :param kb: The knowledge base instance used to create new concrete individuals.
@@ -13253,10 +14140,14 @@ class CreatedIndividualHandler:
         :type kb: KnowledgeBase
         """
 
-        Util.debug(f"Test of Pair-wise Unblock children of {current_individual.name}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(
+                f"Test of Pair-wise Unblock children of {current_individual.name}"
+            )
         # "current_individual" is a blocking Y node: unblock blocked nodes
         if current_individual.name in kb.directly_blocked_children:
-            Util.debug(f"{current_individual.name} is a blocking Y node")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"{current_individual.name} is a blocking Y node")
             # remove Y from the Yprime list
             y_prime: CreatedIndividual = typing.cast(
                 CreatedIndividual,
@@ -13272,7 +14163,8 @@ class CreatedIndividualHandler:
                 del kb.y_prime_individuals[str(y_prime)]
 
             for x_name in kb.directly_blocked_children.get(current_individual.name):
-                Util.debug(f"Processing X node {x_name}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Processing X node {x_name}")
                 # remove Xname from the  Xprime list
                 x: CreatedIndividual = typing.cast(
                     CreatedIndividual, kb.individuals.get(x_name)
@@ -13294,11 +14186,14 @@ class CreatedIndividualHandler:
 
         # if "current_individual" is a Yprime node: unblock blocking Y nodes
         if current_individual.name in kb.y_prime_individuals:
-            Util.debug(f"{current_individual.name} is a y_prime node")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"{current_individual.name} is a y_prime node")
             for y_name in kb.y_prime_individuals.get(current_individual.name):
-                Util.debug(f"Processing Y node {y_name}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Processing Y node {y_name}")
                 for x_name in kb.directly_blocked_children.get(y_name):
-                    Util.debug(f"Processing X node {x_name}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(f"Processing X node {x_name}")
                     # remove X from the  Xprime list
                     x: CreatedIndividual = typing.cast(
                         CreatedIndividual, kb.individuals.get(x_name)
@@ -13308,7 +14203,8 @@ class CreatedIndividualHandler:
                     )
 
                     if x_prime is not None:
-                        Util.debug(f"{constants.STAR_SEPARATOR}{x_prime}")
+                        if ConfigReader.DEBUG_PRINT:
+                            Util.debug(f"{constants.STAR_SEPARATOR}{x_prime}")
                         x_individuals: list[str] = kb.x_prime_individuals.get(
                             str(x_prime), []
                         )
@@ -13326,17 +14222,21 @@ class CreatedIndividualHandler:
 
         # if "current_individual" is a Xprime node: unblock blocked X nodes
         if current_individual.name in kb.x_prime_individuals:
-            Util.debug(f"{current_individual.name} is a x_prime node")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"{current_individual.name} is a x_prime node")
             x_individuals: list[str] = kb.x_prime_individuals.get(
                 current_individual.name, []
             )
             for x_name in x_individuals:
-                Util.debug(f"Processing X node {x_name}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Processing X node {x_name}")
                 # remove X from the  directlyBlockedChildren list
                 x: CreatedIndividual = typing.cast(
                     CreatedIndividual, kb.individuals.get(x_name)
                 )
-                y_name: str = x.blocking_ancestor
+                # TODO: OLD VERSION
+                # y_name: str = x.blocking_ancestor
+                y_name: str = x.blocking_ancestor_y
                 if y_name is not None:
                     y: CreatedIndividual = typing.cast(
                         CreatedIndividual, kb.individuals.get(y_name)
@@ -13352,13 +14252,19 @@ class CreatedIndividualHandler:
                         y_prime: CreatedIndividual = typing.cast(
                             CreatedIndividual, y.get_parent()
                         )
-                        y_individuals: list[str] = kb.x_prime_individuals.get(
-                            str(y_prime)
+                        # TODO: OLD VERSION
+                        # y_individuals: list[str] = kb.x_prime_individuals.get(
+                        #     str(y_prime), []
+                        # )
+                        y_individuals: list[str] = kb.y_prime_individuals.get(
+                            str(y_prime), []
                         )
                         y_individuals.remove(y_name)
 
                         if len(y_individuals) > 0:
-                            kb.y_prime_individuals[str(y_prime)] = x_individuals
+                            # TODO: OLD VERSION
+                            # kb.y_prime_individuals[str(y_prime)] = x_individuals
+                            kb.y_prime_individuals[str(y_prime)] = y_individuals
                         else:
                             del kb.y_prime_individuals[str(y_prime)]
                 #  unblock X
@@ -13414,9 +14320,10 @@ class CreatedIndividualHandler:
         :rtype: bool
         """
 
-        Util.debug(
-            f'Testing indirect blocking "{current_individual}" at depth {current_individual.depth}'
-        )
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(
+                f'Testing indirect blocking "{current_individual}" at depth {current_individual.depth}'
+            )
         type: BlockingDynamicType = kb.blocking_type
         dynamic: bool = kb.blocking_dynamic
 
@@ -13468,7 +14375,8 @@ class CreatedIndividualHandler:
 
         # Don't test if not deep enough in completion forest
         if current_individual.depth < 4:
-            Util.debug("Depth < 4, node is not indirectly blocked")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug("Depth < 4, node is not indirectly blocked")
             current_individual.indirectly_blocked = (
                 CreatedIndividualBlockingType.NOT_BLOCKED
             )
@@ -13478,13 +14386,15 @@ class CreatedIndividualHandler:
             current_individual.indirectly_blocked
             == CreatedIndividualBlockingType.BLOCKED
         ):
-            Util.debug("Already checked if indirectly blocked, node IS blocked")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug("Already checked if indirectly blocked, node IS blocked")
             return True
         if (
             current_individual.indirectly_blocked
             == CreatedIndividualBlockingType.NOT_BLOCKED
         ):
-            Util.debug("Already checked if indirectly blocked, node is not blocked")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug("Already checked if indirectly blocked, node is not blocked")
             return False
         # Proceed, assuming indirectlyBlocked == UNCHECKED holds
         current_individual.indirectly_blocked = (
@@ -13493,17 +14403,19 @@ class CreatedIndividualHandler:
         anc: typing.Optional[Individual] = current_individual.get_parent()
         while anc and anc.is_blockable():
             ancestor: CreatedIndividual = typing.cast(CreatedIndividual, anc)
-            Util.debug(
-                f"Indirect blocking: check if directly blocked {ancestor.name} at depth {ancestor.depth}"
-            )
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(
+                    f"Indirect blocking: check if directly blocked {ancestor.name} at depth {ancestor.depth}"
+                )
             if CreatedIndividualHandler.is_directly_blocked(ancestor, kb):
                 current_individual.indirectly_blocked = (
                     CreatedIndividualBlockingType.BLOCKED
                 )
                 current_individual.blocking_ancestor = str(ancestor)
-                Util.debug(
-                    f"{current_individual.name} IS INDIRECTLY blocked by {ancestor}"
-                )
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(
+                        f"{current_individual.name} IS INDIRECTLY blocked by {ancestor}"
+                    )
                 break
             anc = ancestor.get_parent()
         return (
@@ -13530,7 +14442,8 @@ class CreatedIndividualHandler:
 
         # Don't test if not deep enough in completion forest
         if current_individual.depth < 3:
-            Util.debug("Depth < 3, node is not indirectly anywhere blocked")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug("Depth < 3, node is not indirectly anywhere blocked")
             current_individual.indirectly_blocked = (
                 CreatedIndividualBlockingType.NOT_BLOCKED
             )
@@ -13540,13 +14453,15 @@ class CreatedIndividualHandler:
             current_individual.indirectly_blocked
             == CreatedIndividualBlockingType.BLOCKED
         ):
-            Util.debug("Already checked if indirectly blocked, node IS blocked")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug("Already checked if indirectly blocked, node IS blocked")
             return True
         if (
             current_individual.indirectly_blocked
             == CreatedIndividualBlockingType.NOT_BLOCKED
         ):
-            Util.debug("Already checked if indirectly blocked, node is not blocked")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug("Already checked if indirectly blocked, node is not blocked")
             return False
         # Proceed, assuming indirectlyBlocked == UNCHECKED holds
         current_individual.indirectly_blocked = (
@@ -13555,17 +14470,19 @@ class CreatedIndividualHandler:
         anc: typing.Optional[Individual] = current_individual.get_parent()
         while anc and anc.is_blockable():
             ancestor: CreatedIndividual = typing.cast(CreatedIndividual, anc)
-            Util.debug(
-                f"Indirect blocking: check if directly blocked {ancestor.name} at depth {ancestor.depth}"
-            )
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(
+                    f"Indirect blocking: check if directly blocked {ancestor.name} at depth {ancestor.depth}"
+                )
             if CreatedIndividualHandler.is_directly_blocked(ancestor, kb):
                 current_individual.indirectly_blocked = (
                     CreatedIndividualBlockingType.BLOCKED
                 )
                 current_individual.blocking_ancestor = str(ancestor)
-                Util.debug(
-                    f"{current_individual.name} IS INDIRECTLY anywhere simple blocked by {ancestor}"
-                )
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(
+                        f"{current_individual.name} IS INDIRECTLY anywhere simple blocked by {ancestor}"
+                    )
                 break
             anc = ancestor.get_parent()
         return (
@@ -13592,7 +14509,8 @@ class CreatedIndividualHandler:
 
         # Don't test if not deep enough in completion forest
         if current_individual.depth < 5:
-            Util.debug("Depth < 5, node is not indirectly blocked")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug("Depth < 5, node is not indirectly blocked")
             current_individual.indirectly_blocked = (
                 CreatedIndividualBlockingType.NOT_BLOCKED
             )
@@ -13602,13 +14520,15 @@ class CreatedIndividualHandler:
             current_individual.indirectly_blocked
             == CreatedIndividualBlockingType.BLOCKED
         ):
-            Util.debug("Already checked if indirectly blocked, node IS blocked")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug("Already checked if indirectly blocked, node IS blocked")
             return True
         if (
             current_individual.indirectly_blocked
             == CreatedIndividualBlockingType.NOT_BLOCKED
         ):
-            Util.debug("Already checked if indirectly blocked, node is not blocked")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug("Already checked if indirectly blocked, node is not blocked")
             return False
         # Proceed, assuming indirectlyBlocked == UNCHECKED holds
         current_individual.indirectly_blocked = (
@@ -13617,17 +14537,19 @@ class CreatedIndividualHandler:
         anc: typing.Optional[Individual] = current_individual.get_parent()
         while anc and anc.is_blockable():
             ancestor: CreatedIndividual = typing.cast(CreatedIndividual, anc)
-            Util.debug(
-                f"Indirect blocking: check if directly blocked {ancestor.name} at depth {ancestor.depth}"
-            )
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(
+                    f"Indirect blocking: check if directly blocked {ancestor.name} at depth {ancestor.depth}"
+                )
             if CreatedIndividualHandler.is_directly_blocked(ancestor, kb):
                 current_individual.indirectly_blocked = (
                     CreatedIndividualBlockingType.BLOCKED
                 )
                 current_individual.blocking_ancestor = str(ancestor)
-                Util.debug(
-                    f"{current_individual.name} IS INDIRECTLY blocked by {ancestor}"
-                )
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(
+                        f"{current_individual.name} IS INDIRECTLY blocked by {ancestor}"
+                    )
                 break
             anc = ancestor.get_parent()
         return (
@@ -13654,7 +14576,10 @@ class CreatedIndividualHandler:
 
         # Don't test if not deep enough in completion forest
         if current_individual.depth < 4:
-            Util.debug("Depth < 4, node is not indirectly anywhere pairwise blocked")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(
+                    "Depth < 4, node is not indirectly anywhere pairwise blocked"
+                )
             current_individual.indirectly_blocked = (
                 CreatedIndividualBlockingType.NOT_BLOCKED
             )
@@ -13664,17 +14589,19 @@ class CreatedIndividualHandler:
             current_individual.indirectly_blocked
             == CreatedIndividualBlockingType.BLOCKED
         ):
-            Util.debug(
-                "Already checked if indirectly anywhere pairwise blocked, node IS blocked"
-            )
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(
+                    "Already checked if indirectly anywhere pairwise blocked, node IS blocked"
+                )
             return True
         if (
             current_individual.indirectly_blocked
             == CreatedIndividualBlockingType.NOT_BLOCKED
         ):
-            Util.debug(
-                "Already checked if indirectly anywhere pairwise blocked, node is not blocked"
-            )
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(
+                    "Already checked if indirectly anywhere pairwise blocked, node is not blocked"
+                )
             return False
         # Proceed, assuming indirectlyBlocked == UNCHECKED holds
         current_individual.indirectly_blocked = (
@@ -13683,17 +14610,19 @@ class CreatedIndividualHandler:
         anc: typing.Optional[Individual] = current_individual.get_parent()
         while anc and anc.is_blockable():
             ancestor: CreatedIndividual = typing.cast(CreatedIndividual, anc)
-            Util.debug(
-                f"Indirect anywhere pairwise blocking: check if directly blocked {ancestor.name} at depth {ancestor.depth}"
-            )
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(
+                    f"Indirect anywhere pairwise blocking: check if directly blocked {ancestor.name} at depth {ancestor.depth}"
+                )
             if CreatedIndividualHandler.is_directly_blocked(ancestor, kb):
                 current_individual.indirectly_blocked = (
                     CreatedIndividualBlockingType.BLOCKED
                 )
                 current_individual.blocking_ancestor = str(ancestor)
-                Util.debug(
-                    f"{current_individual.name} IS INDIRECTLY anywhere pairwise blocked by {ancestor}"
-                )
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(
+                        f"{current_individual.name} IS INDIRECTLY anywhere pairwise blocked by {ancestor}"
+                    )
                 break
             anc = ancestor.get_parent()
         return (
@@ -13760,39 +14689,45 @@ class CreatedIndividualHandler:
         :rtype: bool
         """
 
-        Util.debug(
-            f"Directly Simple blocking status {current_individual.directly_blocked}"
-        )
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(
+                f"Directly Simple blocking status {current_individual.directly_blocked}"
+            )
         # Don't test if not deep enough in completion forest
         if current_individual.depth < 3:
-            Util.debug("Depth < 3, node is not blocked")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug("Depth < 3, node is not blocked")
             current_individual.directly_blocked = (
                 CreatedIndividualBlockingType.NOT_BLOCKED
             )
             return False
         # If already blocked don't test again
         if current_individual.directly_blocked == CreatedIndividualBlockingType.BLOCKED:
-            Util.debug(
-                f"Already directly blocked by {current_individual.blocking_ancestor}"
-            )
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(
+                    f"Already directly blocked by {current_individual.blocking_ancestor}"
+                )
             return True
         if (
             current_individual.directly_blocked
             == CreatedIndividualBlockingType.NOT_BLOCKED
         ):
-            Util.debug("Already checked if directly blocked, node is not blocked")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug("Already checked if directly blocked, node is not blocked")
             return False
         # Proceed, assuming directlyBlocked == UNCHECKED holds
         # Direct blocking
         current_individual.directly_blocked = CreatedIndividualBlockingType.NOT_BLOCKED
-        Util.debug(f"Testing direct blocking: {current_individual}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Testing direct blocking: {current_individual}")
         # Loops until the node is blocked or we reach the first root ancestor.
         anc: typing.Optional[Individual] = current_individual.get_parent()
         while anc and anc.is_blockable():
             ancestor: CreatedIndividual = typing.cast(CreatedIndividual, anc)
-            Util.debug(
-                f"Compare with created individual {ancestor.name} of depth {ancestor.depth}"
-            )
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(
+                    f"Compare with created individual {ancestor.name} of depth {ancestor.depth}"
+                )
             # Test if the concept labels matches
             if CreatedIndividualHandler.match_concept_labels(
                 current_individual, ancestor, kb
@@ -13809,11 +14744,17 @@ class CreatedIndividualHandler:
                 if current_individual.name not in blocked_children:
                     blocked_children.append(current_individual.name)
                 kb.directly_blocked_children[str(anc)] = blocked_children
-                Util.debug(f"{current_individual.name} IS DIRECTLY blocked by {anc}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(
+                        f"{current_individual.name} IS DIRECTLY blocked by {anc}"
+                    )
                 # Mark all descendants as indirectly blocked
                 current_individual.mark_indirectly_blocked()
                 break
-            Util.debug(f"{current_individual.name} IS NOT directly blocked by {anc}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(
+                    f"{current_individual.name} IS NOT directly blocked by {anc}"
+                )
             anc = ancestor.get_parent()
         return (
             current_individual.directly_blocked == CreatedIndividualBlockingType.BLOCKED
@@ -13836,44 +14777,51 @@ class CreatedIndividualHandler:
         :rtype: bool
         """
 
-        Util.debug(
-            f"Directly Anywhere Simple blocking status {current_individual.directly_blocked}"
-        )
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(
+                f"Directly Anywhere Simple blocking status {current_individual.directly_blocked}"
+            )
         node_id: int = current_individual.get_integer_id()
         # Don't test if not deep enough in completion forest
         if node_id <= 1:
-            Util.debug(f"Node ID : {node_id} <= 1 : node is not blocked")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"Node ID : {node_id} <= 1 : node is not blocked")
             current_individual.directly_blocked = (
                 CreatedIndividualBlockingType.NOT_BLOCKED
             )
             return False
         if current_individual.depth < 2:
-            Util.debug("Depth < 2, node is not blocked")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug("Depth < 2, node is not blocked")
             current_individual.directly_blocked = (
                 CreatedIndividualBlockingType.NOT_BLOCKED
             )
             return False
         # If already blocked don't test again
         if current_individual.directly_blocked == CreatedIndividualBlockingType.BLOCKED:
-            Util.debug(
-                f"Already directly blocked by {current_individual.blocking_ancestor}"
-            )
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(
+                    f"Already directly blocked by {current_individual.blocking_ancestor}"
+                )
             return True
         if (
             current_individual.directly_blocked
             == CreatedIndividualBlockingType.NOT_BLOCKED
         ):
-            Util.debug("Already checked if directly blocked, node is not blocked")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug("Already checked if directly blocked, node is not blocked")
             return False
         # Proceed, assuming directlyBlocked == UNCHECKED holds
         # Direct blocking
         current_individual.directly_blocked = CreatedIndividualBlockingType.NOT_BLOCKED
-        Util.debug(f"Testing direct anywhere blocking: {current_individual}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Testing direct anywhere blocking: {current_individual}")
         # Find anywhere blocking node
         candidate_ind: SortedSet[CreatedIndividual] = (
             CreatedIndividualHandler.matching_individual(current_individual, kb)
         )
-        Util.debug(f"Anywhere blocking: Found individuals: {candidate_ind}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Anywhere blocking: Found individuals: {candidate_ind}")
         # Check if we found one
         if len(candidate_ind) > 0:
             # pick the the first blocking node
@@ -13886,13 +14834,17 @@ class CreatedIndividualHandler:
             if current_individual.name not in blocked_children:
                 blocked_children.append(current_individual.name)
             kb.directly_blocked_children[str(anc)] = blocked_children
-            Util.debug(
-                f"{current_individual.name} IS DIRECTLY ANYWHERE blocked by {anc}"
-            )
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(
+                    f"{current_individual.name} IS DIRECTLY ANYWHERE blocked by {anc}"
+                )
             # Mark all descendants as indirectly blocked
             current_individual.mark_indirectly_blocked()
         else:
-            Util.debug(f"{current_individual.name} IS NOT directly ANYWHERE blocked")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(
+                    f"{current_individual.name} IS NOT directly ANYWHERE blocked"
+                )
         return (
             current_individual.directly_blocked == CreatedIndividualBlockingType.BLOCKED
         )
@@ -13910,9 +14862,10 @@ class CreatedIndividualHandler:
         :type kb: KnowledgeBase
         """
 
-        Util.debug(
-            f"{constants.SEPARATOR}MARK UNCHECKED subtree of: {current_individual.name}"
-        )
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(
+                f"{constants.SEPARATOR}MARK UNCHECKED subtree of: {current_individual.name}"
+            )
         queue: deque[CreatedIndividual] = deque()
         queue.append(current_individual)
         while len(queue) > 0:
@@ -13921,26 +14874,31 @@ class CreatedIndividualHandler:
             if len(ind.role_relations) == 0:
                 break
             for role in ind.role_relations:
-                rels: list[Relation] = copy.deepcopy(ind.role_relations[role])
+                # rels: list[Relation] = copy.deepcopy(ind.role_relations[role])
+                rels: list[Relation] = list(ind.role_relations[role])
                 for rel in rels:
-                    Util.debug(
-                        f"{rel.get_subject_individual()} has role {rel.get_role_name()} with filler {rel.get_object_individual()}"
-                    )
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(
+                            f"{rel.get_subject_individual()} has role {rel.get_role_name()} with filler {rel.get_object_individual()}"
+                        )
                     son: Individual = rel.get_object_individual()
                     if son != ind.parent:  # not parent via inverse role
                         if not son.is_blockable():
                             continue
                         son: CreatedIndividual = typing.cast(CreatedIndividual, son)
-                        Util.debug(
-                            f"Filler is not {current_individual.name}'s parent, so mark {son} as UNCHECKED"
-                        )
+                        if ConfigReader.DEBUG_PRINT:
+                            Util.debug(
+                                f"Filler is not {current_individual.name}'s parent, so mark {son} as UNCHECKED"
+                            )
                         CreatedIndividualHandler.unblock_indirectly_blocked(son, kb)
                         if rel.get_subject_individual() != rel.get_object_individual():
                             queue.append(son)
-                    Util.debug("Filler is parent, so skip")
-        Util.debug(
-            f"{constants.SEPARATOR}MARK END UNCHECKED subtree of {current_individual.name}{constants.SEPARATOR}"
-        )
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug("Filler is parent, so skip")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(
+                f"{constants.SEPARATOR}MARK END UNCHECKED subtree of {current_individual.name}{constants.SEPARATOR}"
+            )
 
     @staticmethod
     def is_directly_pairwise_blocked(
@@ -13959,32 +14917,37 @@ class CreatedIndividualHandler:
         :rtype: bool
         """
 
-        Util.debug(
-            f"Directly pairwise blocking status {current_individual.directly_blocked}"
-        )
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(
+                f"Directly pairwise blocking status {current_individual.directly_blocked}"
+            )
         # Don't test if not deep enough in completion forest
         if current_individual.depth < 4:
-            Util.debug("Depth < 4, node is not directly blocked")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug("Depth < 4, node is not directly blocked")
             current_individual.directly_blocked = (
                 CreatedIndividualBlockingType.NOT_BLOCKED
             )
             return False
         # If already blocked don't test again
         if current_individual.directly_blocked == CreatedIndividualBlockingType.BLOCKED:
-            Util.debug(
-                f"Already directly blocked by {current_individual.blocking_ancestor}"
-            )
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(
+                    f"Already directly blocked by {current_individual.blocking_ancestor}"
+                )
             return True
         if (
             current_individual.directly_blocked
             == CreatedIndividualBlockingType.NOT_BLOCKED
         ):
-            Util.debug("Already checked if directly blocked, node is not blocked")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug("Already checked if directly blocked, node is not blocked")
             return False
         # Proceed, assuming directlyBlocked == UNCHECKED holds
         # Direct blocking
         current_individual.directly_blocked = CreatedIndividualBlockingType.NOT_BLOCKED
-        Util.debug(f"Testing direct pair-wise blocking: {current_individual}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Testing direct pair-wise blocking: {current_individual}")
         node_x_prime: CreatedIndividual = typing.cast(
             CreatedIndividual, current_individual.get_parent()
         )
@@ -13996,10 +14959,12 @@ class CreatedIndividualHandler:
             node_y_prime: CreatedIndividual = typing.cast(
                 CreatedIndividual, node_y.get_parent()
             )
-            Util.debug(
-                f"{node_x_prime.name} : {current_individual.role_name} : {current_individual.name}"
-            )
-            Util.debug(f"{node_y_prime.name} : {node_y.role_name} : {node_y.name}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(
+                    f"{node_x_prime.name} : {current_individual.role_name} : {current_individual.name}"
+                )
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"{node_y_prime.name} : {node_y.role_name} : {node_y.name}")
             if (
                 current_individual.role_name == node_y.role_name
                 and CreatedIndividualHandler.match_concept_labels(
@@ -14042,9 +15007,10 @@ class CreatedIndividualHandler:
                     x_individuals.append(current_individual.name)
                 # Given xprime, update the list of x nodes
                 kb.x_prime_individuals[x_prime] = x_individuals
-                Util.debug(
-                    f"BLOCKING: x ={current_individual.name} is directly blocked with y = {node_y}, x' = {node_x_prime}, y' = {node_y_prime}"
-                )
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(
+                        f"BLOCKING: x ={current_individual.name} is directly blocked with y = {node_y}, x' = {node_x_prime}, y' = {node_y_prime}"
+                    )
                 # Mark all descendants as indirectly blocked
                 current_individual.mark_indirectly_blocked()
                 break
@@ -14070,12 +15036,14 @@ class CreatedIndividualHandler:
         :rtype: bool
         """
 
-        Util.debug(
-            f"Directly anywhere pairwise blocking status {current_individual.directly_blocked}"
-        )
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(
+                f"Directly anywhere pairwise blocking status {current_individual.directly_blocked}"
+            )
         # Don't test if not deep enough in completion forest
         if current_individual.depth < 3:
-            Util.debug("Depth < 3, node is not directly  anywhere pairwise blocked")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug("Depth < 3, node is not directly  anywhere pairwise blocked")
             current_individual.directly_blocked = (
                 CreatedIndividualBlockingType.NOT_BLOCKED
             )
@@ -14083,37 +15051,45 @@ class CreatedIndividualHandler:
 
         # If already blocked don't test again
         if current_individual.directly_blocked == CreatedIndividualBlockingType.BLOCKED:
-            Util.debug(
-                f"Already directly  anywhere pairwise blocked by {current_individual.blocking_ancestor}"
-            )
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(
+                    f"Already directly  anywhere pairwise blocked by {current_individual.blocking_ancestor}"
+                )
             return True
         if (
             current_individual.directly_blocked
             == CreatedIndividualBlockingType.NOT_BLOCKED
         ):
-            Util.debug(
-                "Already checked if directly anywhere pairwise blocked, node is not blocked"
-            )
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(
+                    "Already checked if directly anywhere pairwise blocked, node is not blocked"
+                )
             return False
 
         # Proceed, assuming directlyBlocked == UNCHECKED holds
         # Direct blocking
         current_individual.directly_blocked = CreatedIndividualBlockingType.NOT_BLOCKED
-        Util.debug(f"Testing direct anywhere pairwise blocking: {current_individual}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(
+                f"Testing direct anywhere pairwise blocking: {current_individual}"
+            )
         node_x_prime: CreatedIndividual = typing.cast(
             CreatedIndividual, current_individual.get_parent()
         )
         x_prime: str = str(node_x_prime)
         node_x: CreatedIndividual = current_individual
         role_name: str = current_individual.role_name
-        Util.debug(
-            f"Edge node_x_prime:role:node_x = {x_prime} : {node_x.role_name} : {node_x.name}"
-        )
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(
+                f"Edge node_x_prime:role:node_x = {x_prime} : {node_x.role_name} : {node_x.name}"
+            )
         rsuccs: list[str] = kb.r_successors.get(role_name, [])
         index_node_x: int = rsuccs.index(node_x.name)
 
-        Util.debug(f"Successors list -> {rsuccs}")
-        Util.debug(f"\t\tPosition -> {index_node_x}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Successors list -> {rsuccs}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"\t\tPosition -> {index_node_x}")
         i: int = 0
         # Test for direct blocking
         while i < index_node_x:
@@ -14121,19 +15097,23 @@ class CreatedIndividualHandler:
             node_y: CreatedIndividual = typing.cast(
                 CreatedIndividual, kb.get_individual(ynode)
             )
-            Util.debug(f"Node y {ynode} depth = {node_y.depth}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"Node y {ynode} depth = {node_y.depth}")
             # skip if nodeY not deep enough in tree
             if node_y.depth < 3:
-                Util.debug("Depth < 3, node cannot be node_y")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug("Depth < 3, node cannot be node_y")
                 i += 1
                 continue
             node_y_prime: CreatedIndividual = typing.cast(
                 CreatedIndividual, node_y.get_parent()
             )
-            Util.debug(
-                f"{x_prime} : {current_individual.role_name} : {current_individual.name}"
-            )
-            Util.debug(f"{node_y_prime.name} : {node_y.role_name} : {node_y.name}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(
+                    f"{x_prime} : {current_individual.role_name} : {current_individual.name}"
+                )
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"{node_y_prime.name} : {node_y.role_name} : {node_y.name}")
             if CreatedIndividualHandler.match_concept_labels(
                 current_individual, node_y, kb
             ) and CreatedIndividualHandler.match_concept_labels(
@@ -14166,9 +15146,10 @@ class CreatedIndividualHandler:
                     x_individuals.append(current_individual.name)
                 # Given xprime, update the list of x nodes
                 kb.x_prime_individuals[x_prime] = x_individuals
-                Util.debug(
-                    f"BLOCKING: x = {current_individual.name} is directly blocked with y = {node_y}, x' = {node_x_prime}, y' = {node_y_prime}"
-                )
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(
+                        f"BLOCKING: x = {current_individual.name} is directly blocked with y = {node_y}, x' = {node_x_prime}, y' = {node_y_prime}"
+                    )
                 current_individual.blocking_ancestor = str(node_x_prime)
                 current_individual.blocking_ancestor_y = str(node_y)
                 current_individual.blocking_ancestor_y_prime = str(node_y_prime)
@@ -14202,7 +15183,7 @@ class CreatedIndividualHandler:
     @staticmethod
     def matching_individual(
         current_individual: CreatedIndividual, kb: KnowledgeBase
-    ) -> set[CreatedIndividual]:
+    ) -> SortedSet[CreatedIndividual]:
         """
         This static method searches the knowledge base for existing individuals that match the provided current individual, primarily to determine if blocking conditions are met. It begins by identifying candidates associated with the first concept of the current individual, filtering them to ensure they were created earlier, are not blocked, and meet size requirements based on the configured blocking dynamic type (subset or set equality). If this initial candidate set is empty, the method returns an empty set immediately. For each subsequent concept, the method checks for an intersection between the candidate set and individuals possessing that concept; if a non-empty intersection is found, it is returned right away. If the loop completes without finding such an intersection, the initial candidate set is returned. The operation is read-only with respect to the knowledge base and the individual, though it generates debug logs.
 
@@ -14211,26 +15192,30 @@ class CreatedIndividualHandler:
         :param kb: The knowledge base providing the existing individuals and blocking configuration for the match check.
         :type kb: KnowledgeBase
 
-        :return: A set of individuals from the knowledge base that share all concepts with the current individual, were created earlier, are not blocked, and satisfy the specific blocking type constraints. Returns an empty set if no matches are found.
+        :return: A sorted set of individuals from the knowledge base that share all concepts with the current individual, were created earlier, are not blocked, and satisfy the specific blocking type constraints. Returns an empty set if no matches are found.
 
-        :rtype: set[CreatedIndividual]
+        :rtype: SortedSet[CreatedIndividual]
         """
 
-        Util.debug(
-            f"Find matching individual for : {current_individual.name} ID : {current_individual.get_integer_id()} size : {len(current_individual.concept_list)}"
-        )
-        Util.debug(f"Concept list: {current_individual.concept_list}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(
+                f"Find matching individual for : {current_individual.name} ID : {current_individual.get_integer_id()} size : {len(current_individual.concept_list)}"
+            )
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Concept list: {current_individual.concept_list}")
         type: BlockingDynamicType = kb.blocking_type
         first_concept: bool = True
         candidate_set: SortedSet[CreatedIndividual] = SortedSet()
         for concept in current_individual.concept_list:
-            Util.debug(
-                f"Process concept {concept}: {kb.get_concept_from_number(concept)}"
-            )
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(
+                    f"Process concept {concept}: {kb.get_concept_from_number(concept)}"
+                )
             current_ind: SortedSet[CreatedIndividual] = kb.concept_individual_list.get(
                 concept, SortedSet()
             )
-            Util.debug(f"Individuals List -> {current_ind}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"Individuals List -> {current_ind}")
             if not first_concept:
                 tmp_current_ind: SortedSet[CreatedIndividual] = (
                     current_individual.individual_set_intersection_of(
@@ -14254,16 +15239,19 @@ class CreatedIndividualHandler:
 
                 if ind.get_integer_id() >= current_individual.get_integer_id():
                     break
-                Util.debug(
-                    f"Individual {ind.name} ID : {ind.get_integer_id()} size : {len(ind.concept_list)}"
-                )
-                Util.debug(f"Concept list -> {ind.concept_list}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(
+                        f"Individual {ind.name} ID : {ind.get_integer_id()} size : {len(ind.concept_list)}"
+                    )
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Concept list -> {ind.concept_list}")
                 # Node should be created earlier and node is not blocked
                 is_blocked: bool = (
                     ind.directly_blocked == CreatedIndividualBlockingType.BLOCKED
                     or ind.indirectly_blocked == CreatedIndividualBlockingType.BLOCKED
                 )
-                Util.debug(f"Blocked? -> {is_blocked}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Blocked? -> {is_blocked}")
                 if (
                     ind.get_integer_id() >= current_individual.get_integer_id()
                     or is_blocked
@@ -14281,7 +15269,8 @@ class CreatedIndividualHandler:
                     current_individual.concept_list
                 ):  # set blocking
                     candidate_set.add(ind)
-            Util.debug(f"Candidate set -> {candidate_set}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"Candidate set -> {candidate_set}")
             # For concept c, there is no candidate, so return immediately false
             if len(candidate_set) == 0:
                 return candidate_set
@@ -14307,15 +15296,22 @@ class CreatedIndividualHandler:
         :rtype: bool
         """
 
-        Util.debug(f"Concept label comparison: {current_individual.name} with {b.name}")
-        Util.debug(
-            f"Individual {current_individual.name} size: {len(current_individual.concept_list)}"
-        )
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(
+                f"Concept label comparison: {current_individual.name} with {b.name}"
+            )
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(
+                f"Individual {current_individual.name} size: {len(current_individual.concept_list)}"
+            )
         for l1 in current_individual.concept_list:
-            Util.debug(f"Concept {l1}: {kb.get_concept_from_number(l1)}")
-        Util.debug(f"Individual {b.name} size: {len(b.concept_list)}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"Concept {l1}: {kb.get_concept_from_number(l1)}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Individual {b.name} size: {len(b.concept_list)}")
         for l2 in b.concept_list:
-            Util.debug(f"Concept {l2}: {kb.get_concept_from_number(l2)}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"Concept {l2}: {kb.get_concept_from_number(l2)}")
         type: BlockingDynamicType = kb.blocking_type
         # indirect blocking applies only if we have dynamic blocking
         if (
@@ -14388,9 +15384,10 @@ class CreatedIndividualHandler:
         :type kb: KnowledgeBase
         """
 
-        Util.debug(
-            f"Directly blocked individual : {current_individual} : now unchecked"
-        )
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(
+                f"Directly blocked individual : {current_individual} : now unchecked"
+            )
         current_individual.directly_blocked = CreatedIndividualBlockingType.UNCHECKED
         current_individual.blocking_ancestor = None
         blocked_assertions: list[Assertion] = kb.blocked_exist_assertions.get(
@@ -14413,9 +15410,10 @@ class CreatedIndividualHandler:
         :type kb: KnowledgeBase
         """
 
-        Util.debug(
-            f"Indirectly blocked individual : {current_individual} : now unchecked"
-        )
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(
+                f"Indirectly blocked individual : {current_individual} : now unchecked"
+            )
         current_individual.indirectly_blocked = CreatedIndividualBlockingType.UNCHECKED
         current_individual.blocking_ancestor = None
         blocked_assertions: list[Assertion] = kb.blocked_exist_assertions.get(

@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzyowl2.fuzzyowl2
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A translator that converts OWL2 ontologies annotated with fuzzy logic into a Fuzzy Description Logic representation for use in reasoning systems.
+A translator that converts OWL2 ontologies annotated with fuzzy logic semantics into a Fuzzy Description Logic representation suitable for reasoning engines.
 
 
 Description
 -----------
 
 
-The software processes OWL2 ontology files to extract fuzzy logic semantics defined through annotations, transforming them into a format compatible with Fuzzy Description Logic reasoners. It parses complex fuzzy constructs, such as triangular functions, linear modifiers, and aggregation operators like OWA or Sugeno integrals, from datatype, concept, and property declarations. The translation pipeline handles both standard crisp axioms and those annotated with specific truth degrees, ensuring that the structural hierarchy and logical constraints of the original ontology are preserved in the target representation. By maintaining internal registries of defined concepts, properties, and datatypes, the system prevents duplicate definitions and manages dependencies between fuzzy elements. Finally, the extracted definitions and axioms are serialized to an output file, sorted to maintain a consistent order suitable for downstream processing.
+The software acts as a bridge between standard OWL2 structures and fuzzy logic reasoning systems by reading an ontology file and extracting specific annotations that define fuzzy concepts, properties, and datatypes. It processes the ontology in distinct stages, first resolving datatype and concept annotations to establish the fuzzy vocabulary—such as triangular membership functions or linguistic modifiers—before handling the axioms that define the logical structure. A critical aspect of the design involves managing axiom degrees, where the system distinguishes between crisp axioms and those carrying specific truth values to accurately represent uncertainty in the output. By relying on an underlying XML parser to interpret complex annotation strings, the tool iterates through various axiom types, serializes them into a text-based format, and ensures no redundancy by tracking processed items before writing the final sorted definitions to a file.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -124,7 +120,7 @@ Module Contents
 
 
 
-   .. py:method:: __write_class_assertion_axiom(ontology: pyowl2.ontology.OWLOntology, annotated: bool = True) -> None
+   .. py:method:: __write_class_assertion_axiom(ontology: pyowl2.ontology.OWLOntology, annotated: bool = True, axioms: Iterable[pyowl2.abstracts.axiom.OWLAxiom] = None) -> None
 
       Processes class assertion axioms from the provided ontology, writing them to the output based on their fuzzy degree and the `annotated` flag. If `annotated` is True, the method specifically targets axioms with a degree different from 1.0, treating them as fuzzy assertions. If `annotated` is False, it processes axioms with a degree of 1.0, but only if they have not already been handled, as tracked by the `processed_axioms` set. This approach ensures that fuzzy and crisp assertions are handled separately without duplication, while modifying the internal state of the object to record processed items.
 
@@ -132,10 +128,12 @@ Module Contents
       :type ontology: OWLOntology
       :param annotated: Flag indicating whether to process fuzzy class assertions. If True, only axioms with degrees different from 1.0 are processed. If False, only crisp axioms (degree 1.0) that have not been processed previously are handled.
       :type annotated: bool
+      :param axioms: Optional pre-fetched axiom iterable; if ``None``, the method retrieves class assertions from the ontology.
+      :type axioms: typing.Iterable[OWLAxiom]
 
 
 
-   .. py:method:: __write_data_property_assertion_axiom(ontology: pyowl2.ontology.OWLOntology, annotated: bool = True) -> None
+   .. py:method:: __write_data_property_assertion_axiom(ontology: pyowl2.ontology.OWLOntology, annotated: bool = True, axioms: Iterable[pyowl2.abstracts.axiom.OWLAxiom] = None) -> None
 
       Iterates over all data property assertion axioms within the provided ontology to serialize them to the output, distinguishing between fuzzy and crisp assertions based on the `annotated` flag. When `annotated` is True, the method processes axioms with a fuzzy degree different from 1.0, writing them to the output and recording them in the internal set of processed axioms. When `annotated` is False, the method handles axioms with a degree of exactly 1.0, but only if they have not already been recorded in the processed set, thereby preventing duplicate writes. This method updates the internal state of processed axioms and delegates the actual writing logic to a lower-level writer function.
 
@@ -143,10 +141,12 @@ Module Contents
       :type ontology: OWLOntology
       :param annotated: Flag indicating whether to process fuzzy axioms. If True, processes axioms with degrees different from 1.0. If False, processes axioms with a degree of 1.0 that have not already been processed.
       :type annotated: bool
+      :param axioms: Optional pre-fetched axiom iterable; if ``None``, the method retrieves data property assertions from the ontology.
+      :type axioms: typing.Iterable[OWLAxiom]
 
 
 
-   .. py:method:: __write_negative_data_property_assertion_axiom(ontology: pyowl2.ontology.OWLOntology, annotated: bool = True) -> None
+   .. py:method:: __write_negative_data_property_assertion_axiom(ontology: pyowl2.ontology.OWLOntology, annotated: bool = True, axioms: Iterable[pyowl2.abstracts.axiom.OWLAxiom] = None) -> None
 
       Iterates over negative data property assertion axioms within the provided ontology and serializes them to the output file based on their fuzzy degree and the `annotated` flag. When `annotated` is True, the method processes only axioms with a fuzzy degree different from 1.0, representing non-crisp fuzzy constraints. Conversely, when `annotated` is False, it handles axioms with a degree of 1.0 (crisp assertions) but only if they have not already been processed, ensuring no duplication occurs. The method maintains an internal set of processed axioms to track this state and delegates the actual writing logic to a separate helper method.
 
@@ -154,10 +154,12 @@ Module Contents
       :type ontology: OWLOntology
       :param annotated: Determines whether to process annotated axioms with fuzzy degrees different from 1.0, or standard axioms with a degree of 1.0 that have not yet been processed.
       :type annotated: bool
+      :param axioms: Optional pre-fetched axiom iterable; if ``None``, the method retrieves negative data property assertions from the ontology.
+      :type axioms: typing.Iterable[OWLAxiom]
 
 
 
-   .. py:method:: __write_negative_object_property_assertion_axiom(ontology: pyowl2.ontology.OWLOntology, annotated: bool = True) -> None
+   .. py:method:: __write_negative_object_property_assertion_axiom(ontology: pyowl2.ontology.OWLOntology, annotated: bool = True, axioms: Iterable[pyowl2.abstracts.axiom.OWLAxiom] = None) -> None
 
       Iterates through negative object property assertion axioms within the provided ontology to serialize them to the output file, distinguishing between fuzzy and crisp assertions based on the `annotated` flag. When the flag is True, the method processes only axioms with a fuzzy degree different from 1.0; when False, it processes axioms with a degree of exactly 1.0, provided they have not already been handled in a previous pass. As a side effect, the method updates an internal set of processed axioms to prevent duplication and triggers debug logging for the items being written.
 
@@ -165,10 +167,12 @@ Module Contents
       :type ontology: OWLOntology
       :param annotated: If True, processes fuzzy axioms with degrees different from 1.0. If False, processes non-annotated axioms or those with a degree of 1.0 that have not been processed previously.
       :type annotated: bool
+      :param axioms: Optional pre-fetched axiom iterable; if ``None``, the method retrieves negative object property assertions from the ontology.
+      :type axioms: typing.Iterable[OWLAxiom]
 
 
 
-   .. py:method:: __write_object_property_assertion_axiom(ontology: pyowl2.ontology.OWLOntology, annotated: bool = True) -> None
+   .. py:method:: __write_object_property_assertion_axiom(ontology: pyowl2.ontology.OWLOntology, annotated: bool = True, axioms: Iterable[pyowl2.abstracts.axiom.OWLAxiom] = None) -> None
 
       Iterates through object property assertion axioms in the given ontology and writes them to the output file based on the specified annotation mode. If the `annotated` flag is set to True, the method processes only those axioms with a fuzzy degree different from 1.0; otherwise, it processes axioms with a degree of 1.0, provided they have not already been handled. To prevent duplication, the method maintains a record of processed assertions in the `processed_axioms` set and triggers debug logging for each axiom written.
 
@@ -176,10 +180,12 @@ Module Contents
       :type ontology: OWLOntology
       :param annotated: Flag indicating whether to process fuzzy axioms with degrees different from 1.0 (True) or standard axioms with a degree of 1.0 (False).
       :type annotated: bool
+      :param axioms: Optional pre-fetched axiom iterable; if ``None``, the method retrieves object property assertions from the ontology.
+      :type axioms: typing.Iterable[OWLAxiom]
 
 
 
-   .. py:method:: __write_subclass_of_axiom(ontology: pyowl2.ontology.OWLOntology, annotated: bool = True) -> set[str]
+   .. py:method:: __write_subclass_of_axiom(ontology: pyowl2.ontology.OWLOntology, annotated: bool = True, axioms: Iterable[pyowl2.abstracts.axiom.OWLAxiom] = None) -> set[str]
 
       Processes subclass axioms from the provided ontology, separating them based on their associated fuzzy degree and the `annotated` flag. When `annotated` is True, the method writes axioms with degrees different from 1.0 to the output and records them as processed. Conversely, when `annotated` is False, it writes axioms with a degree of 1.0 only if they have not been previously processed, ensuring no duplication. This method relies on `__get_degree` to determine the fuzzy value and updates the internal `processed_axioms` set to track state.
 
@@ -187,10 +193,16 @@ Module Contents
       :type ontology: OWLOntology
       :param annotated: Determines whether to process axioms annotated with fuzzy degrees. When True, only axioms with degrees different from 1.0 are processed; when False, only non-annotated axioms or those with a degree of 1.0 are processed.
       :type annotated: bool
+      :param axioms: Optional pre-fetched axiom iterable; if ``None``, the method retrieves subclasses from the ontology.
+      :type axioms: typing.Iterable[OWLAxiom]
+
+      :return: The set of class names (as strings) that were processed.
+
+      :rtype: set[str]
 
 
 
-   .. py:method:: __write_subdata_property_axiom(ontology: pyowl2.ontology.OWLOntology, annotated: bool = True) -> None
+   .. py:method:: __write_subdata_property_axiom(ontology: pyowl2.ontology.OWLOntology, annotated: bool = True, axioms: Iterable[pyowl2.abstracts.axiom.OWLAxiom] = None) -> None
 
       Processes sub-data property axioms from the given ontology, filtering them based on the provided `annotated` flag to separate fuzzy degrees from standard relationships. If the flag is True, the method writes axioms that have a fuzzy degree different from 1.0. If the flag is False, it writes axioms with a degree of 1.0, provided they have not already been processed and recorded in the internal tracking set. This method ensures that each relevant axiom is serialized to the output file exactly once by updating the set of processed axioms upon writing.
 
@@ -198,10 +210,12 @@ Module Contents
       :type ontology: OWLOntology
       :param annotated: Determines whether to process axioms annotated with fuzzy degrees. If True, processes axioms with degrees different from 1.0; if False, processes non-annotated axioms or those with a degree of 1.0 that have not been processed previously.
       :type annotated: bool
+      :param axioms: Optional pre-fetched axiom iterable; if ``None``, the method retrieves sub-data properties from the ontology.
+      :type axioms: typing.Iterable[OWLAxiom]
 
 
 
-   .. py:method:: __write_subobject_property_axiom(ontology: pyowl2.ontology.OWLOntology, annotated: bool = True) -> None
+   .. py:method:: __write_subobject_property_axiom(ontology: pyowl2.ontology.OWLOntology, annotated: bool = True, axioms: Iterable[pyowl2.abstracts.axiom.OWLAxiom] = None) -> None
 
       Iterates over the sub-object property axioms within the specified ontology to serialize them to the output file, distinguishing between standard axioms and those carrying fuzzy degrees. The method explicitly excludes axioms involving property chains from processing. Depending on the 'annotated' parameter, it either writes axioms with a fuzzy degree other than 1.0 or writes non-fuzzy axioms (degree 1.0) that have not been previously recorded. As a side effect, it updates the internal set of processed axioms to ensure that each relationship is written only once.
 
@@ -209,10 +223,12 @@ Module Contents
       :type ontology: OWLOntology
       :param annotated: Flag indicating whether to process axioms with fuzzy degrees (non-1.0) or standard axioms (degree 1.0).
       :type annotated: bool
+      :param axioms: Optional pre-fetched axiom iterable; if ``None``, the method retrieves sub-object properties from the ontology.
+      :type axioms: typing.Iterable[OWLAxiom]
 
 
 
-   .. py:method:: __write_subproperty_chain_of_axiom(ontology: pyowl2.ontology.OWLOntology, annotated: bool = True) -> None
+   .. py:method:: __write_subproperty_chain_of_axiom(ontology: pyowl2.ontology.OWLOntology, annotated: bool = True, axioms: Iterable[pyowl2.abstracts.axiom.OWLAxiom] = None) -> None
 
       Iterates through the axioms of the provided ontology to identify and write sub-property chain axioms, specifically handling those involving object property chains. The behavior is controlled by the `annotated` flag: when set to True, the method processes and writes axioms with fuzzy degrees different from 1.0; when set to False, it processes axioms with a degree of exactly 1.0, provided they have not already been processed. In both cases, the method updates an internal set of processed axioms to prevent duplicate writes and delegates the actual writing logic to a separate helper method.
 
@@ -220,6 +236,8 @@ Module Contents
       :type ontology: OWLOntology
       :param annotated: Flag indicating whether to process axioms annotated with fuzzy degrees. If True, only axioms with degrees different from 1.0 are processed. If False, only non-annotated axioms or those with a degree of 1.0 that have not been processed previously are handled.
       :type annotated: bool
+      :param axioms: Optional pre-fetched axiom iterable; if ``None``, the method retrieves sub-object properties from the ontology.
+      :type axioms: typing.Iterable[OWLAxiom]
 
 
 
@@ -1357,3 +1375,4 @@ Module Contents
 
    .. py:attribute:: processed_axioms
       :type:  set[str]
+

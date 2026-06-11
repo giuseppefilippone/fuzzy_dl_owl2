@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.modifier.modifier
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-An abstract base class defines the interface for fuzzy logic modifiers that transform concepts and calculate adjusted membership degrees.
+An abstract base class that defines the interface for fuzzy logic modifiers capable of transforming concepts and calculating adjusted membership degrees.
 
 
 Description
 -----------
 
 
-Software components designed to implement linguistic hedges or transformations within a fuzzy logic system rely on this blueprint to ensure consistent behavior. By enforcing the implementation of specific mathematical and structural operations, the architecture guarantees that every concrete modifier can accurately transform a given concept and calculate the resulting membership degree within the normalized range of zero to one. The design encapsulates the logic required for object duplication and dynamic naming, allowing specific implementations to define their own string identifiers while maintaining a standard interface for cloning and modification. Through abstract methods, the structure mandates that subclasses provide the necessary algorithms to apply changes to fuzzy concepts, thereby separating the general definition of a modifier from the specific mathematical rules used to intensify or dilute membership values.
+The architecture establishes a contract for various linguistic hedges or logical operators by requiring concrete implementations to handle the transformation of fuzzy concepts and the recalculation of membership values. Central to the design is the requirement for subclasses to define specific mathematical logic for operations such as intensification or dilation, ensuring that input values are mapped correctly to a normalized range between zero and one. State management is handled through a mutable name attribute, which supports both explicit assignment and lazy computation, allowing the object to derive its own identifier if one is not provided. To support robust usage within larger systems, the interface includes provisions for object cloning and consistent hashing, ensuring that instances can be duplicated and compared based on their structural identity.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -66,6 +62,16 @@ Module Contents
 
    :param name: The human-readable label or identifier for the fuzzy modifier instance, used as its string representation.
    :type name: str
+
+
+   .. py:method:: __hash__() -> int
+
+      Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
+
+      :return: An integer hash value representing the structural identity of this object.
+
+      :rtype: int
+
 
 
    .. py:method:: __repr__() -> str
@@ -153,3 +159,4 @@ Module Contents
 
    .. py:attribute:: name
       :type:  str
+

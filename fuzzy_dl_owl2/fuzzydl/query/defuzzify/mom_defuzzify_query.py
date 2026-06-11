@@ -16,8 +16,8 @@ from fuzzy_dl_owl2.fuzzydl.individual.individual import Individual
 from fuzzy_dl_owl2.fuzzydl.knowledge_base import KnowledgeBase
 from fuzzy_dl_owl2.fuzzydl.milp.expression import Expression
 from fuzzy_dl_owl2.fuzzydl.milp.solution import Solution
-from fuzzy_dl_owl2.fuzzydl.milp.term import Term
-from fuzzy_dl_owl2.fuzzydl.milp.variable import Variable
+from fuzzy_dl_owl2.fuzzydl.milp.term import Term  # Term
+from fuzzy_dl_owl2.fuzzydl.milp.variable import Variable  # Variable
 from fuzzy_dl_owl2.fuzzydl.query.defuzzify.defuzzify_query import DefuzzifyQuery
 from fuzzy_dl_owl2.fuzzydl.query.max.max_satisfiable_query import MaxSatisfiableQuery
 from fuzzy_dl_owl2.fuzzydl.relation import Relation
@@ -88,19 +88,19 @@ class MomDefuzzifyQuery(DefuzzifyQuery):
         b: CreatedIndividual = typing.cast(
             CreatedIndividual, rel_set[0].get_object_individual()
         )
-        q: Variable = cloned.milp.get_variable(b)
+        q: Variable = cloned.milp.get_variable(b)  # Variable
         if q is None:
             Util.warning("Warning: Problem in defuzzification. Answer is 0.")
             return None
 
         try:
-            obj_expr: Expression = Expression(Term(-1.0, q))
+            obj_expr: Expression = Expression(Term(-1.0, q))  # Term
             sol1: Solution = cloned.optimize(obj_expr)
             if sol1.get_solution() < 0.0:
                 sol1 = Solution(sol1.get_solution())
 
             # SOM
-            obj_expr: Expression = Expression(Term(1.0, q))
+            obj_expr: Expression = Expression(Term(1.0, q))  # Term
             sol2: Solution = cloned.optimize(obj_expr)
             if sol2.get_solution() < 0.0:
                 sol2 = Solution(sol2.get_solution())
@@ -119,7 +119,7 @@ class MomDefuzzifyQuery(DefuzzifyQuery):
             traceback.print_exc()
         return Solution(Solution.INCONSISTENT_KB)
 
-    def get_obj_expression(self, variable: Variable) -> Expression:
+    def get_obj_expression(self, variable: Variable) -> Expression:  # Variable
         # Put anything here, we do not use this method
         """
         Returns a placeholder objective expression for the provided variable. This method is currently not utilized within the defuzzification logic and serves as a stub implementation. It constructs and returns an Expression object containing a single Term with a coefficient of -1.0, regardless of the input variable's state.
@@ -132,7 +132,7 @@ class MomDefuzzifyQuery(DefuzzifyQuery):
         :rtype: Expression
         """
 
-        return Expression(Term(-1.0, variable))
+        return Expression(Term(-1.0, variable))  # Term
 
     def __str__(self) -> str:
         """

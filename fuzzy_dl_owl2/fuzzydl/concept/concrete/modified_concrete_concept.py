@@ -23,7 +23,6 @@ class ModifiedConcreteConcept(FuzzyConcreteConcept):
     :type _modified: FuzzyConcreteConcept
     """
 
-
     def __init__(self, name: str, modifier: Modifier, f: FuzzyConcreteConcept) -> None:
         """
         Initializes a modified concrete concept by associating a specific name, a modifier object, and a fuzzy concrete concept to be modified. This method invokes the superclass constructor to handle the naming convention and establishes default scaling parameters, setting `k1` to 0.0 and `k2` to 1.0. The provided modifier and fuzzy concept are stored internally for subsequent operations, effectively wrapping the fuzzy concept to allow for modification logic.
@@ -45,31 +44,47 @@ class ModifiedConcreteConcept(FuzzyConcreteConcept):
     @property
     def modifier(self) -> Modifier:
         """
-        Sets the value of the `modifier` property for the `ModifiedConcreteConcept` instance. This method accepts a `Modifier` object and assigns it to the internal `_modifier` attribute, effectively updating the instance's state. No validation or additional side effects are performed during this assignment.
+        Returns the fuzzy modifier (e.g. "very", "somewhat") applied to the wrapped concrete concept. The modifier transforms the membership degrees produced by the underlying concept. The value is read from the private ``_modifier`` attribute without modifying the instance.
 
-        :param value: The new modifier instance to assign to the object.
-        :type value: Modifier
+        :return: The modifier applied to the wrapped concept.
+
+        :rtype: Modifier
         """
 
         return self._modifier
 
     @modifier.setter
     def modifier(self, value: Modifier) -> None:
+        """
+        Sets the fuzzy modifier applied to the wrapped concrete concept. The provided modifier is stored directly in the private ``_modifier`` attribute without validation.
+
+        :param value: The new modifier to apply.
+        :type value: Modifier
+        """
+
         self._modifier = value
 
     @property
     def modified(self) -> FuzzyConcreteConcept:
         """
-        Sets the internal modification state of the object to the provided `FuzzyConcreteConcept` value. This method acts as the setter for the `modified` property, replacing the existing value stored in the private `_modified` attribute. It directly mutates the instance's state and does not perform any validation or return a value.
+        Returns the underlying fuzzy concrete concept that this modified concept wraps and whose membership degrees are transformed by the modifier. The value is read from the private ``_modified`` attribute without modifying the instance.
 
-        :param value: The concept instance to assign as the modified state.
-        :type value: FuzzyConcreteConcept
+        :return: The wrapped concrete concept being modified.
+
+        :rtype: FuzzyConcreteConcept
         """
 
         return self._modified
 
     @modified.setter
     def modified(self, value: FuzzyConcreteConcept) -> None:
+        """
+        Sets the underlying fuzzy concrete concept that this modified concept wraps. The provided concept is stored directly in the private ``_modified`` attribute without validation.
+
+        :param value: The new concrete concept to wrap.
+        :type value: FuzzyConcreteConcept
+        """
+
         self._modified = value
 
     def clone(self) -> typing.Self:
@@ -157,14 +172,17 @@ class ModifiedConcreteConcept(FuzzyConcreteConcept):
 
     def __hash__(self) -> int:
         """
-        Computes the hash value for the instance by generating a hash of the object's string representation. This implementation delegates the hashing logic to the result of `str(self)`, ensuring that objects with identical string representations produce the same hash code. Consequently, any modification to the object that alters its string representation will result in a different hash value, which can lead to unexpected behavior if the object is used as a key in a dictionary or stored in a set.
+        Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-        :return: An integer hash value derived from the string representation of the object.
+        :return: An integer hash value representing the structural identity of this object.
 
         :rtype: int
         """
-
-        return hash(str(self))
+        # return hash(str(self))
+        # return id(self)
+        return hash(
+            (self.k1, self.k2, hash(self.modifier), hash(self.modified))
+        )
 
     # def __str__(self) -> str:
     #     return self.get_name()

@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.modifier.linear_modifier
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A fuzzy logic modifier that applies a configurable piecewise linear transformation to the membership degrees of concepts.
+Implements a fuzzy logic modifier that transforms concept membership degrees using a configurable piecewise linear function.
 
 
 Description
 -----------
 
 
-Software designed to adjust the intensity of fuzzy concepts by mapping input membership values through a piecewise linear function. The transformation is governed by a single coefficient that determines the slope and intercept of the function, allowing for precise control over how membership degrees are scaled. By deriving internal parameters from this coefficient, the implementation ensures that the resulting values remain strictly bounded between 0 and 1, effectively clamping inputs that fall outside the valid range. Integration with the broader fuzzy logic framework is achieved through the ability to wrap existing concepts into modified forms and support standard logical operators such as negation, conjunction, and disjunction.
+The software defines a mechanism for altering the membership degrees of fuzzy concepts through a piecewise linear transformation, controlled by a single shape coefficient. Upon initialization, the coefficient is used to derive two internal weights that define the inflection point and slope of the transformation, ensuring the output remains normalized within the zero-to-one range. When applied to a concept, the logic generates a specialized wrapper object that encapsulates both the original concept and the transformation rules, allowing the modified membership to be calculated dynamically based on input values. To support complex logical reasoning, the implementation includes operator overloading for conjunction, disjunction, and negation, delegating these operations to a central factory for concept construction while maintaining immutability of the original modifier.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -87,9 +83,9 @@ Module Contents
 
    .. py:method:: __hash__() -> int
 
-      Computes the integer hash value for the `LinearModifier` instance based on its string representation, enabling the object to be used as a key in dictionaries or as a member of sets. The implementation delegates the hashing logic to the result of `str(self)`, ensuring that two instances with identical string representations produce the same hash. However, because the hash is derived from the string form, any changes to the object's state that alter its string representation will result in a different hash value, which violates the immutability requirement for objects used in hashed collections and may lead to lookup errors.
+      Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-      :return: An integer hash value derived from the string representation of the object.
+      :return: An integer hash value representing the structural identity of this object.
 
       :rtype: int
 
@@ -180,27 +176,31 @@ Module Contents
       :type: float
 
 
-      Sets the value of the 'a' coefficient for the linear modifier. This method updates the object's internal state by assigning the provided floating-point value to the private attribute `_a`. It allows the linear parameter to be modified dynamically after the object has been initialized.
+      Returns the first derived weight of the linear modifier, computed at construction as ``c / (c + 1)``. Together with ``b`` it forms the pair of weights (summing to ``1``) that define the piecewise-linear membership transformation. The value is read from the private ``_a`` attribute without modifying the instance.
 
-      :param value: The new float value to assign to the property.
-      :type value: float
+      :return: The derived weight ``a`` of the modifier.
+
+      :rtype: float
 
 
    .. py:property:: b
       :type: float
 
 
-      Sets the internal coefficient 'b' for the linear modifier to the specified floating-point value. This method updates the object's state by assigning the input directly to the private attribute `_b`. Since no validation logic is present in the implementation, any float value is accepted, potentially including edge cases like infinity or NaN.
+      Returns the second derived weight of the linear modifier, computed at construction as ``1 / (c + 1)``. Together with ``a`` it forms the pair of weights (summing to ``1``) that define the piecewise-linear membership transformation. The value is read from the private ``_b`` attribute without modifying the instance.
 
-      :param value: The new value to assign to the b attribute.
-      :type value: float
+      :return: The derived weight ``b`` of the modifier.
+
+      :rtype: float
 
 
    .. py:property:: c
       :type: float
 
 
-      Updates the value of the 'c' property, which likely represents a constant term or coefficient in the linear modification logic. This setter assigns the provided floating-point value to the internal `_c` attribute, thereby modifying the object's state. Since the implementation performs a direct assignment without explicit type enforcement, passing incompatible types may result in unexpected behavior during subsequent calculations that rely on this value.
+      Returns the shape coefficient ``c`` of the linear modifier, the single parameter from which the derived weights ``a`` and ``b`` are computed and which controls the intensity of the modification. The value is read from the private ``_c`` attribute without modifying the instance.
 
-      :param value: The new value to assign to the internal c attribute.
-      :type value: float
+      :return: The shape coefficient ``c`` of the modifier.
+
+      :rtype: float
+

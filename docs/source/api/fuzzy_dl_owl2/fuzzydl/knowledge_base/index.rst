@@ -5,13 +5,9 @@ fuzzy_dl_owl2.fuzzydl.knowledge_base
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A fuzzy knowledge base that manages terminological axioms, assertional data, and role hierarchies by implementing a tableau-based reasoning algorithm that translates fuzzy logic constraints into a Mixed-Integer Linear Programming (MILP) problem. It handles complex operations such as TBox normalization and absorption, lazy unfolding, and blocking strategies to ensure termination. The system supports multiple fuzzy logic semantics, including Lukasewicz, Zadeh, and Gödel, allowing for the definition of subsumption relationships and the evaluation of truth degrees. It manages the creation and merging of individuals within a depth-first completion forest, applying inference rules to expand assertions, and translates various fuzzy constructs—such as conjunctions, disjunctions, and concrete domain restrictions—into linear constraints within the MILP model. Additionally, it provides static solvers for specific logic types (Lukasiewicz, Zadeh, Classical) to encode logical connectives and restrictions, alongside handlers for blocking and unblocking nodes in the reasoning graph.
+The ``KnowledgeBase`` class acts as the central engine for a fuzzy description logic knowledge base, managing the TBox, ABox, and RBox components. It implements a tableau-based reasoning algorithm that translates fuzzy axioms into constraints for a Mixed-Integer Linear Programming (MILP) solver. The class handles the preprocessing of the Terminological Box (TBox), including normalization and absorption of axioms based on the configured fuzzy logic semantics (Lukasiewicz, Zadeh, Gödel, Kleene-Dienes). It manages the Assertional Box (ABox) by iteratively applying inference rules to assertions, creating and merging individuals to satisfy existential and universal restrictions, and enforcing blocking strategies to ensure algorithm termination. The system supports multiple fuzzy logic types and optimizations such as lazy unfolding and absorption to improve reasoning efficiency. It also provides functionality to serialize the knowledge base to and from files, compute the Description Logic expressivity of the ontology, and interface with an MILP solver to determine truth degrees and optimize expressions.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -157,7 +153,7 @@ Module Contents
    This class serves as a utility handler for individuals dynamically generated during the reasoning process within a fuzzy knowledge base, primarily focusing on the implementation of blocking strategies to ensure algorithm termination. It provides static methods to determine if an individual is directly or indirectly blocked based on various configurations such as subset, set, or pairwise blocking, comparing concept labels against ancestors or other nodes in the completion forest. Furthermore, it manages the unblocking procedure, which involves resetting the status of blocked nodes and re-queuing their associated assertions for processing. Beyond blocking logic, the class is responsible for updating role successor lists and retrieving or creating representative individuals for concrete features involving fuzzy numbers.
 
 
-   .. py:method:: get_representative(current_individual: fuzzy_dl_owl2.fuzzydl.individual.created_individual.CreatedIndividual, type: fuzzy_dl_owl2.fuzzydl.util.constants.InequalityType, f_name: str, f: fuzzy_dl_owl2.fuzzydl.concept.concrete.fuzzy_number.triangular_fuzzy_number.TriangularFuzzyNumber, kb: KnowledgeBase) -> fuzzy_dl_owl2.fuzzydl.individual.created_individual.CreatedIndividual
+   .. py:method:: get_representative(current_individual: fuzzy_dl_owl2.fuzzydl.individual.created_individual.CreatedIndividual, type: fuzzy_dl_owl2.fuzzydl.util.constants.InequalityType, f_name: Optional[str], f: fuzzy_dl_owl2.fuzzydl.concept.concrete.fuzzy_number.triangular_fuzzy_number.TriangularFuzzyNumber, kb: KnowledgeBase) -> fuzzy_dl_owl2.fuzzydl.individual.created_individual.CreatedIndividual
       :staticmethod:
 
 
@@ -168,7 +164,7 @@ Module Contents
       :param type: Specifies the inequality direction (e.g., GREATER_EQUAL, LESS_EQUAL) used to define the representative individual relative to the fuzzy number.
       :type type: InequalityType
       :param f_name: Name of the feature for which the representative individual serves as a filler.
-      :type f_name: str
+      :type f_name: typing.Optional[str]
       :param f: The fuzzy number value used as the threshold to define the representative individual based on the specified inequality type.
       :type f: TriangularFuzzyNumber
       :param kb: The knowledge base instance used to create new concrete individuals.
@@ -433,7 +429,7 @@ Module Contents
 
 
 
-   .. py:method:: matching_individual(current_individual: fuzzy_dl_owl2.fuzzydl.individual.created_individual.CreatedIndividual, kb: KnowledgeBase) -> set[fuzzy_dl_owl2.fuzzydl.individual.created_individual.CreatedIndividual]
+   .. py:method:: matching_individual(current_individual: fuzzy_dl_owl2.fuzzydl.individual.created_individual.CreatedIndividual, kb: KnowledgeBase) -> sortedcontainers.SortedSet[fuzzy_dl_owl2.fuzzydl.individual.created_individual.CreatedIndividual]
       :staticmethod:
 
 
@@ -444,9 +440,9 @@ Module Contents
       :param kb: The knowledge base providing the existing individuals and blocking configuration for the match check.
       :type kb: KnowledgeBase
 
-      :return: A set of individuals from the knowledge base that share all concepts with the current individual, were created earlier, are not blocked, and satisfy the specific blocking type constraints. Returns an empty set if no matches are found.
+      :return: A sorted set of individuals from the knowledge base that share all concepts with the current individual, were created earlier, are not blocked, and satisfy the specific blocking type constraints. Returns an empty set if no matches are found.
 
-      :rtype: set[CreatedIndividual]
+      :rtype: SortedSet[CreatedIndividual]
 
 
 
@@ -502,7 +498,7 @@ Module Contents
 
 
 
-   .. py:method:: update_role_successors(name: str, role_name: str, kb: KnowledgeBase) -> None
+   .. py:method:: update_role_successors(name: str, role_name: Optional[str], kb: KnowledgeBase) -> None
       :staticmethod:
 
 
@@ -1180,7 +1176,7 @@ Module Contents
     .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzydl_knowledge_base_KnowledgeBase.pdf
        :alt: UML Class Diagram for KnowledgeBase
        :align: center
-       :width: 3.5cm
+       :width: 3.0cm
        :class: uml-diagram
 
        UML Class Diagram for **KnowledgeBase**
@@ -1426,7 +1422,17 @@ Module Contents
 
    .. py:method:: __add_crisp_concrete_concept_equations(concept: fuzzy_dl_owl2.fuzzydl.concept.concrete.crisp_concrete_concept.CrispConcreteConcept, x_c: fuzzy_dl_owl2.fuzzydl.milp.variable.Variable, x_ass: fuzzy_dl_owl2.fuzzydl.milp.variable.Variable) -> None
 
-      Encodes the logical constraints for a crisp concrete concept into the underlying Mixed-Integer Linear Programming (MILP) model by establishing a relationship between the concept's value and its assertion status. This method introduces three auxiliary binary variables to partition the solution space into three mutually exclusive regions based on the concept variable `x_c`: a lower region where `x_c` is strictly less than the lower threshold `a`, a middle region where `x_c` lies between `a` and `b`, and an upper region where `x_c` is strictly greater than the upper threshold `b`. The assertion variable `x_ass` is constrained to be 1 only when `x_c` falls within the middle region `[a, b]`, and 0 otherwise. The formulation utilizes the concept's global bounds `k1` and `k2` to deactivate irrelevant constraints via a Big-M approach and employs a small epsilon value to strictly enforce inequalities at the boundaries. As a side effect, this method modifies the MILP model by adding the new binary variables and the necessary linear constraints.
+      Crisp (rectangular) membership function on the concrete domain.
+
+      Three mutually exclusive binary regions  $y_1+y_2+y_3=1$:
+
+      .. math::
+          \begin{array}{c|c|c}
+          \text{region} & x_C \text{ bounds} & x_{ass} \\ \hline
+          y_1=1 & k_1 \le x_C < a   & 0 \\
+          y_2=1 & a \le x_C \le b    & 1 \\
+          y_3=1 & b < x_C \le k_2 & 0
+          \end{array}
 
       :param concept: The crisp concrete concept definition providing the threshold values (k1, a, b, k2) required to formulate the piecewise linear constraints.
       :type concept: CrispConcreteConcept
@@ -1454,7 +1460,17 @@ Module Contents
 
    .. py:method:: __add_left_concrete_concept_equations(concept: fuzzy_dl_owl2.fuzzydl.concept.concrete.left_concrete_concept.LeftConcreteConcept, x_c: fuzzy_dl_owl2.fuzzydl.milp.variable.Variable, x_ass: fuzzy_dl_owl2.fuzzydl.milp.variable.Variable) -> None
 
-      Encodes the logical constraints for a left concrete concept assertion into the underlying Mixed-Integer Linear Programming (MILP) model by introducing auxiliary binary variables and linear inequalities. It establishes a piecewise relationship between the concrete concept variable and the assertion variable, defining three mutually exclusive regimes: one where the assertion is definitively true, one where it is definitively false, and a transitional region where the assertion value is interpolated. The method adds these constraints to the model to ensure that the assertion variable accurately reflects the state of the concrete concept based on the thresholds and bounds specified in the concept definition.
+      Left-shoulder membership function: rises from 0 to 1.
+
+      Three mutually exclusive binary regions  $y_1+y_2+y_3=1$:
+
+      .. math::
+          \begin{array}{c|c|c}
+          \text{region} & x_C \text{ bounds} & x_{ass} \\ \hline
+          y_1=1 & k_1 \le x_C \le a & 1 \\
+          y_2=1 & a \le x_C \le b  & \text{linear interpolation} \\
+          y_3=1 & b \le x_C \le k_2 & 0
+          \end{array}
 
       :param concept: The left concrete concept assertion providing the parameters (a, b, k1, k2) required to formulate the MILP constraints.
       :type concept: LeftConcreteConcept
@@ -1467,7 +1483,15 @@ Module Contents
 
    .. py:method:: __add_linear_concrete_concept_equations(concept: fuzzy_dl_owl2.fuzzydl.concept.concrete.linear_concrete_concept.LinearConcreteConcept, x_A_is_C: fuzzy_dl_owl2.fuzzydl.milp.variable.Variable, x_ass: fuzzy_dl_owl2.fuzzydl.milp.variable.Variable) -> None
 
-      Encodes the logical constraints for a linear concrete concept assertion into the underlying Mixed-Integer Linear Programming (MILP) model. This method introduces an auxiliary binary variable to handle the disjunctive conditions defined by the concept's threshold `a` and boundaries `k1` and `k2`. It establishes a system of six linear inequalities that link the concrete domain variable `x_A_is_C` with the assertion variable `x_ass`, ensuring that the assertion's value is consistent with the linear relationship defined by the concept's slope `b` and intercepts. The constraints effectively model the piecewise logic where the concrete value falls either below or above the threshold, thereby determining the state of the assertion variable.
+      Piecewise-linear membership function with a single threshold $a$.
+
+      Binary variable $y$ selects the active half-plane:
+
+      .. math::
+          \begin{aligned}
+          y=0:\quad & x_C \le a, \quad & b\,x_C - (a-k_1)x_{ass} = b\,k_1 \\
+          y=1:\quad & x_C \ge a, \quad & (1-b)\,x_C - (k_2-a)x_{ass} = a - b\,k_2
+          \end{aligned}
 
       :param concept: The linear concrete concept assertion providing the coefficients and thresholds necessary to formulate the MILP constraints.
       :type concept: LinearConcreteConcept
@@ -1480,7 +1504,17 @@ Module Contents
 
    .. py:method:: __add_right_concrete_concept_equations(concept: fuzzy_dl_owl2.fuzzydl.concept.concrete.right_concrete_concept.RightConcreteConcept, x_c: fuzzy_dl_owl2.fuzzydl.milp.variable.Variable, x_ass: fuzzy_dl_owl2.fuzzydl.milp.variable.Variable) -> None
 
-      This method encodes the logical constraints for a right concrete concept assertion into the underlying Mixed-Integer Linear Programming (MILP) model. It establishes a relationship between a concrete concept variable and an assertion variable based on thresholds defined in the provided concept object. To model this piecewise logic, the method introduces three auxiliary binary variables that act as mutually exclusive switches, enforcing exactly one of three distinct operational regimes. These regimes define specific bounds on the concept variable and determine the value of the assertion variable, effectively creating a conditional mapping where the assertion is forced to zero in the lower region, one in the upper region, and follows a linear interpolation in the transition region. The primary side effect is the addition of these new variables and their associated linear constraints to the MILP solver.
+      Right-shoulder membership function: falls from 1 to 0.
+
+      Three mutually exclusive binary regions  $y_1+y_2+y_3=1$:
+
+      .. math::
+          \begin{array}{c|c|c}
+          \text{region} & x_C \text{ bounds} & x_{ass} \\ \hline
+          y_1=1 & k_1 \le x_C \le a & 0 \\
+          y_2=1 & a \le x_C \le b  & \text{linear interpolation} \\
+          y_3=1 & b \le x_C \le k_2 & 1
+          \end{array}
 
       :param concept: The right concrete concept assertion defining the thresholds and logic used to construct the constraints linking the concept variable to the assertion variable.
       :type concept: RightConcreteConcept
@@ -1493,7 +1527,9 @@ Module Contents
 
    .. py:method:: __add_sigma_count_equation(x_sigma: fuzzy_dl_owl2.fuzzydl.milp.variable.Variable, xw_in_Ci: list[fuzzy_dl_owl2.fuzzydl.milp.variable.Variable]) -> None
 
-      This method constructs and adds a linear equality constraint to the internal MILP model to enforce a sigma count relationship. It creates an expression representing the sum of the variables in `xw_in_Ci` and constrains this sum to be equal to the degree of the `x_sigma` variable. If the provided list of variables is empty, the method exits without adding any constraints.
+      Sigma-count aggregation  $\sum_i x_{\wedge}^{(i)} = x_{\sigma}$.
+
+      Emitted as a single linear equality; no auxiliary variables are needed.
 
       :param x_sigma: The variable representing the sum or count of the concept variables, used as the target value for the constraint.
       :type x_sigma: Variable
@@ -1504,7 +1540,19 @@ Module Contents
 
    .. py:method:: __add_trapezoidal_concrete_concept_equations(concept: fuzzy_dl_owl2.fuzzydl.concept.concrete.trapezoidal_concrete_concept.TrapezoidalConcreteConcept, x_c: fuzzy_dl_owl2.fuzzydl.milp.variable.Variable, x_ass: fuzzy_dl_owl2.fuzzydl.milp.variable.Variable) -> None
 
-      Encodes the relationship between a concrete variable and its assertion variable within the internal Mixed-Integer Linear Programming (MILP) model using a trapezoidal membership function. The method introduces five auxiliary binary variables to partition the domain into five distinct regions: the left tail, the rising slope, the core, the falling slope, and the right tail. By enforcing that exactly one binary variable is active, it applies specific linear constraints to set the assertion variable to 0 in the tails, 1 in the core, or a linear interpolation on the slopes, depending on the value of the concrete variable relative to the trapezoid's parameters. This process modifies the MILP model by adding the necessary variables and constraints.
+      Trapezoidal membership function on the concrete domain.
+
+      Five mutually exclusive binary regions  $\sum_{i=1}^{5} y_i = 1$:
+
+      .. math::
+          \begin{array}{c|c|c}
+          \text{region} & x_C \text{ bounds} & x_{ass} \\ \hline
+          y_1=1 & k_1 \le x_C \le a & 0 \\
+          y_2=1 & a  \le x_C \le b & \text{linear interpolation} \\
+          y_3=1 & b  \le x_C \le c & 1 \\
+          y_4=1 & c  \le x_C \le d & \text{linear interpolation} \\
+          y_5=1 & d  \le x_C \le k_2 & 0
+          \end{array}
 
       :param concept: The trapezoidal concrete concept assertion providing the parameters ($k_1, a, b, c, d, k_2$) used to construct the linear constraints.
       :type concept: TrapezoidalConcreteConcept
@@ -1517,7 +1565,18 @@ Module Contents
 
    .. py:method:: __add_triangular_concrete_concept_equations(concept: fuzzy_dl_owl2.fuzzydl.concept.concrete.triangular_concrete_concept.TriangularConcreteConcept, x_c: fuzzy_dl_owl2.fuzzydl.milp.variable.Variable, x_ass: fuzzy_dl_owl2.fuzzydl.milp.variable.Variable) -> None
 
-      Encodes the logical constraints for a triangular concrete concept assertion into the underlying Mixed-Integer Linear Programming (MILP) model. This method creates four auxiliary binary variables to select the active segment of the triangular function, corresponding to the lower tail, rising edge, falling edge, and upper tail. It establishes a system of linear inequalities that relate the concrete variable `x_c` to the assertion variable `x_ass`, ensuring that `x_ass` accurately reflects the piecewise linear membership degree defined by the concept's parameters (k1, a, b, c, k2). The constraints enforce that the assertion is zero in the tail regions and scales linearly within the core region. As a side effect, this method modifies the MILP model by adding these new variables and constraints.
+      Triangular membership function on the concrete domain.
+
+      Four mutually exclusive binary regions  $\sum_{i=1}^{4} y_i = 1$:
+
+      .. math::
+          \begin{array}{c|c|c}
+          \text{region} & x_C \text{ bounds} & x_{ass} \\ \hline
+          y_1=1 & k_1 \le x_C \le a & 0 \\
+          y_2=1 & a  \le x_C \le b & \text{linear interpolation (rising)} \\
+          y_3=1 & b  \le x_C \le c & \text{linear interpolation (falling)} \\
+          y_4=1 & c  \le x_C \le k_2 & 0
+          \end{array}
 
       :param concept: The triangular concrete concept assertion providing the parameters and boundaries used to construct the MILP constraints.
       :type concept: TriangularConcreteConcept
@@ -1640,7 +1699,7 @@ Module Contents
 
 
 
-   .. py:method:: __get_new_individual_2(parent: fuzzy_dl_owl2.fuzzydl.individual.individual.Individual, f_name: str) -> fuzzy_dl_owl2.fuzzydl.individual.created_individual.CreatedIndividual
+   .. py:method:: __get_new_individual_2(parent: Optional[fuzzy_dl_owl2.fuzzydl.individual.individual.Individual], f_name: Optional[str]) -> fuzzy_dl_owl2.fuzzydl.individual.created_individual.CreatedIndividual
 
       This method orchestrates the creation and immediate registration of a new individual entity within the knowledge base, utilizing a specified parent individual and role name. It delegates the core instantiation logic to a common code routine, ensuring the new entity is properly initialized relative to its parent. A significant side effect of this operation is the modification of the internal state, as the newly created individual is automatically added to the knowledge base's collection using its string representation as an identifier before being returned.
 
@@ -1799,7 +1858,20 @@ Module Contents
 
    .. py:method:: __solve_cardinality(x_sigma: fuzzy_dl_owl2.fuzzydl.milp.variable.Variable, i1: fuzzy_dl_owl2.fuzzydl.individual.individual.Individual, O: list[fuzzy_dl_owl2.fuzzydl.individual.individual.Individual], r: str, C: fuzzy_dl_owl2.fuzzydl.concept.concept.Concept) -> None
 
-      This method constructs the constraints required to compute the sigma count (cardinality) of a set defined by a specific role and concept. It iterates through the list of candidate individuals `O`, processing only those for which a relation variable exists between the subject `i1` and the candidate via the role `r`. For each valid candidate, it creates a new variable representing the logical conjunction of the relation's truth value and the candidate's membership in the concept `C`, adding the appropriate fuzzy logic constraints (Lukasiewicz or Zadeh) to the solver. The method has the side effect of populating the MILP solver with these new variables and equations, ultimately linking the target variable `x_sigma` to the sum of the calculated conjunctions.
+      Sigma-count (fuzzy cardinality) of the set
+      $\{ i_2 \in O \mid (i_1,i_2):r \text{ and } i_2:C \}$.
+
+      For each known $r$-filler $i_2 \in O$:
+
+      .. math::
+          x_{\wedge}^{(i_2)} = x_{(i_1,i_2):r} \otimes x_{i_2:C}
+
+      reified with ``LukasiewiczSolver.and_equation`` or
+      ``ZadehSolver.and_equation`` (4-argument call with ``self.milp``).
+      The final count is linked via
+
+      .. math::
+          \sum_{i_2} x_{\wedge}^{(i_2)} = x_{\sigma}
 
       :param x_sigma: Free variable representing the sigma count of the conjunctions between the relation and concept membership for the candidate individuals.
       :type x_sigma: Variable
@@ -2249,7 +2321,23 @@ Module Contents
 
    .. py:method:: add_relation_with_role_parent_in_lukasiewicz(r: fuzzy_dl_owl2.fuzzydl.relation.Relation, role_p: str, n: float) -> None
 
-      This method incorporates a new relation into the knowledge base where the specified role acts as a parent, utilizing Lukasiewicz fuzzy logic semantics to determine the resulting truth degree. It computes the degree of the new relation by applying the Lukasiewicz t-norm to the original relation's degree and the provided threshold value. If the original relation possesses a numeric degree, the calculation is performed directly using floating-point arithmetic; otherwise, the method introduces auxiliary variables and linear constraints into the underlying Mixed-Integer Linear Programming (MILP) model to algebraically represent the t-norm operation. This process modifies the MILP model's state and updates internal variable counters before adding the derived relation to the knowledge base.
+      Role inclusion under Łukasiewicz semantics:
+      $x_{(a,b):R_p} = x_{(a,b):R} \otimes_L n$.
+
+      Numeric degree: computed directly as  $\max(0,\; n-1+deg)$.
+      Variable degree: reified with auxiliary variables $y_n$ (binary) and
+      $\text{new}_l$ (continuous) via the Big-M system
+
+      .. math::
+          \begin{aligned}
+          x &= deg \\
+          \text{new}_l &\le 1 - y_n \\
+          x + y_n - 1 &\le \text{new}_l \\
+          x + y_n - 1 &\ge \text{new}_l \\
+          n - 1 + y_n &\le \text{new}_l
+          \end{aligned}
+
+      which yields  $\text{new}_l = \max(0,\; x+n-1)$.
 
       :param r: The relation providing the subject, object, and initial degree for the new relation added to the parent role.
       :type r: Relation
@@ -2295,55 +2383,49 @@ Module Contents
 
 
 
-   .. py:method:: add_tdef_links(g: networkx.DiGraph, A_t_C: dict[str, int], use_tdr: bool) -> bool
+   .. py:method:: add_tdef_links(g: fuzzy_dl_owl2.fuzzydl.graph.DiGraph, A_t_C: dict[str, int], use_tdr: bool) -> bool
 
-      This method constructs a dependency graph by adding edges to the provided directed graph `g` based on the TBox definitions stored in the knowledge base. It iterates through each defined concept, mapping concept names to integer identifiers using the `A_t_C` dictionary, and creates directed edges from the defined concept to the atomic concepts used in its definition. During this process, the method checks for immediate cycles by verifying if a dependent concept is a synonym of the defined concept; if detected, it returns `True`. If the `use_tdr` flag is set, the method also processes domain and range axioms, potentially adding further edges and checking for cycles. The graph `g` is modified in-place, and the method returns `True` if a cycle is identified through synonyms or domain/range axioms, otherwise returning `False`, though a `False` result does not guarantee the absence of cycles in the broader context.
+      Constructs dependency edges based on TBox definitions.
 
-      :param g: The directed graph to which edges representing concept definitions are added.
-      :type g: nx.DiGraph
+      :param g: DiGraph to which edges are added.
+      :type g: DiGraph
       :param A_t_C: Mapping of atomic concept names to integer node identifiers.
       :type A_t_C: dict[str, int]
-      :param use_tdr: Indicates whether to consider domain and range axioms when adding links.
+      :param use_tdr: Whether to consider domain and range axioms.
       :type use_tdr: bool
-
-      :return: True if a cycle is detected due to synonyms or domain/range axioms while adding definition links; False otherwise. Note that a return value of False does not guarantee the graph is acyclic.
-
+      :return: True if a cycle is detected via synonyms or domain/range axioms.
       :rtype: bool
 
 
 
-   .. py:method:: add_tdr_links(g: networkx.DiGraph, A_t_C: dict[str, int], used_roles: set[str], v: int) -> bool
+   .. py:method:: add_tdr_links(g: fuzzy_dl_owl2.fuzzydl.graph.DiGraph, A_t_C: dict[str, int], used_roles: set[str], v: int) -> bool
 
-      Populates the provided directed graph `g` with edges representing dependencies derived from domain and range restrictions associated with the concept `v`. The method expands the set of `used_roles` to include all parent roles within the role hierarchy, then iterates through these roles to identify relevant restrictions. For every atomic concept found within these domain and range restrictions, a directed edge is added from `v` to the corresponding node in the graph. Additionally, the method checks for a specific cycle condition involving 't_synonyms'; if a restriction is identified as a synonym of an atomic concept it restricts, the method returns `True` immediately. If the process completes without detecting this condition, it returns `False`, although this result does not guarantee that the graph is cycle-free.
+      Adds edges from domain and range restrictions to the graph.
 
-      :param g: The directed graph to which edges representing domain and range restrictions are added.
-      :type g: nx.DiGraph
-      :param A_t_C: Mapping of atomic concept names to their corresponding integer identifiers.
+      :param g: DiGraph to which edges are added.
+      :type g: DiGraph
+      :param A_t_C: Mapping of atomic concept names to integer identifiers.
       :type A_t_C: dict[str, int]
-      :param used_roles: The set of role identifiers to be processed for domain and range restrictions.
+      :param used_roles: Role identifiers to process.
       :type used_roles: set[str]
-      :param v: The integer identifier of the concept acting as the source node for the edges to be added.
+      :param v: Source node identifier.
       :type v: int
-
-      :return: True if a cycle involving t_synonyms was detected during the link addition process; False otherwise. Note that a return value of False does not guarantee the graph is acyclic.
-
+      :return: True if a cycle involving t_synonyms was detected.
       :rtype: bool
 
 
 
-   .. py:method:: add_tinc_links(g: networkx.DiGraph, A_t_C: dict[str, int], use_tdr: bool) -> bool
+   .. py:method:: add_tinc_links(g: fuzzy_dl_owl2.fuzzydl.graph.DiGraph, A_t_C: dict[str, int], use_tdr: bool) -> bool
 
-      Populates the provided directed graph with edges representing terminological inclusions defined in the knowledge base. For each atomic concept involved in an inclusion, the method retrieves the corresponding node identifier from the provided mapping and creates directed edges to the atomic concepts found within the inclusion's definition. During this process, it specifically checks for cycles arising from synonym relationships; if an included concept is identified as a synonym of the source concept, the method immediately returns True. Additionally, if the `use_tdr` flag is enabled, the method incorporates domain and range axioms by invoking `add_tdr_links` and propagates any cycle detection result from that call. The graph is modified in place, and while a return value of True confirms the existence of cycles due to synonyms or domain/range axioms, a return value of False does not guarantee the graph is acyclic.
+      Populates graph with edges representing terminological inclusions.
 
-      :param g: The directed graph to which edges representing concept inclusions are added.
-      :type g: nx.DiGraph
-      :param A_t_C: Mapping of atomic concept names to their corresponding integer node identifiers in the graph.
+      :param g: DiGraph to which edges are added.
+      :type g: DiGraph
+      :param A_t_C: Mapping of atomic concept names to integer node identifiers.
       :type A_t_C: dict[str, int]
-      :param use_tdr: Determines whether domain and range axioms are considered when adding links.
+      :param use_tdr: Whether to consider domain and range axioms.
       :type use_tdr: bool
-
-      :return: True if a cycle is detected via synonym relationships or domain/range axioms during the addition of inclusion links; False otherwise. Note that a False return does not guarantee the graph is acyclic.
-
+      :return: True if a cycle is detected via synonym relationships or domain/range axioms.
       :rtype: bool
 
 
@@ -2970,7 +3052,7 @@ Module Contents
 
 
 
-   .. py:method:: get_new_individual_common_code(parent: fuzzy_dl_owl2.fuzzydl.individual.individual.Individual, f_name: str) -> fuzzy_dl_owl2.fuzzydl.individual.created_individual.CreatedIndividual
+   .. py:method:: get_new_individual_common_code(parent: Optional[fuzzy_dl_owl2.fuzzydl.individual.individual.Individual], f_name: Optional[str]) -> fuzzy_dl_owl2.fuzzydl.individual.created_individual.CreatedIndividual
 
       Creates a new `CreatedIndividual` instance linked to the specified parent via the provided role name, assigning it a unique identifier based on an internal counter. This method updates internal knowledge base state, including role successors and the maximum depth, but explicitly avoids adding the new individual to the main collection of individuals. It is designed to handle the common logic of individual instantiation and metadata updates without permanently registering the entity within the knowledge base.
 
@@ -3265,10 +3347,9 @@ Module Contents
 
    .. py:method:: is_tbox_acyclic() -> bool
 
-      Determines whether the TBox component of the knowledge base is acyclic by analyzing the dependencies formed by TBox inclusions and TBox definitions. The method constructs a directed graph representing the relationships between atomic concepts, checking for cycles both during the graph construction phase and upon completion. If a cycle is detected at any point, the method returns False; otherwise, it returns True. This validation ensures that concept definitions do not contain circular dependencies, which is often a prerequisite for specific reasoning tasks.
+      Determines whether the TBox is acyclic.
 
-      :return: True if the union of terminological inclusions and definitions is acyclic, False if a cycle is detected.
-
+      :return: True if the TBox is acyclic, False if a cycle is detected.
       :rtype: bool
 
 
@@ -3421,6 +3502,8 @@ Module Contents
 
       :param file_path: Path to the file from which to load the pickled KnowledgeBase object.
       :type file_path: str
+
+      :raises pickle.UnpicklingError: if the deserialized object is not a `KnowledgeBase`, or if the stream references a class outside the `_PICKLE_ALLOWED_MODULE_PREFIXES` allow-list.
 
       :return: The KnowledgeBase object deserialized from the specified file.
 
@@ -4225,7 +4308,17 @@ Module Contents
 
    .. py:method:: rule_threshold_common(x_a_in_c: fuzzy_dl_owl2.fuzzydl.milp.variable.Variable, x_a_in_tc: fuzzy_dl_owl2.fuzzydl.milp.variable.Variable, y: fuzzy_dl_owl2.fuzzydl.milp.variable.Variable) -> None
 
-      This method adds three linear constraints to the internal Mixed-Integer Linear Programming (MILP) model to enforce the logical relationship between a concept membership variable, a threshold concept variable, and a binary selector variable. The constraints are formulated such that if the binary variable is active (1), the threshold concept variable is forced to equal the concept variable; if the binary variable is inactive (0), the threshold concept variable is forced to zero. This mechanism is used to model the conditional activation of a threshold concept within the knowledge base, modifying the optimization problem's feasible region.
+      Big-M reification of the threshold switch:
+
+      .. math::
+          \begin{aligned}
+          x_{a:TC} &\le x_{a:C} + (1-y) \\
+          x_{a:TC} + (1-y) &\ge x_{a:C} \\
+          x_{a:TC} &\le y
+          \end{aligned}
+
+      Effectively  $x_{a:TC} = x_{a:C} \cdot y$  (product of a continuous and a
+      binary variable).
 
       :param x_a_in_c: The variable representing the degree to which the individual belongs to the concept.
       :type x_a_in_c: Variable
@@ -4440,7 +4533,14 @@ Module Contents
 
    .. py:method:: solve_choquet_integral_assertion(ind: fuzzy_dl_owl2.fuzzydl.individual.individual.Individual, c: fuzzy_dl_owl2.fuzzydl.concept.choquet_integral.ChoquetIntegral) -> None
 
-      Encodes the logic for a Choquet integral concept assertion into the underlying Mixed-Integer Linear Programming (MILP) model for a specific individual. It begins by retrieving the degree variables for the component concepts associated with the individual and ensures these sub-assertions are added to the model. To satisfy the sorting requirement of the Choquet integral, the method introduces auxiliary binary variables to generate an ordered permutation of the component degrees. It then constructs a linear expression based on the Choquet integral formula, applying the provided weights to the sorted variables. Finally, it adds a constraint to the MILP model that equates this calculated expression to the degree variable of the individual with respect to the Choquet integral concept itself.
+      Choquet integral  $\mathsf{Ch}_w(C_1,\dots,C_n)$  for individual $a$.
+
+      Let $y_1 \ge y_2 \ge \dots \ge y_n$ be the sorted values of
+      $x_i = x_{a:C_i}$ (via ``get_ordered_permutation``).  The integral is
+      encoded as the equality
+
+      .. math::
+          w_1 y_1 + \sum_{i=2}^{n} (w_i - w_{i-1}) y_i = x_{a:\mathsf{Ch}}
 
       :param ind: The individual entity for which the Choquet integral assertion is being solved.
       :type ind: Individual
@@ -4544,7 +4644,14 @@ Module Contents
 
    .. py:method:: solve_goedel_gci(ind: fuzzy_dl_owl2.fuzzydl.individual.individual.Individual, gci: fuzzy_dl_owl2.fuzzydl.general_concept_inclusion.GeneralConceptInclusion) -> None
 
-      This method processes a General Concept Inclusion (GCI) for a specific individual by translating the logical constraint into mathematical assertions or linear inequalities based on Gödel fuzzy logic semantics. It handles edge cases such as when the subsumed concept is the universal concept (Top) or the subsumer is the empty concept (Bottom), adding specific assertions or inconsistency constraints to the underlying MILP model. For general concept pairs, it checks if the required degree is 1.0 (crisp logic); if so, it applies an optimization by adding a linear inequality constraint to the MILP model and incrementing the counter for 0-1 variables. Otherwise, it constructs a Gödel implication concept and adds a corresponding assertion to the knowledge base.
+      GCI  $C \sqsubseteq_G D$  under Gödel semantics.
+      Special cases:
+
+      * ``Top \sqsubseteq D``       → assert  $a:D \ge l$
+      * ``C \sqsubseteq Bottom``    → assert  $a:\neg C \ge l$
+      * degree $l = 1.0$ (crisp)   → emit
+        $x_{a:\neg C} + x_{a:D} \ge 1$  (equivalently  $C(a) \le D(a)$)
+      * otherwise                  → assert  $a : (C \Rightarrow_G D) \ge l$
 
       :param ind: The individual instance to which the General Concept Inclusion is applied, serving as the subject for the generated assertions.
       :type ind: Individual
@@ -4600,7 +4707,17 @@ Module Contents
 
    .. py:method:: solve_linear_modifier_assertion(ind: fuzzy_dl_owl2.fuzzydl.individual.individual.Individual, con: fuzzy_dl_owl2.fuzzydl.concept.concept.Concept, modifier: fuzzy_dl_owl2.fuzzydl.modifier.linear_modifier.LinearModifier) -> None
 
-      Encodes the logical constraints of a linear modifier assertion into the underlying Mixed-Integer Linear Programming (MILP) model, establishing a mathematical relationship between the degree to which an individual belongs to a base concept and the degree to which it belongs to a modified version of that concept. The method handles both standard concepts and pre-modified concrete concepts, ensuring the base concept is asserted before applying the modifier logic. It introduces a binary variable to the MILP solver to model a piecewise linear constraint, ensuring that the truth values of the base and modified assertions adhere to the specific linear transformation defined by the modifier's parameters.
+      Linear modifier with parameters $(a,b)$.
+
+      Binary variable $y$ partitions the domain into two linear segments:
+
+      .. math::
+          \begin{aligned}
+          y=0:\quad & x_C \le a,       && x_C = \tfrac{a}{b}\,x_{mod} \\
+          y=1:\quad & x_C \ge a,       && (1-b)\,x_C = (1-a)\,x_{mod} + (a-b)
+          \end{aligned}
+
+      where $x_C$ is the base-concept degree and $x_{mod}$ the modified degree.
 
       :param ind: The individual entity acting as the subject of the assertion, for which membership variables are retrieved and constrained.
       :type ind: Individual
@@ -4613,7 +4730,18 @@ Module Contents
 
    .. py:method:: solve_lukasiewicz_gci(ind: fuzzy_dl_owl2.fuzzydl.individual.individual.Individual, gci: fuzzy_dl_owl2.fuzzydl.general_concept_inclusion.GeneralConceptInclusion) -> None
 
-      Encodes a General Concept Inclusion (GCI) axiom into the internal Mixed Integer Linear Programming (MILP) model using Lukasiewicz fuzzy logic semantics for a specific individual. The method processes the GCI $C \sqsubseteq_l D$ by generating linear constraints that enforce the relationship between the membership degrees of the individual in concepts $C$ and $D$. It handles specific structural simplifications: if the subsumed concept is Top, it asserts the subsumer; if the subsumer is Bottom, it asserts the negation of the subsumed concept; and if both are Bottom, it introduces an inconsistency constraint. In the general case, it applies the Lukasiewicz implication constraint $1 - C(a) + D(a) \ge l$, utilizing a specialized crisp constraint when the degree is exactly 1.0. This operation modifies the MILP model by adding new constraints and assertions, and updates internal counters related to variable usage.
+      GCI  $C \sqsubseteq_L D$  encoded as the Lukasiewicz implication
+
+      .. math::
+          1 - C(a) + D(a) \ge l
+
+      which in MILP variables is  $x_{a:\neg C} + x_{a:D} \ge l$.
+      Special cases:
+
+      * ``Top \sqsubseteq D``       → assert  $a:D \ge l$
+      * ``C \sqsubseteq Bottom``    → assert  $a:\neg C \ge l$
+      * degree $l = 1.0$ (crisp)   → emit  $x_{a:\neg C} \le x_{a:D}$
+        (optimisation that avoids the implication concept)
 
       :param ind: The individual entity to which the General Concept Inclusion is applied, serving as the subject for the generated assertions and constraints.
       :type ind: Individual
@@ -4658,7 +4786,25 @@ Module Contents
 
    .. py:method:: solve_owa_assertion(ind: fuzzy_dl_owl2.fuzzydl.individual.individual.Individual, c: Union[fuzzy_dl_owl2.fuzzydl.concept.owa_concept.OwaConcept, fuzzy_dl_owl2.fuzzydl.concept.qowa_concept.QowaConcept]) -> None
 
-      Translates a fuzzy logic Ordered Weighted Averaging (OWA) concept assertion into a set of constraints within the underlying Mixed-Integer Linear Programming (MILP) model. It retrieves the membership variables for the individual across the sub-concepts defined in the OWA operator and ensures that these sub-concepts are asserted. Depending on the system configuration, the method either constructs an explicit ordering of the variables to apply weights or utilizes an optimized algebraic reformulation involving pairwise minimum operations to avoid sorting. In both cases, it adds a new equality constraint to the solver that links the degree of the OWA concept to the aggregated degrees of its constituent concepts.
+      OWA aggregation  $\mathsf{OWA}_w(C_1,\dots,C_n)$  for individual $a$.
+
+      *Standard path* (``OPTIMIZATIONS == 0``): sort the inputs
+      $x_i = x_{a:C_i}$ into $y_1 \ge y_2 \ge \dots \ge y_n$ and enforce
+
+      .. math::
+          \sum_{i=1}^{n} w_i y_i = x_{a:\mathsf{OWA}}
+
+      *Optimised path*: reformulates the OWA via pairwise minima
+      (Yager’s algebraic identity) to avoid the sorting MILP:
+
+      .. math::
+          \begin{aligned}
+          a &= \frac{1}{n} - \frac{w_n - w_1}{2} \\
+          b &= \frac{w_n - w_1}{n-1} \\
+          x_{a:\mathsf{OWA}} &= a\sum_i x_i + b\sum_{j<k} \min(x_j, x_k)
+          \end{aligned}
+
+      where every $\min$ is reified with ``ZadehSolver.and_equation``.
 
       :param ind: The specific individual entity for which the OWA concept assertion is being solved.
       :type ind: Individual
@@ -4720,7 +4866,22 @@ Module Contents
 
    .. py:method:: solve_sugeno_integral_assertion(ind: fuzzy_dl_owl2.fuzzydl.individual.individual.Individual, concept: Union[fuzzy_dl_owl2.fuzzydl.concept.sugeno_integral.SugenoIntegral, fuzzy_dl_owl2.fuzzydl.concept.quasi_sugeno_integral.QsugenoIntegral]) -> None
 
-      Encodes the mathematical definition of a Sugeno Integral or Quantified Sugeno Integral into the underlying Mixed-Integer Linear Programming (MILP) model to determine the degree of truth for a specific individual. It recursively processes the sub-concepts comprising the integral, establishing their degrees and corresponding MILP variables, and then constructs auxiliary variables and constraints to simulate the fuzzy logic operations required for the calculation. The method handles the sorting of sub-concept values, aligns them with the integral's weights, computes the minimum between each value and the cumulative weight, and finally determines the maximum of these minima to set the degree of the integral concept. Depending on the specific type of integral provided, it utilizes either Zadeh or Lukasiewicz logic for the intermediate aggregation steps, thereby modifying the MILP model state without returning a direct value.
+      Sugeno integral  $\mathsf{SI}_w(C_1,\dots,C_n)$  for individual $a$.
+
+      1. Sort sub-concept degrees  $x_i = x_{a:C_i}$  into
+         $y_1 \ge y_2 \ge \dots \ge y_n$.
+      2. Ordered weights  $ow_j$  are pinned to  $w_k$  via Big-M constraints
+         using the permutation matrix $z$:
+
+         .. math::
+             ow_j \ge (1-z_{kj})w_k,\qquad ow_j \le z_{kj}+w_k
+      3. Accumulate  $a_1 = ow_1$,  $a_i = ow_i \oplus a_{i-1}$  (Łukasiewicz or).
+      4. Conjoin  $c_i = y_i \otimes a_i$.  ``QsugenoIntegral`` uses Łukasiewicz
+         ``and_equation``; ``SugenoIntegral`` uses Zadeh ``and_equation``.
+      5. Link to the result with binary switches $b_i$:
+
+         .. math::
+             b_i + c_i \ge x_{a:\mathsf{SI}},\qquad \sum_{i=1}^{n} b_i = n-1
 
       :param ind: The individual entity for which the Sugeno integral assertion is being evaluated and solved.
       :type ind: Individual
@@ -4764,7 +4925,20 @@ Module Contents
 
    .. py:method:: solve_triangular_modifier_assertion(individual: fuzzy_dl_owl2.fuzzydl.individual.individual.Individual, concept: fuzzy_dl_owl2.fuzzydl.concept.concept.Concept, modifier: fuzzy_dl_owl2.fuzzydl.modifier.triangular_modifier.TriangularModifier) -> None
 
-      Encodes the logical constraints for a triangular modifier assertion within the Mixed-Integer Linear Programming (MILP) model associated with the knowledge base. This method establishes the relationship between an individual's membership degree in a base concept and its membership in a triangularly modified version of that concept, handling both standard concepts and modified concrete concepts by retrieving or creating the appropriate variables. The implementation introduces four binary auxiliary variables to model the piecewise linear structure of the triangular modifier, defined by parameters a, b, and c, thereby enforcing the specific fuzzy logic rules across the rising, peak, and falling segments of the membership function. As a side effect, this method adds new variables and constraints to the MILP solver and records the assertion within the knowledge base.
+      Triangular modifier with parameters $(a,b,c)$.
+
+      Four mutually exclusive binary regions  $y_1+y_2+y_3+y_4=1$:
+
+      .. math::
+          \begin{array}{c|c|c}
+          \text{region} & x_C \text{ bounds} & x_{mod} \\ \hline
+          y_1=1 & 0 \le x_C \le a & 0 \\
+          y_2=1 & a \le x_C \le b   & \text{linear interpolation} \\
+          y_3=1 & b \le x_C \le c   & \text{linear interpolation} \\
+          y_4=1 & c \le x_C \le 1  & 0
+          \end{array}
+
+      where $x_C$ is the base-concept degree and $x_{mod}$ the modified degree.
 
       :param individual: The entity or object instance serving as the subject of the assertion being solved.
       :type individual: Individual
@@ -4777,7 +4951,12 @@ Module Contents
 
    .. py:method:: solve_w_max_assertion(ind: fuzzy_dl_owl2.fuzzydl.individual.individual.Individual, concept: fuzzy_dl_owl2.fuzzydl.concept.weighted_max_concept.WeightedMaxConcept) -> None
 
-      Encodes the constraints necessary to evaluate a weighted maximum concept assertion for a specific individual within the underlying Mixed-Integer Linear Programming (MILP) model. The method computes the membership degree as the maximum of the minimum values between each sub-concept's membership degree and its associated weight, effectively implementing the logic $\max_i \min(\mu_{C_i}(ind), w_i)$. It recursively ensures that all constituent sub-concepts are asserted and resolved before introducing auxiliary variables and logical constraints to represent the aggregation.
+      Weighted maximum  $\max_i \min(x_{a:C_i}, w_i)$.
+
+      Each intermediate  $\min_i$  is reified with ``ZadehSolver.and_equation``
+      (treating the constant weight as a variable bound).  The final maximum
+      over the  $\min_i$  variables is reified with
+      ``ZadehSolver.or_equation``.
 
       :param ind: The individual entity for which the weighted max concept assertion is being solved.
       :type ind: Individual
@@ -4799,7 +4978,12 @@ Module Contents
 
    .. py:method:: solve_w_min_assertion(ind: fuzzy_dl_owl2.fuzzydl.individual.individual.Individual, concept: fuzzy_dl_owl2.fuzzydl.concept.weighted_min_concept.WeightedMinConcept) -> None
 
-      This method translates a weighted minimum concept assertion into a set of constraints within the underlying Mixed-Integer Linear Programming (MILP) model. It calculates the degree of membership for the given individual by determining the minimum value across a series of intermediate calculations, where each intermediate value represents the maximum of the sub-concept's degree and the complement of its associated weight. The process involves creating new auxiliary variables for the MILP solver and recursively ensuring that all nested sub-concepts are properly asserted before establishing the final logical constraints.
+      Weighted minimum  $\min_i \max(x_{a:C_i}, 1-w_i)$.
+
+      Each intermediate  $\max_i$  is reified with ``ZadehSolver.or_equation``
+      (bound  $1-w_i$  is supplied as a constant argument).  The final
+      minimum over the  $\max_i$  variables is reified with
+      ``ZadehSolver.and_equation``.
 
       :param ind: The individual entity for which the weighted min concept assertion is being evaluated and solved.
       :type ind: Individual
@@ -4821,7 +5005,9 @@ Module Contents
 
    .. py:method:: solve_w_sum_assertion(ind: fuzzy_dl_owl2.fuzzydl.individual.individual.Individual, concept: fuzzy_dl_owl2.fuzzydl.concept.weighted_sum_concept.WeightedSumConcept) -> None
 
-      This method enforces the logic of a weighted sum concept for a specific individual by integrating the necessary constraints into the MILP model. It processes the component concepts and their associated weights, ensuring that assertions for these sub-concepts are recursively added to the knowledge base. The core operation involves creating a linear equality constraint that equates the degree of the individual's membership in the weighted sum concept to the sum of the weighted degrees of membership in its constituent concepts.
+      Weighted sum  $x_{a:WS} = \sum_{i=1}^{n} w_i \, x_{a:C_i}$.
+
+      Emitted as a single linear equality; no auxiliary variables are needed.
 
       :param ind: The specific individual for which the weighted sum concept assertion is being solved.
       :type ind: Individual
@@ -4843,7 +5029,19 @@ Module Contents
 
    .. py:method:: solve_w_sum_zero_assertion(ind: fuzzy_dl_owl2.fuzzydl.individual.individual.Individual, concept: fuzzy_dl_owl2.fuzzydl.concept.weighted_sum_zero_concept.WeightedSumZeroConcept) -> None
 
-      Encodes the logical constraints for a WeightedSumZeroConcept assertion applied to a specific Individual into the underlying Mixed-Integer Linear Programming (MILP) model. The method recursively processes the sub-concepts and their associated weights, ensuring that assertions for these sub-concepts are added to the model. It introduces auxiliary binary and semi-continuous variables to construct a set of linear constraints that approximate the fuzzy logic rule, specifically linking the truth value of the assertion to the weighted sum of its components while enforcing a dependency on the minimum truth value of those components. Finally, the method updates the solver state with these constraints and marks the rule as complemented.
+      Weighted-sum-with-zero concept.
+
+      Let  $z = \min_i x_{a:C_i}$  and  $y = \neg_G z$.  The encoding is:
+
+      .. math::
+          \begin{aligned}
+          x_{a:WSZ} &\le 1 - y \\
+          x_{a:WSZ} &\ge \sum_i w_i x_{a:C_i} - y \\
+          x_{a:WSZ} &\le \sum_i w_i x_{a:C_i} + y
+          \end{aligned}
+
+      Effectively: if any  $x_{a:C_i}=0$  then  $x_{a:WSZ}=0$;
+      otherwise  $x_{a:WSZ}=\sum_i w_i x_{a:C_i}$.
 
       :param ind: The individual entity for which the weighted sum zero concept assertion is being solved.
       :type ind: Individual
@@ -5348,7 +5546,20 @@ Module Contents
 
 .. py:class:: LukasiewiczSolver
 
-   This class provides a static interface for solving fuzzy logic assertions by applying the Lukasiewicz t-norm and t-conorm within a Mixed-Integer Linear Programming (MILP) framework. It translates high-level fuzzy description logic constructs—such as conjunctions, disjunctions, and existential or universal restrictions—into a set of linear constraints and variables that are added to a provided knowledge base. Users typically invoke methods like `solve_and`, `solve_or`, `solve_some`, or `solve_all` by passing a specific assertion and the target knowledge base; the class then handles the internal logic of creating necessary variables, managing role relations, and generating the specific equations required to model the fuzzy logic operations accurately. The implementation accounts for complex scenarios such as transitive roles, role hierarchies, and functional roles, ensuring that the generated constraints correctly reflect the semantics of the Lukasiewicz logic.
+   Static solver that encodes Łukasiewicz fuzzy operators as MILP linear constraints.
+
+   Operators implemented:
+
+   .. math::
+       \begin{aligned}
+       x \otimes_L y &= \max(0,\; x+y-1) && \text{(t-norm / and)} \\
+       x \oplus_L y &= \min(1,\; x+y)   && \text{(t-conorm / or)} \\
+       x \Rightarrow_L y &= \min(1,\; 1-x+y) && \text{(implication)} \\
+       \neg_L x &= 1-x                 && \text{(negation)}
+       \end{aligned}
+
+   Each operator is reified via Big-M linearisations that introduce auxiliary
+   binary variables when necessary.
 
    :raises ValueError: Raised when the arguments provided to the equation methods do not match the expected types, specifically when a required argument is neither a Variable nor a numeric constant.
 
@@ -5459,7 +5670,16 @@ Module Contents
       :staticmethod:
 
 
-      This static method acts as a dispatcher to enforce the Lukasiewicz logical AND operation within a Mixed-Integer Linear Programming (MILP) context by adding specific constraints to the model. It supports multiple argument patterns: a sequence of input variables with a designated result variable, or a pair of input variables combined with a third operand that is either a numeric constant or another variable. In all cases, a `MILPHelper` object must be provided to handle the constraint generation. The method performs strict validation on the number and types of arguments, raising errors if the input does not match the expected signatures for the underlying constraint logic.
+      Dispatcher for the Łukasiewicz t-norm  $z = x_1 \otimes_L x_2 \otimes_L \dots$
+      encoded as MILP linear constraints.
+
+      Supported signatures:
+
+      * ``and_equation([x_1,…,x_n], z, milp)``   → $z = x_1 \otimes_L \dots \otimes_L x_n$
+      * ``and_equation(z, x_1, x_2, milp)``       → $z = x_1 \otimes_L x_2$  (two variables)
+      * ``and_equation(z, x_1, c, milp)``        → $z = x_1 \otimes_L c$  (variable + constant)
+
+      Big-M linearisation is used for every min/max operator.
 
       :param args: A variable-length argument list specifying the operands and solver context for the AND constraint. Valid signatures include a sequence of input variables and a result variable, or two input variables combined with a numeric constant or a third variable, followed by a MILP helper.
       :type args: typing.Any
@@ -5503,7 +5723,17 @@ Module Contents
       :staticmethod:
 
 
-      Adds linear constraints to the MILP model to enforce the logical condition that the variable `z` represents the OR operation of the variables in list `x`. This ensures that `z` is 1 if and only if at least one variable in `x` is 1, and `z` is 0 if all variables in `x` are 0. The method introduces an auxiliary binary variable to linearize the relationship and modifies the `milp` helper by adding the new variable and the necessary inequality constraints.
+      Łukasiewicz t-conorm  $z = x_1 \oplus_L x_2 \oplus_L \dots$
+      encoded as MILP linear constraints.
+
+      Introduces an auxiliary binary variable $y$ and enforces:
+
+      .. math::
+          \begin{aligned}
+          \sum_i x_i &\ge z \\
+          y &\le z \\
+          \sum_i x_i &\le z + (n-1)\,y
+          \end{aligned}
 
       :param x: A list of variables representing the operands of the logical OR operation.
       :type x: list[Variable]
@@ -5590,7 +5820,22 @@ Module Contents
 
 .. py:class:: ZadehSolver
 
-   This class serves as a static solver for translating fuzzy logic assertions into Mixed-Integer Linear Programming (MILP) constraints, primarily operating under Zadeh fuzzy logic semantics. It provides a suite of methods to model fundamental logical operations—such as conjunction, disjunction, negation, and various forms of implication (including Zadeh, Goedel, and Kleene-Dienes)—by mapping them to linear inequalities and introducing auxiliary binary variables where necessary. The solver interacts directly with a `KnowledgeBase` and an `MILPHelper` to populate the optimization model, handling both simple logical connectives and complex quantifiers like existential and universal restrictions. Users typically invoke the high-level `solve_and`, `solve_or`, `solve_some`, and `solve_all` methods to process assertions against a knowledge base, while the lower-level equation methods are utilized to construct the specific mathematical relationships required by the underlying solver.
+   Static solver that encodes Zadeh (Gödel min/max + Kleene–Dienes) fuzzy
+   operators as MILP linear constraints.
+
+   Operators implemented:
+
+   .. math::
+       \begin{aligned}
+       x \otimes_Z y &= \min(x,y)              && \text{(Zadeh / Gödel t-norm)} \\
+       x \oplus_Z y &= \max(x,y)              && \text{(Zadeh / Gödel t-conorm)} \\
+       x \Rightarrow_{KD} y &= \max(1-x,\; y) && \text{(Kleene–Dienes implication)} \\
+       x \Rightarrow_G y &= \begin{cases}1 & x \le y \\ y & \text{otherwise}\end{cases}
+                                             && \text{(Gödel implication)} \\
+       x \Rightarrow_Z y &= \max(1-x,\; \min(x,y)) && \text{(Zadeh implication)} \\
+       \neg_G x &= \begin{cases}1 & x=0 \\ 0 & \text{otherwise}\end{cases}
+                                             && \text{(Gödel negation)}
+       \end{aligned}
 
    :raises ValueError: Raised when the arguments provided to the overloaded equation methods (such as `and_equation`, `and_geq_equation`, or `zadeh_implies_equation`) do not match the expected type signatures for any supported operation.
 
@@ -5799,7 +6044,19 @@ Module Contents
       :staticmethod:
 
 
-      Computes and enforces the logical AND operation within a Mixed-Integer Linear Programming (MILP) context by adding constraints to the provided solver helper. This static method serves as a dispatcher that validates the input arguments—accepting either 3 or 4 arguments where the final argument must be a `MILPHelper` instance—and delegates the constraint generation to specific private helper methods based on the types of the preceding inputs. Supported input patterns include lists of variables, pairs of variables, variables combined with terms, or variables combined with numeric constants. The method modifies the state of the `MILPHelper` object to reflect the new constraints and raises a `ValueError` if the argument types do not conform to the expected patterns.
+      Dispatcher for the Zadeh (Gödel) t-norm  $z = \min(x_1, x_2, \dots)$
+      encoded as MILP linear constraints.
+
+      Supported signatures:
+
+      * ``and_equation([x_1,…,x_n], z, milp)``   → $z = \min(x_1,\dots,x_n)$
+      * ``and_equation(z, x_1, x_2, milp)``       → $z = \min(x_1, x_2)$
+      * ``and_equation(z, x_1, c, milp)``         → $z = \min(x_1, c)$
+      * ``and_equation(z, x_1, t, milp)``         → $z = \min(x_1, t)$  (``Term``)
+      * ``and_equation(x_1, x_2, milp)``          → crisp disjointness
+        $x_1 + x_2 \le 1$ (two-variable Zadeh AND for disjointness)
+
+      Every minimum is reified via Big-M linearisations.
 
       :param args: Operands for the AND operation and the MILP solver helper, provided as a variable-length list. Valid configurations include three arguments (a list of variables, a variable or term, and a helper) or four arguments (two variables, a variable or number, and a helper).
       :type args: typing.Any
@@ -6016,7 +6273,7 @@ Module Contents
       :type z: Variable
       :param x1: The first operand of the Z-implies operation, which is a binary variable.
       :type x1: Variable
-      :param x2: The second operand of the Zadeh implication, representing the consequent in the logical relationship $x1     o x2$.
+      :param x2: The second operand of the Zadeh implication, representing the consequent in the logical relationship $x1 \to x2$.
       :type x2: Variable
       :param milp: Helper object used to add the generated constraint to the model.
       :type milp: MILPHelper
@@ -6057,17 +6314,22 @@ Module Contents
 
    .. py:method:: find_class(module: str, name: str)
 
-      Return an object from a specified module.
+      Resolves a class during unpickling while restricting which modules are allowed, guarding against arbitrary code execution from untrusted pickle streams. The requested module is checked against the project's allow-list (:data:`_PICKLE_ALLOWED_MODULE_PREFIXES`); only when it matches is resolution delegated to the standard :meth:`pickle.Unpickler.find_class`. Any module outside the allow-list is rejected.
 
-      If necessary, the module will be imported. Subclasses may override
-      this method (e.g. to restrict unpickling of arbitrary classes and
-      functions).
+      :param module: The fully-qualified module name of the class to resolve.
+      :type module: str
+      :param name: The qualified class name to resolve within ``module``.
+      :type name: str
 
-      This method is called whenever a class or a function object is
-      needed.  Both arguments passed are str objects.
+      :raises pickle.UnpicklingError: if ``module`` is not in the allowed-module allow-list.
+
+      :return: The resolved class object.
+
+      :rtype: type
 
 
 
 .. py:data:: _PICKLE_ALLOWED_MODULE_PREFIXES
    :type:  tuple[str, Ellipsis]
    :value: ('fuzzy_dl_owl2.', 'collections', 'sortedcontainers', 'builtins', 'networkx')
+

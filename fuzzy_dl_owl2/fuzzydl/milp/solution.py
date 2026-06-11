@@ -16,7 +16,6 @@ class Solution:
     :raises ValueError: Raised if the argument provided to the constructor is neither a boolean nor a numeric type.
     """
 
-
     # Indicates whether the fuzzy KB is consistent
     CONSISTENT_KB: bool = True
     # Indicates whether the fuzzy KB is inconsistent
@@ -30,12 +29,12 @@ class Solution:
 
     def __init__(self, *args) -> None:
         """
-        Initializes a new instance of the Solution class based on a single provided argument. The constructor validates the input type and delegates the specific initialization logic to private helper methods: boolean arguments are routed to `__solution_init_1`, while numeric arguments are routed to `__solution_init_2`. If the argument is neither a boolean nor a number, a `ValueError` is raised. The method also enforces that exactly one argument is passed, raising an `AssertionError` otherwise.
+        Initializes a new instance of the Solution class based on a single provided argument. The constructor validates the input type and delegates the specific initialization logic to private helper methods: boolean arguments are routed to `__solution_init_1`, while numeric arguments are routed to `__solution_init_2`. If the argument is neither a boolean nor a number, a `TypeError` is raised. The method also enforces that exactly one argument is passed, raising a `TypeError` otherwise.
 
         :param args: A single argument used to initialize the object, which must be a boolean or a number.
         :type args: typing.Any
 
-        :raises ValueError: Raised if the provided argument is not a boolean or a number.
+        :raises TypeError: Raised if exactly one argument is not passed, or if the provided argument is neither a boolean nor a number.
         """
 
         if len(args) != 1:
@@ -126,14 +125,14 @@ class Solution:
 
     def __hash__(self) -> int:
         """
-        Computes a hash value for the instance by converting the object to its string representation and hashing the resulting string. This enables instances of the class to be used as dictionary keys or stored in sets. The hash value is entirely dependent on the output of the `__str__` method, meaning that the efficiency of this operation is tied to the complexity of generating the string representation. If the object is mutable, modifying it after it has been added to a hash-based collection will lead to inconsistent behavior, as the hash value will change while the object remains in its original bucket.
+        Calculates the hash value for the instance by hashing its string representation, enabling the object to be used as a key in dictionaries or as an element in sets. This implementation relies on the `__str__` method to determine the object's identity for hashing purposes. It is important to note that if the object is mutable and its string representation changes after it has been added to a hash-based collection, the hash value will change, potentially causing the object to become lost or inaccessible within that collection.
 
         :return: An integer hash value derived from the string representation of the object.
 
         :rtype: int
         """
-
-        return hash(str(self))
+        # return hash(str(self))
+        return hash((self.sol, self.consistent, frozenset(self.showed_variables.items())))
 
     def __repr__(self) -> str:
         """

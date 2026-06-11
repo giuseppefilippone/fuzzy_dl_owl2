@@ -62,7 +62,7 @@ from fuzzy_dl_owl2.fuzzydl.concept.weighted_sum_zero_concept import (
 from fuzzy_dl_owl2.fuzzydl.degree.degree import Degree
 from fuzzy_dl_owl2.fuzzydl.degree.degree_expression import DegreeExpression
 from fuzzy_dl_owl2.fuzzydl.degree.degree_numeric import DegreeNumeric
-from fuzzy_dl_owl2.fuzzydl.degree.degree_variable import DegreeVariable
+from fuzzy_dl_owl2.fuzzydl.degree.degree_variable import DegreeVariable  # Variable
 from fuzzy_dl_owl2.fuzzydl.exception.fuzzy_ontology_exception import (
     FuzzyOntologyException,
 )
@@ -73,10 +73,10 @@ from fuzzy_dl_owl2.fuzzydl.feature_function import FeatureFunction
 from fuzzy_dl_owl2.fuzzydl.individual.individual import Individual
 from fuzzy_dl_owl2.fuzzydl.knowledge_base import KnowledgeBase
 from fuzzy_dl_owl2.fuzzydl.milp.expression import Expression
-from fuzzy_dl_owl2.fuzzydl.milp.inequation import Inequation
+from fuzzy_dl_owl2.fuzzydl.milp.inequation import Inequation  # Inequation
 from fuzzy_dl_owl2.fuzzydl.milp.solution import Solution
-from fuzzy_dl_owl2.fuzzydl.milp.term import Term
-from fuzzy_dl_owl2.fuzzydl.milp.variable import Variable
+from fuzzy_dl_owl2.fuzzydl.milp.term import Term  # Term
+from fuzzy_dl_owl2.fuzzydl.milp.variable import Variable  # Variable
 from fuzzy_dl_owl2.fuzzydl.modifier.linear_modifier import LinearModifier
 from fuzzy_dl_owl2.fuzzydl.modifier.modifier import Modifier
 from fuzzy_dl_owl2.fuzzydl.modifier.triangular_modifier import TriangularModifier
@@ -99,27 +99,35 @@ from fuzzy_dl_owl2.fuzzydl.query.min.min_subsumes_query import MinSubsumesQuery
 from fuzzy_dl_owl2.fuzzydl.query.query import Query
 from fuzzy_dl_owl2.fuzzydl.util import constants, utils
 from fuzzy_dl_owl2.fuzzydl.util.config_reader import ConfigReader
+from fuzzy_dl_owl2.fuzzydl.util.constants import VariableType  # Variable
 from fuzzy_dl_owl2.fuzzydl.util.constants import (
     ConceptType,
+    ConcreteFeatureType,
     FuzzyDLKeyword,
     FuzzyLogic,
     InequalityType,
     LogicOperatorType,
     RestrictionType,
-    VariableType,
 )
 from fuzzy_dl_owl2.fuzzydl.util.util import Util
 from fuzzy_dl_owl2.fuzzydl.util.utils import class_debugging
 
+
 def _ensure_parser_log_path() -> str:
+    """
+    Builds and returns the path to a timestamped parser log file, creating its containing directory if needed. The file lives under a dated tree ``./logs/parser/<year>/<month>/<day>`` and is named from the current hour, minute and second, so each parser run writes to its own log without collisions.
+
+    :return: The full path to the parser log file for the current run.
+
+    :rtype: str
+    """
+
     today = datetime.datetime.today()
     log_dir = os.path.join(
         ".", "logs", "parser", str(today.year), str(today.month), str(today.day)
     )
     os.makedirs(log_dir, exist_ok=True)
-    filename = (
-        f"fuzzydl_{today.hour:02d}-{today.minute:02d}-{today.second:02d}.log"
-    )
+    filename = f"fuzzydl_{today.hour:02d}-{today.minute:02d}-{today.second:02d}.log"
     return os.path.join(log_dir, filename)
 
 
@@ -136,6 +144,22 @@ class DLParser(object):
 
     kb: KnowledgeBase = None
     queries_list: list[Query] = []
+
+    @staticmethod
+    def _is_non_decreasing(v: list[typing.Any]) -> bool:
+        """
+        Utility method to check if a list is sorted in non-decreasing order. It iterates through the list and compares each element with the next one, returning `False` if it finds any pair of elements that are out of order. If the entire list is traversed without finding any such pair, it returns `True`, indicating that the list is sorted.
+
+        :param v: The list to be checked for sorted order.
+        :type v: list[typing.Any]
+
+        :return: A boolean value indicating whether the list is sorted in non-decreasing order.
+        :rtype: bool
+        """
+        for i in range(len(v) - 1):
+            if v[i] > v[i + 1]:
+                return False
+        return True
 
     @staticmethod
     def _check_abstract(c: Concept) -> None:
@@ -274,6 +298,8 @@ class DLParser(object):
             ]
             for c in list_tokens:
                 DLParser._check_abstract(c)
+            if len(list_tokens) == 1:
+                return pp.ParseResults([list_tokens[0]])
             if DLParser.kb.get_logic() == FuzzyLogic.LUKASIEWICZ:
                 return pp.ParseResults([OperatorConcept.lukasiewicz_and(*list_tokens)])
             elif DLParser.kb.get_logic() == FuzzyLogic.ZADEH:
@@ -289,6 +315,8 @@ class DLParser(object):
                 )
             for c in list_tokens:
                 DLParser._check_abstract(c)
+            if len(list_tokens) == 1:
+                return pp.ParseResults([list_tokens[0]])
             return pp.ParseResults([OperatorConcept.lukasiewicz_and(*list_tokens)])
         elif operator == FuzzyDLKeyword.GOEDEL_AND:
             list_tokens: list[Concept] = [
@@ -298,6 +326,8 @@ class DLParser(object):
                 Util.error("Error: GOEDEL_AND cannot be used under classical reasoner.")
             for c in list_tokens:
                 DLParser._check_abstract(c)
+            if len(list_tokens) == 1:
+                return pp.ParseResults([list_tokens[0]])
             return pp.ParseResults([OperatorConcept.goedel_and(*list_tokens)])
         elif operator == FuzzyDLKeyword.OR:
             list_tokens: list[Concept] = [
@@ -305,6 +335,8 @@ class DLParser(object):
             ]
             for c in list_tokens:
                 DLParser._check_abstract(c)
+            if len(list_tokens) == 1:
+                return pp.ParseResults([list_tokens[0]])
             if DLParser.kb.get_logic() == FuzzyLogic.LUKASIEWICZ:
                 return pp.ParseResults([OperatorConcept.lukasiewicz_or(*list_tokens)])
             elif DLParser.kb.get_logic() == FuzzyLogic.ZADEH:
@@ -320,6 +352,8 @@ class DLParser(object):
                 )
             for c in list_tokens:
                 DLParser._check_abstract(c)
+            if len(list_tokens) == 1:
+                return pp.ParseResults([list_tokens[0]])
             return pp.ParseResults([OperatorConcept.lukasiewicz_or(*list_tokens)])
         elif operator == FuzzyDLKeyword.GOEDEL_OR:
             list_tokens: list[Concept] = [
@@ -329,6 +363,8 @@ class DLParser(object):
                 Util.error("Error: GOEDEL_OR cannot be used under classical reasoner.")
             for c in list_tokens:
                 DLParser._check_abstract(c)
+            if len(list_tokens) == 1:
+                return pp.ParseResults([list_tokens[0]])
             return pp.ParseResults([OperatorConcept.goedel_or(*list_tokens)])
         elif operator in (
             FuzzyDLKeyword.IMPLIES,
@@ -342,6 +378,8 @@ class DLParser(object):
             ]
             for c in list_tokens:
                 DLParser._check_abstract(c)
+            if len(list_tokens) == 1:
+                return pp.ParseResults([list_tokens[0]])
             # degree: Degree = list_tokens[2] if len(list_tokens) == 3 else DegreeNumeric.get_one()
             # if operator == FuzzyDLKeyword.IMPLIES:
             #     return pp.ParseResults([DLParser.kb.implies(list_tokens[0], list_tokens[1], degree)])
@@ -404,6 +442,7 @@ class DLParser(object):
             DLParser.kb.check_role(role, c)
             return pp.ParseResults([AllSomeConcept.some(role, c)])
         elif operator == FuzzyDLKeyword.HAS_VALUE:
+            role: str = list_tokens[1]
             ind: Individual = DLParser.kb.get_individual(list_tokens[2])
             DLParser.kb.check_role(role, TruthConcept.get_top())
             return pp.ParseResults([HasValueConcept.has_value(role, ind)])
@@ -528,6 +567,10 @@ class DLParser(object):
 
         :param tokens: The parsed elements of a threshold expression, structured as an operator, a threshold value (numeric or variable), and a concept.
         :type tokens: pp.ParseResults
+
+        :return: A single-element ``ParseResults`` wrapping the constructed ``ThresholdConcept`` or ``ExtThresholdConcept``.
+
+        :rtype: pp.ParseResults
         """
 
         if ConfigReader.DEBUG_PRINT:
@@ -554,17 +597,6 @@ class DLParser(object):
                 return pp.ParseResults(
                     [ThresholdConcept.neg_threshold(list_tokens[1], concept)]
                 )
-            elif isinstance(list_tokens[1], str):
-                return pp.ParseResults(
-                    [
-                        ExtThresholdConcept.extended_neg_threshold(
-                            DLParser.kb.milp.get_variable(list_tokens[1]), concept
-                        )
-                    ]
-                )
-        elif operator == FuzzyDLKeyword.EQUALS:
-            if isinstance(list_tokens[1], (int, float)):
-                return pp.ParseResults([ThresholdConcept.ea(list_tokens[1], concept)])
             elif isinstance(list_tokens[1], str):
                 return pp.ParseResults(
                     [
@@ -708,19 +740,19 @@ class DLParser(object):
                 Util.error("Error: The sum of the weights must be equal to 1.")
             return pp.ParseResults([OwaConcept(weights, concepts)])
         elif operator == FuzzyDLKeyword.CHOQUET:
-            if sorted(weights) != weights:
+            if not DLParser._is_non_decreasing(weights):
                 Util.error("Error: The weights must be in non-decreasing order.")
             if max(weights) != 1.0:
                 Util.error("Error: The maximum of the weights must be equal to 1.")
             return pp.ParseResults([ChoquetIntegral(weights, concepts)])
         elif operator == FuzzyDLKeyword.SUGENO:
-            if sorted(weights) != weights:
+            if not DLParser._is_non_decreasing(weights):
                 Util.error("Error: The weights must be in non-decreasing order.")
             if max(weights) != 1.0:
                 Util.error("Error: The maximum of the weights must be equal to 1.")
             return pp.ParseResults([SugenoIntegral(weights, concepts)])
         elif operator == FuzzyDLKeyword.QUASI_SUGENO:
-            if sorted(weights) != weights:
+            if not DLParser._is_non_decreasing(weights):
                 Util.error("Error: The weights must be in non-decreasing order.")
             if max(weights) != 1.0:
                 Util.error("Error: The maximum of the weights must be equal to 1.")
@@ -747,9 +779,12 @@ class DLParser(object):
         role: str = list_tokens[0]
         concept: Concept = DLParser._to_concept(list_tokens[1])
         individuals: list[Individual] = [
-            DLParser.kb.get_individual(token) for token in list_tokens[2:-1]
+            # DLParser.kb.get_individual(token) for token in list_tokens[2:-1]
+            DLParser.kb.get_individual(token)
+            for token in list_tokens[2 : len(list_tokens) - 1]
         ]
-        concept_name: str = list_tokens[-1]
+        # concept_name: str = list_tokens[-1]
+        concept_name: str = list_tokens[len(list_tokens) - 1]
         if concept_name not in DLParser.kb.concrete_concepts:
             Util.error(f"Error: Fuzzy concept {concept_name} has not been defined")
         fuzzy_concept: Concept = DLParser.kb.get_concept(concept_name)
@@ -977,7 +1012,7 @@ class DLParser(object):
                 return pp.ParseResults(
                     [TriangularFuzzyNumber(tokens[0], tokens[0], tokens[0])]
                 )
-            elif tokens[0] == str:
+            elif isinstance(tokens[0], str):
                 if tokens[0] not in DLParser.kb.fuzzy_numbers:
                     Util.error(
                         f"Error: Fuzzy number {tokens[0]} has to be defined before being used."
@@ -1147,12 +1182,24 @@ class DLParser(object):
             restriction_type = RestrictionType.AT_MOST_VALUE
         elif list_tokens[0] == FuzzyDLKeyword.GREATER_THAN_OR_EQUAL_TO:
             restriction_type = RestrictionType.AT_LEAST_VALUE
+
         if isinstance(list_tokens[2], str):
             # if tokens.as_dict().get("string") == tokens[2] and not DLParser.kb.check_fuzzy_number_concept_exists(list_tokens[2]):
             #     return pp.ParseResults(
             #         [DLParser.kb.add_datatype_restriction(restriction_type, list_tokens[2], role)]
             #     )
             # else:
+            feature_type: ConcreteFeatureType = DLParser.kb.concrete_features[
+                role
+            ].get_type()
+            if feature_type == ConcreteFeatureType.STRING:
+                return pp.ParseResults(
+                    [
+                        DLParser.kb.add_datatype_restriction(
+                            restriction_type, list_tokens[2], role
+                        )
+                    ]
+                )
             if DLParser.kb.check_fuzzy_number_concept_exists(list_tokens[2]):
                 return pp.ParseResults(
                     [
@@ -1164,7 +1211,9 @@ class DLParser(object):
                     ]
                 )
             else:
-                v: Variable = Variable(list_tokens[2], VariableType.CONTINUOUS)
+                v: Variable = Variable(
+                    list_tokens[2], VariableType.CONTINUOUS
+                )  # Variable
                 return pp.ParseResults(
                     [DLParser.kb.add_datatype_restriction(restriction_type, v, role)]
                 )
@@ -1218,11 +1267,13 @@ class DLParser(object):
         list_tokens: list = tokens.as_list()[0]
         if len(list_tokens) == 1:
             return pp.ParseResults(
-                [Term(1.0, DLParser.kb.milp.get_variable(list_tokens[0]))]
+                [Term(1.0, DLParser.kb.milp.get_variable(list_tokens[0]))]  # Term
             )
         elif len(list_tokens) == 3:
             return pp.ParseResults(
-                [Term(list_tokens[0], DLParser.kb.milp.get_variable(list_tokens[2]))]
+                [
+                    Term(list_tokens[0], DLParser.kb.milp.get_variable(list_tokens[2]))
+                ]  # Term
             )
         return tokens
 
@@ -1246,11 +1297,11 @@ class DLParser(object):
         expr: Expression = Expression(0)
         if isinstance(list_tokens[0], (tuple, list)):
             list_tokens = list_tokens[0]
-        if len(list_tokens) == 1 and isinstance(list_tokens[0], Term):
+        if len(list_tokens) == 1 and isinstance(list_tokens[0], Term):  # Term
             expr.add_term(list_tokens[0])
             return expr
         if "+" in list_tokens and all(
-            isinstance(term, Term) for term in list_tokens[::2]
+            isinstance(term, Term) for term in list_tokens[::2]  # Term
         ):
             for term in list_tokens[::2]:
                 expr.add_term(term)
@@ -1288,7 +1339,7 @@ class DLParser(object):
                 )
             )
             DLParser.kb.milp.add_new_constraint(expr, operator_type)
-            return pp.ParseResults([Inequation(expr, operator_type)])
+            return pp.ParseResults([Inequation(expr, operator_type)])  # Inequation
         return tokens
 
     @staticmethod
@@ -1309,11 +1360,11 @@ class DLParser(object):
             Util.debug(f"\t\t_parse_constraints -> {tokens}")
         list_tokens: list = tokens.as_list()
         if list_tokens[0] == FuzzyDLKeyword.BINARY:
-            v: Variable = DLParser.kb.milp.get_variable(list_tokens[1])
-            v.set_type(VariableType.BINARY)
+            v: Variable = DLParser.kb.milp.get_variable(list_tokens[1])  # Variable
+            v.set_type(VariableType.BINARY)  # Variable
         elif list_tokens[0] == FuzzyDLKeyword.FREE:
-            v: Variable = DLParser.kb.milp.get_variable(list_tokens[1])
-            v.set_type(VariableType.CONTINUOUS)
+            v: Variable = DLParser.kb.milp.get_variable(list_tokens[1])  # Variable
+            v.set_type(VariableType.CONTINUOUS)  # Variable
         return tokens
 
     @staticmethod
@@ -1519,7 +1570,7 @@ class DLParser(object):
             Util.debug(f"\t\t_show_variables -> {tokens}")
         list_tokens: list = tokens.as_list()
         for variable_name in list_tokens:
-            var: Variable = DLParser.kb.milp.get_variable(variable_name)
+            var: Variable = DLParser.kb.milp.get_variable(variable_name)  # Variable
             DLParser.kb.milp.show_vars.add_variable(var, str(var))
         return tokens
 
@@ -1637,7 +1688,7 @@ class DLParser(object):
             else:
                 return pp.ParseResults(
                     [
-                        DegreeVariable.get_degree(
+                        DegreeVariable.get_degree(  # Variable
                             DLParser.kb.milp.get_variable(list_tokens[0])
                         )
                     ]
@@ -1944,14 +1995,30 @@ class DLParser(object):
 
         digits = pp.Word(pp.nums)
         numbers = (
-            pp.Combine(pp.Opt(pp.one_of(["+", "-"])) + digits + pp.Opt("." + digits))
+            pp.Combine(
+                pp.Opt(pp.one_of(["+", "-"]))
+                + digits
+                + pp.Opt("." + digits)
+                + pp.Opt(
+                    pp.one_of(["e", "E"]) + pp.Opt(pp.one_of(["+", "-"])) + digits
+                )  # support for scientific notation
+            )
             .set_results_name("number", list_all_matches=True)
             .set_parse_action(DLParser._to_number)
         )
 
-        simple_string = pp.Word(pp.alphas + "_", pp.alphanums + "_'").set_results_name(
+        simple_string = pp.Word(
+            pp.alphanums + "_><", pp.alphanums + "_'/.:><@$!?-"
+        ).set_results_name(
             "string", list_all_matches=True
         )  # pp.Regex(r"[a-zA-Z_][a-zA-Z0-9_]*")
+
+        # ':' is allowed so blank-node ids such as '_:genid3686' parse (the fast
+        # tokenizer already accepts it).
+        simple_string = pp.Word(pp.alphanums + "_'/.:><@$!?-").set_results_name(
+            "string", list_all_matches=True
+        )
+
         strings = (
             pp.Opt(pp.one_of(['"', "'"])).suppress()
             + simple_string.set_results_name("string", list_all_matches=True)
@@ -2145,7 +2212,7 @@ class DLParser(object):
                                 FuzzyDLKeyword.IMPLIES.get_name(),
                             ]
                         )
-                        + concept[2, ...]
+                        + concept[1, ...]
                     ).set_results_name("implies_concepts", list_all_matches=True)
                     | (
                         FuzzyDLKeyword.SOME.get_value()
@@ -2736,23 +2803,28 @@ class DLParser(object):
         return DLParser.get_grammatics().parse_string(instring, parse_all=True)
 
     @staticmethod
-    def load_config(*args) -> None:
+    def load_config(**kwargs) -> None:
         """
         This static method acts as a wrapper to load specific configuration parameters from a predefined INI file located in the current working directory. It constructs the file path for 'CONFIG.ini' and delegates the actual parsing and parameter extraction to the `ConfigReader` class, passing along the provided arguments to determine which specific settings to retrieve. The function relies on the presence of the configuration file in the file system and triggers side effects within the `ConfigReader` rather than returning a value directly. By accepting a variable length argument list, it allows for selective loading of configuration data based on the caller's needs.
 
-        :param args: Keys specifying which configuration parameters to load from the file.
-        :type args: typing.Any
+        :param kwargs: Keys specifying which configuration parameters to load from the file.
+        :type kwargs: typing.Any
         """
 
-        ConfigReader.load_parameters(os.path.join(os.getcwd(), "CONFIG.ini"), args)
+        ConfigReader.load_parameters(os.path.join(os.getcwd(), "CONFIG.ini"), **kwargs)
 
     @staticmethod
-    def get_kb(*args) -> tuple[KnowledgeBase, list[Query]]:
+    def get_kb(file_path: str, **kwargs) -> tuple[KnowledgeBase, list[Query]]:
         """
-        Parses the input file specified by the arguments to construct a Knowledge Base and a list of Queries, initializing the necessary configuration and internal state. This method resets the class-level knowledge base and query list, sets the global logic semantics to Łukasiewicz fuzzy logic, and processes the file content using either a verbose line-by-line approach or an optimized path based on the debug configuration. It returns a tuple containing the populated `KnowledgeBase` object and the list of `Query` objects. Significant side effects include updates to class attributes and global constants; errors such as missing files or parsing failures are caught and logged rather than raised, resulting in a return value of None in those cases.
+        Parses the input file specified by the arguments to construct a Knowledge Base and a list of Queries, initializing the necessary configuration and internal state. This method resets the class-level knowledge base and query list, sets the global logic semantics to Łukasiewicz fuzzy logic, and processes the file content using either a verbose line-by-line approach or an optimized path based on the debug configuration. It returns a tuple containing the populated `KnowledgeBase` object and the list of `Query` objects. Significant side effects include updates to class attributes and global constants. A missing input file is logged and re-raised as `FileNotFoundError`; any other parsing failure is logged and re-raised wrapped in a `FuzzyOntologyException`.
 
-        :param args: Variable-length arguments where the first argument is the path to the input file, and any remaining arguments are passed to the configuration loader.
-        :type args: typing.Any
+        :param file_path: Path to the input file.
+        :type file_path: str
+        :param kwargs: Additional configuration parameters to load.
+        :type kwargs: typing.Any
+
+        :raises FileNotFoundError: if the input file at ``file_path`` does not exist.
+        :raises FuzzyOntologyException: if parsing fails for any other reason; the original exception is chained as the cause.
 
         :return: A tuple containing the KnowledgeBase instance and the list of Query instances parsed from the input file.
 
@@ -2760,14 +2832,14 @@ class DLParser(object):
         """
 
         starting_time: float = time.perf_counter_ns()
-        DLParser.load_config(*args)
+        DLParser.load_config(**kwargs)
         DLParser.kb = KnowledgeBase()
         DLParser.queries_list = []
         constants.KNOWLEDGE_BASE_SEMANTICS = FuzzyLogic.LUKASIEWICZ
 
         try:
             if ConfigReader.DEBUG_PRINT:
-                with open(args[0], "r") as file:
+                with open(file_path, "r") as file:
                     lines = file.readlines()
                 for line in lines:
                     line = line.strip()
@@ -2776,9 +2848,9 @@ class DLParser(object):
                     Util.debug(f"Line -> {line}")
                     _ = DLParser.parse_string(line)
             else:
-                _ = DLParser.parse_string_opt(args[0])
+                _ = DLParser.parse_string_opt(file_path)
         except FileNotFoundError:
-            Util.warning(f"File {args[0]} not found.")
+            Util.warning(f"File {file_path} not found.")
             raise
         except Exception as e:
             Util.warning(traceback.format_exc())
@@ -2789,16 +2861,18 @@ class DLParser(object):
         return DLParser.kb, DLParser.queries_list
 
     @staticmethod
-    def main(*args) -> None:
+    def main(file_path: str, **kwargs) -> None:
         """
         Serves as the primary entry point for the DLParser program, orchestrating the loading, solving, and querying of a fuzzy description logic knowledge base. It accepts variable arguments to configure the loading process, retrieving the knowledge base and a list of queries via the `get_kb` method. The method first solves the knowledge base to prepare it for inference, then iterates through each query to generate solutions. Special handling is provided for `AllInstancesQuery` instances when the knowledge base lacks individuals, logging a specific informational message. For general queries, it evaluates consistency and logs the solution or a default value of 1.0 if the knowledge base is inconsistent. Additionally, it logs execution time and optionally the description logic language used. The method includes robust error handling, catching ontology inconsistency exceptions to report a default answer and logging stack traces for unexpected errors.
 
-        :param args: Variable length positional arguments used to specify configuration parameters and the input file for parsing.
-        :type args: typing.Any
+        :param file_path: Path to the input file.
+        :type file_path: str
+        :param kwargs: Additional configuration parameters to load.
+        :type kwargs: typing.Any
         """
 
         try:
-            kb, queries = DLParser.get_kb(*args)
+            kb, queries = DLParser.get_kb(file_path, **kwargs)
             kb.solve_kb()
             for query in queries:
                 if (

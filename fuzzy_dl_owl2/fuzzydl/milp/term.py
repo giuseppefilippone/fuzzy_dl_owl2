@@ -1,51 +1,53 @@
 import typing
 
-from fuzzy_dl_owl2.fuzzydl.milp.variable import Variable
-from fuzzy_dl_owl2.fuzzydl.util import constants
+from fuzzy_dl_owl2.fuzzydl.milp.variable import Variable  # Variable
 
 
-class Term:
+class Term:  # Term
     """
     This class represents a fundamental component of a linear expression, defined as the product of a numerical coefficient and a variable. It is primarily utilized to construct mathematical representations of concept satisfaction degrees within fuzzy description logic ontologies. Instances can be initialized by providing both a coefficient and a variable, or by providing a variable alone, which automatically sets the coefficient to 1.0. The class supports standard arithmetic operations, including negation, addition, subtraction, and scalar multiplication or division; however, addition and subtraction operations are strictly constrained to terms that share the same variable, raising an error otherwise.
 
     :raises ValueError: Raised when attempting to add two terms with different variables.
     """
 
+    @typing.overload
+    def __init__(self, coeff: float, var: Variable) -> None: ...  # Variable
 
     @typing.overload
-    def __init__(self, coeff: float, var: Variable) -> None: ...
-
-    @typing.overload
-    def __init__(self, var: Variable) -> None: ...
+    def __init__(self, var: Variable) -> None: ...  # Variable
 
     def __init__(self, *args) -> None:
         """
-        Initializes a new Term instance, which represents an algebraic component consisting of a coefficient and a variable. The constructor accepts either one or two arguments to define the term's structure. If a single argument is provided, it must be a Variable instance, representing a term with an implied coefficient. If two arguments are provided, the first must be a numeric constant representing the coefficient, and the second must be a Variable instance. The method strictly validates the argument count and types, raising an AssertionError if the inputs do not match the expected patterns.
+        Initializes a new Term instance, which represents an algebraic component consisting of a coefficient and a variable. The constructor accepts either one or two arguments to define the term's structure. If a single argument is provided, it must be a Variable instance, representing a term with an implied coefficient. If two arguments are provided, the first must be a numeric constant representing the coefficient, and the second must be a Variable instance. The method strictly validates the argument count and types, raising a `TypeError` if the inputs do not match the expected patterns.
 
         :param args: Arguments defining the term, accepted as either a single Variable or a numeric coefficient followed by a Variable.
         :type args: typing.Any
+
+        :raises TypeError: Raised if the number of arguments is not 1 or 2, or if the supplied arguments do not match the expected (Variable) or (numeric, Variable) types.
         """
 
         if len(args) not in (1, 2):
-            raise TypeError(f"Term expects 1 or 2 args, got {len(args)}")
+            raise TypeError(f"Term expects 1 or 2 args, got {len(args)}")  # Term
         if len(args) == 1:
-            if not isinstance(args[0], Variable):
+            if not isinstance(args[0], Variable):  # Variable
                 raise TypeError(
-                    f"Term[0] must be Variable, got {type(args[0]).__name__}"
+                    f"Term[0] must be Variable, got {type(args[0]).__name__}"  # Variable, Term
                 )
             self.__term_init_2(*args)
         else:
             if not isinstance(args[0], (int, float)):
                 raise TypeError(
-                    f"Term[0] must be numeric, got {type(args[0]).__name__}"
+                    f"Term[0] must be numeric, got {type(args[0]).__name__}"  # Term
                 )
-            if not isinstance(args[1], Variable):
+            if not isinstance(args[1], Variable):  # Variable
                 raise TypeError(
-                    f"Term[1] must be Variable, got {type(args[1]).__name__}"
+                    f"Term[1] must be Variable, got {type(args[1]).__name__}"  # Variable, Term
                 )
             self.__term_init_1(*args)
 
-    def __term_init_1(self, coeff: typing.Union[int, float], var: Variable) -> None:
+    def __term_init_1(
+        self, coeff: typing.Union[int, float], var: Variable
+    ) -> None:  # Variable
         """
         Initializes the Term instance by assigning a specific coefficient and variable to the object's internal state. The method accepts a numeric coefficient, which may be an integer or a float, and a Variable object, storing them in the `coeff` and `var` attributes respectively. This operation directly modifies the instance, effectively defining the term's value and associated variable without performing additional validation or calculation.
 
@@ -55,10 +57,10 @@ class Term:
         :type var: Variable
         """
 
-        self.var: Variable = var
+        self.var: Variable = var  # Variable
         self.coeff: float = coeff
 
-    def __term_init_2(self, var: Variable) -> None:
+    def __term_init_2(self, var: Variable) -> None:  # Variable
         """
         Initializes the Term object by setting its coefficient to 1.0 and associating it with the provided Variable. This helper method delegates the core assignment logic to `__term_init_1`, effectively constructing a term that represents the variable itself without an explicit multiplicative factor. As this method modifies the instance's internal state, it relies on `__term_init_1` to handle any validation or type checking for the variable argument.
 
@@ -77,9 +79,9 @@ class Term:
         :rtype: typing.Self
         """
 
-        return Term(self.coeff, self.var)
+        return Term(self.coeff, self.var)  # Term
 
-    def get_var(self) -> Variable:
+    def get_var(self) -> Variable:  # Variable
         """
         Retrieves the `Variable` instance associated with this `Term`. This method serves as a simple accessor, returning the value of the internal `var` attribute without modifying the state of the object. It provides direct access to the variable component that defines or is linked to the current term.
 
@@ -102,7 +104,15 @@ class Term:
         return self.coeff
 
     def clone(self) -> typing.Self:
-        return Term(self.coeff, self.var)
+        """
+        Creates and returns a new :class:`Term` with the same coefficient and variable as this one. The variable reference is shared rather than deep-copied, so the clone is independent only with respect to the coefficient; the original term is left unmodified.
+
+        :return: A new term holding the same coefficient and variable.
+
+        :rtype: typing.Self
+        """
+
+        return Term(self.coeff, self.var)  # Term
 
     def __neg__(self) -> typing.Self:
         """
@@ -113,7 +123,7 @@ class Term:
         :rtype: typing.Self
         """
 
-        return Term(-self.coeff, self.var)
+        return Term(-self.coeff, self.var)  # Term
 
     def __add__(self, term: typing.Self) -> typing.Self:
         """
@@ -131,7 +141,7 @@ class Term:
 
         if self.var != term.var:
             raise ValueError("Cannot add terms with different variables")
-        return Term(self.coeff + term.coeff, self.var)
+        return Term(self.coeff + term.coeff, self.var)  # Term
 
     def __sub__(self, term: typing.Self) -> typing.Self:
         """
@@ -159,7 +169,7 @@ class Term:
         :rtype: typing.Self
         """
 
-        return Term(self.coeff * scalar, self.var)
+        return Term(self.coeff * scalar, self.var)  # Term
 
     def __rmul__(self, scalar: float) -> typing.Self:
         """
@@ -201,7 +211,7 @@ class Term:
         :rtype: bool
         """
 
-        if not isinstance(term, Term):
+        if not isinstance(term, Term):  # Term
             return False
         return self.var == term.var and self.coeff == term.coeff
 
@@ -221,14 +231,14 @@ class Term:
 
     def __hash__(self) -> int:
         """
-        Computes the hash value for the `Term` instance, enabling its use as a key in dictionaries or as an element in sets. The implementation derives the hash from the string representation of the object, ensuring that two terms with identical string representations produce the same hash code. Because the hash is based on the result of `str(self)`, the object should be treated as immutable; if the object's state changes in a way that alters its string representation, the hash value will also change, which violates the contract required for hashable objects and can lead to errors when the object is used in hash-based collections.
+        Calculates the hash value for the instance by hashing its string representation, enabling the object to be used as a key in dictionaries or as an element in sets. This implementation relies on the `__str__` method to determine the object's identity for hashing purposes. It is important to note that if the object is mutable and its string representation changes after it has been added to a hash-based collection, the hash value will change, potentially causing the object to become lost or inaccessible within that collection.
 
-        :return: An integer hash value computed from the string representation of the object.
+        :return: An integer hash value derived from the string representation of the object.
 
         :rtype: int
         """
-
-        return hash(str(self))
+        # return hash(str(self))
+        return hash((hash(self.var), self.coeff))
 
     def __repr__(self) -> str:
         """

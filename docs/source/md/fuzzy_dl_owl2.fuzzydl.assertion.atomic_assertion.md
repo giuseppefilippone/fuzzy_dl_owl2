@@ -1,7 +1,7 @@
 # Summary
 
-Defines a fundamental logical constraint within a fuzzy logic framework by associating a specific concept with a minimum membership degree threshold.
+A class representing a fundamental fuzzy logic constraint that links a specific concept to a minimum membership degree threshold.
 
 ## Description
 
-The software models a basic logical statement in fuzzy description logics, specifically asserting that a particular concept possesses a membership degree that is at least equal to a specified lower bound. By encapsulating a `Concept` instance and a `Degree` instance, the implementation serves as a data structure that represents the condition where a concept's truth value meets or exceeds a defined threshold. Functionality is provided to retrieve the identifier of the concept and the specific degree value, ensuring that the components of the logical constraint can be accessed and utilized by other parts of the system. The design focuses on storing these two core elements and offering a string representation for debugging or logging, thereby acting as a foundational component for constructing more complex fuzzy logic assertions.
+The software models a basic logical constraint within a fuzzy logic framework by asserting that a specific atomic concept must meet or exceed a defined threshold of membership. It encapsulates a relationship between a concept and a degree, representing the condition where the concept's membership is greater than or equal to the specified value. By storing these components as instance attributes, the implementation allows for the retrieval of the concept's identifier and the specific degree value, facilitating the evaluation of logical constraints. The design supports string representation for logging or display purposes, ensuring that the assertion's state can be easily inspected and communicated within the broader system.

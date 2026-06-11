@@ -1,7 +1,7 @@
 # Summary
 
-Encapsulates a property name and its associated fuzzy modifier to define linguistic hedges within the FuzzyOWL2 ontology framework.
+Encapsulates a property name and its associated fuzzy modifier to support the definition of fuzzy logic constraints within the FuzzyOWL2 ontology framework.
 
 ## Description
 
-Designed to serve as a fundamental component for constructing fuzzy logic constraints, the implementation links a specific ontology property with a linguistic hedge or truth value. Maintaining the fuzzy modifier alongside the property identifier enables the precise application of logic that dictates how lenient or strict comparisons should be interpreted. Instantiation requires supplying the modifier and property strings, allowing the subsequent retrieval of these values to build complex fuzzy axioms while keeping the internal state encapsulated.
+It acts as a container that links a specific property to a fuzzy modifier, allowing the application of linguistic hedges or truth values to object or data properties. By storing these two distinct elements together, the design enables the precise construction of complex fuzzy axioms where the strictness or leniency of comparisons can be controlled. The implementation relies on simple internal storage of string values, providing read-only access through dedicated methods to ensure that the underlying data remains immutable after initialization. This structure serves as a foundational component for the broader system, facilitating the representation of nuanced relationships that go beyond standard binary logic.

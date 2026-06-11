@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.query.min.min_related_query
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A query mechanism that determines the minimum degree to which two individuals are related through a specific role within a fuzzy description logic knowledge base.
+A specialized query mechanism that computes the minimum degree to which two individuals are related through a specific role within a fuzzy description logic knowledge base.
 
 
 Description
 -----------
 
 
-The software implements a specialized query for fuzzy description logic ontologies, specifically designed to compute the minimum membership degree of a role assertion between two distinct individuals. By leveraging mixed-integer linear programming, the system constructs an optimization problem where the objective is to minimize the degree variable associated with the relationship. To ensure the integrity of the original data, the process operates on a cloned instance of the knowledge base, allowing for the addition of temporary assertions and constraints without side effects. The logic involves transforming the role relationship into a concept expression, integrating it into the solver, and handling potential ontology inconsistencies by returning a specific status rather than raising an error.
+The software implements a logic for determining the minimum membership degree associated with a specific role assertion between two entities in a fuzzy ontology. By leveraging mixed-integer linear programming, the system constructs a concept representing the target relationship and integrates it into a cloned version of the provided knowledge base to prevent unintended side effects on the original data. During the optimization process, the logic adds specific assertions linking the primary individual to the constructed concept and its negation, thereby establishing constraints that drive the solver to find the lowest possible truth value for the relationship. The execution flow handles potential inconsistencies within the ontology gracefully, returning a specific status indicator rather than failing, while also managing dynamic blocking for concepts involving existential restrictions.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -114,3 +110,4 @@ Module Contents
 
    .. py:attribute:: role
       :type:  str
+

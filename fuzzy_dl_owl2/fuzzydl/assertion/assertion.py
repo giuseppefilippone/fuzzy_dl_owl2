@@ -12,7 +12,7 @@ from fuzzy_dl_owl2.fuzzydl.util.constants import ConceptType
 
 
 class Assertion:
-    """
+    r"""
     This class models a fuzzy logic constraint or statement, specifically an assertion that an individual belongs to a concept with a minimum degree of membership. It is defined by three components: an individual entity, a concept (or category), and a degree representing a lower bound threshold. The assertion is considered satisfied if the individual's actual membership in the concept meets or exceeds this threshold. Users can instantiate this class by providing an `Individual`, a `Concept`, and a `Degree`, and utilize methods to retrieve or modify these components, such as `get_concept` or `set_lower_limit`. Additionally, the class supports cloning and generates a string representation in the format 'individual:concept >= degree'. It is important to note that the equality comparison logic is non-standard; two assertions are considered equal if they share the same individual and concept, provided the numeric degree of the first is less than the degree of the second, in addition to standard string equality.
 
     :param individual: The subject of the assertion, corresponding to the individual $a$ in the expression $a:C \ge d$.

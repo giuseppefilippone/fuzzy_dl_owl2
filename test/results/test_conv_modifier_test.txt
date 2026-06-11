@@ -1,0 +1,7 @@
+(define-modifier molto linear-modifier(0.8))
+
+(define-primitive-concept PersonaAlta *top*)
+(define-primitive-concept PersonaMoltoAlta *top*)
+
+(define-concept PersonaMoltoAlta (molto PersonaAlta))
+

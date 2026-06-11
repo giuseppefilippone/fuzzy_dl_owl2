@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.triangular_function
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Implements a triangular membership function for fuzzy logic systems, characterized by three defining points.
+Implements a triangular membership function to model vague concepts within the FuzzyOWL2 framework.
 
 
 Description
 -----------
 
 
-The software models a specific type of fuzzy set using a geometric shape defined by three distinct floating-point parameters representing the left boundary, the peak, and the right boundary. By inheriting from a base datatype class, it integrates into a broader framework designed for handling fuzzy constraints and reasoning within ontologies. Encapsulation is achieved through private attributes and public accessor methods, ensuring that the geometric configuration remains immutable after initialization while allowing read access for computational purposes. A string representation method is provided to facilitate debugging and logging by displaying the current configuration in a constructor-like format, including parameters potentially inherited from the parent class.
+Inheriting from the base fuzzy datatype, this concrete implementation defines a geometric shape characterized by a left endpoint, a peak, and a right endpoint. These three floating-point parameters determine the support and core of the fuzzy set, allowing the system to calculate membership degrees for imprecise values. Accessor methods expose the internal state to ensure the defining geometric properties remain immutable after initialization, facilitating their use in reasoning tasks. The integration into the broader ontology framework provides a standardized way to represent triangular constraints, enabling the translation of linguistic variables into computational logic.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -122,3 +118,4 @@ Module Contents
 
    .. py:attribute:: _c
       :type:  float
+

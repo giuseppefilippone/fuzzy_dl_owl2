@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_sum_concept
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A specialized class representing a weighted sum concept that aggregates multiple concept definitions within the FuzzyOWL2 framework.
+A specialized definition that aggregates multiple fuzzy concepts into a weighted sum structure within the FuzzyOWL2 framework.
 
 
 Description
 -----------
 
 
-The software extends the base definition structure to model complex fuzzy logic operations by combining a collection of existing concept definitions into a single aggregate entity. By initializing with a specific type identifier and storing a reference to a list of component concepts, the implementation allows for the representation of mathematical summations where individual elements contribute to a larger whole. Access to the internal collection is provided to support downstream processing or serialization, while a custom string representation ensures the structure can be displayed in a readable, parenthesized format. This design facilitates the construction of hierarchical concept models where weighted sums can be nested or combined with other fuzzy logic primitives.
+Extending the base definition for fuzzy logic constructs, the software facilitates the creation of complex concepts by combining a collection of existing definitions into a single aggregated entity. It specifically targets scenarios where a concept is defined through a weighted summation, distinguishing this logical operation from other types of relationships within the ontology. During initialization, the entity is explicitly marked with a type identifier corresponding to a weighted sum, which allows reasoning engines or serialization tools to correctly interpret the structure. The stored collection of concepts can be retrieved for further processing, and the internal state is represented textually using a specific notation that encapsulates the components within a parenthesized prefix.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -90,3 +86,4 @@ Module Contents
 
    .. py:attribute:: _wc
       :type:  list[fuzzy_dl_owl2.fuzzyowl2.owl_types.concept_definition.ConceptDefinition]
+

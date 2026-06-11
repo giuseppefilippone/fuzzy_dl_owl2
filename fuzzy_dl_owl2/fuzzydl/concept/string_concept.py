@@ -17,7 +17,6 @@ class StringConcept(Concept):
     :raises FuzzyOntologyException: Raised when the negation operator is applied to a StringConcept, as atomic string concepts cannot be complemented in fuzzy description logic.
     """
 
-
     def __init__(self, name: str) -> None:
         """
         Initializes a new instance representing an atomic concept identified by the provided string name. This constructor invokes the superclass initializer to explicitly define the concept type as atomic and assigns the name to an internal attribute for later retrieval. By setting these properties, the method establishes the instance as a fundamental, indivisible unit within the broader conceptual framework.
@@ -104,11 +103,12 @@ class StringConcept(Concept):
 
     def __hash__(self) -> int:
         """
-        Calculates the hash value for the instance by delegating to the hash of its string representation. This behavior ensures that the object is hashable, allowing it to be utilized as a key in dictionaries or as a member of sets. The method relies on the `__str__` implementation of the class, meaning that any two instances producing identical string representations will yield the same hash code, which is essential for maintaining consistency with equality comparisons.
+        Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-        :return: An integer hash value derived from the string representation of the object.
+        :return: An integer hash value representing the structural identity of this object.
 
         :rtype: int
         """
-
-        return hash(str(self))
+        # return hash(str(self))
+        # return id(self)
+        return hash((self.name, hash(self.type)))

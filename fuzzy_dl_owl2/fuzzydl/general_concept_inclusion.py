@@ -21,7 +21,6 @@ class GeneralConceptInclusion:
     :type type: LogicOperatorType
     """
 
-
     def __init__(
         self,
         subsumer: Concept,
@@ -50,6 +49,8 @@ class GeneralConceptInclusion:
         self.degree: Degree = degree
         # Type (depends on the fuzzy implication)
         self.type: LogicOperatorType = type_
+
+        self._name: typing.Optional[str] = None  # Cache for the string representation
 
     def clone(self) -> typing.Self:
         """
@@ -237,7 +238,8 @@ class GeneralConceptInclusion:
         :rtype: int
         """
 
-        return hash(str(self))
+        # return hash(str(self))
+        return hash((hash(self.subsumed), hash(self.subsumer), hash(self.degree), hash(self.type)))
 
     def __repr__(self) -> str:
         """
@@ -259,6 +261,6 @@ class GeneralConceptInclusion:
         :rtype: str
         """
 
-        return (
-            f"{self.subsumed} =>_{self.type.name[0]} {self.subsumer} >= {self.degree}"
-        )
+        if self._name is None:
+            self._name = f"{self.subsumed} =>_{self.type.name[0]} {self.subsumer} >= {self.degree}"
+        return self._name

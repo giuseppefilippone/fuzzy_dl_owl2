@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.modifier.triangular_modifier
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A fuzzy logic modifier that applies a triangular membership function to concepts based on three defining parameters.
+Implements a fuzzy logic modifier that applies a triangular membership function to concepts using three distinct boundary parameters to define degrees of membership.
 
 
 Description
 -----------
 
 
-The software implements a specific type of fuzzy logic modifier characterized by a triangular membership function, which determines the degree to which a value belongs to a concept based on three distinct parameters: a left boundary, a peak, and a right boundary. By enforcing the constraint that the left boundary must be less than or equal to the peak, which in turn must be less than or equal to the right boundary, the implementation ensures a valid geometric shape where membership increases linearly from zero to one and then decreases back to zero. When applied to a base concept, the logic wraps the original entity into a specialized structure that incorporates these triangular characteristics, allowing for the dynamic calculation of membership degrees for any given input value. Furthermore, the design supports logical composition by overloading standard operators to perform conjunctions, disjunctions, and negations, effectively enabling the combination of multiple triangular modifiers into complex fuzzy expressions.
+The implementation defines a mathematical model where membership degrees increase linearly from a lower bound to a peak and then decrease linearly to an upper bound, effectively modeling vague or imprecise linguistic terms within a fuzzy description logic system. Upon initialization, the logic enforces strict ordering constraints on the boundary parameters to ensure the formation of a valid triangle, raising an error if the configuration is geometrically impossible. By wrapping base concepts into a specialized modified structure, the software allows for the dynamic evaluation of membership values based on the specific triangular shape defined by the instance. Furthermore, the design supports logical composition through operator overloading, enabling the combination or negation of modifiers to construct more complex fuzzy expressions while maintaining immutability and hashability for use in collections.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -87,9 +83,9 @@ Module Contents
 
    .. py:method:: __hash__() -> int
 
-      Computes an integer hash value for the instance by hashing the string representation of the object. This implementation allows the object to be used as a key in dictionaries or as a member of sets, provided the string representation remains consistent throughout the object's lifetime. The resulting hash is entirely dependent on the output of the `__str__` method, meaning any changes to the string representation will alter the hash value.
+      Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-      :return: An integer hash value derived from the string representation of the object.
+      :return: An integer hash value representing the structural identity of this object.
 
       :rtype: int
 
@@ -177,27 +173,31 @@ Module Contents
       :type: float
 
 
-      Updates the internal state of the object by setting the value of the private attribute `_a` to the provided floating-point number. This method serves as the setter for the 'a' property, allowing external modification of this specific parameter within the TriangularModifier context. Since the implementation performs a direct assignment, side effects are limited to the mutation of the instance's internal state, though the validity of the new value relative to other constraints is not enforced within this specific method.
+      Returns the left endpoint of this triangular modifier's membership function, i.e. the lower bound where the membership degree begins rising from zero toward the peak. The value is read from the private ``_a`` attribute without modifying the instance.
 
-      :param value: The new value to assign to the internal attribute.
-      :type value: float
+      :return: The left endpoint ``a`` of the triangle.
+
+      :rtype: float
 
 
    .. py:property:: b
       :type: float
 
 
-      Updates the internal configuration of the `TriangularModifier` by setting the value of the parameter `b`. This property setter accepts a floating-point number and assigns it directly to the private attribute `_b`. While this specific implementation performs no validation or triggers immediate side effects, modifying this value changes the state of the object, which will influence the behavior of any subsequent operations that rely on the `b` parameter.
+      Returns the peak of this triangular modifier's membership function, i.e. the point where the membership degree reaches its maximum value of ``1``. The value is read from the private ``_b`` attribute without modifying the instance.
 
-      :param value: The new value to assign to the b attribute.
-      :type value: float
+      :return: The peak ``b`` of the triangle.
+
+      :rtype: float
 
 
    .. py:property:: c
       :type: float
 
 
-      Sets the value of the parameter 'c' for the triangular modifier. This method acts as a property setter, assigning the provided floating-point value to the internal `_c` attribute. By updating this attribute, the method modifies the internal state of the instance, which may influence subsequent calculations or behaviors relying on this parameter.
+      Returns the right endpoint of this triangular modifier's membership function, i.e. the upper bound where the membership degree falls back to zero. The value is read from the private ``_c`` attribute without modifying the instance.
 
-      :param value: The new value to assign to the c attribute.
-      :type value: float
+      :return: The right endpoint ``c`` of the triangle.
+
+      :rtype: float
+

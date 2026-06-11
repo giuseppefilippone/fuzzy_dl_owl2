@@ -1,7 +1,7 @@
 # Summary
 
-Calculates the greatest lower bound of membership for a specific individual relative to a given concept using Mixed-Integer Linear Programming optimization.
+A query mechanism that computes the minimum membership degree of an individual for a given concept by formulating and solving a mixed-integer linear programming problem.
 
 ## Description
 
-The software models a query designed to retrieve the greatest lower bound of the degree of membership for a specific individual relative to a given concept. It functions by transforming the logical query into an optimization problem, specifically utilizing a semi-continuous variable to represent the degree of membership. Execution involves cloning the current knowledge base to prevent side effects, applying necessary constraints, and performing an optimization to calculate the result. The implementation includes specific handling for existential restrictions and manages inconsistent ontology states by returning a designated solution type.
+The implementation extends the standard instance query logic to specifically target the greatest lower bound of truth values within a fuzzy description logic framework. To achieve this, the system introduces a semi-continuous variable into the optimization model and establishes a linear constraint that links the negation of the target concept to this variable, effectively minimizing the objective to find the lower bound. The resolution process ensures data integrity by cloning the knowledge base before applying transformations, handles dynamic blocking for existential restrictions, and gracefully manages inconsistent ontology states by returning a specific solution type rather than propagating exceptions.

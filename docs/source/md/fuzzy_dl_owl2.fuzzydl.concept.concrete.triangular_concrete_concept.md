@@ -1,7 +1,7 @@
 # Summary
 
-Implements a fuzzy logic concept characterized by a triangular membership function to model linguistic variables within a specific domain.
+Implements a fuzzy logic concept using a triangular membership function to determine the degree of membership for numeric values within a defined domain.
 
 ## Description
 
-The software models a specific type of fuzzy set where membership degrees follow a triangular shape, defined by a rising edge, a peak, and a falling edge. It enforces strict validation during initialization to ensure that the geometric parameters form a valid triangle and that the overall domain encompasses the active support interval. Membership evaluation relies on linear interpolation, calculating a value between zero and one based on where a specific input falls relative to the triangle's vertices. To support complex logical reasoning, the implementation delegates operations like negation, conjunction, and disjunction to a central operator handler, allowing these concepts to be combined within a broader fuzzy ontology framework.
+The software models a specific type of fuzzy set where membership degrees follow a triangular shape, rising linearly to a peak and then falling back to zero. It requires defining a domain interval alongside three specific points that determine the start, peak, and end of the triangle, enforcing strict validation to ensure the geometric constraints are met during instantiation. Central to the implementation is the calculation of membership degrees, which evaluates a given numeric value against the triangle's vertices to return a value between zero and one based on linear interpolation. To support complex fuzzy logic reasoning, the implementation overloads standard logical operators such as negation, conjunction, and disjunction, delegating these operations to a separate handler while maintaining the ability to clone instances and generate unique hash identifiers based on the defining parameters.

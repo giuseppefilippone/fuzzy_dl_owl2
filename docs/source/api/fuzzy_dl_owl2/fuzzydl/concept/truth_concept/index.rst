@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.concept.truth_concept
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A Python implementation of the universal (Top) and contradictory (Bottom) concepts within a fuzzy description logic framework.
+Defines the logical constants Top and Bottom within a fuzzy description logic hierarchy to represent universal truth and contradiction.
 
 
 Description
 -----------
 
 
-The software models the two extreme truth values, known as the universal concept (Top) and the contradictory concept (Bottom), which serve as the boundary elements within a fuzzy description logic hierarchy. These concepts represent states that are either always satisfied or never satisfied, acting as identity or absorbing elements during logical operations such as conjunction and disjunction. By inheriting from a base concept class, the implementation ensures that these truth values integrate seamlessly with the broader logic framework while maintaining immutability and atomic status. The design includes static factory methods and global constants to facilitate the instantiation and reuse of these fundamental logical constructs, supporting standard behaviors like negation, cloning, and equality comparison without allowing internal structural modification.
+The implementation models the two extreme truth values, known as the universal concept (Top) and the contradictory concept (Bottom), which serve as the boundary conditions for the logical framework. By employing a singleton pattern, the design ensures that only a single shared instance exists for each truth value, optimizing memory usage and guaranteeing immutability across the ontology. Logical operations such as conjunction, disjunction, and negation are overridden to adhere to standard mathematical laws, where Top acts as an identity for conjunction and Bottom acts as an absorbing element. These constants are treated as atomic entities that cannot be decomposed further, providing a stable foundation for constructing more complex concept expressions within the system.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -57,7 +53,7 @@ Module Contents
     .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzydl_concept_truth_concept_TruthConcept.pdf
        :alt: UML Class Diagram for TruthConcept
        :align: center
-       :width: 9.2cm
+       :width: 10.3cm
        :class: uml-diagram
 
        UML Class Diagram for **TruthConcept**
@@ -105,9 +101,9 @@ Module Contents
 
    .. py:method:: __hash__() -> int
 
-      Computes the integer hash value for the instance based on the `name` attribute. This allows `TruthConcept` objects to be used as dictionary keys or elements within sets. The implementation ensures that two instances with identical names will produce the same hash value, which is a requirement for consistent behavior in hash-based collections.
+      Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-      :return: An integer hash value derived from the object's name attribute.
+      :return: An integer hash value representing the structural identity of this object.
 
       :rtype: int
 
@@ -216,7 +212,11 @@ Module Contents
       :staticmethod:
 
 
-      Returns a `TruthConcept` instance representing the bottom element of the conceptual hierarchy. This static method constructs a new object initialized with `ConceptType.BOTTOM`, typically signifying a contradiction or the least defined state. The operation has no side effects and does not depend on instance state.
+      Returns the shared singleton representing the bottom element of the conceptual hierarchy (a contradiction / the least defined state). The instance is created lazily on first access and cached.
+
+      :return: The singleton Bottom concept.
+
+      :rtype: TruthConcept
 
 
 
@@ -234,7 +234,11 @@ Module Contents
       :staticmethod:
 
 
-      Returns a new instance representing the universal or "Top" concept within the logical framework. This concept typically signifies the set of all possible individuals or the most general supertype in the ontology. The method acts as a static factory, instantiating a `TruthConcept` object initialized specifically with the `ConceptType.TOP` identifier, and it has no side effects.
+      Returns the shared singleton representing the universal ("Top") concept. The instance is created lazily on first access and cached, signifying the set of all possible individuals or the most general supertype in the ontology.
+
+      :return: The singleton Top concept.
+
+      :rtype: TruthConcept
 
 
 
@@ -273,18 +277,29 @@ Module Contents
 
 
 
+   .. py:attribute:: _BOTTOM
+      :type:  Optional[Self]
+      :value: None
+
+
+
+   .. py:attribute:: _TOP
+      :type:  Optional[Self]
+      :value: None
+
+
+
    .. py:attribute:: name
       :value: '*top*'
 
 
-      Updates the name of the Concept instance to the specified string value. This setter modifies the object's internal state by assigning the provided value to the private `_name` attribute, effectively replacing any previously stored name.
-
-      :param value: The new name to assign to the object.
-      :type value: str
-
 
 .. py:data:: BOTTOM
    :type:  fuzzy_dl_owl2.fuzzydl.concept.concept.Concept
+   :value: None
+
 
 .. py:data:: TOP
    :type:  fuzzy_dl_owl2.fuzzydl.concept.concept.Concept
+   :value: None
+

@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzyowl2.parser.owl2_xml_parser
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A specialized parser converts FuzzyOWL2 XML annotations into corresponding Python data structures representing fuzzy logic elements.
+Specialized XML parsing logic transforms FuzzyOWL2 annotations into corresponding Python data structures for fuzzy logic concepts, datatypes, and properties.
 
 
 Description
 -----------
 
 
-The software interprets XML strings containing FuzzyOWL2 annotations to instantiate a wide variety of Python objects representing fuzzy logic constructs, such as concept definitions, fuzzy datatypes, and property definitions. By leveraging the standard library's XML parsing capabilities, the logic inspects specific attributes within the XML structure to determine the appropriate class to construct, ranging from simple triangular functions to complex weighted or aggregated concepts like Choquet or Sugeno integrals. A central dispatch mechanism routes the parsing flow based on the annotation type, ensuring that nested elements, such as lists of weights or concept names, are correctly extracted and mapped to the corresponding object attributes. Additionally, the implementation integrates with an external configuration system to load necessary parameters before parsing and includes robust error handling to manage file access issues or malformed XML gracefully.
+Deserialization of FuzzyOWL2 XML data is handled by interpreting specific tags and attributes to instantiate a wide range of fuzzy logic objects, including concept definitions, fuzzy datatypes, and property modifiers. The implementation utilizes ``defusedxml`` to safely parse input strings, dispatching to specific constructors based on the ``fuzzyType`` annotation found within the XML structure. Complex constructs such as weighted concepts, aggregation operators like OWA or Sugeno integrals, and various membership functions are mapped to their respective Python representations to support the underlying fuzzy description logic. Additionally, the software integrates configuration management to load runtime parameters and provides robust error handling to ensure that parsing failures or missing configuration files do not cause unexpected termination.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -92,14 +88,14 @@ Module Contents
 
 
 
-   .. py:method:: load_config(*args) -> None
+   .. py:method:: load_config(**kargs) -> None
       :staticmethod:
 
 
       This static method loads configuration parameters by reading a "CONFIG.ini" file located in the current working directory. It acts as a wrapper that forwards any provided arguments to the underlying `ConfigReader.load_parameters` method to facilitate the parsing and application of settings. The operation modifies the global or class-level configuration state but does not return a value. Note that this method relies on the specific execution context, as it will fail to locate the configuration file if the current working directory does not contain "CONFIG.ini".
 
-      :param args: Additional arguments passed directly to the underlying configuration loader.
-      :type args: typing.Any
+      :param kargs: Additional arguments passed directly to the underlying configuration loader.
+      :type kargs: typing.Any
 
 
 
@@ -134,3 +130,5 @@ Module Contents
       :return: Returns a Python object representing the parsed FuzzyOWL2 element. The specific type is determined by the XML's `fuzzyType` attribute and may be a `ConceptDefinition`, `FuzzyDatatype`, `PropertyDefinition`, `FuzzyModifier`, a `float` (for axiom degrees), or a `str` (for ontology logic).
 
       :rtype: typing.Union[ConceptDefinition, FuzzyDatatype, PropertyDefinition, FuzzyModifier, float, str]
+
+

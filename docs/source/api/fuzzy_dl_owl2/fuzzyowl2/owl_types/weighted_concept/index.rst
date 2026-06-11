@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_concept
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Defines a data structure for representing weighted concepts in the FuzzyOWL2 ontology language by associating a numerical weight with a named fuzzy concept.
+Defines a data structure that associates a numerical weight with a fuzzy concept identifier within the FuzzyOWL2 ontology language.
 
 
 Description
 -----------
 
 
-Serving as a concrete implementation within the FuzzyOWL2 framework, the structure models concepts that carry a specific numerical weight or degree of membership. By extending the base ``ConceptDefinition`` class, the implementation integrates into the broader type hierarchy and explicitly registers instances as weighted concepts during initialization. The structure encapsulates a floating-point value representing the weight and a string identifier for the concept, storing them as private attributes to ensure data integrity. Accessor methods allow the retrieval of the numerical weight and the associated concept label, while a custom string representation provides a human-readable format combining both elements.
+The implementation extends the base definition for concepts to support degrees of membership or importance by pairing a floating-point value with a specific concept label. During initialization, the object explicitly registers itself as a weighted entity within the system hierarchy while encapsulating the numerical and textual data as private attributes to ensure data integrity. Accessor methods allow external components to retrieve the stored weight and concept identifier without modifying the internal state, facilitating read-only interactions with the fuzzy logic data. A string representation is provided to display the combined weight and concept in a parenthesized format, which aids in debugging and logging by presenting a human-readable summary of the entity's current state.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -106,3 +102,4 @@ Module Contents
 
    .. py:attribute:: _n
       :type:  float
+

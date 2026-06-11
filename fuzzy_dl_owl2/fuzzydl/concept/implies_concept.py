@@ -27,7 +27,6 @@ class ImpliesConcept(Concept, HasConceptsInterface):
     :type name: str
     """
 
-
     def __init__(self, c_type: ConceptType, concepts: list[Concept]) -> None:
         """
         Initializes an implication concept representing a logical relationship between a list of child concepts using a specific fuzzy logic operator. The constructor validates that the provided concept type is strictly limited to either Zadeh or Gödel implication, raising an assertion error if any other type is supplied. It performs initialization for both the `Concept` and `HasConceptsInterface` base classes and automatically computes and assigns a descriptive name to the instance.
@@ -260,14 +259,18 @@ class ImpliesConcept(Concept, HasConceptsInterface):
 
     def __hash__(self) -> int:
         """
-        Calculates the hash value for the instance, enabling it to be used as a dictionary key or stored in a set. The hash is derived from the object's string representation, meaning that two objects with identical string outputs will produce the same hash. Because the hash depends on the result of `str(self)`, any changes to the object's state that modify its string representation will also change its hash value.
+        Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-        :return: An integer hash value derived from the object's string representation.
+        :return: An integer hash value representing the structural identity of this object.
 
         :rtype: int
         """
 
-        return hash(str(self))
+        # return hash(str(self))
+        # return id(self)
+        return hash(
+            (hash(self.concepts[0]), hash(self.concepts[1]), hash(self.type), self.name)
+        )
 
     def __eq__(self, value: typing.Self) -> bool:
         """

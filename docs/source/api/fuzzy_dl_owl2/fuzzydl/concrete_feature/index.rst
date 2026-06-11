@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.concrete_feature
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A class representing a concrete feature characterized by a name and a specific data type such as string, boolean, integer, or real.
+A class that models a specific attribute of an individual characterized by a name and a data type such as string, boolean, integer, or real.
 
 
 Description
 -----------
 
 
-Flexible instantiation allows the data type to be automatically inferred from the provided arguments, defaulting to a string if only a name is supplied, or explicitly setting **boolean**, **integer**, or **real** types based on the presence of flags or numeric bounds. Utilizing overloaded constructors and internal dispatch logic ensures that numeric features are initialized with specific lower and upper bounds, which are essential for defining ranges within the domain. State management is handled through standard accessors and mutators, enabling the modification of the feature's type and range constraints after creation, while a cloning mechanism facilitates the creation of independent copies that preserve the original configuration. Such a structure serves as a foundational component for defining typed attributes within the broader system, ensuring that semantic constraints and data types are strictly enforced and easily retrievable.
+The implementation provides a flexible mechanism for defining attributes that can represent various data categories, automatically inferring the specific type based on the arguments provided during instantiation. When initialized with a single string, the attribute defaults to a string type, while the presence of a boolean flag explicitly designates the attribute as boolean, and the inclusion of numeric boundaries establishes an integer or real range. Delegation to distinct helper methods ensures that the appropriate type and boundary values are assigned to the instance, while runtime modification of type and range constraints remains supported alongside a cloning capability that generates independent copies.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -196,3 +192,5 @@ Module Contents
 
       :param new_type: The concrete feature type to assign to the instance.
       :type new_type: ConcreteFeatureType
+
+

@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.query.max.max_subsumes_query
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Determines the maximum degree to which one fuzzy concept is subsumed by another by formulating and solving a Mixed-Integer Linear Programming optimization problem.
+A class that calculates the maximum degree to which one fuzzy concept is subsumed by another by formulating the problem as a mixed-integer linear programming optimization task.
 
 
 Description
 -----------
 
 
-Functionality is provided to calculate the maximum truth value for which one fuzzy concept implies another, extending standard subsumption reasoning into the fuzzy domain. Support for various fuzzy logic operators, such as Łukasiewicz and Gödel, enables the construction of specific implication concepts that define the semantic constraints of the query. Execution involves cloning the knowledge base to preserve the original state, followed by the creation of an objective expression that minimizes the degree of the derived implication within a Mixed-Integer Linear Programming model. The optimization process yields the precise maximum subsumption degree, while error handling mechanisms manage scenarios involving inconsistent ontologies.
+It extends the base subsumption query functionality to support various fuzzy logic semantics, including Łukasiewicz, Gödel, Kleene-Dienes, and Zadeh operators. The core mechanism involves transforming the logical subsumption relationship into an optimization problem where the objective is to minimize the degree of an implication assertion derived from the input concepts. During execution, the software clones the knowledge base to preserve the original state, creates a new individual to represent the implication, and configures the objective expression based on the specific logic operator selected. It handles potential inconsistencies in the ontology by catching exceptions and returning a specific solution status, while also managing performance metrics and the conditional solving of the ABox depending on configuration settings.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -48,7 +44,7 @@ Module Contents
     .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzydl_query_max_max_subsumes_query_MaxSubsumesQuery.pdf
        :alt: UML Class Diagram for MaxSubsumesQuery
        :align: center
-       :width: 14.1cm
+       :width: 13.9cm
        :class: uml-diagram
 
        UML Class Diagram for **MaxSubsumesQuery**
@@ -94,3 +90,5 @@ Module Contents
       :return: The Solution object resulting from optimizing the knowledge base, or a solution indicating inconsistency if the ontology is invalid.
 
       :rtype: Solution
+
+

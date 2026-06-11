@@ -1,6 +1,7 @@
 from fuzzy_dl_owl2.fuzzydl.milp.solution import Solution
 from fuzzy_dl_owl2.fuzzydl.milp.variable import Variable
-from fuzzy_dl_owl2.fuzzydl.parser.dl_parser import DLParser
+from fuzzy_dl_owl2.fuzzydl.parser import DLParserFast as DLParser
+from fuzzy_dl_owl2.fuzzydl.parser.dl_parser import DLParser as DLParserSlow
 from fuzzy_dl_owl2.fuzzydl.query.all_instances_query import AllInstancesQuery
 from fuzzy_dl_owl2.fuzzydl.util.util import Util
 

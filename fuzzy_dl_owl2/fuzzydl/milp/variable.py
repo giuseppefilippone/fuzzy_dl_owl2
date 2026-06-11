@@ -1,9 +1,9 @@
 import typing
 
-from fuzzy_dl_owl2.fuzzydl.util.constants import VariableType
+from fuzzy_dl_owl2.fuzzydl.util.constants import VariableType  # Variable
 
 
-class Variable:
+class Variable:  # Variable
     """
     This class models a symbolic variable used within linear expressions, typically to represent degrees of satisfaction in fuzzy description logic ontologies. It encapsulates properties such as a unique name, a specific type (e.g., binary, integer, or continuous), and corresponding lower and upper bounds that are automatically adjusted based on the variable type. Users can instantiate variables directly or utilize static factory methods to create specific variable types, while a class-level counter facilitates the automatic generation of unique sequential names. Additionally, the class provides functionality to flag variables as datatype fillers and supports cloning for creating independent copies.
 
@@ -23,13 +23,12 @@ class Variable:
     :type datatype_filler: bool
     """
 
-
     # Name of new variables
     VARIABLE_NAME: str = "y"
     # Number of new variables
     VARIABLE_NUMBER: int = 0
 
-    def __init__(self, name: str, v_type: VariableType) -> None:
+    def __init__(self, name: str, v_type: VariableType) -> None:  # Variable
         # Lower bound of the variable
         """
         Constructs a new Variable instance, assigning the provided name and initializing the variable's type via the set_type method. The method establishes default numeric constraints by setting both the lower and upper bounds to 0.0. Additionally, it initializes the datatype_filler attribute to False, indicating that the variable is not currently serving as a placeholder for a datatype restriction.
@@ -46,7 +45,7 @@ class Variable:
         # Name of the variable
         self.name: str = name
         # Type of the variable
-        self.type: VariableType = None
+        self.type: VariableType = None  # Variable
         # Variable is filler value of datatype restriction
         self.datatype_filler: bool = False
         self.set_type(v_type)
@@ -64,7 +63,7 @@ class Variable:
         :rtype: typing.Self
         """
 
-        return Variable(name, VariableType.BINARY)
+        return Variable(name, VariableType.BINARY)  # Variable
 
     @staticmethod
     def get_continuous_variable(name: str) -> typing.Self:
@@ -79,7 +78,7 @@ class Variable:
         :rtype: typing.Self
         """
 
-        return Variable(name, VariableType.CONTINUOUS)
+        return Variable(name, VariableType.CONTINUOUS)  # Variable
 
     @staticmethod
     def get_semi_continuous_variable(name: str) -> typing.Self:
@@ -94,7 +93,7 @@ class Variable:
         :rtype: typing.Self
         """
 
-        return Variable(name, VariableType.SEMI_CONTINUOUS)
+        return Variable(name, VariableType.SEMI_CONTINUOUS)  # Variable
 
     @staticmethod
     def get_integer_variable(name: str) -> typing.Self:
@@ -109,7 +108,7 @@ class Variable:
         :rtype: typing.Self
         """
 
-        return Variable(name, VariableType.INTEGER)
+        return Variable(name, VariableType.INTEGER)  # Variable
 
     def get_lower_bound(self) -> float:
         """
@@ -122,7 +121,7 @@ class Variable:
 
         return self.lower_bound
 
-    def get_type(self) -> VariableType:
+    def get_type(self) -> VariableType:  # Variable
         """
         Retrieves the type classification associated with the variable instance. This method returns the value stored in the internal `type` attribute, which defines the specific data type or category of the variable. It is a read-only operation that does not modify the object's state, and it simply returns whatever value is currently assigned to the type attribute.
 
@@ -158,7 +157,7 @@ class Variable:
     def set_binary_variable(self) -> None:
         """Marks the current variable instance as a binary variable, effectively restricting its domain to discrete values of 0 and 1. This method updates the variable's internal type attribute by delegating to the `set_type` method with the appropriate enumeration value. As this operation modifies the object's state in place, any previous type assignment associated with the variable will be overwritten."""
 
-        self.set_type(VariableType.BINARY)
+        self.set_type(VariableType.BINARY)  # Variable
 
     def set_datatype_filler_variable(self) -> None:
         """Marks the variable instance as a datatype filler by setting the `datatype_filler` attribute to `True`. This operation is typically used to designate the variable as a placeholder or default value intended to satisfy a specific data type requirement within a schema or data processing pipeline. The method modifies the object's state in place and does not return any value."""
@@ -175,7 +174,7 @@ class Variable:
 
         self.name = name
 
-    def set_type(self, v_type: VariableType) -> None:
+    def set_type(self, v_type: VariableType) -> None:  # Variable
         """
         Updates the variable's type to the specified value and automatically adjusts the variable's bounds to match standard defaults for that type. When the type is set to BINARY or SEMI_CONTINUOUS, the lower and upper bounds are reset to 0.0 and 1.0, respectively. For CONTINUOUS or INTEGER types, the bounds are set to negative and positive infinity. This method modifies the variable's state in place and asserts that the provided type is valid.
 
@@ -183,17 +182,17 @@ class Variable:
         :type v_type: VariableType
         """
 
-        if v_type in (VariableType.BINARY, VariableType.SEMI_CONTINUOUS):
+        if v_type in (VariableType.BINARY, VariableType.SEMI_CONTINUOUS):  # Variable
             self.lower_bound = 0.0
             self.upper_bound = 1.0
         else:
-            assert v_type in (VariableType.CONTINUOUS, VariableType.INTEGER)
+            assert v_type in (VariableType.CONTINUOUS, VariableType.INTEGER)  # Variable
             self.lower_bound = float("-inf")
             self.upper_bound = float("inf")
         self.type = v_type
 
     @staticmethod
-    def get_new_variable(v_type: VariableType) -> typing.Self:
+    def get_new_variable(v_type: VariableType) -> typing.Self:  # Variable
         """
         Generates a new `Variable` instance with a unique, auto-generated name based on the specified variable type. The method increments an internal class-level counter to ensure that each subsequent call produces a distinct identifier, combining a static name prefix with the current counter value. This process modifies the class state by updating the counter, meaning the generated names are sequential and dependent on the history of calls to this method.
 
@@ -205,8 +204,10 @@ class Variable:
         :rtype: typing.Self
         """
 
-        Variable.VARIABLE_NUMBER += 1
-        return Variable(f"{Variable.VARIABLE_NAME}{Variable.VARIABLE_NUMBER}", v_type)
+        Variable.VARIABLE_NUMBER += 1  # Variable
+        return Variable(
+            f"{Variable.VARIABLE_NAME}{Variable.VARIABLE_NUMBER}", v_type
+        )  # Variable
 
     def clone(self) -> typing.Self:
         """
@@ -217,7 +218,7 @@ class Variable:
         :rtype: typing.Self
         """
 
-        return Variable(self.name, self.type)
+        return Variable(self.name, self.type)  # Variable
 
     def __eq__(self, value: typing.Self) -> bool:
         """
@@ -231,7 +232,9 @@ class Variable:
         :rtype: bool
         """
 
-        return str(self) == str(value)
+        if not isinstance(value, Variable):  # Variable
+            return self.name == str(value)
+        return self.name == value.name
 
     def __ne__(self, value: object) -> bool:
         """
@@ -249,14 +252,22 @@ class Variable:
 
     def __hash__(self) -> int:
         """
-        Returns the hash value for the `Variable` instance, enabling its use in hash-based collections like dictionaries and sets. The hash is calculated by converting the object to its string representation and hashing that string. Consequently, the hash value is directly tied to the output of the object's `__str__` method, meaning that any change to the object's state which alters its string representation will result in a different hash.
+        Calculates the hash value for the instance by hashing its string representation, enabling the object to be used as a key in dictionaries or as an element in sets. This implementation relies on the `__str__` method to determine the object's identity for hashing purposes. It is important to note that if the object is mutable and its string representation changes after it has been added to a hash-based collection, the hash value will change, potentially causing the object to become lost or inaccessible within that collection.
 
-        :return: An integer hash value derived from the object's string representation.
+        :return: An integer hash value derived from the string representation of the object.
 
         :rtype: int
         """
-
-        return hash(str(self))
+        # return hash(str(self))
+        return hash(
+            (
+                self.name,
+                hash(self.type),
+                self.lower_bound,
+                self.upper_bound,
+                self.datatype_filler,
+            )
+        )
 
     def __repr__(self) -> str:
         """
@@ -281,7 +292,7 @@ class Variable:
         return self.name
 
 
-BinaryVar = Variable.get_binary_variable
-IntegerVar = Variable.get_integer_variable
-UpVar = Variable.get_semi_continuous_variable
-FreeVar = Variable.get_continuous_variable
+BinaryVar = Variable.get_binary_variable  # Variable
+IntegerVar = Variable.get_integer_variable  # Variable
+UpVar = Variable.get_semi_continuous_variable  # Variable
+FreeVar = Variable.get_continuous_variable  # Variable

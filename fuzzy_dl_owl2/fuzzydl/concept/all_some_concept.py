@@ -33,7 +33,8 @@ class AllSomeConcept(Concept, HasRoleConceptInterface):
         HasRoleConceptInterface.__init__(self, role, c)
 
         assert c_type in (ConceptType.ALL, ConceptType.SOME)
-        self._name: str = self.compute_name()
+        # self._name: str = self.compute_name()  # eager; disabled to defer string building until __str__ is actually called
+        self._name: typing.Optional[str] = None
 
     @staticmethod
     def new(c_type: ConceptType, role: str, concept: Concept) -> typing.Self:
@@ -196,14 +197,17 @@ class AllSomeConcept(Concept, HasRoleConceptInterface):
 
     def __hash__(self) -> int:
         """
-        Returns an integer hash value for the instance based on its string representation, enabling the object to be used as a dictionary key or stored in a set. The implementation delegates to the built-in `hash` function applied to `str(self)`, meaning the hash value is intrinsically linked to the output of the object's string conversion. Consequently, if the object is mutable and its string representation changes, the hash value will also change, which violates the immutability requirement for objects used in hash-based collections and may lead to unpredictable behavior.
+        Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-        :return: An integer hash value derived from the string representation of the object.
+        :return: An integer hash value representing the structural identity of this object.
 
         :rtype: int
         """
-
-        return hash(str(self))
+        # return hash(str(self))
+        # return id(self)
+        return hash(
+            (hash(self.role), hash(self.curr_concept), hash(self.type))
+        )
 
 
 # class AllConcept(AllSomeConcept):

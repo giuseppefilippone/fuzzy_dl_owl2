@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.milp.expression
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A linear mathematical expression model represents the degree of satisfaction of concepts within fuzzy description logic ontologies.
+A linear algebraic representation class used to construct and manipulate mathematical expressions within a Mixed-Integer Linear Programming (MILP) framework.
 
 
 Description
 -----------
 
 
-It supports flexible construction from numeric constants, collections of variables, or existing expression instances, allowing for the representation of forms such as :math:`c + c_1x_1 + \dots + c_nx_n`. The design incorporates operator overloading to handle arithmetic operations like addition, subtraction, and scalar multiplication seamlessly, ensuring that interactions with other expressions, terms, or numbers behave intuitively. To maintain a canonical internal structure, the logic automatically consolidates terms by merging coefficients whenever operations involve the same variable, thereby preventing duplicate entries. Furthermore, the implementation includes capabilities for cloning, negation, and string generation, which facilitate its use in complex algebraic computations and mixed-integer linear programming contexts.
+The software implements a core algebraic structure representing linear forms, serving as the foundational primitive for defining constraints and objective functions in a Mixed-Integer Linear Programming (MILP) system. By encapsulating a constant term and a collection of variable terms, the logic enables the construction of complex mathematical equations through flexible initialization patterns that accept raw numbers, existing terms, or collections of variables. Operator overloading facilitates intuitive arithmetic manipulation, allowing for the addition, subtraction, and scalar multiplication of these linear forms while automatically merging coefficients when identical variables are combined. This design ensures that intermediate quantities are consistently represented as standardized objects before being translated into the specific inequality constraints required by the underlying solver.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -59,7 +55,21 @@ Module Contents
               Expression(expr: Self)
               Expression(v: Union[list[fuzzy_dl_owl2.fuzzydl.milp.variable.Variable], set[fuzzy_dl_owl2.fuzzydl.milp.variable.Variable]])
 
-   This class models a linear mathematical expression of the form $c + c_1x_1 + \dots + c_nx_n$, typically used to represent the degree of satisfaction of a concept within a fuzzy description logic ontology. It offers flexible initialization options, allowing construction from a numeric constant, a sequence of `Term` objects, another `Expression` instance, or a collection of `Variable` objects. The class supports comprehensive arithmetic manipulation through operator overloading, enabling addition, subtraction, multiplication, and division with scalars, terms, or other expressions. Furthermore, it automatically manages term consolidation; if a term is added involving a variable that already exists, the coefficients are merged rather than creating a duplicate entry.
+   Linear form  $E = c_0 + \sum_{i=1}^{n} c_i\,x_i$  used as the primitive
+   algebraic object in the MILP layer.  Every constraint, objective term and
+   intermediate quantity is first wrapped into an ``Expression`` and then
+   turned into an ``Inequation`` via ``MILPHelper.add_new_constraint``.
+
+   Flexible initialisation covers five signatures:
+
+   * ``Expression(c)``                → $E = c$
+   * ``Expression(c, t_1, …, t_n)``   → $E = c + \sum_i t_i$
+   * ``Expression(t_1, …, t_n)``      → $E = \sum_i t_i$
+   * ``Expression(other)``            → clone
+   * ``Expression([v_1,…,v_n])``      → $E = \sum_i 1\cdot v_i$
+
+   Operator overloading (``+``, ``-``, ``*``, ``/``, unary ``-``) is supported,
+   and ``add_term`` merges coefficients when a variable already exists.
 
    :raises ValueError:
 
@@ -432,3 +442,5 @@ Module Contents
       :return: The result of subtracting the second expression from the first.
 
       :rtype: typing.Self
+
+

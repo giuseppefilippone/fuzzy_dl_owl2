@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.left_shoulder_function
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A specialized data structure representing a left-shoulder membership function for fuzzy logic systems where membership values decrease as input values increase.
+A Python class representing a left-shoulder membership function used within fuzzy logic systems to model concepts where membership decreases as values increase.
 
 
 Description
 -----------
 
 
-It models concepts where membership is high for low values and drops as values rise, utilizing two floating-point parameters to establish the transition zone where the membership grade shifts from one to zero. Inheritance from a base fuzzy datatype allows the implementation to utilize inherited bounds to define the overall domain of the fuzzy set. Access to the defining parameters is provided through a string representation that aids in debugging and logging within the broader fuzzy logic framework.
+The implementation models a specific type of fuzzy set where membership is full for low values and tapers off linearly as the input grows. It relies on two primary floating-point parameters to define the transition zone where the degree of membership drops from one to zero, while also utilizing inherited bounds to establish the overall domain of the fuzzy set. By extending the base fuzzy datatype, the class encapsulates the geometric properties of this shape and provides mechanisms to retrieve the defining coefficients. A string representation is included to offer a human-readable format of the current configuration, which aids in debugging and logging within the broader fuzzy logic framework.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -106,3 +102,4 @@ Module Contents
 
    .. py:attribute:: _b
       :type:  float
+

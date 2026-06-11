@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.query.defuzzify.som_defuzzify_query
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A specialized query implementation applies the Smallest of Maxima strategy to convert fuzzy logic values into crisp numerical outputs.
+Implements the Smallest of Maxima defuzzification strategy to convert fuzzy logic values into crisp numerical outputs.
 
 
 Description
 -----------
 
 
-By identifying domain values that correspond to the highest degree of membership for a specific individual within a given concept, the logic selects the smallest value among those maxima. Extending a base defuzzification handler allows the component to inherit standard initialization parameters, such as the target concept, individual instance, and feature name, while defining unique behavior for the optimization process. The objective function is constructed to minimize a specific variable, ensuring that the mathematical solver identifies the lower bound of the maximized membership set.
+The software defines a specific approach to resolving fuzzy values by identifying the smallest domain value that achieves the maximum membership degree for a given individual and concept. By extending a base query structure, it integrates into a broader fuzzy logic framework that utilizes Mixed-Integer Linear Programming to solve reasoning tasks. The implementation focuses on constructing an objective expression that minimizes the query variable, effectively steering the optimization process toward the smallest valid maximum. This behavior ensures that when multiple domain values share the highest degree of membership, the system consistently selects the lowest one to produce a deterministic crisp result.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -48,7 +44,7 @@ Module Contents
     .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzydl_query_defuzzify_som_defuzzify_query_SomDefuzzifyQuery.pdf
        :alt: UML Class Diagram for SomDefuzzifyQuery
        :align: center
-       :width: 12.4cm
+       :width: 11.2cm
        :class: uml-diagram
 
        UML Class Diagram for **SomDefuzzifyQuery**
@@ -85,3 +81,5 @@ Module Contents
       :return: An Expression object representing the variable `q` with a coefficient of 1.0.
 
       :rtype: Expression
+
+

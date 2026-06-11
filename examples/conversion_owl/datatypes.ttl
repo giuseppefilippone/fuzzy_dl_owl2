@@ -1,0 +1,27 @@
+@prefix : <http://example.org/conversion#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<http://example.org/conversion> rdf:type owl:Ontology .
+
+:Person rdf:type owl:Class .
+
+:age rdf:type owl:DatatypeProperty .
+:age rdfs:domain :Person .
+:age rdfs:range xsd:integer .
+
+:name rdf:type owl:DatatypeProperty .
+:name rdfs:domain :Person .
+:name rdfs:range xsd:string .
+
+:height rdf:type owl:DatatypeProperty .
+:height rdfs:domain :Person .
+:height rdfs:range xsd:float .
+
+:Alice rdf:type owl:NamedIndividual .
+:Alice rdf:type :Person .
+:Alice :age "30"^^xsd:integer .
+:Alice :name "Alice"^^xsd:string .

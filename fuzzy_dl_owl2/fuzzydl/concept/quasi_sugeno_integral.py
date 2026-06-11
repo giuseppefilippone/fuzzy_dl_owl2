@@ -19,7 +19,6 @@ class QsugenoIntegral(SugenoIntegral):
     :type name: typing.Any
     """
 
-
     def __init__(self, weights: list[float], concepts: list[Concept]) -> None:
         """
         Initializes the Quasi-Sugeno Integral object with a specific set of weights and concepts. The method ensures that the number of weights corresponds exactly to the number of concepts provided, triggering an error if a mismatch is detected. It delegates the core initialization to the parent class, sets the specific integral type identifier, and automatically generates a descriptive name for the instance based on the input parameters.
@@ -121,11 +120,15 @@ class QsugenoIntegral(SugenoIntegral):
 
     def __hash__(self) -> int:
         """
-        Computes the hash value for the `QsugenoIntegral` instance, allowing it to be used as a key in dictionaries or stored in sets. The implementation derives the hash from the string representation of the object, meaning that two instances with identical string representations will yield the same hash. This method relies on the stability of the `__str__` method; if the string representation of an instance changes, its hash value will also change, which can lead to unexpected behavior if the object is used in a hash-based collection after modification.
+        Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-        :return: An integer hash value for the object, derived from its string representation.
+        :return: An integer hash value representing the structural identity of this object.
 
         :rtype: int
         """
 
-        return hash(str(self))
+        # return hash(str(self))
+        # return id(self)
+        return hash(
+            (tuple(self.weights), tuple(hash(c) for c in self.concepts), self.name, hash(self.type))
+        )

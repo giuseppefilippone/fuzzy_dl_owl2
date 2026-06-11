@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.concept.weighted_max_concept
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Implements a weighted maximum concept for fuzzy description logic that pairs sub-concepts with numerical weights to perform logical operations.
+Implements a weighted maximum concept structure that pairs sub-concepts with numerical weights to perform fuzzy logic operations.
 
 
 Description
 -----------
 
 
-The software models a specific type of logical construct where a collection of concepts is combined using a weighted maximum function, requiring strict validation to ensure the number of weights matches the number of concepts and that at least one weight is normalized to 1.0. It integrates with a broader logic framework by inheriting from base concept classes and implementing interfaces for weighted operations, allowing it to participate in standard logical manipulations such as conjunction, disjunction, and negation through operator overloading. Beyond initialization, the implementation supports structural traversal to extract atomic concepts and roles, provides cloning capabilities for safe copying, and enables recursive replacement of sub-concepts within the hierarchy. The object relies on a generated string representation for hashing and identification, ensuring that the weighted structure can be uniquely identified within collections or used as dictionary keys.
+The software models a weighted maximum operation by associating a collection of sub-concepts with a corresponding list of numerical weights, ensuring structural integrity through strict validation checks that require matching list lengths and the presence of at least one maximum weight. By inheriting from base concept and interface classes, the implementation integrates seamlessly into a broader fuzzy description logic framework, enabling the representation of complex logical constructs through a standardized parenthetical syntax. Logical operations such as conjunction, disjunction, and negation are supported by delegating to a central operator utility, allowing the weighted maximum structure to participate in algebraic expressions without modifying the original instance. Additionally, the design facilitates recursive traversal and manipulation of the concept hierarchy, providing mechanisms to extract atomic components, retrieve associated roles, and dynamically replace sub-concepts while maintaining the integrity of the weighted relationships.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -48,7 +44,7 @@ Module Contents
     .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzydl_concept_weighted_max_concept_WeightedMaxConcept.pdf
        :alt: UML Class Diagram for WeightedMaxConcept
        :align: center
-       :width: 100%
+       :width: 11.7cm
        :class: uml-diagram
 
        UML Class Diagram for **WeightedMaxConcept**
@@ -83,9 +79,9 @@ Module Contents
 
    .. py:method:: __hash__() -> int
 
-      Returns the integer hash value for the instance, enabling its use as a dictionary key or set element. The hash is derived from the string representation of the object, meaning that any changes to the output of the `__str__` method will alter the hash value. Consequently, the object should be treated as immutable if used in hash-based collections, as modifying the state that affects the string representation would result in a different hash and break lookup invariants.
+      Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-      :return: An integer hash value derived from the string representation of the object.
+      :return: An integer hash value representing the structural identity of this object.
 
       :rtype: int
 
@@ -173,7 +169,3 @@ Module Contents
       :value: '(w-max )'
 
 
-      Updates the name of the Concept instance to the specified string value. This setter modifies the object's internal state by assigning the provided value to the private `_name` attribute, effectively replacing any previously stored name.
-
-      :param value: The new name to assign to the object.
-      :type value: str

@@ -1,7 +1,7 @@
 # Summary
 
-Encapsulates the logical axiom asserting that two distinct concepts are equivalent within a fuzzy description logic system.
+Encapsulates the logical equivalence between two distinct concepts within a fuzzy description logic framework.
 
 ## Description
 
-The implementation serves as a container for a pair of `Concept` objects, allowing the definition of relationships where two entities are treated as interchangeable. By storing references to both sides of the equivalence, the structure supports operations that require reasoning about or manipulating the equality of distinct logical entities. The design includes functionality to generate independent copies of the equivalence statement, ensuring that modifications to a cloned instance do not affect the original relationship. Accessor methods are provided to retrieve the specific concepts involved, facilitating the integration of this equivalence axiom into broader logical processing workflows without exposing the internal state directly.
+The software provides a structural representation for asserting that two specific entities are treated as interchangeable, serving as a container for a pair of concept objects. By storing references to two distinct concepts, the implementation allows users to define and manipulate relationships where the semantics of one entity are identical to another within a specific context. Design choices include the ability to generate independent copies of the equivalence statement through a cloning mechanism, which facilitates the reuse of logical axioms without altering the original definitions. Accessor methods enable the retrieval of the individual components involved in the relationship, ensuring that the internal state remains encapsulated while still allowing external inspection of the logical structure.

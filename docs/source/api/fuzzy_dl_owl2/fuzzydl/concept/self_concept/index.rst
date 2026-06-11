@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.concept.self_concept
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Implements a self-referential concept construct within fuzzy description logic that requires an individual to be related to itself through a specified role.
+Implements a self-referential concept construct within fuzzy description logic to model individuals that satisfy a relationship with themselves through a specific role.
 
 
 Description
 -----------
 
 
-The software provides a mechanism to model reflexive relationships within a fuzzy description logic framework, specifically capturing scenarios where an entity must satisfy a relationship with itself. By inheriting from a base concept class and a role-handling interface, the implementation ensures that the entity is treated as an atomic unit while still carrying the semantic weight of the specific role involved. Logical operations such as conjunction, disjunction, and negation are supported through delegation to a central operator handler, allowing these self-referential constructs to be seamlessly integrated into complex logical expressions. Additionally, the design includes functionality for cloning, role retrieval, and standardized string formatting, which facilitates consistent identification and hashing within the broader system.
+The software provides a mechanism to model reflexivity by defining a concept that is satisfied only when an entity is linked to itself via a designated role. By inheriting from a base concept class and a role interface, the implementation ensures that instances can be treated as atomic building blocks within larger logical expressions. Logical operations such as negation, conjunction, and disjunction are supported through operator overloading, which delegates the creation of complex constructs to a dedicated operator handler. Utility methods for cloning, retrieving associated roles, and generating standardized string representations facilitate the integration of these self-referential nodes into broader description logic frameworks. The design treats the entity as an atomic concept that cannot be decomposed further, ensuring consistent behavior during structural transformations and replacements.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -48,7 +44,7 @@ Module Contents
     .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzydl_concept_self_concept_SelfConcept.pdf
        :alt: UML Class Diagram for SelfConcept
        :align: center
-       :width: 100%
+       :width: 8.9cm
        :class: uml-diagram
 
        UML Class Diagram for **SelfConcept**
@@ -83,9 +79,9 @@ Module Contents
 
    .. py:method:: __hash__() -> int
 
-      Computes an integer hash value for the object based on its string representation. By delegating to the hash of `str(self)`, this method ensures that the hash is consistent with the object's textual output, allowing instances to be used as dictionary keys or stored in sets. This implementation implies that the hashability of the object is directly tied to the stability and uniqueness of its string representation.
+      Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-      :return: An integer representing the hash of the object's string representation.
+      :return: An integer hash value representing the structural identity of this object.
 
       :rtype: int
 
@@ -117,6 +113,10 @@ Module Contents
    .. py:method:: clone()
 
       Creates and returns a new `SelfConcept` instance that duplicates the current object, initialized with the same `role` attribute. This method performs a shallow copy of the object's state, meaning the new instance shares the reference to the original `role` object if it is mutable. The operation has no side effects on the original instance.
+
+      :return: A shallow copy of this concept.
+
+      :rtype: SelfConcept
 
 
 
@@ -181,10 +181,4 @@ Module Contents
 
 
    .. py:attribute:: name
-      :value: '(self Uninferable)'
 
-
-      Updates the name of the Concept instance to the specified string value. This setter modifies the object's internal state by assigning the provided value to the private `_name` attribute, effectively replacing any previously stored name.
-
-      :param value: The new name to assign to the object.
-      :type value: str

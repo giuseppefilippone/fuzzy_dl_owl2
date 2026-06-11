@@ -1,7 +1,7 @@
 # Summary
 
-A class representing a fuzzy role assertion that connects two individuals via a specific relationship type and a lower bound degree.
+Defines a data structure for representing fuzzy role assertions connecting two individuals through a specific relationship type constrained by a lower bound degree.
 
 ## Description
 
-The software models a role assertion within a fuzzy description logic framework, defining a binary connection between a subject individual and an object individual. It encapsulates the properties of the relationship, including the role name, the two participating entities, and a lower bound degree that represents the minimum truth value required for the assertion to hold. The design allows for the dynamic modification of the subject and object individuals after instantiation, ensuring flexibility in constructing and updating knowledge graphs. Furthermore, the implementation provides mechanisms for cloning the assertion to create independent copies and generating string representations that either include or exclude the degree constraint for various reporting needs.
+The implementation centers on a container that links a subject and an object individual via a named role while enforcing a minimum degree of membership. By storing references to the participating entities and the associated truth value, the software allows for the dynamic modification of relationship participants without altering the underlying role definition. Functionality includes the ability to generate human-readable representations of the assertion, both with and without the degree constraint, which aids in logging and debugging within fuzzy description logic systems. Furthermore, the design supports object cloning to ensure that independent copies of assertions can be created and manipulated without affecting the original instance.

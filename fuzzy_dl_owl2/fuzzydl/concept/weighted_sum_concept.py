@@ -17,7 +17,6 @@ class WeightedSumConcept(Concept, HasWeightedConceptsInterface):
     :type name: typing.Any
     """
 
-
     def __init__(self, weights: list[float], concepts: list[Concept]) -> None:
         """
         Initializes a weighted sum concept by combining a list of concepts with corresponding floating-point weights. This constructor validates that the number of weights matches the number of concepts and that the sum of the weights does not exceed 1.0, triggering an error if these constraints are violated. It sets up the base concept type as a weighted sum and automatically computes the instance's name based on the provided components.
@@ -151,11 +150,14 @@ class WeightedSumConcept(Concept, HasWeightedConceptsInterface):
 
     def __hash__(self) -> int:
         """
-        Calculates the hash value of the instance by hashing its string representation, enabling the object to be used in hash-based collections such as dictionaries and sets. The implementation delegates the hashing logic to the result of the `__str__` method, meaning the hash value is directly tied to the textual representation of the object. Consequently, any modifications to the string formatting logic will alter the hash value, potentially affecting lookups in existing hash-based data structures.
+        Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-        :return: An integer hash value computed from the string representation of the object.
+        :return: An integer hash value representing the structural identity of this object.
 
         :rtype: int
         """
-
-        return hash(str(self))
+        # return hash(str(self))
+        # return id(self)
+        return hash(
+            (tuple((hash(c), w) for c, w in zip(self.concepts, self.weights)), self.name, hash(self.type))
+        )

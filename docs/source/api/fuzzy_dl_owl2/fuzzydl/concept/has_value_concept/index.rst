@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.concept.has_value_concept
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Implements a specific type of existential restriction known as a has-value concept within a fuzzy description logic system.
+Defines a fuzzy logic concept representing an existential restriction where an entity must have a specific value for a given role.
 
 
 Description
 -----------
 
 
-The software models a logical construct where an individual must be related to a specific value through a defined role, representing the form ``(b-some r v)``. By inheriting from a base concept class and a specific interface, the implementation manages the storage of the role and value pair while providing functionality to generate a standardized string representation for identification. Logical operations such as conjunction, disjunction, and negation are supported through delegation to an operator utility, allowing these concepts to be combined into complex expressions without modifying the original instances. Additionally, the implementation includes mechanisms for deep cloning to ensure data independence and defines a hash value based on the string representation to facilitate use in hash-based collections. To maintain structural integrity, attempts to replace internal sub-concepts are explicitly prevented, treating the entity as an atomic unit during such operations.
+Models a specific type of existential restriction, often termed a "has-value" concept, which asserts that an individual must be related to a specific value through a defined role. Structurally, it represents the logical form ``(b-some r v)``, meaning an entity satisfies this concept if it participates in the relationship ``r`` with a target entity that corresponds to ``v``. Instantiation requires a string representing the role and a target value of arbitrary type, after which the object automatically derives a canonical name for identification. Composition with other logical constructs is supported through operator overloading for conjunction, disjunction, and negation, while the architecture explicitly prevents the replacement of internal components to maintain atomic integrity. Identity comparisons rely on a hashing mechanism that combines the concept type, role, and value to ensure consistency within the broader system.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -48,7 +44,7 @@ Module Contents
     .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzydl_concept_has_value_concept_HasValueConcept.pdf
        :alt: UML Class Diagram for HasValueConcept
        :align: center
-       :width: 100%
+       :width: 9.4cm
        :class: uml-diagram
 
        UML Class Diagram for **HasValueConcept**
@@ -83,9 +79,9 @@ Module Contents
 
    .. py:method:: __hash__() -> int
 
-      Returns an integer hash value derived from the string representation of the object, allowing instances to be used as dictionary keys or stored in sets. The calculation is performed by passing the result of `__str__` to the built-in hash function. Because the hash depends on the string output, any mutation of the object that alters its string representation will result in a different hash, which may cause the object to become inaccessible if it is used as a key in a hash-based collection after modification.
+      Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-      :return: An integer hash of the object's string representation.
+      :return: An integer hash value representing the structural identity of this object.
 
       :rtype: int
 
@@ -189,7 +185,3 @@ Module Contents
    .. py:attribute:: name
       :type:  str
 
-      Updates the name of the Concept instance to the specified string value. This setter modifies the object's internal state by assigning the provided value to the private `_name` attribute, effectively replacing any previously stored name.
-
-      :param value: The new name to assign to the object.
-      :type value: str

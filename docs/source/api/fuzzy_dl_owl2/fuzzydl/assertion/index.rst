@@ -16,7 +16,7 @@ fuzzy_dl_owl2.fuzzydl.assertion
     .. figure:: /_uml/module_fuzzy_dl_owl2_fuzzydl_assertion.pdf
        :alt: UML Class Diagram for fuzzy_dl_owl2.fuzzydl.assertion
        :align: center
-       :width: 14.7cm
+       :width: 13.8cm
        :class: uml-diagram
 
        UML Class Diagram for **fuzzy_dl_owl2.fuzzydl.assertion**
@@ -25,28 +25,24 @@ fuzzy_dl_owl2.fuzzydl.assertion
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Models fuzzy logic assertions by associating individuals and concepts with minimum membership degree thresholds within a description logic framework.
+A framework for modeling fuzzy logic constraints that enforce minimum membership thresholds for individuals and concepts.
 
 
 Description
 -----------
 
 
-The software provides a foundational layer for representing logical constraints in fuzzy description logics, specifically focusing on the relationship between entities, categories, and truth values. It distinguishes between fundamental constraints that bind a concept to a degree and more specific assertions that tie an individual entity to a concept under a threshold. By encapsulating these core components, the architecture supports the construction of complex logical statements while offering mechanisms for data access, object cloning, and custom equality comparisons. The design ensures that the semantic meaning of fuzzy constraints is preserved through precise string representations and internal state management, allowing the system to evaluate whether membership criteria are met.
+The implementation provides structures to encapsulate logical expressions where specific entities or categories must satisfy defined degrees of membership. By distinguishing between constraints applied to individual subjects and those applied to atomic concepts, the architecture supports a comprehensive representation of fuzzy logic rules. Components within the system allow for the dynamic modification and cloning of these constraints, facilitating complex reasoning processes. Furthermore, the design incorporates specialized comparison logic that evaluates equivalence based on the strength of the membership degree, enabling the ordering and management of fuzzy assertions.
 
 
 Modules
 -------
 
 
-* [``fuzzy_dl_owl2.fuzzydl.assertion.assertion``] — Models a fuzzy logic assertion that associates an individual with a concept subject to a minimum membership degree threshold.
-* [``fuzzy_dl_owl2.fuzzydl.assertion.atomic_assertion``] — Defines a fundamental logical constraint within a fuzzy logic framework by associating a specific concept with a minimum membership degree threshold.
+* [``fuzzy_dl_owl2.fuzzydl.assertion.assertion``] — Models a fuzzy logic constraint stating that an individual belongs to a concept with a minimum degree of membership.
+* [``fuzzy_dl_owl2.fuzzydl.assertion.atomic_assertion``] — A class representing a fundamental fuzzy logic constraint that links a specific concept to a minimum membership degree threshold.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -58,3 +54,4 @@ Submodules
 
    /api/fuzzy_dl_owl2/fuzzydl/assertion/assertion/index
    /api/fuzzy_dl_owl2/fuzzydl/assertion/atomic_assertion/index
+

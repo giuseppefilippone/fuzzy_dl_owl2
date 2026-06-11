@@ -12,7 +12,7 @@ from fuzzy_dl_owl2.fuzzydl.util.util import Util
 
 
 class TriangularModifier(Modifier):
-    """
+    r"""
     This class implements a fuzzy logic modifier that applies a triangular membership function to concepts, defining how strongly a specific value belongs to a modified concept. The function is characterized by three parameters: the left boundary `a`, the peak `b`, and the right boundary `c`, which must satisfy the ordering $a \le b \le c$. Membership degrees increase linearly from 0 at `a` to 1 at `b`, and then decrease linearly back to 0 at `c`. To utilize this modifier, instantiate it with a name and the three boundary values, and then apply it to a `Concept` instance via the `modify` method, which produces a `TriangularlyModifiedConcept`. The class also provides a `get_membership_degree` method for calculating the specific membership value of a given input.
 
     :param _a: The left endpoint of the triangular membership function, marking the lower bound where the membership degree begins to increase from zero.
@@ -22,7 +22,6 @@ class TriangularModifier(Modifier):
     :param _c: The right endpoint of the triangular membership function, defining the upper bound where the membership degree reaches zero.
     :type _c: typing.Any
     """
-
 
     def __init__(self, name: str, a: float, b: float, c: float) -> None:
         """
@@ -48,46 +47,70 @@ class TriangularModifier(Modifier):
     @property
     def a(self) -> float:
         """
-        Updates the internal state of the object by setting the value of the private attribute `_a` to the provided floating-point number. This method serves as the setter for the 'a' property, allowing external modification of this specific parameter within the TriangularModifier context. Since the implementation performs a direct assignment, side effects are limited to the mutation of the instance's internal state, though the validity of the new value relative to other constraints is not enforced within this specific method.
+        Returns the left endpoint of this triangular modifier's membership function, i.e. the lower bound where the membership degree begins rising from zero toward the peak. The value is read from the private ``_a`` attribute without modifying the instance.
 
-        :param value: The new value to assign to the internal attribute.
-        :type value: float
+        :return: The left endpoint ``a`` of the triangle.
+
+        :rtype: float
         """
 
         return self._a
 
     @a.setter
     def a(self, value: float) -> None:
+        """
+        Sets the left endpoint ``a`` of this triangular modifier's membership function. The provided value is stored directly in the private ``_a`` attribute; the ``a <= b <= c`` ordering is not re-validated here.
+
+        :param value: The new left endpoint ``a``.
+        :type value: float
+        """
+
         self._a = value
 
     @property
     def b(self) -> float:
         """
-        Updates the internal configuration of the `TriangularModifier` by setting the value of the parameter `b`. This property setter accepts a floating-point number and assigns it directly to the private attribute `_b`. While this specific implementation performs no validation or triggers immediate side effects, modifying this value changes the state of the object, which will influence the behavior of any subsequent operations that rely on the `b` parameter.
+        Returns the peak of this triangular modifier's membership function, i.e. the point where the membership degree reaches its maximum value of ``1``. The value is read from the private ``_b`` attribute without modifying the instance.
 
-        :param value: The new value to assign to the b attribute.
-        :type value: float
+        :return: The peak ``b`` of the triangle.
+
+        :rtype: float
         """
 
         return self._b
 
     @b.setter
     def b(self, value: float) -> None:
+        """
+        Sets the peak ``b`` of this triangular modifier's membership function. The provided value is stored directly in the private ``_b`` attribute; the ``a <= b <= c`` ordering is not re-validated here.
+
+        :param value: The new peak ``b``.
+        :type value: float
+        """
+
         self._b = value
 
     @property
     def c(self) -> float:
         """
-        Sets the value of the parameter 'c' for the triangular modifier. This method acts as a property setter, assigning the provided floating-point value to the internal `_c` attribute. By updating this attribute, the method modifies the internal state of the instance, which may influence subsequent calculations or behaviors relying on this parameter.
+        Returns the right endpoint of this triangular modifier's membership function, i.e. the upper bound where the membership degree falls back to zero. The value is read from the private ``_c`` attribute without modifying the instance.
 
-        :param value: The new value to assign to the c attribute.
-        :type value: float
+        :return: The right endpoint ``c`` of the triangle.
+
+        :rtype: float
         """
 
         return self._c
 
     @c.setter
     def c(self, value: float) -> None:
+        """
+        Sets the right endpoint ``c`` of this triangular modifier's membership function. The provided value is stored directly in the private ``_c`` attribute; the ``a <= b <= c`` ordering is not re-validated here.
+
+        :param value: The new right endpoint ``c``.
+        :type value: float
+        """
+
         self._c = value
 
     def clone(self) -> typing.Self:
@@ -185,14 +208,14 @@ class TriangularModifier(Modifier):
 
     def __hash__(self) -> int:
         """
-        Computes an integer hash value for the instance by hashing the string representation of the object. This implementation allows the object to be used as a key in dictionaries or as a member of sets, provided the string representation remains consistent throughout the object's lifetime. The resulting hash is entirely dependent on the output of the `__str__` method, meaning any changes to the string representation will alter the hash value.
+        Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-        :return: An integer hash value derived from the string representation of the object.
+        :return: An integer hash value representing the structural identity of this object.
 
         :rtype: int
         """
-
-        return hash(str(self))
+        # return hash(str(self))
+        return hash((self.name, self.a, self.b, self.c))
 
     # def __str__(self) -> str:
     #     return self.get_name()

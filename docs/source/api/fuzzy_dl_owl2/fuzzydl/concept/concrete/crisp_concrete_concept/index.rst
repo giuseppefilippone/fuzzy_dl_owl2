@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.concept.concrete.crisp_concrete_concept
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Defines a crisp concrete concept within a fuzzy logic framework using a binary membership function based on specific validity and satisfaction intervals.
+A crisp concrete concept implementation that applies binary membership logic to determine if a value lies within a specified satisfaction interval.
 
 
 Description
 -----------
 
 
-Extending the fuzzy concrete concept hierarchy, this implementation models a binary membership function where a specific value is either fully accepted or rejected based on defined boundaries. The logic relies on a validity interval that establishes the domain of the concept and a nested satisfaction interval that determines where the concept holds true. During evaluation, the system checks if an input value falls within the satisfaction interval to return a membership degree of 1.0, otherwise returning 0.0. To ensure structural integrity, the initialization process validates that the satisfaction interval is strictly contained within the validity interval, raising errors for invalid configurations. Logical operations such as negation, conjunction, and disjunction are supported by delegating to an external operator handler, allowing for the composition of complex crisp concepts within the broader fuzzy logic framework.
+The software defines a specialized concept that operates within a fuzzy logic environment but enforces strict binary membership, effectively distinguishing between complete satisfaction and non-satisfaction based on numerical intervals. By establishing a validity domain defined by boundaries ``k1`` and ``k2``, alongside a narrower satisfaction interval bounded by ``a`` and ``b``, the implementation ensures that any evaluated value yields a membership degree of 1.0 only if it falls strictly within the inner range, returning 0.0 otherwise. During initialization, rigorous validation logic enforces structural integrity by verifying that the satisfaction interval is properly contained within the validity domain, raising errors if the bounds are misconfigured. To facilitate complex logical reasoning, the class integrates with an operator framework to support negation, conjunction, and disjunction, allowing these crisp concepts to be combined or manipulated while maintaining their distinct binary characteristics.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -91,9 +87,9 @@ Module Contents
 
    .. py:method:: __hash__() -> int
 
-      Returns the hash value of the object by computing the hash of its string representation. This implementation delegates the hashing logic to the result of `str(self)`, ensuring that the hash is derived from the object's textual form. Consequently, the object is hashable and can be used in collections like dictionaries and sets, though care must be taken if the string representation is mutable, as changing it would alter the hash value.
+      Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-      :return: An integer representing the hash of the object's string representation.
+      :return: An integer hash value representing the structural identity of this object.
 
       :rtype: int
 
@@ -167,37 +163,28 @@ Module Contents
       :type: float
 
 
-      This setter method updates the value of the property 'a' for the instance. It assigns the provided floating-point value to the internal attribute `_a`, modifying the object's internal state. While the type hint suggests the input should be a float, the implementation performs no validation, meaning any type of value can be stored.
+      Returns the lower bound of the crisp satisfaction interval ``[a, b]``, i.e. the smallest value for which the membership degree is ``1``. The value is held internally as a float and is read without modifying the instance.
 
-      :param value: The new floating-point value to assign to the internal attribute.
-      :type value: float
+      :return: The lower bound ``a`` of the satisfaction interval.
+
+      :rtype: float
 
 
    .. py:property:: b
       :type: float
 
 
-      Updates the value of the attribute 'b' for the `CrispConcreteConcept` instance by assigning the provided floating-point number to the internal backing field `_b`. This method mutates the state of the object, potentially influencing any subsequent calculations or logic that relies on this specific property. While the signature indicates a float input, the implementation performs no explicit validation, meaning that passing incompatible types may lead to errors in later operations that expect a numeric value.
+      Returns the upper bound of the crisp satisfaction interval ``[a, b]``, i.e. the largest value for which the membership degree is ``1``. The value is held internally as a float and is read without modifying the instance.
 
-      :param value: The new value to assign to the b attribute.
-      :type value: float
+      :return: The upper bound ``b`` of the satisfaction interval.
+
+      :rtype: float
 
 
    .. py:attribute:: k1
       :type:  float
 
-      Sets the value of the `k1` attribute for the instance, converting the input to a float to ensure type consistency. This method updates the private `_k1` variable, effectively modifying the internal state of the `FuzzyConcreteConcept` object. Any subsequent operations relying on this parameter will reflect the new value.
-
-      :param value: The new value for the k1 attribute.
-      :type value: float
-
 
    .. py:attribute:: k2
       :type:  float
 
-      Sets the upper bound parameter k2 for the fuzzy concrete concept. This method enforces a constraint ensuring that the new value is greater than or equal to the existing k1 parameter; if k1 is larger than the provided value, a ValueError is raised. Upon successful validation, the input is converted to a float and stored in the internal state.
-
-      :param value: The value to assign to the k2 parameter, which must be greater than or equal to k1.
-      :type value: float
-
-      :raises ValueError: Raised if the provided value is less than `k1`, as `k2` must be greater than or equal to `k1`.

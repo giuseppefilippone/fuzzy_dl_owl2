@@ -37,28 +37,23 @@ fuzzy_dl_owl2.fuzzyowl2.parser
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Specialized parsing logic transforms Fuzzy OWL 2 XML annotations and grammar-based strings into internal knowledge bases and fuzzy logic objects.
+Specialized XML parsing logic transforms FuzzyOWL2 annotations into corresponding Python data structures for fuzzy logic concepts, datatypes, and properties.
 
 
 Description
 -----------
 
 
-Two distinct parsing strategies are employed to interpret fuzzy logic constructs, utilizing both the pyparsing library for grammar definition and standard XML parsing for structural analysis. These components process complex fuzzy elements, such as weighted aggregations, integral-based concepts, and specific datatypes like triangular functions, converting raw text or XML tokens into strongly typed domain objects. A central dispatch mechanism and internal callback functions orchestrate the translation flow, ensuring that nested attributes and annotation types are correctly mapped to the appropriate object attributes within the knowledge base. Integration with external configuration systems allows for parameter loading prior to parsing, while robust error handling manages file access and malformed input to ensure reliable data transformation.
+Deserialization of FuzzyOWL2 XML data occurs by interpreting specific tags and attributes to instantiate a wide range of fuzzy logic objects, including concept definitions, fuzzy datatypes, and property modifiers. The implementation utilizes ``defusedxml`` to safely parse input strings, dispatching to specific constructors based on the ``fuzzyType`` annotation found within the XML structure. Complex constructs such as weighted concepts, aggregation operators like OWA or Sugeno integrals, and various membership functions are mapped to their respective Python representations to support the underlying fuzzy description logic. Furthermore, the software integrates configuration management to load runtime parameters and provides robust error handling to ensure that parsing failures or missing configuration files do not cause unexpected termination.
 
 
 Modules
 -------
 
 
-* [``fuzzy_dl_owl2.fuzzyowl2.parser.owl2_parser``] — A specialized parser that interprets Fuzzy OWL 2 XML annotations and transforms them into a knowledge base and query objects using the pyparsing library.
-* [``fuzzy_dl_owl2.fuzzyowl2.parser.owl2_xml_parser``] — A specialized parser converts FuzzyOWL2 XML annotations into corresponding Python data structures representing fuzzy logic elements.
+* [``fuzzy_dl_owl2.fuzzyowl2.parser.owl2_xml_parser``] — Specialized XML parsing logic transforms FuzzyOWL2 annotations into corresponding Python data structures for fuzzy logic concepts, datatypes, and properties.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -68,5 +63,5 @@ Submodules
 .. toctree::
    :maxdepth: 1
 
-   /api/fuzzy_dl_owl2/fuzzyowl2/parser/owl2_parser/index
    /api/fuzzy_dl_owl2/fuzzyowl2/parser/owl2_xml_parser/index
+

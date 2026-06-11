@@ -5,22 +5,16 @@ fuzzy_dl_owl2.fuzzydl.concept.value_concept
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A Python class representing value restrictions such as "at most" or "at least" within a fuzzy description logic system.
+Implements a specialized concept class for representing numerical value restrictions, such as "at most" or "at least," within a fuzzy description logic system.
 
 
 Description
 -----------
 
 
-The software defines a specialized component for handling numerical constraints on role fillers, enabling the expression of logic such as "at most," "at least," or "exactly" a specific value. By inheriting from a base concept class and utilizing a mixin interface, the implementation manages the storage of role identifiers and their associated values while enforcing strict validation to ensure only valid constraint types are used. Static factory methods are provided to simplify the instantiation process, allowing for the creation of specific constraint objects without manually specifying the underlying enumeration types.
-
-Functionality includes the automatic generation of human-readable string representations that reflect the logical constraint, as well as support for cloning and replacement operations that treat the object as an atomic, terminal node within a larger concept hierarchy. Logical operations such as negation, conjunction, and disjunction are implemented by delegating to a separate operator handler, ensuring consistent behavior across different concept types. Furthermore, the implementation includes hashing capabilities based on the string representation, allowing these value concepts to be used effectively within sets and as dictionary keys.
+The software provides a mechanism to encapsulate numerical constraints associated with specific roles, supporting logic such as upper bounds, lower bounds, and exact matches. By inheriting from a base concept class and a value interface, it integrates seamlessly into a broader hierarchy of logical constructs while ensuring that specific constraint types are strictly validated during initialization. Static factory methods are employed to simplify the instantiation of these constraints, allowing for readable code that clearly defines the nature of the restriction without requiring manual specification of enumeration types. As a terminal node within the concept structure, it handles operations like cloning and replacement by returning itself or shallow copies, while logical conjunctions, disjunctions, and negations are delegated to a separate operator handler to maintain separation of concerns.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -50,7 +44,7 @@ Module Contents
     .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzydl_concept_value_concept_ValueConcept.pdf
        :alt: UML Class Diagram for ValueConcept
        :align: center
-       :width: 100%
+       :width: 13.1cm
        :class: uml-diagram
 
        UML Class Diagram for **ValueConcept**
@@ -85,9 +79,9 @@ Module Contents
 
    .. py:method:: __hash__() -> int
 
-      Computes a hash value for the instance based on its string representation, enabling the object to be used as a key in dictionaries or as a member of sets. The implementation delegates the hashing logic to the built-in hash function applied to the result of the object's string conversion, ensuring that two instances with identical string representations yield the same hash. Because the hash is derived from the string representation, any internal state changes that alter the output of `str(self)` will result in a different hash value, which may cause issues if the object is used in hash-based collections after being modified.
+      Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-      :return: An integer hash value derived from the string representation of the object.
+      :return: An integer hash value representing the structural identity of this object.
 
       :rtype: int
 
@@ -224,7 +218,3 @@ Module Contents
 
    .. py:attribute:: name
 
-      Updates the name of the Concept instance to the specified string value. This setter modifies the object's internal state by assigning the provided value to the private `_name` attribute, effectively replacing any previously stored name.
-
-      :param value: The new name to assign to the object.
-      :type value: str

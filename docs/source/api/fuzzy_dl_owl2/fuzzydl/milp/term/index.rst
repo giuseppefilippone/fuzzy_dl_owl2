@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.milp.term
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A Python class representing a linear term consisting of a coefficient and a variable for use in fuzzy description logic MILP formulations.
+A class representing a linear term defined by a coefficient and a variable, designed to construct mathematical expressions within fuzzy description logic ontologies.
 
 
 Description
 -----------
 
 
-The software models a fundamental algebraic component used to construct linear expressions within fuzzy description logic ontologies, specifically representing the product of a numerical coefficient and a variable. Designed to facilitate mathematical operations on concept satisfaction degrees, the implementation supports standard arithmetic such as negation, addition, subtraction, and scalar multiplication or division. To maintain mathematical integrity, addition and subtraction operations are strictly constrained to ensure that only terms sharing the same variable can be combined, raising an error otherwise. Instances can be initialized either with an explicit coefficient and variable or with a variable alone, which implies a coefficient of 1.0, while the design also includes functionality for cloning objects and generating string representations for debugging or display.
+The software implements a fundamental algebraic component used to build linear expressions, specifically tailored for representing concept satisfaction degrees in fuzzy description logic ontologies. By encapsulating a numerical coefficient and a variable, the design allows for the construction of complex mathematical models where terms can be manipulated through standard arithmetic operations such as negation, addition, subtraction, and scalar multiplication. Strict type checking and validation are enforced during initialization to ensure that terms are constructed correctly, either with an explicit coefficient or with a default value of 1.0. To maintain mathematical integrity, operations like addition and subtraction are restricted to terms sharing the same variable, while scalar operations return new instances to preserve the immutability of the original objects. The implementation also includes hashing and equality comparisons, enabling these objects to be used effectively within sets and dictionaries as part of larger optimization algorithms.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -91,9 +87,9 @@ Module Contents
 
    .. py:method:: __hash__() -> int
 
-      Computes the hash value for the `Term` instance, enabling its use as a key in dictionaries or as an element in sets. The implementation derives the hash from the string representation of the object, ensuring that two terms with identical string representations produce the same hash code. Because the hash is based on the result of `str(self)`, the object should be treated as immutable; if the object's state changes in a way that alters its string representation, the hash value will also change, which violates the contract required for hashable objects and can lead to errors when the object is used in hash-based collections.
+      Calculates the hash value for the instance by hashing its string representation, enabling the object to be used as a key in dictionaries or as an element in sets. This implementation relies on the `__str__` method to determine the object's identity for hashing purposes. It is important to note that if the object is mutable and its string representation changes after it has been added to a hash-based collection, the hash value will change, potentially causing the object to become lost or inaccessible within that collection.
 
-      :return: An integer hash value computed from the string representation of the object.
+      :return: An integer hash value derived from the string representation of the object.
 
       :rtype: int
 
@@ -241,3 +237,5 @@ Module Contents
       :return: Returns the `Variable` instance stored in the `var` attribute.
 
       :rtype: Variable
+
+

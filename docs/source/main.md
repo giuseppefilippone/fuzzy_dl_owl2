@@ -1,7 +1,7 @@
 # Fuzzy DL OWL 2
 A python porting of the [Fuzzy Description Language](https://www.umbertostraccia.it/cs/software/fuzzyDL/fuzzyDL.html) and the [Fuzzy OWL 2](https://www.umbertostraccia.it/cs/software/FuzzyOWL/index.html) framework.
 
-A lightweight Python porting of the Fuzzy Description Language (FuzzyDL) and the Fuzzy OWL 2 framework, designed for representing fuzzy logic within description logic and for mapping an knowledge base represented in FuzzyDL to a Fuzzy OWL 2 construct in RDF/XML format.
+A lightweight Python porting of the Fuzzy Description Language (FuzzyDL) and the Fuzzy OWL 2 framework, designed for representing fuzzy logic within description logic and for mapping a knowledge base represented in FuzzyDL to a Fuzzy OWL 2 construct in RDF/XML format.
 
 Features:
 - Object-oriented representation of Fuzzy Description Logic elements
@@ -96,6 +96,9 @@ fuzzy_dl_owl2
 │   ├── feature_function.py
 │   ├── fuzzydl_to_owl2.py
 │   ├── general_concept_inclusion.py
+│   ├── graph
+│   │   ├── __init__.py
+│   │   └── digraph.py
 │   ├── individual
 │   │   ├── __init__.py
 │   │   ├── created_individual.py
@@ -119,7 +122,14 @@ fuzzy_dl_owl2
 │   │   └── triangular_modifier.py
 │   ├── parser
 │   │   ├── __init__.py
-│   │   └── dl_parser.py
+│   │   ├── dl_parser.py
+│   │   ├── dl_parser_clean.py
+│   │   ├── dl_parser_fast.py
+│   │   └── tokenizer
+│   │       ├── __init__.py
+│   │       ├── generate.py
+│   │       ├── tokenizer_handler.py
+│   │       └── tokens.py
 │   ├── primitive_concept_definition.py
 │   ├── query
 │   │   ├── __init__.py
@@ -200,7 +210,6 @@ fuzzy_dl_owl2
     │   └── weighted_sum_zero_concept.py
     ├── parser
     │   ├── __init__.py
-    │   ├── owl2_parser.py
     │   └── owl2_xml_parser.py
     └── util
         ├── __init__.py

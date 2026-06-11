@@ -2,8 +2,6 @@ from __future__ import annotations
 
 import typing
 
-import trycast
-
 from fuzzy_dl_owl2.fuzzydl.concept.concept import Concept
 from fuzzy_dl_owl2.fuzzydl.concept.interface.has_weighted_concepts_interface import (
     HasWeightedConceptsInterface,
@@ -12,10 +10,11 @@ from fuzzy_dl_owl2.fuzzydl.concept.operator_concept import OperatorConcept
 from fuzzy_dl_owl2.fuzzydl.util.constants import ConceptType
 from fuzzy_dl_owl2.fuzzydl.util.util import Util
 
+# import trycast
+
 
 class SugenoIntegral(Concept, HasWeightedConceptsInterface):
     """This class models a Sugeno integral, a fuzzy aggregation operator used to combine a collection of sub-concepts based on a corresponding set of weights. It serves as a composite concept within a logical framework, allowing for the representation of complex, weighted decision structures. To utilize this class, instantiate it with a list of floating-point weights and a list of `Concept` objects, ensuring that the number of weights exactly matches the number of concepts; a mismatch will trigger an error during initialization. Once created, the instance supports operations such as cloning, replacing specific sub-concepts, and recursively retrieving atomic concepts or roles, while also providing a string representation of the integral formula."""
-
 
     @typing.overload
     def __init__(self) -> None: ...
@@ -37,8 +36,15 @@ class SugenoIntegral(Concept, HasWeightedConceptsInterface):
         if len(args) == 0:
             self.__sugeno_init_1()
         else:
-            trycast.checkcast(typing.Optional[list[float]], args[0])
-            trycast.checkcast(list[Concept], args[1])
+            # trycast.checkcast(typing.Optional[list[float]], args[0])
+            # trycast.checkcast(list[Concept], args[1])
+            assert args[0] is None or (
+                isinstance(args[0], list)
+                and all(isinstance(x, (int, float)) for x in args[0])
+            )
+            assert isinstance(args[1], list) and all(
+                isinstance(x, Concept) for x in args[1]
+            )
             self.__sugeno_init_2(*args)
 
     def __sugeno_init_1(self) -> None:
@@ -178,11 +184,14 @@ class SugenoIntegral(Concept, HasWeightedConceptsInterface):
 
     def __hash__(self) -> int:
         """
-        Calculates a hash code for the current instance to support its use in hash-based collections like dictionaries and sets. This method derives the hash value by converting the object to its string representation and hashing that string. Because the hash depends on the string output, any changes to the object's state that affect its string representation will alter its hash value, which may lead to unexpected behavior if the object is used as a dictionary key after modification.
+        Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-        :return: An integer hash value derived from the string representation of the object.
+        :return: An integer hash value representing the structural identity of this object.
 
         :rtype: int
         """
-
-        return hash(str(self))
+        # return hash(str(self))
+        # return id(self)
+        return hash(
+            (tuple(self.weights), tuple(hash(c) for c in self.concepts), self.name, hash(self.type))
+        )

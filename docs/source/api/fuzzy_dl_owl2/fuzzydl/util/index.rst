@@ -16,7 +16,7 @@ fuzzy_dl_owl2.fuzzydl.util
     .. figure:: /_uml/module_fuzzy_dl_owl2_fuzzydl_util.pdf
        :alt: UML Class Diagram for fuzzy_dl_owl2.fuzzydl.util
        :align: center
-       :width: 100%
+       :width: 11.6cm
        :class: uml-diagram
 
        UML Class Diagram for **fuzzy_dl_owl2.fuzzydl.util**
@@ -25,30 +25,26 @@ fuzzy_dl_owl2.fuzzydl.util
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Foundational infrastructure for a fuzzy description logic reasoning engine that centralizes configuration management, logging, debugging instrumentation, and mathematical utilities.
+Foundational infrastructure supporting a fuzzy description logic reasoning engine by centralizing configuration management, defining core operational constants, and providing cross-cutting utilities for logging, mathematics, and runtime instrumentation.
 
 
 Description
 -----------
 
 
-Operational parameters and type safety are established through a centralized configuration system that loads settings from external files and command-line arguments while defining enumerations for solvers, logical operators, and domain-specific vocabulary. Runtime behavior is monitored via a persistent logging framework that organizes output by date and supports dynamic verbosity, complemented by decorators that enable method tracing and automatic recursion limit adjustments to handle complex computations. To ensure numerical accuracy within the reasoning engine, static helper methods provide precise decimal-based rounding and mathematical operations, while global constants align application limits with the constraints of selected Mixed-Integer Linear Programming solvers.
+The software establishes a robust environment for fuzzy logic processing by first loading and normalizing system parameters from external files or environment variables, which subsequently drives global numerical limits and solver capabilities. A comprehensive taxonomy of enumerations and type aliases defines the logical vocabulary, including specific t-norms, aggregation methods, and Mixed-Integer Linear Programming solver backends, ensuring that parsing and execution strategies remain consistent across the application. Cross-cutting concerns are managed through a static utility class that handles precise mathematical operations and timestamped logging, while high-level decorators facilitate deep recursion and method tracing for debugging purposes. By integrating these components, the system ensures that numerical precision, optimization levels, and diagnostic visibility are uniformly applied throughout the reasoning process.
 
 
 Modules
 -------
 
 
-* [``fuzzy_dl_owl2.fuzzydl.util.config_reader``] — A centralized configuration manager for a fuzzy description logic reasoning engine that loads parameters from files and command-line arguments to control precision, optimization strategies, and solver selection.
-* [``fuzzy_dl_owl2.fuzzydl.util.constants``] — A central configuration module that defines enumerations, type aliases, and global constants for a fuzzy description logic reasoning system.
-* [``fuzzy_dl_owl2.fuzzydl.util.util``] — A centralized utility module that configures application logging and provides static helper methods for mathematical operations, data manipulation, and error handling within the fuzzy ontology reasoner.
-* [``fuzzy_dl_owl2.fuzzydl.util.utils``] — Utility decorators are provided to facilitate debugging through method tracing and to manage deep recursion by dynamically adjusting system limits.
+* [``fuzzy_dl_owl2.fuzzydl.util.config_reader``] — A centralized configuration manager that loads and applies settings for a fuzzy reasoning engine from INI or environment files.
+* [``fuzzy_dl_owl2.fuzzydl.util.constants``] — A collection of enumerations, type aliases, and utility functions that define the core vocabulary, operational strategies, and configuration parameters for a fuzzy description logic reasoning engine.
+* [``fuzzy_dl_owl2.fuzzydl.util.util``] — Centralizes logging infrastructure and provides static helper methods for mathematical operations and data manipulation within the fuzzy description logic reasoner.
+* [``fuzzy_dl_owl2.fuzzydl.util.utils``] — A collection of utility decorators designed to facilitate debugging through method tracing and to handle deep recursion by dynamically adjusting system limits.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -62,3 +58,4 @@ Submodules
    /api/fuzzy_dl_owl2/fuzzydl/util/constants/index
    /api/fuzzy_dl_owl2/fuzzydl/util/util/index
    /api/fuzzy_dl_owl2/fuzzydl/util/utils/index
+

@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.concept.weighted_sum_concept
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A weighted sum concept that aggregates sub-concepts using specific numerical weights to form a linear combination within a fuzzy description logic system.
+A weighted sum concept aggregates multiple sub-concepts using specific numerical weights to form a composite linear combination within a fuzzy description logic framework.
 
 
 Description
 -----------
 
 
-The component models a composite entity by combining multiple sub-concepts into a linear mixture, enforcing strict validation during initialization to ensure the number of weights matches the number of concepts and that the total weight sum does not exceed 1.0. By inheriting from a base concept class and implementing a specific interface for weighted structures, the design integrates seamlessly into the broader logic framework. It supports standard logical operations such as negation, conjunction, and disjunction by delegating to a central operator handler, allowing these complex structures to participate in broader logical expressions. Additionally, the implementation facilitates structural analysis and manipulation, enabling the retrieval of atomic components, extraction of associated roles, and recursive replacement of nested concepts while preserving the original weighting scheme.
+The software defines a composite entity that represents a linear mixture of other concepts, where each component contributes proportionally based on an assigned floating-point weight. During initialization, strict validation ensures that the number of weights matches the number of constituent concepts and that the total weight sum does not exceed 1.0, maintaining logical consistency within the fuzzy logic model. By inheriting from a base concept class and implementing a specific interface, the entity integrates seamlessly into a larger hierarchy, enabling it to participate in complex logical expressions such as negation, conjunction, and disjunction. Structural manipulation capabilities allow for the traversal of the concept hierarchy to retrieve atomic components or roles, while a cloning mechanism ensures that modifications to the internal structure can be performed without affecting the original instance.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -48,7 +44,7 @@ Module Contents
     .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzydl_concept_weighted_sum_concept_WeightedSumConcept.pdf
        :alt: UML Class Diagram for WeightedSumConcept
        :align: center
-       :width: 100%
+       :width: 11.7cm
        :class: uml-diagram
 
        UML Class Diagram for **WeightedSumConcept**
@@ -83,9 +79,9 @@ Module Contents
 
    .. py:method:: __hash__() -> int
 
-      Calculates the hash value of the instance by hashing its string representation, enabling the object to be used in hash-based collections such as dictionaries and sets. The implementation delegates the hashing logic to the result of the `__str__` method, meaning the hash value is directly tied to the textual representation of the object. Consequently, any modifications to the string formatting logic will alter the hash value, potentially affecting lookups in existing hash-based data structures.
+      Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-      :return: An integer hash value computed from the string representation of the object.
+      :return: An integer hash value representing the structural identity of this object.
 
       :rtype: int
 
@@ -173,7 +169,3 @@ Module Contents
       :value: '(w-sum )'
 
 
-      Updates the name of the Concept instance to the specified string value. This setter modifies the object's internal state by assigning the provided value to the private `_name` attribute, effectively replacing any previously stored name.
-
-      :param value: The new name to assign to the object.
-      :type value: str

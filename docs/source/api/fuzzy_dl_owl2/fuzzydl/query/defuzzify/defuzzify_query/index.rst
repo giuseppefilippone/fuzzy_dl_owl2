@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.query.defuzzify.defuzzify_query
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-An abstract base class that defines the structure for defuzzifying fuzzy logic queries by converting membership degrees into crisp values using Mixed-Integer Linear Programming.
+An abstract base class that implements the logic for converting fuzzy membership degrees into crisp values for a specific individual and feature using Mixed-Integer Linear Programming.
 
 
 Description
 -----------
 
 
-Defuzzification logic is encapsulated within this abstract class, which orchestrates the conversion of fuzzy membership degrees into crisp numerical values for a specific individual and feature. The process begins by calculating the maximum degree of membership for a given individual to a concept and asserting this value into a cloned version of the knowledge base to establish a constrained environment. Once the context is set, the logic identifies the mathematical variable associated with the target feature and optimizes an objective expression derived from that variable to produce the final crisp result. By delegating the construction of the objective expression to subclasses, the design allows for various defuzzification strategies while centralizing the common workflow of solving Mixed-Integer Linear Programming problems and handling potential ontology inconsistencies.
+The software provides a framework for resolving fuzzy logic values into crisp numbers by leveraging Mixed-Integer Linear Programming (MILP) to optimize specific features within a knowledge base. During the execution process, the logic first determines the maximum degree of membership for a given individual and concept, asserts this value back into a cloned knowledge base, and then identifies the variable associated with the target feature. By separating the general optimization workflow from the specific mathematical strategy, the design allows subclasses to define custom objective expressions while the base class handles the complexities of ontology consistency, variable retrieval, and solution normalization. Error handling mechanisms ensure that inconsistent ontologies are detected and reported, while the solver manages negative results by returning absolute values to maintain mathematical validity.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -126,3 +122,5 @@ Module Contents
    .. py:attribute:: obj_expr
       :type:  fuzzy_dl_owl2.fuzzydl.milp.expression.Expression
       :value: None
+
+

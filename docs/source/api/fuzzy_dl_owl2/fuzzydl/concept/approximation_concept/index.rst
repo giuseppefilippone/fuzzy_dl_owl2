@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.concept.approximation_concept
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A class representing logical approximation constructs that constrain individuals based on the properties of related entities through specific roles within a fuzzy description logic framework.
+A class that models logical constructs constraining individuals based on related entity properties through specific roles within a fuzzy description logic framework.
 
 
 Description
 -----------
 
 
-This implementation models various forms of quantification, including lower approximations (universal quantification) and upper approximations (existential quantification), along with their tight and loose nested variants. Instead of allowing direct instantiation, the design relies on static factory methods to construct these concepts by specifying a role name and a target concept, ensuring that only valid approximation types are created. The logic includes functionality to transform these specialized approximations into standard "all" and "some" quantifier structures, facilitating their use within the broader description logic system. Furthermore, the class supports logical negation by automatically inverting the approximation type and integrates seamlessly with the concept hierarchy to enable operations such as conjunction, disjunction, and recursive replacement of sub-concepts.
+The software implements a mechanism for defining logical constraints that quantify over related entities using specific roles, supporting various approximation strategies such as lower, upper, tight, and loose variants. By employing static factory methods for instantiation, it ensures that specific approximation types are created correctly without exposing the underlying constructor logic directly. This design allows for the representation of complex description logic constructs where individuals must satisfy conditions based on the properties of their neighbors, effectively bridging the gap between high-level approximation logic and standard quantifier representations. Internally, the logic handles the transformation of these specialized approximations into standard universal and existential quantifiers, facilitating seamless integration with other components of the system. It supports logical operations such as negation by inverting the approximation type and recursively applying negation to the underlying concept, while conjunction and disjunction are delegated to a dedicated operator handler. Furthermore, the implementation includes capabilities for structural manipulation, such as replacing sub-concepts and generating unique string identifiers, which are essential for maintaining consistency across the concept hierarchy and enabling efficient hashing and comparison.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -61,7 +57,7 @@ Module Contents
     .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzydl_concept_approximation_concept_ApproximationConcept.pdf
        :alt: UML Class Diagram for ApproximationConcept
        :align: center
-       :width: 100%
+       :width: 13.1cm
        :class: uml-diagram
 
        UML Class Diagram for **ApproximationConcept**
@@ -100,9 +96,9 @@ Module Contents
 
    .. py:method:: __hash__() -> int
 
-      Computes the integer hash value for the object by delegating to the hash of its string representation. This enables the instance to be used as a key in dictionaries or as an element in sets, assuming the object is immutable or its string representation does not change. The specific hash value is determined by the `__str__` method, so any modifications to the object that alter its string output will result in a different hash, potentially affecting its behavior in hash-based collections.
+      Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-      :return: An integer hash value computed from the object's string representation.
+      :return: An integer hash value representing the structural identity of this object.
 
       :rtype: int
 
@@ -307,11 +303,6 @@ Module Contents
 
 
    .. py:attribute:: name
-
-      Updates the name of the Concept instance to the specified string value. This setter modifies the object's internal state by assigning the provided value to the private `_name` attribute, effectively replacing any previously stored name.
-
-      :param value: The new name to assign to the object.
-      :type value: str
 
 
 .. py:data:: LooseLowerApprox

@@ -25,28 +25,24 @@ fuzzy_dl_owl2.fuzzydl.exception
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Specialized exception handling mechanisms for managing errors specific to fuzzy description logic and ontology operations.
+Specialized exception handling mechanisms for fuzzy description logic frameworks and ontology validation.
 
 
 Description
 -----------
 
 
-These components extend the standard Python exception hierarchy to isolate domain-specific failures from generic system errors. One class addresses general issues arising from concept manipulation, such as invalid definitions or improper modifier application, while another specifically targets logical contradictions and unsatisfiable concepts found within the ontology structure. By accepting descriptive string arguments during instantiation, the architecture facilitates precise debugging and logging, allowing developers to implement targeted error handling strategies. This separation of concerns ensures that complex fuzzy logic computations can clearly distinguish between semantic failures and other runtime exceptions, thereby enhancing the robustness and clarity of error reporting.
+These components extend the standard Python exception hierarchy to provide semantic clarity for domain-specific errors arising during the manipulation of fuzzy concepts and modifiers. By isolating issues such as invalid concept definitions or contradictory logical constraints, the architecture ensures that runtime failures can be distinguished from generic system errors. Each specialized error type accepts descriptive context messages, facilitating precise debugging and recovery strategies when logical inconsistencies or unsatisfiable concepts are detected. This design integrates seamlessly with native Python error catching mechanisms while abstracting the complexity of ontology validation into distinct, manageable error signals.
 
 
 Modules
 -------
 
 
-* [``fuzzy_dl_owl2.fuzzydl.exception.fuzzy_ontology_exception``] — Defines a specialized exception for handling errors specific to fuzzy ontology operations.
-* [``fuzzy_dl_owl2.fuzzydl.exception.inconsistent_ontology_exception``] — A custom exception class designed to signal logical inconsistencies within fuzzy description logic ontologies.
+* [``fuzzy_dl_owl2.fuzzydl.exception.fuzzy_ontology_exception``] — A custom exception class designed to handle domain-specific errors within the fuzzy description logic framework.
+* [``fuzzy_dl_owl2.fuzzydl.exception.inconsistent_ontology_exception``] — A custom exception class designed to signal logical inconsistencies detected within fuzzy ontologies during description logic processing.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -58,3 +54,4 @@ Submodules
 
    /api/fuzzy_dl_owl2/fuzzydl/exception/fuzzy_ontology_exception/index
    /api/fuzzy_dl_owl2/fuzzydl/exception/inconsistent_ontology_exception/index
+

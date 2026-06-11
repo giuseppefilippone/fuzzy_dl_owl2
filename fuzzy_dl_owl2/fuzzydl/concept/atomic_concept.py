@@ -11,7 +11,6 @@ from fuzzy_dl_owl2.fuzzydl.util.util import Util
 class AtomicConcept(Concept):
     """This entity serves as a fundamental, indivisible unit within a conceptual hierarchy, representing a base concept that is not defined by or composed of other concepts. It can be instantiated directly with a specific string name or generated automatically via the static factory method to ensure unique identifiers. As a leaf node in the structure, it supports standard logical operations such as conjunction, disjunction, and negation, where negation transforms it into a complex operator concept. The class defines equality and hashing based strictly on its name, ensuring that two instances with the same name are considered identical, and it provides methods for cloning, replacement, and traversal that consistently return itself or a singleton set containing itself."""
 
-
     def __init__(self, name: str) -> None:
         """
         Initializes a new instance of the AtomicConcept class, representing a fundamental concept identified by the provided name. The constructor delegates the core initialization logic to the superclass, passing the name and explicitly setting the concept type to ATOMIC. This ensures that the instance is correctly categorized within the broader concept hierarchy while retaining the specific identifier supplied by the caller.
@@ -279,14 +278,15 @@ class AtomicConcept(Concept):
 
     def __hash__(self) -> int:
         """
-        Computes the hash value for the instance based on the `name` attribute, allowing `AtomicConcept` objects to be used as dictionary keys or stored in sets. The method delegates the hashing operation to the `name` property, ensuring that instances with identical names produce the same hash. It is important that the `name` attribute remains immutable for the lifetime of the object, as modifying it would change the hash value and potentially corrupt hash-based collections.
+        Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-        :return: An integer representing the hash of the object's `name` attribute.
+        :return: An integer hash value representing the structural identity of this object.
 
         :rtype: int
         """
-
-        return hash(self.name)
+        # return hash(str(self))
+        # return id(self)
+        return hash((self.name, hash(self.type)))
 
     def __repr__(self) -> str:
         """

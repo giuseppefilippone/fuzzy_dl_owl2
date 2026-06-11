@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.concept.weighted_sum_zero_concept
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Implements a fuzzy description logic concept that aggregates multiple sub-concepts using a weighted sum constrained by a maximum total weight.
+Implements a fuzzy logic concept that aggregates multiple sub-concepts using specific weights while enforcing a constraint that the total weight cannot exceed 1.0.
 
 
 Description
 -----------
 
 
-The software models a specific type of fuzzy description logic construct where multiple sub-concepts are aggregated based on assigned numerical weights. It enforces a strict validation rule ensuring that the sum of these weights does not exceed 1.0, which maintains logical consistency within the fuzzy ontology framework. By inheriting from base concept and interface classes, the implementation provides functionality for logical operations such as negation, conjunction, and disjunction, allowing these weighted structures to participate in complex logical expressions. The design also supports structural manipulation through methods for cloning, retrieving atomic components, and recursively replacing specific sub-concepts, ensuring the object can be dynamically modified or analyzed within a larger reasoning system.
+The software defines a specific type of fuzzy logic construct that combines multiple conceptual definitions using numerical weights. It enforces strict validation rules during initialization, ensuring that the number of weights matches the number of concepts and that the aggregate weight remains within a logical bound of 1.0. This design allows for the creation of complex, probabilistic, or fuzzy constraints where the contribution of each sub-concept is precisely quantified. Beyond simple storage, the implementation supports standard logical operations such as negation, conjunction, and disjunction through Python operator overloading, integrating seamlessly with a broader framework of fuzzy description logic operators. It provides mechanisms for structural introspection, enabling the retrieval of atomic components and semantic roles, as well as recursive modification where specific sub-concepts can be replaced within the hierarchy. The object is immutable in terms of its logical operations, returning new instances rather than modifying existing state, and relies on a structural hashing mechanism to ensure uniqueness based on its internal composition.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -48,7 +44,7 @@ Module Contents
     .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzydl_concept_weighted_sum_zero_concept_WeightedSumZeroConcept.pdf
        :alt: UML Class Diagram for WeightedSumZeroConcept
        :align: center
-       :width: 100%
+       :width: 11.7cm
        :class: uml-diagram
 
        UML Class Diagram for **WeightedSumZeroConcept**
@@ -83,9 +79,9 @@ Module Contents
 
    .. py:method:: __hash__() -> int
 
-      Computes an integer hash value for the instance, enabling its use in hash-based collections such as dictionaries and sets. The implementation derives the hash from the string representation of the object, effectively hashing the output of its `__str__` method. This implies that the hash value is consistent with the object's string form, but it also means that if the object is mutable and its string representation changes, the hash will change as well, potentially violating the invariants required for dictionary keys.
+      Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-      :return: An integer hash value derived from the string representation of the object.
+      :return: An integer hash value representing the structural identity of this object.
 
       :rtype: int
 
@@ -173,7 +169,3 @@ Module Contents
       :value: '(w-sum-zero )'
 
 
-      Updates the name of the Concept instance to the specified string value. This setter modifies the object's internal state by assigning the provided value to the private `_name` attribute, effectively replacing any previously stored name.
-
-      :param value: The new name to assign to the object.
-      :type value: str

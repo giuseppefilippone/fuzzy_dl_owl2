@@ -1,0 +1,5 @@
+(define-primitive-concept Animal *top*)
+(define-primitive-concept Person Animal)
+
+(disjoint Person Plant)
+

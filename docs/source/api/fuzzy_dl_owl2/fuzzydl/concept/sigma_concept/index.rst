@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.concept.sigma_concept
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A class representing a sigma-count construct within fuzzy description logic that evaluates concepts based on the cardinality of related individuals.
+A class representing a sigma-count construct within fuzzy description logic that evaluates the cardinality of related individuals against a fuzzy concrete domain.
 
 
 Description
 -----------
 
 
-The implementation models a specialized construct known as a sigma-count, which determines satisfaction by counting the number of individuals reachable via a specific role that also belong to a target concept. It encapsulates a binary role, a target concept definition, a collection of reference individuals, and a fuzzy concrete concept that defines the evaluation criteria within a fuzzy logic framework. By inheriting from the base ``Concept`` class, the implementation integrates seamlessly into the broader description logic system, providing mechanisms for deep cloning and generating a standardized string representation of the complex logical structure. Logical operations such as negation, conjunction, and disjunction are supported through delegation to an ``OperatorConcept`` utility, allowing these instances to participate in complex logical expressions while maintaining their specific semantic identity. The design treats the construct as an atomic entity for replacement operations and relies on its string representation for hashing, ensuring consistent behavior when used in collections.
+The implementation extends the base ``Concept`` class to model a specific fuzzy logic constraint where satisfaction depends on the number of related individuals belonging to a target concept. By combining a binary role, a reference set of individuals, and a fuzzy concrete domain concept, it defines a complex condition that evaluates the cardinality of relationships within a fuzzy context. To facilitate logical reasoning, the class overrides standard operators to support negation, conjunction, and disjunction, delegating the construction of these composite expressions to a dedicated operator handler. Structural integrity is maintained through a deep cloning mechanism and a custom hashing implementation that relies on the internal components, ensuring that instances behave correctly when used in collections or complex logical structures.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -91,9 +87,9 @@ Module Contents
 
    .. py:method:: __hash__() -> int
 
-      Returns an integer hash value for the instance based on its string representation, enabling the object to be used as a dictionary key or stored in a set. The implementation delegates the hashing logic to the built-in `hash` function applied to the result of `str(self)`, which implies that the object should be treated as immutable or that its string representation must remain constant to maintain consistent behavior within hash-based collections.
+      Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-      :return: An integer hash value based on the string representation of the object.
+      :return: An integer hash value representing the structural identity of this object.
 
       :rtype: int
 
@@ -234,11 +230,7 @@ Module Contents
       :value: '(sigma-count Uninferable Uninferable {} Uninferable)'
 
 
-      Updates the name of the Concept instance to the specified string value. This setter modifies the object's internal state by assigning the provided value to the private `_name` attribute, effectively replacing any previously stored name.
-
-      :param value: The new name to assign to the object.
-      :type value: str
-
 
    .. py:attribute:: role
       :type:  str
+

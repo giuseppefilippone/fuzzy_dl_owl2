@@ -1,14 +1,14 @@
 # Summary
 
-A suite of defuzzification strategies converts fuzzy membership degrees into crisp numerical values by leveraging Mixed-Integer Linear Programming to optimize objective expressions within a constrained knowledge base.
+A framework for converting fuzzy membership degrees into crisp numerical values using Mixed-Integer Linear Programming strategies.
 
 ## Description
 
-An abstract base class orchestrates the common workflow required to transform fuzzy logic results into precise numbers, establishing a constrained environment by asserting the maximum degree of membership into a cloned knowledge base. By identifying the mathematical variable associated with a target feature, the system utilizes a mathematical optimization engine to solve Mixed-Integer Linear Programming problems, where the specific objective function determines the final crisp output. Subclasses implement distinct defuzzification methods by defining unique optimization objectives, such as identifying the smallest or largest value within the region of maximum membership or calculating the arithmetic mean of these boundaries. This architecture centralizes the logic for handling ontology inconsistencies and solving constraints while allowing flexibility in how the target variable is manipulated to achieve the desired numerical result.
+The software architecture separates the general workflow of ontology manipulation from specific mathematical optimization techniques by utilizing an abstract base class to handle knowledge base cloning, consistency checks, and variable retrieval. By asserting the maximum degree of membership for a specific individual and concept back into the system, the framework establishes a constrained environment where Mixed-Integer Linear Programming solvers can determine valid crisp values for target features. Concrete implementations extend this foundation to apply distinct defuzzification heuristics, such as identifying the smallest or largest values within the plateau of maximum membership, or calculating the arithmetic mean of these boundaries. This design pattern allows for flexible selection of optimistic, pessimistic, or average estimates while ensuring that error handling and solution normalization remain consistent across different mathematical approaches.
 
 ## Modules
 
-- [`fuzzy_dl_owl2.fuzzydl.query.defuzzify.defuzzify_query`] — An abstract base class that defines the structure for defuzzifying fuzzy logic queries by converting membership degrees into crisp values using Mixed-Integer Linear Programming.
-- [`fuzzy_dl_owl2.fuzzydl.query.defuzzify.lom_defuzzify_query`] — Implements the Largest of Maxima defuzzification strategy to determine the highest crisp value within the region of maximum membership for a specific feature.
-- [`fuzzy_dl_owl2.fuzzydl.query.defuzzify.mom_defuzzify_query`] — Implements the Mean of Maxima defuzzification strategy to calculate a crisp feature value for an individual within a fuzzy ontology.
-- [`fuzzy_dl_owl2.fuzzydl.query.defuzzify.som_defuzzify_query`] — A specialized query implementation applies the Smallest of Maxima strategy to convert fuzzy logic values into crisp numerical outputs.
+- [`fuzzy_dl_owl2.fuzzydl.query.defuzzify.defuzzify_query`] — An abstract base class that implements the logic for converting fuzzy membership degrees into crisp values for a specific individual and feature using Mixed-Integer Linear Programming.
+- [`fuzzy_dl_owl2.fuzzydl.query.defuzzify.lom_defuzzify_query`] — Implements the Largest of Maxima defuzzification strategy to convert fuzzy membership values into crisp numbers by maximizing the target variable within an optimization framework.
+- [`fuzzy_dl_owl2.fuzzydl.query.defuzzify.mom_defuzzify_query`] — Implements the Mean of Maxima defuzzification strategy to derive a crisp numerical value for a specific feature of an individual within a fuzzy ontology.
+- [`fuzzy_dl_owl2.fuzzydl.query.defuzzify.som_defuzzify_query`] — Implements the Smallest of Maxima defuzzification strategy to convert fuzzy logic values into crisp numerical outputs.

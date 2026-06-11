@@ -21,7 +21,6 @@ class QowaConcept(OwaConcept):
     :type name: typing.Any
     """
 
-
     def __init__(
         self, quantifier: FuzzyConcreteConcept, concepts: list[Concept]
     ) -> None:
@@ -44,16 +43,24 @@ class QowaConcept(OwaConcept):
     @property
     def quantifier(self) -> FuzzyConcreteConcept:
         """
-        Sets the quantifier for the concept to the provided `FuzzyConcreteConcept` value. This method updates the internal `_quantifier` attribute and automatically triggers a recalculation of the concept's name by calling `compute_name`, ensuring that the display name remains consistent with the new quantifier state.
+        Returns the fuzzy quantifier (a concrete concept such as "most" or "at least half") that defines the weighting of this quantifier-guided OWA concept. The value is read from the private ``_quantifier`` attribute without modifying the instance.
 
-        :param value: The fuzzy concrete concept to assign as the quantifier.
-        :type value: FuzzyConcreteConcept
+        :return: The fuzzy quantifier driving the OWA weights.
+
+        :rtype: FuzzyConcreteConcept
         """
 
         return self._quantifier
 
     @quantifier.setter
     def quantifier(self, value: FuzzyConcreteConcept) -> None:
+        """
+        Sets the fuzzy quantifier of this quantifier-guided OWA concept. The provided concept is stored in the private ``_quantifier`` attribute and the concept's cached ``name`` is recomputed via :meth:`compute_name` so it stays consistent with the new quantifier.
+
+        :param value: The new fuzzy quantifier.
+        :type value: FuzzyConcreteConcept
+        """
+
         self._quantifier = value
         self.name = self.compute_name()
 
@@ -154,11 +161,15 @@ class QowaConcept(OwaConcept):
 
     def __hash__(self) -> int:
         """
-        Computes the hash value for the instance by hashing its string representation, enabling the object to be used as a key in dictionaries or stored in sets. This implementation delegates the hashing logic to the result of the `__str__` method, ensuring that instances with identical string representations yield the same hash. Consequently, the efficiency of this operation is directly tied to the performance of the object's string conversion, and any exceptions raised during string formatting will propagate to the hash calculation.
+        Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-        :return: An integer hash value derived from the string representation of the object.
+        :return: An integer hash value representing the structural identity of this object.
 
         :rtype: int
         """
 
-        return hash(str(self))
+        # return hash(str(self))
+        # return id(self)
+        return hash(
+            (tuple(self.weights), tuple(hash(c) for c in self.concepts), self.name, hash(self.type))
+        )

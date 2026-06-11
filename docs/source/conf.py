@@ -15,10 +15,10 @@ project = "Fuzzy DL OWL 2"
 copyright = "2025, Giuseppe Filippone"
 author = "Giuseppe Filippone"
 # The short X.Y version
-version = "1.0.17"
+version = "1.0.18"
 
 # The full version, including alpha/beta/rc tags
-release = "1.0.17"
+release = "1.0.18"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -77,6 +77,7 @@ suppress_warnings = [
     "misc.highlighting_failure",
     "autoapi.python_import_resolution",
     "docutils",
+    "ref.python",
 ]
 
 # -- Custom Sphinx extension: Markdown Injector --------------------------------
@@ -162,6 +163,11 @@ latex_elements = {
         \DefineVerbatimEnvironment{Verbatim}{Verbatim}{breaklines,commandchars=\\\{\}}
         \usepackage[htt]{hyphenat}
         \sloppy
+
+        % TikZ for hand-drawn flow diagrams in the PDF (e.g. the reasoner
+        % pipeline in architecture.rst). HTML keeps its ASCII-art fallback.
+        \usepackage{tikz}
+        \usetikzlibrary{arrows.meta, positioning, shapes.geometric}
      """,
     "passoptionstopackages": r"\PassOptionsToPackage{hyphens}{url}",
     "sphinxsetup": r"verbatimwithframe=true, verbatimwrapslines=true, verbatimforcewraps=true, inlineliteralwraps=true",

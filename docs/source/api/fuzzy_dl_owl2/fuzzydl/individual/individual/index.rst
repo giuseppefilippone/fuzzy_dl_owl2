@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.individual.individual
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Defines a core entity class representing a specific instance within a fuzzy description logic knowledge base, managing concept assertions, role relations, and restrictions during reasoning processes.
+A class representing an individual entity within a fuzzy description logic knowledge base that manages concept assertions, role relations, and restrictions during reasoning processes.
 
 
 Description
 -----------
 
 
-The software implements a fundamental node structure used in description logic reasoning, specifically designed to handle the state of an entity within a knowledge base. It manages various semantic properties, including concept assertions, role connections to other entities, and specific constraints such as concrete role restrictions or "not self" rules. To support tableau-based reasoning algorithms, the architecture includes mechanisms for cloning the entire internal state, allowing the system to explore different branches of logic without mutating the original data. Additionally, the logic provides functionality to prune role relations and recursively clean up blockable successors, which optimizes memory usage and performance during complex inference tasks. The design enforces strict identity rules by raising exceptions when naming conflicts occur, ensuring that the unique name assumption is maintained throughout the reasoning process.
+The software defines a fundamental node structure used in description logic reasoning, specifically designed to handle the state of an instance within a knowledge graph. It maintains collections for concept assertions, role connections, and various restrictions, allowing the reasoning engine to track properties and relationships as they are expanded or processed. To support non-deterministic tableau algorithms, the implementation includes mechanisms for cloning the entire state of an entity, enabling the system to explore different reasoning branches without mutating the original state. Additionally, the logic provides pruning capabilities to remove blockable successors and clear role relations, which optimizes memory usage and performance during complex deduction tasks. The design enforces strict identity constraints through unique naming and equality checks, while also offering an abstract interface for retrieving representative individuals based on specific fuzzy criteria.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -89,6 +85,16 @@ Module Contents
       :return: True if the instance has the same name as the other instance, otherwise False.
 
       :rtype: bool
+
+
+
+   .. py:method:: __hash__() -> int
+
+      Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
+
+      :return: An integer hash value representing the structural identity of this object.
+
+      :rtype: int
 
 
 
@@ -258,6 +264,12 @@ Module Contents
       :type:  dict[str, set[str]]
 
 
+   .. py:attribute:: individual_number
+      :type:  int
+      :value: -1
+
+
+
    .. py:attribute:: list_of_concepts
       :type:  set[fuzzy_dl_owl2.fuzzydl.concept.concept.Concept]
 
@@ -280,3 +292,4 @@ Module Contents
 
    .. py:attribute:: role_restrictions
       :type:  dict[str, list[fuzzy_dl_owl2.fuzzydl.restriction.restriction.Restriction]]
+

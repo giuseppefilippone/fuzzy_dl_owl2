@@ -1,0 +1,11 @@
+(define-fuzzy-logic lukasiewicz)
+
+(instance a D 0.8)
+
+(disjoint A B)
+(disjoint A C)
+(disjoint A D)
+(disjoint B C)
+(disjoint B D)
+(disjoint C D)
+

@@ -23,7 +23,6 @@ class RightConcreteConcept(FuzzyConcreteConcept):
     :type _b: float
     """
 
-
     def __init__(self, name: str, k1: float, k2: float, a: float, b: float) -> None:
         """
         Initializes the RightConcreteConcept instance by assigning a name and defining the geometric parameters k1, k2, a, and b. This constructor enforces specific ordering constraints necessary for the validity of the underlying "Right" function: a must not exceed b, k1 must not exceed a, and k2 must be at least b. If these constraints are not met, the method triggers an error. Finally, it stores the parameters as instance attributes, ensuring a and b are stored as floating-point numbers.
@@ -56,31 +55,47 @@ class RightConcreteConcept(FuzzyConcreteConcept):
     @property
     def a(self) -> float:
         """
-        Sets the value of the property 'a' by converting the provided input to a float and storing it in the internal attribute '_a'. This method ensures that the underlying state is always maintained as a floating-point number, automatically handling type coercion for compatible inputs such as integers or numeric strings. If the provided value cannot be converted to a float, a TypeError or ValueError will be raised.
+        Returns the left breakpoint of this right-shoulder membership function, i.e. the point up to which the degree is ``0`` and beyond which it starts increasing linearly toward one. The value is held internally as a float and is read without modifying the instance.
 
-        :param value: The value to assign, converted to a float.
-        :type value: float
+        :return: The breakpoint ``a`` where the degree begins to rise from ``0``.
+
+        :rtype: float
         """
 
         return self._a
 
     @a.setter
     def a(self, value: float) -> None:
+        """
+        Sets the left breakpoint ``a`` of this right-shoulder membership function (the point up to which the degree is ``0``). The provided value is cast to a float and stored in the private ``_a`` attribute; a non-convertible value raises a ``ValueError`` or ``TypeError``.
+
+        :param value: The new breakpoint, converted to a float.
+        :type value: float
+        """
+
         self._a = float(value)
 
     @property
     def b(self) -> float:
         """
-        Sets the value of the property 'b' by converting the provided input to a float and storing it in the internal attribute '_b'. This method ensures that the underlying state is always maintained as a floating-point number, regardless of the input type, provided it is convertible. If the input value cannot be parsed as a float, a ValueError or TypeError will be raised, and the object's state will remain unchanged until the exception is handled.
+        Returns the right breakpoint of this right-shoulder membership function, i.e. the point at which the degree reaches its maximum value of ``1``. The value is held internally as a float and is read without modifying the instance.
 
-        :param value: The new value to assign, which will be converted to a float.
-        :type value: float
+        :return: The breakpoint ``b`` where the degree reaches ``1``.
+
+        :rtype: float
         """
 
         return self._b
 
     @b.setter
     def b(self, value: float) -> None:
+        """
+        Sets the right breakpoint ``b`` of this right-shoulder membership function (the point where the degree reaches ``1``). The provided value is cast to a float and stored in the private ``_b`` attribute; a non-convertible value raises a ``ValueError`` or ``TypeError``.
+
+        :param value: The new breakpoint, converted to a float.
+        :type value: float
+        """
+
         self._b = float(value)
 
     def clone(self) -> typing.Self:
@@ -164,14 +179,17 @@ class RightConcreteConcept(FuzzyConcreteConcept):
 
     def __hash__(self) -> int:
         """
-        Calculates the hash value of the instance by hashing the string representation of the object. This allows instances of this class to be used as keys in dictionaries or elements in sets. The hash is derived directly from the output of the `__str__` method, meaning that any changes to the object's state that modify its string representation will also change its hash value, potentially affecting its behavior in hash-based collections.
+        Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-        :return: An integer representing the hash of the object, computed from its string representation.
+        :return: An integer hash value representing the structural identity of this object.
 
         :rtype: int
         """
-
-        return hash(str(self))
+        # return hash(str(self))
+        # return id(self)
+        return hash(
+            (self.k1, self.k2, hash(self.a), hash(self.b))
+        )
 
     # def __str__(self) -> str:
     #     return self.get_name()

@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.query.defuzzify.mom_defuzzify_query
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Implements the Mean of Maxima defuzzification strategy to calculate a crisp feature value for an individual within a fuzzy ontology.
+Implements the Mean of Maxima defuzzification strategy to derive a crisp numerical value for a specific feature of an individual within a fuzzy ontology.
 
 
 Description
 -----------
 
 
-The software calculates a crisp numerical value for a specific feature of an individual using the Mean of Maxima defuzzification method. To achieve this, it first determines the maximum degree of membership the individual has to a given concept by solving a max-satisfiability query against the knowledge base. Once the peak membership degree is established, the system creates a modified version of the knowledge base where the individual is asserted to possess the concept at this specific degree. Within this constrained environment, it performs optimization to identify the smallest and largest possible values for the target feature that satisfy the maximum membership condition. The final result is derived by computing the arithmetic mean of these two boundary values, effectively representing the center of the membership plateau.
+The logic centers on determining the maximum degree of membership an individual has to a given concept by first solving the ABox and executing a max-satisfiability query. Once this peak membership degree is established, the system creates a modified version of the knowledge base where the individual is asserted to possess the concept at that specific degree. Within this constrained environment, the process identifies the Mixed-Integer Linear Programming variable corresponding to the target feature and performs optimization to locate both the minimum and maximum values that satisfy the constraints. The final crisp output is calculated as the arithmetic mean of these two boundary values, effectively representing the center of the plateau where the membership function is maximized. Error handling ensures that inconsistencies or missing role relations result in appropriate warnings or inconsistent solution states rather than unhandled failures.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -107,3 +103,5 @@ Module Contents
       :return: A Solution object containing the calculated numeric value (Mean of Maximums) derived from fuzzy logic optimization, or None if defuzzification fails. The Solution may also indicate an inconsistent knowledge base.
 
       :rtype: Solution
+
+

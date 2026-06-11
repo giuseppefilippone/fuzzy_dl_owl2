@@ -1,7 +1,7 @@
 # Summary
 
-A concrete proxy that models a collection of individuals satisfying a specific fuzzy condition relative to a threshold by associating a feature with a triangular fuzzy number.
+Defines a proxy entity that represents a group of individuals satisfying a specific fuzzy condition relative to a feature threshold.
 
 ## Description
 
-Acting as a bridge between a concrete entity and an abstract group defined by fuzzy logic constraints, the implementation encapsulates the logic required to define sets of entities based on feature evaluation. By storing a feature name, a classification type, and a `TriangularFuzzyNumber`, the software allows for the precise quantification of partial truths and uncertainty in how an individual satisfies a concept. The structure links a specific `CreatedIndividual` to these broader criteria, enabling the system to determine membership degrees through comparisons such as greater than or less than. Accessor methods expose the underlying data necessary for these evaluations, ensuring that the fuzzy logic framework can consistently handle degrees of satisfaction without directly manipulating internal state.
+The implementation encapsulates the relationship between a concrete entity and a fuzzy constraint defined by a triangular fuzzy number applied to a specific feature. By storing a classification type alongside the fuzzy value and the referenced individual, the logic enables the representation of partial truths and degrees of membership within a fuzzy description logic framework. Accessor methods are provided to retrieve the feature name, the fuzzy number quantifying the satisfaction degree, and the underlying individual, allowing other components of the system to query these properties without modifying the internal state. This structure effectively models how specific entities satisfy abstract concepts under uncertainty, serving as a foundational building block for reasoning with fuzzy data types.

@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.query.query
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-An abstract base class defines the standard interface for executing, preprocessing, and timing queries against a fuzzy knowledge base.
+An abstract base class defines the standard interface and timing utilities for executing queries against a fuzzy knowledge base.
 
 
 Description
 -----------
 
 
-The architecture establishes a contract that requires concrete implementations to handle the preparation of data and the resolution of specific logical problems against a provided knowledge base. By mandating the implementation of preprocessing and solving logic, it ensures that all derived query types can interact correctly with the underlying fuzzy logic system and produce standardized solution objects. To support performance analysis and optimization, the design incorporates high-resolution timing utilities that allow the execution duration of the solving process to be captured and reported in seconds. This abstraction facilitates the creation of diverse query types while maintaining a consistent structure for execution flow and metric collection across the system.
+The software establishes a foundational contract for all query operations within the fuzzy description logic framework, ensuring that specific reasoning tasks adhere to a consistent structure. By extending the abstract base class, concrete implementations are required to define how they prepare input data and resolve specific problems against a provided knowledge base, thereby enforcing a separation between setup and execution phases. Integrated performance monitoring capabilities allow the system to capture high-precision execution metrics, enabling the measurement of computational overhead associated with complex reasoning tasks. The design facilitates a standardized workflow where a query object interacts with the knowledge base to produce a formal solution object, while also providing a human-readable representation for debugging or logging purposes.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -139,3 +135,5 @@ Module Contents
    .. py:attribute:: total_time
       :type:  int
       :value: 0
+
+

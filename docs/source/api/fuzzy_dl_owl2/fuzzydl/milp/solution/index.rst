@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.milp.solution
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Encapsulates the outcome of a query performed on a fuzzy knowledge base, distinguishing between a numerical degree of satisfaction and the consistency status of the base itself.
+A data container encapsulates the outcome of a query on a fuzzy knowledge base, distinguishing between a numerical degree of satisfaction and the logical consistency status of the base.
 
 
 Description
 -----------
 
 
-The design allows the object to represent two distinct states: a valid query result where the knowledge base is consistent, or a state indicating inconsistency. When initialized with a floating-point number, the instance stores the satisfaction value and assumes the underlying knowledge base is consistent, providing a container for the numerical outcome. Conversely, initialization with a boolean flag explicitly marks the knowledge base as inconsistent, rendering the numerical solution irrelevant and resetting the internal state to reflect this failure. To support detailed analysis, the structure maintains a dictionary of variable bindings that can be populated and retrieved, allowing users to inspect specific values determined during the resolution process. Accessor methods provide a clean interface for retrieving the consistency status, the primary solution value, and the associated variable mappings, while standard string representation methods offer human-readable summaries of the result state.
+The software defines a structure to represent the results of queries executed against a fuzzy knowledge base, specifically handling the dual nature of outcomes where the base might be consistent or inconsistent. When the knowledge base is consistent, the object stores a numerical value representing the degree of satisfaction for the query, whereas an inconsistent state is flagged explicitly to indicate logical failure. To support detailed analysis, the implementation maintains a collection of variable bindings that map specific names to their calculated values, allowing users to inspect the internal state of the solution. Type safety and initialization flexibility are achieved through method overloading, ensuring that the object can be constructed either with a boolean status or a floating-point result while enforcing strict input validation. Furthermore, the design includes standard object representations and hashing capabilities to facilitate debugging and usage within collection data structures.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -68,7 +64,7 @@ Module Contents
 
    .. py:method:: __hash__() -> int
 
-      Computes a hash value for the instance by converting the object to its string representation and hashing the resulting string. This enables instances of the class to be used as dictionary keys or stored in sets. The hash value is entirely dependent on the output of the `__str__` method, meaning that the efficiency of this operation is tied to the complexity of generating the string representation. If the object is mutable, modifying it after it has been added to a hash-based collection will lead to inconsistent behavior, as the hash value will change while the object remains in its original bucket.
+      Calculates the hash value for the instance by hashing its string representation, enabling the object to be used as a key in dictionaries or as an element in sets. This implementation relies on the `__str__` method to determine the object's identity for hashing purposes. It is important to note that if the object is mutable and its string representation changes after it has been added to a hash-based collection, the hash value will change, potentially causing the object to become lost or inaccessible within that collection.
 
       :return: An integer hash value derived from the string representation of the object.
 
@@ -164,3 +160,5 @@ Module Contents
    .. py:attribute:: INCONSISTENT_KB
       :type:  bool
       :value: False
+
+

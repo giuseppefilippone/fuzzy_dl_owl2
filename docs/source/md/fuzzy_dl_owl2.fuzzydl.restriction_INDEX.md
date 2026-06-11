@@ -1,12 +1,12 @@
 # Summary
 
-Implements fuzzy logic restrictions within a description logic framework to model constraints involving roles, concepts, and individuals.
+A framework for modeling fuzzy description logic restrictions that enforce constraints on roles, concepts, and specific individuals with varying degrees of certainty.
 
 ## Description
 
-Designed to operate within fuzzy description logics, the software provides mechanisms to define and manage logical constraints that enforce specific membership degrees or certainty levels. The architecture relies on inheritance to handle different types of restrictions, including those that associate a specific role with an individual and those that enforce universal quantification across a role and concept combination. By storing core components such as role identifiers, target concepts, individuals, and fuzzy degree objects, the system ensures that logical assertions can be evaluated, copied, and represented textually according to formal syntax rules. These implementations collectively support the representation of complex logical relationships, allowing for the precise definition of conditions where entities must satisfy specific criteria with a defined degree of truth.
+Universal constraints are handled by encapsulating a role, a target concept, and a degree threshold to ensure connected entities meet specific certainty levels. Value restrictions link roles to concrete individuals through a transformation into negated existential quantifications, effectively integrating crisp values into the fuzzy reasoning system. The architecture utilizes inheritance to share core functionality across different restriction types while supporting state preservation via object copying. String representations are generated to visualize logical syntax, enabling both full constraint display and simplified relationship views for downstream processing.
 
 ## Modules
 
-- [`fuzzy_dl_owl2.fuzzydl.restriction.has_value_restriction`] — Defines a fuzzy logic restriction that associates a specific role with a particular individual, constrained by a lower bound degree.
-- [`fuzzy_dl_owl2.fuzzydl.restriction.restriction`] — A universal restriction in a fuzzy description logic system that enforces a minimum membership degree for a specific role and concept combination.
+- [`fuzzy_dl_owl2.fuzzydl.restriction.has_value_restriction`] — A fuzzy description logic restriction that enforces a specific individual value for a given role, represented internally as a negated existential quantification.
+- [`fuzzy_dl_owl2.fuzzydl.restriction.restriction`] — Defines a data structure for modeling universal restrictions within a fuzzy description logic framework by combining a role, a target concept, and a specific degree threshold.

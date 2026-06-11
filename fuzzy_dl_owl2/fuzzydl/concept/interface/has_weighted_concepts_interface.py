@@ -15,7 +15,6 @@ class HasWeightedConceptsInterface(HasConceptsInterface, abc.ABC):
     :type _weights: typing.Optional[list[float]]
     """
 
-
     def __init__(
         self,
         weights: typing.Optional[typing.Iterable[float]],
@@ -39,14 +38,22 @@ class HasWeightedConceptsInterface(HasConceptsInterface, abc.ABC):
     @property
     def weights(self) -> typing.Optional[list[float]]:
         """
-        Sets the weights for the instance, replacing any existing values. The method accepts an optional iterable of floats; if a value is provided, it is converted to a list and assigned to the internal storage. Passing None explicitly sets the internal weights to None, effectively clearing them.
+        Returns the per-concept weights applied in the weighted aggregation, or ``None`` when no weights are set. The value is read from the private ``_weights`` attribute without modifying the instance.
 
-        :param value: An iterable of floating-point values representing the weights. If None, the weights are reset.
-        :type value: typing.Optional[typing.Iterable[float]]
+        :return: The list of weights, or ``None`` if unset.
+
+        :rtype: typing.Optional[list[float]]
         """
 
         return self._weights
 
     @weights.setter
     def weights(self, value: typing.Optional[typing.Iterable[float]]) -> None:
+        """
+        Sets the per-concept weights of the weighted aggregation, replacing any existing values. A provided iterable is materialized into a list and stored in the private ``_weights`` attribute; passing ``None`` clears the weights.
+
+        :param value: The new weights, or ``None`` to clear them.
+        :type value: typing.Optional[typing.Iterable[float]]
+        """
+
         self._weights = list(value) if value is not None else None

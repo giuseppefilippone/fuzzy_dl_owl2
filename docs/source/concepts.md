@@ -20,7 +20,7 @@ Defines the top $\top$ and bottom $\perp$ concepts. These represent absolute tru
 
 ### OperatorConcept
 
-It is the class to handle a logic (Zadeh, Lukasiewicz, and product) connectives (AND, OR, NOT) between fuzzy concepts. This class implements the fundamental logical operations in fuzzy logic systems.
+It is the class to handle logical connectives (AND, OR, NOT) between fuzzy concepts under the supported semantics (classical, Gödel, and Lukasiewicz). This class implements the fundamental logical operations in fuzzy logic systems.
 
 ### AllSomeConcept
 
@@ -28,7 +28,7 @@ Defines a universal ($\forall$) and existential ($\exists$) restrictions on fuzz
 
 ### ImpliesConcept
 
-Defines a zadeh and goedel implies concept. This handles implication operations in fuzzy logic.
+Defines an implication concept. It directly represents Zadeh and Gödel implications, and provides static helpers that compute Lukasiewicz and Kleene-Dienes implications in terms of the other connectives. This handles implication operations in fuzzy logic.
 
 ## Fuzzy Integrals
 
@@ -77,6 +77,10 @@ Defines a concept associated with a value. This links concepts to specific value
 ### ValueConcept
 
 Defines a datatype restriction (at most, at least, and exact) concept. This handles numerical constraints and restrictions.
+
+### StringConcept
+
+Defines an atomic string-literal concept. It encapsulates a textual value (such as a name or label) as an indivisible leaf concept and cannot be negated.
 
 ### SelfConcept
 

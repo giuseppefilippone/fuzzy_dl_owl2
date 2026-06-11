@@ -5,20 +5,20 @@ fuzzy_dl_owl2.fuzzydl.individual.created_individual
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A class representing dynamically generated nodes within a completion forest for tableau-based reasoning, incorporating hierarchical tracking, blocking mechanisms, and state cloning capabilities.
+A dynamically generated node within a completion forest for tableau-based fuzzy description logic reasoning that manages hierarchical context, blocking states, and representative constraints.
 
 
 Description
 -----------
 
 
-The software defines a specialized entity used in tableau-based reasoning algorithms to model abstract nodes generated dynamically within a completion forest. By extending the base individual structure, it maintains hierarchical context through attributes like parent references, role names, and depth calculations, which are essential for traversing the reasoning tree. To prevent infinite loops during the inference process, the implementation incorporates a comprehensive blocking mechanism that tracks both direct and indirect block statuses, allowing the system to identify and halt redundant expansions. Furthermore, the design supports deep cloning of internal states, including concept labels and representative individuals, enabling the preservation of snapshots during backtracking or branching operations. The entity also distinguishes between abstract placeholders and concrete instances, providing the necessary flexibility to handle complex constraints and fuzzy logic requirements within the broader reasoning framework.
+Dynamically generated nodes within a completion forest are modeled here to support tableau-based fuzzy description logic reasoning, extending the base individual structure with hierarchical context. Unlike static individuals, these nodes are created dynamically to satisfy existential restrictions, maintaining a lineage through references to a parent node and the specific role relation that necessitated their creation. The design incorporates a depth calculation mechanism that determines the hierarchical level of the node based on the parent's status, which is crucial for optimization strategies like pairwise blocking.
+
+To ensure reasoning efficiency and termination, the implementation manages complex blocking states that prevent infinite expansion by tracking both direct and indirect block conditions. A breadth-first traversal algorithm is employed to propagate indirect blocking status to descendant nodes, effectively pruning large sections of the search space when a node is deemed equivalent to an ancestor. Furthermore, the entity supports deep cloning capabilities, allowing the reasoning engine to preserve and restore the complete state of a node—including its concept labels, representatives, and role relations—during non-deterministic branching.
+
+The internal state distinguishes between abstract placeholders and concrete instances, utilizing collections to manage representative individuals and concept labels required for fuzzy constraint satisfaction. Equality and ordering comparisons are implemented based on unique identifiers and names, enabling the use of these nodes within sorted containers and hash-based data structures. By encapsulating attributes such as blocking ancestors and role names, the class provides a comprehensive representation of the inference context required for complex fuzzy description logic operations.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -48,7 +48,7 @@ Module Contents
     .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzydl_individual_created_individual_CreatedIndividual.pdf
        :alt: UML Class Diagram for CreatedIndividual
        :align: center
-       :width: 14.4cm
+       :width: 100%
        :class: uml-diagram
 
        UML Class Diagram for **CreatedIndividual**
@@ -131,9 +131,9 @@ Module Contents
 
    .. py:method:: __hash__() -> int
 
-      Returns an integer hash value for the instance, derived from the string representation of the object. This method enables `CreatedIndividual` instances to be used as keys in dictionaries or members of sets. Because the hash is calculated based on the output of `__str__`, any changes to the object's state that affect its string representation will alter its hash value, potentially causing issues if the object is already stored in a hash-based collection. Consequently, instances should be treated as immutable regarding their string representation if used in such contexts.
+      Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-      :return: An integer hash value computed from the string representation of the object.
+      :return: An integer hash value representing the structural identity of this object.
 
       :rtype: int
 
@@ -247,14 +247,14 @@ Module Contents
 
 
 
-   .. py:method:: get_representative_if_exists(type: fuzzy_dl_owl2.fuzzydl.util.constants.InequalityType, f_name: str, f: fuzzy_dl_owl2.fuzzydl.concept.concrete.fuzzy_number.triangular_fuzzy_number.TriangularFuzzyNumber) -> Optional[Self]
+   .. py:method:: get_representative_if_exists(type: fuzzy_dl_owl2.fuzzydl.util.constants.InequalityType, f_name: Optional[str], f: fuzzy_dl_owl2.fuzzydl.concept.concrete.fuzzy_number.triangular_fuzzy_number.TriangularFuzzyNumber) -> Optional[Self]
 
       Searches the collection of representatives associated with this instance for an entry matching the specified inequality type, feature name, and triangular fuzzy number. If a matching representative is found, the method returns the underlying individual linked to that representative; otherwise, it returns None.
 
       :param type: Specifies the inequality condition (e.g., GREATER_EQUAL or LESS_EQUAL) that defines the representative individual relative to the fuzzy number.
       :type type: InequalityType
       :param f_name: The name of the feature associated with the representative individual.
-      :type f_name: str
+      :type f_name: typing.Optional[str]
       :param f: The fuzzy number defining the representative individual to retrieve.
       :type f: TriangularFuzzyNumber
 
@@ -318,3 +318,5 @@ Module Contents
    .. py:method:: set_concrete_individual() -> None
 
       Marks the individual as concrete, indicating that it represents a specific, fully realized entity rather than an abstract or placeholder concept. This method updates the internal `_is_concrete` flag to `True`, effectively changing the state of the object. The operation is idempotent; calling it multiple times has the same effect as calling it once, and it does not return any value.
+
+

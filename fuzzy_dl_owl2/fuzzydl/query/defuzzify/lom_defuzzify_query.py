@@ -3,8 +3,8 @@ from __future__ import annotations
 from fuzzy_dl_owl2.fuzzydl.concept.concept import Concept
 from fuzzy_dl_owl2.fuzzydl.individual.individual import Individual
 from fuzzy_dl_owl2.fuzzydl.milp.expression import Expression
-from fuzzy_dl_owl2.fuzzydl.milp.term import Term
-from fuzzy_dl_owl2.fuzzydl.milp.variable import Variable
+from fuzzy_dl_owl2.fuzzydl.milp.term import Term  # Term
+from fuzzy_dl_owl2.fuzzydl.milp.variable import Variable  # Variable
 from fuzzy_dl_owl2.fuzzydl.query.defuzzify.defuzzify_query import DefuzzifyQuery
 
 
@@ -37,7 +37,7 @@ class LomDefuzzifyQuery(DefuzzifyQuery):
 
         return f"Largest of the maxima defuzzification of feature {self.f_name} for instance {self.a} = "
 
-    def get_obj_expression(self, variable: Variable) -> Expression:
+    def get_obj_expression(self, variable: Variable) -> Expression:  # Variable
         """
         Constructs an objective expression representing the negative of the specified variable by creating a Term with a coefficient of -1.0 associated with that variable and wrapping it within an Expression object. This is typically utilized within optimization contexts to formulate a minimization objective for the given variable. The method is stateless and does not modify the input variable or the instance's internal state.
 
@@ -49,4 +49,4 @@ class LomDefuzzifyQuery(DefuzzifyQuery):
         :rtype: Expression
         """
 
-        return Expression(Term(-1.0, variable))
+        return Expression(Term(-1.0, variable))  # Term

@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.concept.concrete.trapezoidal_concrete_concept
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Implements a trapezoidal membership function for fuzzy logic concepts, defining degrees of membership based on specific geometric parameters.
+Defines a trapezoidal concrete concept that models fuzzy membership degrees using a geometric shape defined by four distinct parameters.
 
 
 Description
 -----------
 
 
-The software models a fuzzy logic concept using a trapezoidal membership function, where the degree of truth for a given value is determined by its position relative to four defining parameters. It enforces strict geometric constraints during initialization to ensure the shape parameters are ordered correctly and that the definition domain fully encompasses the support interval. Membership calculations return zero for values outside the support range, one for values within the core plateau, and linearly interpolated values for the rising and falling edges. Logical operations such as conjunction, disjunction, and negation are supported through operator overloading, which delegates the computation to a separate operator utility to maintain consistency across the fuzzy logic framework. The implementation also includes mechanisms for object cloning and hashing based on the specific configuration of the trapezoid, facilitating use in collections and data structures.
+The implementation extends the base fuzzy concrete concept to represent a specific type of membership function characterized by a trapezoidal shape. By utilizing four distinct parameters to define the support and core intervals, the logic ensures that membership degrees transition linearly from zero to one and back to zero, creating a plateau of full certainty in the center. Initialization includes strict validation to guarantee that the geometric parameters are ordered correctly and that the definition domain fully encompasses the support interval, preventing invalid mathematical states. Beyond calculating membership for specific values, the class integrates with broader logical operations by delegating conjunctions, disjunctions, and negations to an operator handler, allowing these concepts to be combined within complex fuzzy expressions. Property accessors and a cloning mechanism are provided to manage the internal state and facilitate the creation of independent instances without side effects.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -95,9 +91,9 @@ Module Contents
 
    .. py:method:: __hash__() -> int
 
-      Computes the integer hash value for the instance, enabling its use as a key in dictionary lookups or membership in sets. The implementation derives the hash from the string representation of the object, meaning that two instances with identical string outputs will produce the same hash code. Because the hash is based on the string representation, the efficiency of this method is directly tied to the performance of the `__str__` method, and any mutation that alters the string output will result in a different hash value.
+      Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-      :return: An integer hash value derived from the string representation of the object.
+      :return: An integer hash value representing the structural identity of this object.
 
       :rtype: int
 
@@ -179,66 +175,54 @@ Module Contents
       :type: float
 
 
-      Sets the value of the property 'a', representing a specific geometric dimension of the trapezoidal concrete concept. The method accepts a numeric input, casts it to a float, and stores the result in the private attribute `_a`. This type conversion ensures that the internal state maintains floating-point precision for subsequent calculations, even if an integer or compatible numeric type is provided.
+      Returns the left-most breakpoint of the trapezoidal membership function, i.e. the start of the support interval where the membership degree begins rising from zero. The value is held internally as a float and is read without modifying the instance.
 
-      :param value: The value to assign to the attribute, converted to a float.
-      :type value: float
+      :return: The lower support bound ``a`` of the trapezoid.
+
+      :rtype: float
 
 
    .. py:property:: b
       :type: float
 
 
-      Sets the dimension represented by 'b' for the trapezoidal concrete concept, typically corresponding to a width or base length. The method accepts a value, explicitly converts it to a float, and assigns it to the internal attribute `_b`. This ensures the underlying data type remains consistent, though providing a value that cannot be converted to a float will raise an error.
+      Returns the second breakpoint of the trapezoidal membership function, i.e. the lower bound of the core plateau where the membership degree first reaches ``1``. The value is held internally as a float and is read without modifying the instance.
 
-      :param value: The new value to assign to the b attribute.
-      :type value: float
+      :return: The lower core bound ``b`` of the trapezoid.
+
+      :rtype: float
 
 
    .. py:property:: c
       :type: float
 
 
-      Assigns the specified value to the property 'c', which corresponds to a geometric dimension of the trapezoidal concrete concept. The input is explicitly cast to a float to maintain numerical precision and stored in the private attribute `_c`. This setter modifies the object's state and may raise a TypeError or ValueError if the provided value cannot be converted to a float.
+      Returns the third breakpoint of the trapezoidal membership function, i.e. the upper bound of the core plateau where the membership degree starts dropping below ``1``. The value is held internally as a float and is read without modifying the instance.
 
-      :param value: The new value to assign to the property, converted to a float.
-      :type value: float
+      :return: The upper core bound ``c`` of the trapezoid.
+
+      :rtype: float
 
 
    .. py:property:: d
       :type: float
 
 
-      Sets the depth dimension of the trapezoidal concrete concept. This method serves as the setter for the `d` property, converting the provided value to a float and storing it in the private `_d` attribute. While this ensures the internal state is always a float, passing a non-numeric value will result in a `ValueError` or `TypeError` during the conversion process.
+      Returns the right-most breakpoint of the trapezoidal membership function, i.e. the end of the support interval where the membership degree falls back to zero. The value is held internally as a float and is read without modifying the instance.
 
-      :param value: The numeric value to assign to the attribute, converted to a float.
-      :type value: float
+      :return: The upper support bound ``d`` of the trapezoid.
+
+      :rtype: float
 
 
    .. py:attribute:: k1
       :type:  float
 
-      Sets the value of the `k1` attribute for the instance, converting the input to a float to ensure type consistency. This method updates the private `_k1` variable, effectively modifying the internal state of the `FuzzyConcreteConcept` object. Any subsequent operations relying on this parameter will reflect the new value.
-
-      :param value: The new value for the k1 attribute.
-      :type value: float
-
 
    .. py:attribute:: k2
       :type:  float
-
-      Sets the upper bound parameter k2 for the fuzzy concrete concept. This method enforces a constraint ensuring that the new value is greater than or equal to the existing k1 parameter; if k1 is larger than the provided value, a ValueError is raised. Upon successful validation, the input is converted to a float and stored in the internal state.
-
-      :param value: The value to assign to the k2 parameter, which must be greater than or equal to k1.
-      :type value: float
-
-      :raises ValueError: Raised if the provided value is less than `k1`, as `k2` must be greater than or equal to `k1`.
 
 
    .. py:attribute:: name
       :type:  str
 
-      Updates the name of the Concept instance to the specified string value. This setter modifies the object's internal state by assigning the provided value to the private `_name` attribute, effectively replacing any previously stored name.
-
-      :param value: The new name to assign to the object.
-      :type value: str

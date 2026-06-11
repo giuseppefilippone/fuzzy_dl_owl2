@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.concept.modified.modified_concept
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A specialized conceptual entity that wraps a base concept with a modifier to adjust the degree of truth or satisfaction within a fuzzy description logic framework.
+A fuzzy description logic construct that applies a semantic modifier to an underlying concept to alter its degree of satisfaction.
 
 
 Description
 -----------
 
 
-The wrapper alters the semantic interpretation of an existing base concept by applying a specific modifier, effectively changing how individuals satisfy the concept in a fuzzy logic context. Structural queries, such as retrieving atomic concepts, roles, and checking concreteness, are delegated directly to the underlying wrapped entity, ensuring that the modification layer does not obscure the original structure. Logical composition is supported through operator overloading for negation, conjunction, and disjunction, allowing these modified concepts to participate seamlessly in complex logical expressions. A formatted string representation combines the modifier and the base concept, facilitating clear identification and debugging within the broader system.
+This software component functions as a wrapper that combines a base concept with a specific modifier, such as "very" or "slightly," to adjust the semantic interpretation of the original entity. It preserves the structural integrity of the underlying concept by delegating queries regarding roles, atomicity, and concreteness directly to the wrapped object, while independently managing the state of the applied modifier. The implementation facilitates the construction of complex logical expressions by overloading standard operators to handle negation, conjunction, and disjunction, effectively treating the modified concept as a first-class citizen within the logic system. Additionally, dynamic string generation ensures that the visual representation accurately reflects the combination of the modifier and the base concept, aiding in readability and debugging during logical evaluation.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -48,7 +44,7 @@ Module Contents
     .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzydl_concept_modified_modified_concept_ModifiedConcept.pdf
        :alt: UML Class Diagram for ModifiedConcept
        :align: center
-       :width: 12.0cm
+       :width: 11.8cm
        :class: uml-diagram
 
        UML Class Diagram for **ModifiedConcept**
@@ -181,7 +177,9 @@ Module Contents
       :type: fuzzy_dl_owl2.fuzzydl.modifier.modifier.Modifier
 
 
-      Sets the modifier applied to the concept by updating the internal state. This setter accepts a `Modifier` instance and assigns it to the private `_modifier` attribute, effectively replacing any previously associated modifier. It enables dynamic modification of the concept's behavior or properties after the object has been instantiated.
+      Returns the fuzzy modifier (e.g. "very", "slightly") applied to the wrapped concept by this modified concept. The value is read from the private ``_modifier`` attribute without modifying the instance.
 
-      :param value:
-      :type value: Modifier
+      :return: The modifier applied to the wrapped concept.
+
+      :rtype: Modifier
+

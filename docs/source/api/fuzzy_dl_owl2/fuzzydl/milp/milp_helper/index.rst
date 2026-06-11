@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.milp.milp_helper
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A comprehensive manager for Mixed-Integer Linear Programming (MILP) problems that translates high-level fuzzy logic constructs into mathematical optimization models and interfaces with various solver backends.
+A comprehensive manager for Mixed-Integer Linear Programming problems that translates fuzzy description logic constructs into mathematical optimization models and interfaces with various external solvers.
 
 
 Description
 -----------
 
 
-The software functions as a central interface for constructing and solving optimization problems derived from fuzzy description logics, bridging the gap between abstract domain entities and mathematical variables. It manages the lifecycle of decision variables by generating unique identifiers for individuals, concepts, and roles, while simultaneously enforcing specific constraints such as crispness, nominal definitions, and cardinality limits. The architecture abstracts the complexity of solver interaction by delegating optimization tasks to external libraries like Gurobi, Python-MIP, and PuLP, allowing users to switch backends without modifying the core logic. Additionally, it supports advanced problem-solving strategies, including graph-based partitioning to decompose large models into manageable sub-problems, and provides utilities for visualizing results through linguistic labels and variable value inspection.
+It bridges the gap between abstract fuzzy logic concepts—such as individuals, roles, and assertions—and concrete decision variables by maintaining internal registries for variables, constraints, and cardinalities. The software supports multiple solver backends, including Gurobi, MIP, and PuLP, delegating the actual solving process to these libraries while handling the specific translation of variable types and linear constraints. Additionally, it provides advanced features such as problem partitioning to handle large variable sets, support for crisp logic enforcement, and utilities for tracking and displaying solution values and linguistic label memberships.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -28,6 +24,14 @@ Classes
 .. autoapisummary::
 
    fuzzy_dl_owl2.fuzzydl.milp.milp_helper.MILPHelper
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   fuzzy_dl_owl2.fuzzydl.milp.milp_helper._find_cplex_executable
 
 
 Module Contents
@@ -320,7 +324,7 @@ Module Contents
 
 
 
-   .. py:method:: __get_variable_12(ind: fuzzy_dl_owl2.fuzzydl.individual.created_individual.CreatedIndividual, v_type: fuzzy_dl_owl2.fuzzydl.util.constants.VariableType) -> None
+   .. py:method:: __get_variable_12(ind: fuzzy_dl_owl2.fuzzydl.individual.created_individual.CreatedIndividual, v_type: fuzzy_dl_owl2.fuzzydl.util.constants.VariableType) -> fuzzy_dl_owl2.fuzzydl.milp.variable.Variable
 
       Retrieves or creates a MILP variable associated with a specific concrete individual, deriving a unique identifier from the individual's role and parent context. The method constructs the variable name by combining the role name and parent string, substituting default placeholders or the individual's string representation if these attributes are missing. If the variable does not already exist in the internal registry, it is initialized, assigned the specified variable type, and conditionally added to the display tracking system based on visibility settings for concrete fillers.
 
@@ -328,6 +332,10 @@ Module Contents
       :type ind: CreatedIndividual
       :param v_type: The type classification to assign to the variable representing the individual's value.
       :type v_type: VariableType
+
+      :return: The existing or newly created MILP variable for the concrete individual.
+
+      :rtype: Variable
 
 
 
@@ -533,7 +541,7 @@ Module Contents
 
    .. py:method:: add_contradiction() -> None
 
-      Forces the fuzzy Knowledge Base (KB) into an unsatisfiable state by introducing a logical contradiction. This method first clears all existing constraints stored in the helper, effectively discarding any prior model state. It then adds a new constraint requiring a constant expression of 1.0 to equal zero, which is mathematically impossible, thereby ensuring that the MILP model becomes infeasible.
+      Forces the KB into an unsatisfiable state by emitting $1 = 0$.
 
 
 
@@ -557,7 +565,12 @@ Module Contents
 
    .. py:method:: add_equality(var1: fuzzy_dl_owl2.fuzzydl.milp.variable.Variable, var2: fuzzy_dl_owl2.fuzzydl.milp.variable.Variable) -> None
 
-      Adds a linear constraint to the optimization model that enforces the equivalence of two specified variables. By creating an expression representing the difference between the first and second variable and setting it to zero, this method ensures that the solver assigns the same value to both variables. This action updates the internal model state, potentially affecting the feasibility or optimality of the solution depending on other existing constraints.
+      Enforces  $x_{v_1} = x_{v_2}$  by emitting
+
+      .. math::
+          x_{v_1} - x_{v_2} = 0
+
+      This identifies two MILP variables (used when individuals are merged).
 
       :param var1: The first variable in the equality constraint.
       :type var1: Variable
@@ -574,7 +587,21 @@ Module Contents
                   add_new_constraint(expr: fuzzy_dl_owl2.fuzzydl.milp.expression.Expression, constraint_type: fuzzy_dl_owl2.fuzzydl.util.constants.InequalityType, degree: fuzzy_dl_owl2.fuzzydl.degree.degree.Degree) -> None
                   add_new_constraint(expr: fuzzy_dl_owl2.fuzzydl.milp.expression.Expression, constraint_type: fuzzy_dl_owl2.fuzzydl.util.constants.InequalityType, n: float) -> None
 
-      Adds a new constraint to the MILP model, supporting multiple overloads based on the provided arguments to accommodate various ways of defining linear constraints. Depending on the number and types of arguments, the method dispatches to specific internal handlers for cases such as a single `Assertion`; a pair consisting of an `Expression` and `InequalityType`, a `Variable` and a numeric value, an `Assertion` and a numeric value, or a `Variable` and a `Degree`; or a triplet consisting of an `Expression`, an `InequalityType`, and either a `Degree` or a numeric value. If the number of arguments is not between 1 and 3, or if the specific type combination does not match a supported signature, a `ValueError` is raised. This operation modifies the internal state of the helper object by incorporating the new constraint into the underlying model.
+      Adds a linear constraint to the MILP model.
+
+      Core overloads and their normalised forms:
+
+      * ``(Expression E, InequalityType op)``              →  $E \bowtie 0$
+      * ``(Expression E, InequalityType op, Degree d)``  →  $E \bowtie d$
+      * ``(Expression E, InequalityType op, float n)``   →  $E \bowtie n$
+      * ``(Variable x, float n)``                        →  $x \ge n$
+      * ``(Assertion ass)``                              →  $x_{ass} \ge \ell_{ass}$
+      * ``(Assertion ass, float n)``                       →  $x_{ass} \ge n$
+      * ``(Variable x, Degree d)``                         →  $x \ge d$
+
+      Dispatches to the appropriate private ``__add_new_constraint_*`` handler.
+      Modifies the internal state of the helper object by appending the
+      resulting ``Inequation`` to ``self.constraints``.
 
       :param args: Variable-length arguments defining the constraint, accepting an Assertion or combinations of Expressions, Variables, InequalityTypes, Degrees, or numeric constants.
       :type args: typing.Any
@@ -605,7 +632,17 @@ Module Contents
 
    .. py:method:: change_variable_names(old_name: str, new_name: str, old_is_created_individual: bool) -> None
 
-      Updates the MILP model by renaming variables that include a specific individual identifier, replacing the old name with the new one within variable definitions. It iterates through existing variables to identify matches and establishes constraints linking the original variables to their renamed counterparts. The specific constraint logic depends on whether the old individual is a created individual: if true, an equality constraint is enforced to ensure the variables remain equivalent; otherwise, an inequality constraint is added involving a nominal variable to enforce that the value of the variable associated with the new name is greater than or equal to the value associated with the old name when the nominal condition is met.
+      Renames variables that contain ``old_name`` and links the renamed copies.
+
+      * If ``old_is_created_individual`` is ``True``, emits an equality
+        $x_{\text{old}} = x_{\text{new}}$.
+      * Otherwise emits the Big-M relaxation
+
+        .. math::
+            x_{v_2} \le 1 - x_{a:\{b\}} + x_{v_1}
+
+        which forces  $x_{v_2} \le x_{v_1}$  when the nominal merge
+        $x_{a:\{b\}} = 1$  is active.
 
       :param old_name: The existing individual name to be replaced within the variable definitions.
       :type old_name: str
@@ -690,7 +727,14 @@ Module Contents
 
    .. py:method:: get_negated_nominal_variable(i1: str, i2: str) -> fuzzy_dl_owl2.fuzzydl.milp.variable.Variable
 
-      Retrieves or creates a binary decision variable representing the assertion that a specific individual does not belong to the nominal concept defined by another individual. The variable is identified by the string pattern "{i1}: not { {i2} }". If this variable is being created for the first time, the method sets its type to binary and adds a linear constraint to the model enforcing the relationship that the sum of this negated variable and its corresponding positive nominal variable equals one, ensuring they are mutually exclusive. If the variable already exists within the helper's variable set, it is returned directly without adding new constraints.
+      Retrieves or creates the binary variable representing  $x_{i_1:\neg\{i_2\}}$.
+      On first creation it pins the nominal complement with the partition
+      equation
+
+      .. math::
+          x_{i_1:\{i_2\}} + x_{i_1:\neg\{i_2\}} = 1
+
+      which enforces the law of excluded middle for crisp nominals.
 
       :param i1: The individual representing the entity that is the subject of the negated assertion.
       :type i1: str
@@ -698,7 +742,6 @@ Module Contents
       :type i2: str
 
       :return: A binary variable representing the assertion that individual `i1` does not belong to the nominal concept `{i2}`. If the variable is created for the first time, it is constrained to be the logical complement of the corresponding nominal variable.
-
       :rtype: Variable
 
 
@@ -746,7 +789,25 @@ Module Contents
    .. py:method:: get_ordered_permutation(x: list[fuzzy_dl_owl2.fuzzydl.milp.variable.Variable]) -> list[fuzzy_dl_owl2.fuzzydl.milp.variable.Variable]
                   get_ordered_permutation(x: list[fuzzy_dl_owl2.fuzzydl.milp.variable.Variable], z: list[list[fuzzy_dl_owl2.fuzzydl.milp.variable.Variable]]) -> list[fuzzy_dl_owl2.fuzzydl.milp.variable.Variable]
 
-      Generates and returns a list of decision variables used to model an ordered permutation within a Mixed-Integer Linear Programming (MILP) context. The method acts as a dispatcher based on the number of arguments provided: it accepts either a single list of variables or a list of variables paired with a two-dimensional list of variables. Input validation is performed to ensure the first argument is a list of `Variable` objects and, if present, the second argument is a list of lists containing `Variable` objects. Depending on the argument count, the logic delegates to internal helper methods to construct the specific variable set required for the permutation constraints.
+      Sorting network as MILP — returns variables $y_1,\dots,y_n$ that are a
+      non-increasing permutation of the input $x_1,\dots,x_n$.
+
+      Overloads:
+
+      * ``get_ordered_permutation(x)``  → introduces an $n\times n$ binary
+        permutation matrix $z$ internally and delegates to overload 2.
+      * ``get_ordered_permutation(x, z)``  → uses the supplied matrix $z$.
+
+      The full encoding (see ``__get_ordered_permutation_2``) is:
+
+      .. math::
+          \begin{aligned}
+          y_i - y_{i+1} &\ge 0 && \forall i < n \\
+          x_j - y_i + z_{ij} &\ge 0 && \forall i,j \\
+          x_j - y_i - z_{ij} &\le 0 && \forall i,j \\
+          \sum_j z_{ij} &= n-1 && \forall i \\
+          \sum_i z_{ij} &= n-1 && \forall j
+          \end{aligned}
 
       :param args: A variable-length argument list accepting either a single list of Variables, or a list of Variables followed by a list of lists of Variables.
       :type args: typing.Any
@@ -754,7 +815,6 @@ Module Contents
       :raises ValueError: Raised if the number of provided arguments is not 1 or 2.
 
       :return: A list of Variable objects representing the ordered permutation derived from the input arguments.
-
       :rtype: list[Variable]
 
 
@@ -995,3 +1055,19 @@ Module Contents
    .. py:attribute:: variables
       :type:  list[fuzzy_dl_owl2.fuzzydl.milp.variable.Variable]
       :value: []
+
+
+
+.. py:function:: _find_cplex_executable() -> Optional[str]
+
+   Locates the CPLEX command-line binary across macOS, Linux, and Windows.
+
+   Discovery proceeds in order: the system ``PATH`` (via ``shutil.which``), the
+   ``CPLEX_STUDIO_BINARIES`` / ``CPLEX_HOME`` / ``CPLEX_STUDIO_DIR`` environment
+   variables, and finally a set of platform-specific install-location globs.
+
+   :return: The absolute path to the CPLEX executable, or ``None`` when no
+       binary is found.
+
+   :rtype: typing.Optional[str]
+

@@ -5,20 +5,20 @@ fuzzy_dl_owl2.fuzzydl.fuzzydl_to_owl2
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Software that translates FuzzyDL knowledge bases into OWL2 ontologies, preserving fuzzy logic semantics through specialized annotations and standard semantic web structures.
+A translation engine that converts FuzzyDL knowledge bases into OWL2 ontologies by embedding fuzzy logic semantics as XML annotations within standard semantic web structures.
 
 
 Description
 -----------
 
 
-The implementation acts as a bridge between fuzzy description logic and the semantic web by parsing FuzzyDL definitions and reconstructing them within an OWL2 framework. Because standard OWL2 lacks native support for fuzzy logic, the converter preserves these semantics by generating new atomic classes for complex fuzzy constructs and attaching detailed XML annotations that encode truth degrees, modifiers, and aggregation operators like OWA or Choquet integrals. The conversion process systematically iterates through the parsed knowledge base to handle concept definitions, property hierarchies, and individual assertions, translating them into corresponding OWL axioms such as subclass, equivalent classes, and property assertions. Ultimately, the tool produces a fully compliant OWL2 ontology file where fuzzy logic rules are embedded as metadata, enabling the data to be utilized by standard semantic web tools while retaining the original nuance of the fuzzy definitions.
+The software functions as a bridge between fuzzy description logic and the standard OWL2 web ontology language, parsing a FuzzyDL knowledge base to generate a corresponding OWL2 ontology. It maps fuzzy concepts, roles, and individuals to OWL classes, properties, and named individuals, respectively, while addressing the inherent incompatibility between fuzzy logic and crisp OWL2 semantics. To preserve the nuance of fuzzy truth degrees, modifiers, and complex aggregations, the engine encapsulates these details within XML annotations attached to the generated ontology entities rather than attempting to force them into native OWL2 constructs.
+
+Complex fuzzy constructs, such as weighted sums, ordered weighted averages, and modified concepts, are nominalized into new atomic classes to fit the OWL2 structure, with their specific fuzzy definitions stored in the associated annotations. The translation process handles a wide array of logical axioms, including concept equivalence, subsumption, and disjointness, converting them into standard OWL axioms annotated with non-crisp truth values where necessary. Additionally, the system manages property characteristics like domains, ranges, and transitivity, ensuring that the relational structure of the original knowledge base is accurately reflected in the target ontology.
+
+The conversion is orchestrated by a central routine that iterates through the parsed knowledge base, invoking specific handlers for concrete concepts, modifiers, and assertions to populate the ontology. It generates unique Internationalized Resource Identifiers (IRIs) for all entities based on a configurable base namespace, ensuring that the resulting ontology is distinct and properly namespaced. Once the transformation is complete, the resulting OWL2 ontology is serialized and saved to a specified file path, effectively enabling the interchange of fuzzy logic knowledge across standard semantic web platforms.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -424,6 +424,21 @@ Module Contents
 
 
 
+   .. py:method:: get_property(role: str) -> Union[pyowl2.expressions.data_property.OWLDataProperty, pyowl2.expressions.object_property.OWLObjectProperty]
+
+      Retrieves an existing property from the ontology based on the provided role name, checking for both object and data properties. The method first checks if an object property with the given role exists; if found, it returns that object property. If no object property is found, it then checks for a data property with the same role name and returns it if it exists. If neither an object nor a data property is found, the method raises a ValueError indicating that no property with the specified role exists in the ontology. This approach ensures that the method can flexibly return either type of property while providing clear error handling for missing properties.
+
+      :param role: The name of the property to retrieve, which may correspond to either an object or a data property in the ontology.
+      :type role: str
+
+      :raises ValueError: If no property (object or data) with the specified role exists in the ontology.
+
+      :return: The OWLDataProperty or OWLObjectProperty instance corresponding to the provided role name.
+
+      :rtype: typing.Union[OWLDataProperty, OWLObjectProperty]
+
+
+
    .. py:method:: individual_iri(o: object) -> pyowl2.base.iri.IRI
 
       Generates an Internationalized Resource Identifier (IRI) for a given individual object within the OWL2 ontology context. This method delegates the construction of the IRI to the class's generic `iri` method, specifically passing the `OWLNamedIndividual` type to ensure the resulting identifier adheres to the structure required for named individuals. It returns the constructed IRI, relying on the underlying implementation to handle the specific formatting and validation of the input object.
@@ -495,6 +510,14 @@ Module Contents
       :type:  dict[str, pyowl2.base.datatype.OWLDatatype]
 
 
+   .. py:attribute:: declared_individuals
+      :type:  set[str]
+
+
+   .. py:attribute:: declared_properties
+      :type:  set[str]
+
+
    .. py:attribute:: fuzzyLabel
       :type:  pyowl2.base.annotation_property.OWLAnnotationProperty
 
@@ -534,3 +557,4 @@ Module Contents
 .. py:function:: main()
 
    Serves as the command-line entry point for the script, initiating the conversion process from FuzzyDL ontology files to OWL2 format. It strictly enforces that exactly two command-line arguments are supplied: the input path for the FuzzyDL ontology and the output path for the generated OWL2 ontology. If the argument count is invalid, the function prints a usage instruction to standard error and terminates the application with an error code. When arguments are valid, it instantiates the FuzzydlToOwl2 converter with the specified paths and triggers the conversion routine, resulting in file system modifications.
+

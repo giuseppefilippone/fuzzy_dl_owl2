@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.crisp_function
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A specialized datatype class representing a crisp function within the FuzzyOWL2 framework to model precise mathematical intervals or linear transformations.
+A specialized datatype class that models crisp functions using linear coefficients to integrate precise mathematical logic into a fuzzy ontology framework.
 
 
 Description
 -----------
 
 
-Acting as a bridge between non-fuzzy, exact logic and a broader fuzzy system, the implementation models precise mathematical intervals or linear transformations using specific coefficients. The logic is driven by two primary numerical parameters, ``a`` and ``b``, which are supplied during instantiation to define the function's behavior, while operating within conceptual lower and upper bounds inherited from the parent datatype. Accessor methods are provided to retrieve these coefficients without modifying the internal state, ensuring encapsulation of the mathematical properties. Furthermore, a string representation formats the current configuration, including the bounds and coefficients, to facilitate debugging and display within the ontology context.
+Extending the base fuzzy datatype allows for the definition of exact mathematical intervals or linear transformations within an otherwise fuzzy logic environment. The core functionality relies on two primary coefficients, initialized during object creation, which determine the specific characteristics of the crisp constraint being modeled. By encapsulating these parameters and exposing them through accessor methods, the software allows for the precise definition of non-fuzzy elements that interact with the broader ontology structure. The string representation further integrates these values with conceptual bounds, offering a clear textual format for debugging or display purposes that reflects the underlying mathematical definition.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -106,3 +102,4 @@ Module Contents
 
    .. py:attribute:: _b
       :type:  float
+

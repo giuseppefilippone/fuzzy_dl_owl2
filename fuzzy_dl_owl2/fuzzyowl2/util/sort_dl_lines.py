@@ -5,6 +5,7 @@ from collections.abc import Iterable
 from itertools import groupby
 
 from fuzzy_dl_owl2.fuzzydl.util import Util
+from fuzzy_dl_owl2.fuzzydl.util.config_reader import ConfigReader
 
 # Total syntax order induced by the PDF:
 # first by page number, then by top-to-bottom order on that page.
@@ -111,17 +112,28 @@ FUZZYDL_PDF_ORDER_RE: list[re.Pattern[str]] = [
 
 def find_fuzzydl_pdf_order_index(text: str) -> int:
     """
-    Find the index of the first regex in FUZZYDL_PDF_ORDER that matches s.
-    If no entry matches, return a large number so the item sorts at the end.
+    Finds the index of the first regex in :data:`FUZZYDL_PDF_ORDER_RE` that
+    matches *text*. If no entry matches, returns a large number (``10**9``)
+    so the item sorts at the end.
+
+    :param text: The fuzzy-DL statement to classify.
+    :type text: str
+
+    :return: The PDF-order index, or ``10**9`` if unrecognised.
+
+    :rtype: int
     """
+
     for index, pattern in enumerate(FUZZYDL_PDF_ORDER_RE):
         match_result = pattern.search(text)
-        Util.debug(
-            f"Matching result -> {match_result} for pattern {pattern.pattern!r} on text {text!r}"
-        )
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(
+                f"Matching result -> {match_result} for pattern {pattern.pattern!r} on text {text!r}"
+            )
         if match_result:
             return index
-    Util.debug(f"No fuzzyDL PDF-order match for {text!r}")
+    if ConfigReader.DEBUG_PRINT:
+        Util.debug(f"No fuzzyDL PDF-order match for {text!r}")
     return 10**9
 
 
@@ -131,11 +143,20 @@ def sort_by_fuzzydl_pdf_order(
     group_separator: str = "",
 ) -> list[str]:
     """
-    Sort fuzzyDL statements by PDF order index, group equal-index items,
-    and insert `group_separator` after each group.
+    Sorts fuzzy-DL statements by PDF order index, groups equal-index items,
+    and inserts *group_separator* after each group. Unknown statements are
+    placed at the end.
 
-    Unknown statements are placed at the end.
+    :param values: The fuzzy-DL statements to sort.
+    :type values: Iterable[str]
+    :param group_separator: String inserted after each group of equal-index items.
+    :type group_separator: str
+
+    :return: The sorted statements with group separators inserted.
+
+    :rtype: list[str]
     """
+
     prepared: list[tuple[int, str]] = [
         (
             find_fuzzydl_pdf_order_index(value),
@@ -147,7 +168,8 @@ def sort_by_fuzzydl_pdf_order(
     prepared.sort(key=lambda item: (item[0], item[1]))
 
     for index, value in prepared:
-        Util.debug(f"[{index}] = {value!r}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"[{index}] = {value!r}")
 
     result: list[str] = []
 

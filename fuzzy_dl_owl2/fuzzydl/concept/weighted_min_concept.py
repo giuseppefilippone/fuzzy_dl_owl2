@@ -17,7 +17,6 @@ class WeightedMinConcept(Concept, HasWeightedConceptsInterface):
     :type name: typing.Any
     """
 
-
     def __init__(self, weights: list[float], concepts: list[Concept]) -> None:
         """
         Initializes a new instance of the WeightedMinConcept class using the provided lists of weights and concepts. This constructor configures the instance as a weighted minimum concept by invoking the initializers of the `Concept` and `HasWeightedConceptsInterface` base classes. It performs validation to ensure that the number of weights corresponds exactly to the number of concepts and that the list of weights contains at least one value equal to 1.0; failure to meet these conditions results in an error. Additionally, the method automatically computes and sets the instance's name attribute based on the input data.
@@ -147,11 +146,14 @@ class WeightedMinConcept(Concept, HasWeightedConceptsInterface):
 
     def __hash__(self) -> int:
         """
-        Computes the hash value for the instance by hashing its string representation, enabling the object to be used in hash-based collections such as dictionaries and sets. This implementation relies on the `__str__` method to generate a unique identifier for the object, ensuring that instances with identical string representations produce the same hash code. It assumes that the string representation is stable and consistent with the object's equality comparison.
+        Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-        :return: An integer hash value computed from the string representation of the object.
+        :return: An integer hash value representing the structural identity of this object.
 
         :rtype: int
         """
-
-        return hash(str(self))
+        # return hash(str(self))
+        # return id(self)
+        return hash(
+            (tuple((hash(c), w) for c, w in zip(self.concepts, self.weights)), self.name, hash(self.type))
+        )

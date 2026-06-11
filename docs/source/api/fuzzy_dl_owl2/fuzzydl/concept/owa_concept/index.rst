@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.concept.owa_concept
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-An implementation of an Ordered Weighted Averaging (OWA) concept that aggregates a collection of sub-concepts using corresponding numerical weights within a fuzzy description logic framework.
+Defines an **Ordered Weighted Averaging (OWA)** concept structure that aggregates a collection of sub-concepts using corresponding numerical weights to support fuzzy logic operations.
 
 
 Description
 -----------
 
 
-The software models an Ordered Weighted Averaging (OWA) operator, functioning as a composite structure that combines multiple sub-concepts based on a parallel list of numerical weights. During initialization, the logic ensures that the number of provided weights exactly matches the number of concepts, raising an error if a mismatch is detected to maintain structural integrity. By inheriting from specific base classes, the implementation integrates seamlessly into a broader semantic system, enabling the retrieval of atomic concepts and roles, as well as the creation of deep or shallow copies of the conceptual structure. Logical operations such as negation, conjunction, and disjunction are supported through operator overloading, which delegates the actual computation to a central operator utility, while a custom hash function allows instances to be used efficiently in hash-based collections.
+The software models an **Ordered Weighted Averaging (OWA)** operator, which functions as a composite structure designed to aggregate multiple sub-concepts by applying a specific set of numerical weights to each component. By inheriting from base classes that define conceptual behavior and weighted interfaces, the implementation ensures that the number of provided weights strictly matches the number of associated concepts, raising an error if these parallel lists are misaligned during initialization. The design supports complex logical manipulations by overloading standard operators such as negation, conjunction, and disjunction, delegating the actual computation to a central operator utility while maintaining the specific OWA structure. Furthermore, the logic includes capabilities for recursive traversal to extract atomic concepts and roles from nested structures, as well as a mechanism to generate a standardized string representation that reflects the internal weights and concept hierarchy. A custom hashing strategy is employed to establish structural identity based on the tuple of weights, the hashes of nested concepts, and the object type, ensuring that instances can be reliably compared and stored in hash-based collections.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -48,7 +44,7 @@ Module Contents
     .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzydl_concept_owa_concept_OwaConcept.pdf
        :alt: UML Class Diagram for OwaConcept
        :align: center
-       :width: 100%
+       :width: 11.8cm
        :class: uml-diagram
 
        UML Class Diagram for **OwaConcept**
@@ -83,9 +79,9 @@ Module Contents
 
    .. py:method:: __hash__() -> int
 
-      Computes an integer hash value for the instance based on its string representation, enabling the object to be used as a key in dictionaries or as an element in sets. The implementation delegates to the built-in hash function applied to the result of the object's string conversion. It is critical that the string representation remains consistent throughout the object's lifetime; if the string output changes due to internal state mutation, the hash value will also change, potentially causing the object to become inaccessible or behave incorrectly within hash-based collections.
+      Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-      :return: An integer hash value derived from the string representation of the object.
+      :return: An integer hash value representing the structural identity of this object.
 
       :rtype: int
 
@@ -166,3 +162,5 @@ Module Contents
       :return: The negation of the concept resulting from replacing all occurrences of `a` with `c`.
 
       :rtype: typing.Optional[Concept]
+
+

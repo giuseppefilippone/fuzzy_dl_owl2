@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import copy
 import typing
 from abc import abstractmethod
 
@@ -43,7 +42,6 @@ class Individual:
     :raises InconsistentOntologyException: Raised when the individual is assigned a name that conflicts with an existing name, violating the unique name assumption and resulting in an inconsistent ontology.
     """
 
-
     # Default prefix for new individual names
     DEFAULT_NAME: str = "i"
 
@@ -55,7 +53,10 @@ class Individual:
         :type name: str
         """
 
+        # Indivual name, used for equality and string representation
         self.name: str = name
+        # individual number, used for equality and string representation
+        self.individual_number: int = -1
         # Concrete role restrictions
         self.concrete_role_restrictions: dict[str, list[Assertion]] = dict()
         # Fillers to show
@@ -95,10 +96,14 @@ class Individual:
         ind.concrete_role_restrictions = {
             k: [a for a in v] for k, v in self.concrete_role_restrictions.items()
         }
-        ind.fillers_to_show = copy.deepcopy(self.fillers_to_show)
-        ind.list_of_concepts = set([c for c in self.list_of_concepts])
-        ind.nominal_list = copy.deepcopy(self.nominal_list)
-        ind.not_self_roles = copy.deepcopy(self.not_self_roles)
+        # ind.fillers_to_show = copy.deepcopy(self.fillers_to_show)
+        # ind.nominal_list = copy.deepcopy(self.nominal_list)
+        # ind.not_self_roles = copy.deepcopy(self.not_self_roles)
+        # ind.list_of_concepts = set([c for c in self.list_of_concepts])
+        ind.fillers_to_show = dict(self.fillers_to_show)
+        ind.list_of_concepts = set(self.list_of_concepts)
+        ind.nominal_list = set(self.nominal_list)
+        ind.not_self_roles = set(self.not_self_roles)
         # ind.representatives = copy.deepcopy(self.representatives)
         ind.role_restrictions = {
             k: [r.clone() for r in v] for k, v in self.role_restrictions.items()
@@ -234,6 +239,17 @@ class Individual:
         # Prune blockable successors
         for i in to_prune:
             i.prune()
+
+    def __hash__(self) -> int:
+        """
+        Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
+
+        :return: An integer hash value representing the structural identity of this object.
+
+        :rtype: int
+        """
+        # return hash(str(self))
+        return hash((self.name, self.individual_number))
 
     def __eq__(self, value: typing.Self) -> bool:
         """

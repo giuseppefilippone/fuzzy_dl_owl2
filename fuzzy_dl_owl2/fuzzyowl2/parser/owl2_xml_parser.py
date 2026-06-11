@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 import traceback
 import typing
+
 from defusedxml import ElementTree
 
 from fuzzy_dl_owl2.fuzzydl.util.config_reader import ConfigReader
@@ -88,7 +89,8 @@ class FuzzyOwl2XMLParser(object):
         """
 
         root: ElementTree.Element = ElementTree.fromstring(instring)
-        Util.debug(f"XML PARSER -> {FuzzyXML.to_str(root)}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"XML PARSER -> {FuzzyXML.to_str(root)}")
         assert root.tag == FuzzyOWL2Keyword.FUZZY_OWL_2
 
         annotation_type: str = root.attrib.get(
@@ -258,15 +260,15 @@ class FuzzyOwl2XMLParser(object):
             raise ValueError
 
     @staticmethod
-    def load_config(*args) -> None:
+    def load_config(**kargs) -> None:
         """
         This static method loads configuration parameters by reading a "CONFIG.ini" file located in the current working directory. It acts as a wrapper that forwards any provided arguments to the underlying `ConfigReader.load_parameters` method to facilitate the parsing and application of settings. The operation modifies the global or class-level configuration state but does not return a value. Note that this method relies on the specific execution context, as it will fail to locate the configuration file if the current working directory does not contain "CONFIG.ini".
 
-        :param args: Additional arguments passed directly to the underlying configuration loader.
-        :type args: typing.Any
+        :param kargs: Additional arguments passed directly to the underlying configuration loader.
+        :type kargs: typing.Any
         """
 
-        ConfigReader.load_parameters(os.path.join(os.getcwd(), "CONFIG.ini"), args)
+        ConfigReader.load_parameters(os.path.join(os.getcwd(), "CONFIG.ini"), **kargs)
 
     @staticmethod
     def main(

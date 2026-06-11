@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.query.max.max_related_query
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A query mechanism that calculates the maximum degree of truth for a specific relationship between two individuals within a fuzzy knowledge base.
+Determines the maximum degree of truth for a specific role relationship between two individuals within a fuzzy ontology using mathematical optimization.
 
 
 Description
 -----------
 
 
-This component extends the functionality of relationship queries by focusing on optimization rather than simple verification, specifically seeking the highest possible truth value for a role assertion between two defined entities. By leveraging Mixed-Integer Linear Programming (MILP), the logic translates the fuzzy description logic constraints into mathematical expressions that can be solved numerically. During execution, the system isolates the problem by cloning the knowledge base to prevent side effects on the original data, then formulates an objective function that targets the specific variable representing the relationship degree. Error handling is integrated directly into the workflow to manage cases where the underlying ontology is inconsistent, ensuring that the process fails gracefully without corrupting the system state.
+Designed to calculate the highest possible membership degree for a relationship assertion, the logic translates the semantic query into a Mixed-Integer Linear Programming (MILP) formulation. It achieves this by constructing a specific concept restriction that represents the role value, which is then used to define an objective expression aimed at maximizing the corresponding variable. The execution process ensures data integrity by cloning the knowledge base before performing any modifications, allowing the optimization to run on an isolated instance while the original remains untouched. Robustness is built into the workflow through exception handling that detects ontology inconsistencies, returning a designated solution status instead of propagating errors when the knowledge base cannot be satisfied.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -114,3 +110,4 @@ Module Contents
 
    .. py:attribute:: role
       :type:  str
+

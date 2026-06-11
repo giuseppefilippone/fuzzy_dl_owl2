@@ -19,6 +19,10 @@ def debugging_wrapper(cls, func):
     :type cls: typing.Any
     :param func: The method or function to be wrapped with debug logging.
     :type func: typing.Any
+
+    :return: The wrapped function, which logs entry/exit around ``func`` and returns its result unchanged.
+
+    :rtype: typing.Callable
     """
 
 
@@ -30,23 +34,55 @@ def debugging_wrapper(cls, func):
 
     @functools.wraps(func)
     def wrapped(*args, **kwargs):
-        Util.debug(
-            f"\t\t\t>>>>Entering {cls.__name__}:{func.__name__} with args={args if is_static else args[1:]}, kwargs={kwargs}"
-        )
+        """
+        Wrapped version of the target method that logs its entry and exit when debugging is enabled. The positional arguments and keyword arguments are logged on entry (omitting the leading ``self``/``cls`` for non-static methods) and the return value is logged on exit, both gated by :attr:`ConfigReader.DEBUG_PRINT`. The original return value is passed through unchanged.
+
+        :param args: Positional arguments forwarded verbatim to the wrapped method.
+        :type args: typing.Any
+        :param kwargs: Keyword arguments forwarded verbatim to the wrapped method.
+        :type kwargs: typing.Any
+
+        :return: Whatever the wrapped method returns.
+
+        :rtype: typing.Any
+        """
+
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(
+                f"\t\t\t>>>>Entering {cls.__name__}:{func.__name__} with args={args if is_static else args[1:]}, kwargs={kwargs}"
+            )
         result = func(*args, **kwargs)
-        Util.debug(
-            f"\t\t\t<<<<Leaving {cls.__name__}:{func.__name__} returned {result}"
-        )
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(
+                f"\t\t\t<<<<Leaving {cls.__name__}:{func.__name__} returned {result}"
+            )
         return result
 
     return wrapped
 
 
 def class_debugging():
-    """This function serves as a decorator factory that generates a class-level decorator to instrument all instance methods with debugging capabilities. When applied to a class, it checks the global `FULL_CLASS_DEBUG_PRINT` flag; if this flag is true, the decorator iterates over the class's attributes to identify functions and replaces them with wrapped versions using `debugging_wrapper`. This mechanism enables automatic logging or tracing of method execution across the entire class, contingent on the global configuration state."""
+    """
+    This function serves as a decorator factory that generates a class-level decorator to instrument all instance methods with debugging capabilities. When applied to a class, it checks the global `FULL_CLASS_DEBUG_PRINT` flag; if this flag is true, the decorator iterates over the class's attributes to identify functions and replaces them with wrapped versions using `debugging_wrapper`. This mechanism enables automatic logging or tracing of method execution across the entire class, contingent on the global configuration state.
+
+    :return: A class decorator that optionally instruments the methods of the class it is applied to.
+
+    :rtype: typing.Callable
+    """
 
 
     def class_decorator(cls):
+        """
+        Class decorator that, when ``FULL_CLASS_DEBUG_PRINT`` is enabled, wraps every plain function attribute of the class with :func:`debugging_wrapper` to trace method calls. When the flag is disabled the class is returned untouched. The class is always returned (mutated in place when wrapping occurs).
+
+        :param cls: The class to instrument with debug wrappers.
+        :type cls: typing.Any
+
+        :return: The same class, with its methods optionally wrapped.
+
+        :rtype: typing.Any
+        """
+
         if FULL_CLASS_DEBUG_PRINT:
             for attr_name in dir(cls):
                 attr = getattr(cls, attr_name)
@@ -66,12 +102,31 @@ def recursion_unlimited(func: typing.Callable):
 
     :param func: The callable to be wrapped that may raise a RecursionError; the wrapper will dynamically increase the recursion limit until the function succeeds.
     :type func: typing.Callable
+
+    :return: The wrapped callable, which retries ``func`` while raising the recursion limit and always restores the original limit afterwards.
+
+    :rtype: typing.Callable
     """
 
     module: types.ModuleType = inspect.getmodule(func)
 
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
+        """
+        Wrapped version of the target callable that retries on ``RecursionError`` by repeatedly doubling the interpreter's recursion limit until the call succeeds or the limit would exceed ``RECURSION_LIMIT_CAP``. The original recursion limit is always restored in a ``finally`` block once the call returns or finally fails.
+
+        :param args: Positional arguments forwarded verbatim to the wrapped callable.
+        :type args: typing.Any
+        :param kwargs: Keyword arguments forwarded verbatim to the wrapped callable.
+        :type kwargs: typing.Any
+
+        :raises RecursionError: if doubling the recursion limit would exceed ``RECURSION_LIMIT_CAP``.
+
+        :return: Whatever the wrapped callable returns.
+
+        :rtype: typing.Any
+        """
+
         orig_n: int = sys.getrecursionlimit()
         try:
             while True:

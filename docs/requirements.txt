@@ -5,12 +5,15 @@ networkx==3.3
 numpy==2.2.6
 pandas==2.3.0
 pulp==3.2.1
-pyowl2>=1.0.6,<2.0.0
+pyowl2>=1.0.7,<2.0.0
 pyparsing==3.2.3
 rdflib==7.1.4
 setuptools==80.8.0
 sortedcontainers==2.4.0
 trycast==1.2.1
+defusedxml==0.7.1
+python-dotenv==1.0.1
+cffi==1.17.1
 pillow==11.3.0
 langchain-ollama==0.3.6
 #sphinx-autoapi

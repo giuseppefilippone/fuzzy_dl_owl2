@@ -5,6 +5,9 @@ from test_aggregation import TestAggregation
 from test_all import TestAll
 from test_and import TestAnd
 from test_blocking import TestBlocking
+from test_conversion_dl_to_owl2 import TestConversionDlToOwl2
+from test_conversion_owl2_to_dl import TestConversionOwl2ToDl
+from test_conversion_roundtrip import TestConversionRoundtrip
 from test_datatype import TestDatatype
 from test_disjoint import TestDisjoint
 from test_functional import TestFunctional
@@ -71,6 +74,9 @@ def suite():
     suite.addTests(loader.loadTestsFromTestCase(TestWeightedConcept))
     suite.addTests(loader.loadTestsFromTestCase(TestWeightedSum))
     suite.addTests(loader.loadTestsFromTestCase(TestBlocking))
+    suite.addTests(loader.loadTestsFromTestCase(TestConversionDlToOwl2))
+    suite.addTests(loader.loadTestsFromTestCase(TestConversionOwl2ToDl))
+    suite.addTests(loader.loadTestsFromTestCase(TestConversionRoundtrip))
     return suite
 
 

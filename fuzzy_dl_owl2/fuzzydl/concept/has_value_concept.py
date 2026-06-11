@@ -1,4 +1,4 @@
-import copy
+# import copy
 import typing
 
 from fuzzy_dl_owl2.fuzzydl.concept.concept import Concept
@@ -17,7 +17,6 @@ class HasValueConcept(Concept, HasValueInterface):
     :param name: String representation of the concept in the format (b-some role value).
     :type name: str
     """
-
 
     def __init__(self, role: str, value: typing.Any) -> None:
         """
@@ -60,7 +59,8 @@ class HasValueConcept(Concept, HasValueInterface):
         :rtype: typing.Self
         """
 
-        return HasValueConcept(self.role, copy.deepcopy(self.value))
+        # return HasValueConcept(self.role, copy.deepcopy(self.value))
+        return HasValueConcept(self.role, self.value)
 
     def replace(self, a: Concept, c: Concept) -> Concept:
         """
@@ -153,11 +153,15 @@ class HasValueConcept(Concept, HasValueInterface):
 
     def __hash__(self) -> int:
         """
-        Returns an integer hash value derived from the string representation of the object, allowing instances to be used as dictionary keys or stored in sets. The calculation is performed by passing the result of `__str__` to the built-in hash function. Because the hash depends on the string output, any mutation of the object that alters its string representation will result in a different hash, which may cause the object to become inaccessible if it is used as a key in a hash-based collection after modification.
+        Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-        :return: An integer hash of the object's string representation.
+        :return: An integer hash value representing the structural identity of this object.
 
         :rtype: int
         """
 
-        return hash(str(self))
+        # return hash(str(self))
+        # return id(self)
+        return hash(
+            (hash(self.type), hash(self.role), hash(self.value))
+        )

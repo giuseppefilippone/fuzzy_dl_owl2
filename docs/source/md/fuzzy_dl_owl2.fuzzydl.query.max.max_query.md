@@ -1,7 +1,7 @@
 # Summary
 
-A query operation that determines the maximum possible value of a specific expression while maintaining consistency with a fuzzy knowledge base.
+A query operation that calculates the maximum possible value of a specific expression within a fuzzy knowledge base by transforming the maximization problem into a minimization task.
 
 ## Description
 
-Extending the base query functionality, this component handles optimization requests aimed at finding the upper bound of a mathematical expression defined within an ontology. To achieve this, the implementation transforms the objective by negating the input expression, effectively converting a maximization problem into a minimization task that the underlying solver can process. During execution, the logic first ensures the consistency of the assertional data (ABox) and then creates a clone of the knowledge base to perform the optimization without altering the original state. If the data is inconsistent, the process gracefully handles the exception and returns a solution indicating the failure state rather than attempting the calculation.
+The logic extends the generic query framework to handle optimization requests where the goal is to find the upper bound of a given mathematical or logical expression. To achieve this, the implementation relies on a design pattern where the target expression is mathematically negated during initialization, allowing the underlying optimization engine—which is designed for minimization—to effectively solve for the maximum value. During execution, the process first ensures the consistency of the data through ABox reasoning before creating a separate clone of the knowledge base to prevent unintended side effects on the original data structure. The optimization routine is then applied to this cloned instance, with robust error handling in place to return a specific status indicating inconsistency if the reasoning phase fails, rather than raising a runtime error.

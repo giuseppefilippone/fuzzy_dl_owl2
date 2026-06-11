@@ -1,0 +1,13 @@
+(define-fuzzy-logic lukasiewicz)
+
+(define-primitive-concept Animal *top*)
+(define-primitive-concept Mammal *top*)
+(define-primitive-concept Mammal Human)
+
+(instance alice Human 1.0)
+(instance bob Animal 0.8)
+
+(related alice bob knows 0.9)
+
+(disjoint Human Plant)
+

@@ -2,11 +2,11 @@ import typing
 
 from fuzzy_dl_owl2.fuzzydl.concept.concept import Concept
 from fuzzy_dl_owl2.fuzzydl.individual.individual import Individual
-from fuzzy_dl_owl2.fuzzydl.milp.variable import Variable
+from fuzzy_dl_owl2.fuzzydl.milp.variable import Variable  # Variable
 
 
 class SigmaCount:
-    """
+    r"""
     This class represents a sigma-count concept within fuzzy description logic, serving as a structural representation for evaluating constraints based on the quantity of role fillers. It defines a condition where a target individual is considered satisfied if the number of related entities—connected via a specific role and conforming to a particular concept—falls within a fuzzy set determined by a collection of reference individuals. To use this class, instantiate it with a variable for the count, the target individual, the list of reference individuals, the role name, and the concept to be evaluated. The object provides methods to access these internal components and a cloning utility to create deep copies of the instance.
 
     :param variable: The variable associated with the sigma-count concept, used for counting the number of role fillers that satisfy the concept C.
@@ -21,10 +21,9 @@ class SigmaCount:
     :type concept: Concept
     """
 
-
     def __init__(
         self,
-        var: Variable,
+        var: Variable,  # Variable
         ind: Individual,
         inds: list[Individual],
         role: str,
@@ -45,7 +44,7 @@ class SigmaCount:
         :type concept: Concept
         """
 
-        self.variable: Variable = var
+        self.variable: Variable = var  # Variable
         self.individual: Individual = ind
         self.individuals: list[Individual] = inds
         self.role: str = role
@@ -68,7 +67,7 @@ class SigmaCount:
             self.concept.clone(),
         )
 
-    def get_variable(self) -> Variable:
+    def get_variable(self) -> Variable:  # Variable
         """
         Retrieves the `Variable` instance associated with this `SigmaCount` object. This method acts as a simple accessor, returning the reference to the internal variable attribute without modifying the state of the object. It allows external code to inspect which variable is being tracked or aggregated by the counter.
 
@@ -125,14 +124,17 @@ class SigmaCount:
 
     def __hash__(self) -> int:
         """
-        Computes the hash value for the instance by hashing its string representation. This allows the object to be used as a dictionary key or stored in a set. The hash is derived directly from the output of the `__str__` method, ensuring that the hash value remains consistent as long as the string representation does not change.
+        Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-        :return: An integer hash value calculated from the object's string representation.
+        :return: An integer hash value representing the structural identity of this object.
 
         :rtype: int
         """
-
-        return hash(str(self))
+        # return hash(str(self))
+        # return id(self)
+        return hash(
+            (hash(self.variable), hash(self.individual), tuple(hash(i) for i in self.individuals), self.role, hash(self.concept))
+        )
 
     def __repr__(self) -> str:
         """

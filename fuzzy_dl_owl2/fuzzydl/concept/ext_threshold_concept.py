@@ -5,7 +5,7 @@ from fuzzy_dl_owl2.fuzzydl.concept.interface.has_concept_interface import (
     HasConceptInterface,
 )
 from fuzzy_dl_owl2.fuzzydl.concept.operator_concept import OperatorConcept
-from fuzzy_dl_owl2.fuzzydl.milp.variable import Variable
+from fuzzy_dl_owl2.fuzzydl.milp.variable import Variable  # Variable
 from fuzzy_dl_owl2.fuzzydl.util.constants import ConceptType
 
 
@@ -19,9 +19,8 @@ class ExtThresholdConcept(Concept, HasConceptInterface):
     :type name: str
     """
 
-
     def __init__(
-        self, c_type: ConceptType, c: Concept, weight_variable: Variable
+        self, c_type: ConceptType, c: Concept, weight_variable: Variable  # Variable
     ) -> None:
         """
         Initializes an instance representing a concept with an external threshold, configuring it with a specific concept type, a base concept, and a weight variable. The method enforces that the provided concept type must be either a positive or negative external threshold, raising an error otherwise. It performs initialization for the parent `Concept` and `HasConceptInterface` classes, stores the weight variable, and automatically computes the instance's name.
@@ -41,26 +40,34 @@ class ExtThresholdConcept(Concept, HasConceptInterface):
             ConceptType.EXT_POS_THRESHOLD,
             ConceptType.EXT_NEG_THRESHOLD,
         )
-        self._weight_variable: Variable = weight_variable
+        self._weight_variable: Variable = weight_variable  # Variable
         self.name: str = self.compute_name()
 
     @property
-    def weight_variable(self) -> Variable:
+    def weight_variable(self) -> Variable:  # Variable
         """
-        Sets the weight variable associated with this concept instance. This method accepts a Variable object and assigns it to the internal `_weight_variable` attribute, replacing any existing value. It serves as the setter for the `weight_variable` property, enabling external modification of the concept's internal state.
+        Returns the MILP :class:`Variable` that carries the threshold weight of this extended-threshold concept. Unlike the plain :class:`ThresholdConcept`, the weight here is a solver variable rather than a fixed constant, allowing the reasoner to determine it. The value is read from the private ``_weight_variable`` attribute without modifying the instance.
 
-        :param value: The instance to assign as the weight variable.
-        :type value: Variable
+        :return: The variable holding the threshold weight.
+
+        :rtype: Variable
         """
 
         return self._weight_variable
 
     @weight_variable.setter
-    def weight_variable(self, value: Variable) -> None:
+    def weight_variable(self, value: Variable) -> None:  # Variable
+        """
+        Sets the MILP :class:`Variable` that carries the threshold weight of this extended-threshold concept. The provided variable is stored directly in the private ``_weight_variable`` attribute without validation.
+
+        :param value: The new variable to hold the threshold weight.
+        :type value: Variable
+        """
+
         self._weight_variable = value
 
     @staticmethod
-    def extended_pos_threshold(v: Variable, c: typing.Self) -> typing.Self:
+    def extended_pos_threshold(v: Variable, c: typing.Self) -> typing.Self:  # Variable
         """
         Creates a new instance of `ExtThresholdConcept` representing an extended positive threshold. This static method takes a `Variable` and an existing `ExtThresholdConcept` as inputs to construct the new object. It returns the newly created concept configured with the type `EXT_POS_THRESHOLD`, combining the provided variable and the existing concept without modifying the original arguments.
 
@@ -77,7 +84,7 @@ class ExtThresholdConcept(Concept, HasConceptInterface):
         return ExtThresholdConcept(ConceptType.EXT_POS_THRESHOLD, c, v)
 
     @staticmethod
-    def extended_neg_threshold(v: Variable, c: typing.Self) -> typing.Self:
+    def extended_neg_threshold(v: Variable, c: typing.Self) -> typing.Self:  # Variable
         """
         Constructs a new instance representing an extended negative threshold concept by combining a variable with an existing concept. This static method acts as a factory that initializes an `ExtThresholdConcept` with the specific type identifier `EXT_NEG_THRESHOLD`, passing the provided concept and variable to the constructor. The operation does not modify the input arguments but rather creates a new object that encapsulates the logical relationship defined by the negative threshold.
 
@@ -94,7 +101,13 @@ class ExtThresholdConcept(Concept, HasConceptInterface):
         return ExtThresholdConcept(ConceptType.EXT_NEG_THRESHOLD, c, v)
 
     def clone(self):
-        """Generates a duplicate of the current object by creating a new instance of `ExtThresholdConcept` initialized with the existing `type`, `curr_concept`, and `weight_variable` attributes. This method ensures that the original object remains unmodified, effectively providing a snapshot of the object's state at the time of the call. Note that because the constructor receives direct references to the attributes, the resulting clone performs a shallow copy, meaning any mutable objects referenced by these attributes will be shared between the original and the new instance."""
+        """
+        Generates a duplicate of the current object by creating a new instance of `ExtThresholdConcept` initialized with the existing `type`, `curr_concept`, and `weight_variable` attributes. This method ensures that the original object remains unmodified, effectively providing a snapshot of the object's state at the time of the call. Note that because the constructor receives direct references to the attributes, the resulting clone performs a shallow copy, meaning any mutable objects referenced by these attributes will be shared between the original and the new instance.
+
+        :return: A shallow copy of this concept.
+
+        :rtype: ExtThresholdConcept
+        """
 
         return ExtThresholdConcept(self.type, self.curr_concept, self.weight_variable)
 
@@ -193,14 +206,23 @@ class ExtThresholdConcept(Concept, HasConceptInterface):
 
     def __hash__(self) -> int:
         """
-        Computes the hash value for the instance by delegating to the hash of its string representation. This allows the object to be used as a dictionary key or stored in a set. The resulting integer hash depends entirely on the output of the object's `__str__` method.
+        Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-        :return: An integer hash value computed from the string representation of the object, intended for use in hashed collections.
+        :return: An integer hash value representing the structural identity of this object.
 
         :rtype: int
         """
 
-        return hash(str(self))
+        # return hash(str(self))
+        # return id(self)
+        return hash(
+            (
+                hash(self.curr_concept),
+                hash(self.weight_variable),
+                hash(self.type),
+                self.name,
+            )
+        )
 
 
 ExtendedPosThreshold = ExtThresholdConcept.extended_pos_threshold

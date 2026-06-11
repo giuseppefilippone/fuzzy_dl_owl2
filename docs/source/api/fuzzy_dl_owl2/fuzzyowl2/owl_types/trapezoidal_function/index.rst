@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.trapezoidal_function
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A Python implementation of a trapezoidal membership function that models fuzzy sets with a flat top region.
+A Python implementation of a trapezoidal membership function that models fuzzy sets using four defining coordinates.
 
 
 Description
 -----------
 
 
-Extending the ``FuzzyDatatype`` base class, the software defines a geometric shape used to represent fuzzy logic sets where membership values rise, plateau, and fall based on four specific coordinates. The design encapsulates the mathematical properties of a trapezoid by storing the left endpoint, left peak, right peak, and right endpoint as floating-point values, which dictate the linear increase, constant maximum, and linear decrease of the membership degree. Accessor methods allow retrieval of these geometric parameters, ensuring that the specific configuration of the fuzzy set can be queried or utilized by other components. Integration into the FuzzyOWL2 framework is achieved through this structure, enabling the representation of complex fuzzy data types with well-defined boundaries and a human-readable string format for debugging.
+The software models a trapezoidal membership function, a core concept in fuzzy logic for defining sets with a flat top region where membership is complete. It relies on four floating-point parameters to establish the geometry: the left endpoint, the left peak, the right peak, and the right endpoint, which dictate the linear rise, the plateau, and the linear fall of the function. By inheriting from a base fuzzy datatype, this implementation integrates seamlessly into the FuzzyOWL2 framework to represent specific fuzzy data types with precise geometric boundaries. Accessor methods allow the retrieval of these coordinate values, while a string representation provides a human-readable summary of the function's configuration for debugging or logging purposes.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -138,3 +134,4 @@ Module Contents
 
    .. py:attribute:: _d
       :type:  float
+

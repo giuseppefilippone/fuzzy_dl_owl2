@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.concept.sigma_count
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A structural representation of a sigma-count concept used in fuzzy description logic to evaluate constraints based on the number of role fillers satisfying specific conditions.
+A structural representation of a sigma-count concept within fuzzy description logic that evaluates constraints based on the quantity of role fillers satisfying specific conditions.
 
 
 Description
 -----------
 
 
-The ``SigmaCount`` class encapsulates the components necessary to evaluate constraints based on the quantity of role fillers within a fuzzy description logic framework. It holds references to a counting variable, a target individual, a set of reference individuals, a specific role, and a concept that fillers must satisfy. By including a deep cloning utility, the design ensures that instances can be copied independently to preserve state during complex logical operations or optimizations. Additionally, standard hashing and string formatting capabilities are provided to support usage in hash-based collections and to enable clear textual representation for debugging purposes.
+Sigma-count concepts serve to quantify the number of role fillers that satisfy a specific condition, effectively bridging fuzzy set theory with description logic structures. By encapsulating a variable, a target individual, a collection of reference individuals, a role identifier, and a specific concept, the implementation allows for the evaluation of whether the count of related entities meets a fuzzy constraint. The design ensures that these logical components can be safely duplicated through deep cloning, which is essential for maintaining state integrity during complex reasoning tasks. Furthermore, the implementation provides robust hashing and string representation capabilities, enabling instances to be used effectively within hash-based collections and facilitating readable debugging output.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -71,9 +67,9 @@ Module Contents
 
    .. py:method:: __hash__() -> int
 
-      Computes the hash value for the instance by hashing its string representation. This allows the object to be used as a dictionary key or stored in a set. The hash is derived directly from the output of the `__str__` method, ensuring that the hash value remains consistent as long as the string representation does not change.
+      Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-      :return: An integer hash value calculated from the object's string representation.
+      :return: An integer hash value representing the structural identity of this object.
 
       :rtype: int
 
@@ -177,3 +173,4 @@ Module Contents
 
    .. py:attribute:: variable
       :type:  fuzzy_dl_owl2.fuzzydl.milp.variable.Variable
+

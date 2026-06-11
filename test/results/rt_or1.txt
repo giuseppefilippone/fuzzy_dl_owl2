@@ -1,0 +1,7 @@
+(define-fuzzy-logic lukasiewicz)
+
+(define-primitive-concept A *top*)
+(define-primitive-concept B *top*)
+
+(instance a (or A B) 1.0)
+

@@ -11,7 +11,6 @@ class ConcreteFeature:
     :raises ValueError: Raised when the arguments provided during initialization are invalid, such as having an incorrect number of arguments or types that do not match the expected signature for a boolean or numeric feature.
     """
 
-
     @typing.overload
     def __init__(self, name: str) -> None: ...
 
@@ -26,18 +25,17 @@ class ConcreteFeature:
 
     def __init__(self, *args) -> None:
         """
-        Initializes the ConcreteFeature instance by delegating to specific internal initialization logic based on the number and types of arguments provided. The first argument must always be a string, serving as the feature's identifier. The constructor supports three distinct signatures: a single string; a string followed by a boolean flag; or a string followed by two numeric values, which must be either integers or specific number constants defined in the module. If the number of arguments is not between one and three, or if the types of the arguments do not conform to these specific patterns, the method raises an assertion error or a ValueError.
+        Initializes the ConcreteFeature instance by delegating to specific internal initialization logic based on the number and types of arguments provided. The first argument must always be a string, serving as the feature's identifier. The constructor supports three distinct signatures: a single string; a string followed by a boolean flag; or a string followed by two numeric values, which must be either integers or specific number constants defined in the module. If the number of arguments is not between one and three, or if the types of the arguments do not conform to these specific patterns, the method raises a `TypeError` or a `ValueError`.
 
         :param args: Variable-length arguments allowing initialization with a string, a string and a boolean, or a string and two numeric values (integers or constants.NUMBER).
         :type args: typing.Any
 
-        :raises ValueError: Raised if the number of arguments is not 1, 2, or 3, or if three arguments are provided but the second and third arguments are not both integers or both of type `constants.NUMBER`.
+        :raises TypeError: Raised if the number of arguments is not 1, 2, or 3, if the first argument is not a string, or if the second argument of a two-argument call is not a boolean.
+        :raises ValueError: Raised if three arguments are provided but the second and third arguments are not both integers or both of type `constants.NUMBER`.
         """
 
         if len(args) not in (1, 2, 3):
-            raise TypeError(
-                f"ConcreteFeature expects 1, 2, or 3 args, got {len(args)}"
-            )
+            raise TypeError(f"ConcreteFeature expects 1, 2, or 3 args, got {len(args)}")
         if not isinstance(args[0], str):
             raise TypeError(
                 f"ConcreteFeature[0] must be str, got {type(args[0]).__name__}"
@@ -139,7 +137,7 @@ class ConcreteFeature:
         """
 
         if self.type == ConcreteFeatureType.BOOLEAN:
-            return ConcreteFeature(self.name, is_boolean=True)
+            return ConcreteFeature(self.name, True)
         elif self.type == ConcreteFeatureType.STRING:
             return ConcreteFeature(self.name)
 

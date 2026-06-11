@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.linear_function
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Implements a linear membership function used to calculate degrees of membership in fuzzy sets.
+Implements a linear membership function for the FuzzyOWL2 framework by defining geometric parameters and bounds.
 
 
 Description
 -----------
 
 
-Extending the base fuzzy datatype, this component models a linear relationship to determine membership degrees within a fuzzy set. It relies on two primary coefficients, representing the slope and intercept, to define the geometric properties of the function and calculate how specific values map to a degree of membership. The implementation encapsulates these parameters to facilitate calculations while providing a string representation that includes inherited boundary values for debugging and serialization purposes. By abstracting the mathematical definition of a line, the logic supports the broader framework's ability to handle fuzzy logic constraints and reasoning.
+The software extends the base fuzzy datatype to model a specific type of membership function characterized by a linear progression between defined points. It relies on two primary coefficients, stored as private attributes, to determine the slope and intercept of the line, which are essential for calculating the degree of membership for a given value. In addition to these linear coefficients, the implementation integrates with inherited lower and upper bounds to fully constrain the domain of the function. Accessor methods are provided to retrieve the specific parameters, while a string representation utility outputs the complete definition including the inherited bounds for debugging or display purposes.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -106,3 +102,4 @@ Module Contents
 
    .. py:attribute:: _b
       :type:  float
+

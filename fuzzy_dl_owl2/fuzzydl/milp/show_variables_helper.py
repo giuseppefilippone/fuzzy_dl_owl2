@@ -6,10 +6,10 @@ import typing
 from fuzzy_dl_owl2.fuzzydl.concept.concrete.fuzzy_concrete_concept import (
     FuzzyConcreteConcept,
 )
-from fuzzy_dl_owl2.fuzzydl.milp.variable import Variable
+from fuzzy_dl_owl2.fuzzydl.milp.variable import Variable  # Variable
 
 
-class ShowVariablesHelper:
+class ShowVariablesHelper:  # Variable
     """
     This class serves as a configuration manager for determining which elements of a fuzzy description logic ontology should be displayed. It enables the selective tracking of atomic concepts, individuals, abstract roles, and concrete features, distinguishing between global visibility—applying to all entities—and specific visibility restricted to particular individuals. Additionally, it manages the mapping of internal variable objects to display names and handles the association of fuzzy linguistic labels with concrete feature fillers. Users can interact with this class to populate these sets, query visibility status, and clone the entire configuration state to preserve or branch the current display settings.
 
@@ -50,7 +50,7 @@ class ShowVariablesHelper:
         # For every concrete filler, show the membership degree to these fuzzy concrete concepts
         self.labels_for_fillers: dict[str, list[FuzzyConcreteConcept]] = dict()
         # Show these variables
-        self.variables: dict[Variable, str] = dict()
+        self.variables: dict[Variable, str] = dict()  # Variable
 
     def clone(self) -> typing.Self:
         """
@@ -61,20 +61,26 @@ class ShowVariablesHelper:
         :rtype: typing.Self
         """
 
-        s = ShowVariablesHelper()
-        s.abstract_fillers = copy.deepcopy(self.abstract_fillers)
-        s.concepts = copy.deepcopy(self.concepts)
-        s.concrete_fillers = copy.deepcopy(self.concrete_fillers)
-        s.global_abstract_fillers = copy.deepcopy(self.global_abstract_fillers)
-        s.global_concrete_fillers = copy.deepcopy(self.global_concrete_fillers)
-        s.individuals = copy.deepcopy(self.individuals)
+        s = ShowVariablesHelper()  # Variable
+        # s.abstract_fillers = copy.deepcopy(self.abstract_fillers)
+        # s.concepts = copy.deepcopy(self.concepts)
+        # s.concrete_fillers = copy.deepcopy(self.concrete_fillers)
+        # s.global_abstract_fillers = copy.deepcopy(self.global_abstract_fillers)
+        # s.global_concrete_fillers = copy.deepcopy(self.global_concrete_fillers)
+        # s.individuals = copy.deepcopy(self.individuals)
+        s.abstract_fillers = dict(self.abstract_fillers)
+        s.concepts = set(self.concepts)
+        s.concrete_fillers = dict(self.concrete_fillers)
+        s.global_abstract_fillers = set(self.global_abstract_fillers)
+        s.global_concrete_fillers = set(self.global_concrete_fillers)
+        s.individuals = set(self.individuals)
         s.labels_for_fillers = {
             k: [c for c in v] for k, v in self.labels_for_fillers.items()
         }
         s.variables = {k: v for k, v in self.variables.items()}
         return s
 
-    def get_name(self, var: Variable) -> str:
+    def get_name(self, var: Variable) -> str:  # Variable
         """
         Retrieves the string name associated with a given `Variable` instance by querying the internal mapping of variables. This method serves as a read-only accessor to resolve variable objects to their string identifiers. If the specified variable is not present in the internal collection, the method returns `None`.
 
@@ -88,7 +94,7 @@ class ShowVariablesHelper:
 
         return self.variables.get(var)
 
-    def show_variable(self, var: Variable) -> bool:
+    def show_variable(self, var: Variable) -> bool:  # Variable
         """
         Determines whether a specific variable is present within the internal collection managed by the helper. It performs a membership check against the stored variables and returns a boolean value indicating if the variable is currently tracked. This method is a read-only operation and does not modify the state of the helper or the variable itself.
 
@@ -337,7 +343,7 @@ class ShowVariablesHelper:
 
         return concept_name in self.concepts
 
-    def add_variable(self, var: Variable, name_to_show: str) -> None:
+    def add_variable(self, var: Variable, name_to_show: str) -> None:  # Variable
         """
         Registers a specific `Variable` instance for display, associating it with a custom string label to be used when rendering or presenting the variable. This method updates the internal state of the helper by storing the mapping between the variable object and its designated display name. If the variable is already present in the collection, the existing display name will be overwritten with the new value, ensuring that the most recent label is retained.
 
@@ -349,7 +355,7 @@ class ShowVariablesHelper:
 
         self.variables[var] = name_to_show
 
-    def get_variables(self) -> list[Variable]:
+    def get_variables(self) -> list[Variable]:  # Variable
         """
         Returns a list of variables currently managed by the helper for display purposes. This method retrieves the keys from the internal `variables` mapping and returns them as a new list, ensuring that modifications to the returned collection do not affect the helper's internal state. If no variables are stored, an empty list is returned.
 

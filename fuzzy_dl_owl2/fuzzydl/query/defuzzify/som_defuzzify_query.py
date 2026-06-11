@@ -3,8 +3,8 @@ from __future__ import annotations
 from fuzzy_dl_owl2.fuzzydl.concept.concept import Concept
 from fuzzy_dl_owl2.fuzzydl.individual.individual import Individual
 from fuzzy_dl_owl2.fuzzydl.milp.expression import Expression
-from fuzzy_dl_owl2.fuzzydl.milp.term import Term
-from fuzzy_dl_owl2.fuzzydl.milp.variable import Variable
+from fuzzy_dl_owl2.fuzzydl.milp.term import Term  # Term
+from fuzzy_dl_owl2.fuzzydl.milp.variable import Variable  # Variable
 from fuzzy_dl_owl2.fuzzydl.query.defuzzify.defuzzify_query import DefuzzifyQuery
 
 
@@ -37,7 +37,7 @@ class SomDefuzzifyQuery(DefuzzifyQuery):
 
         return f"Smallest of the maxima defuzzification of feature {self.f_name} for instance {self.a} = "
 
-    def get_obj_expression(self, q: Variable) -> Expression:
+    def get_obj_expression(self, q: Variable) -> Expression:  # Variable
         """
         Constructs a linear expression representing the provided variable with a coefficient of 1.0. The method encapsulates the variable within a Term object assigned a unit weight and wraps it in an Expression structure, effectively creating a mathematical representation of the variable itself. This function is stateless and produces no side effects on the instance or the input variable, though it assumes the input is a valid Variable object to prevent errors during Term instantiation.
 
@@ -49,4 +49,4 @@ class SomDefuzzifyQuery(DefuzzifyQuery):
         :rtype: Expression
         """
 
-        return Expression(Term(1.0, q))
+        return Expression(Term(1.0, q))  # Term

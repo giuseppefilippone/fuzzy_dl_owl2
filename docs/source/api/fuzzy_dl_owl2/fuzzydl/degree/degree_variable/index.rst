@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.degree.degree_variable
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Defines a symbolic representation of a degree of satisfaction using an algebraic variable to enable dynamic constraint generation within a fuzzy logic system.
+A symbolic wrapper for algebraic variables allows degrees of satisfaction in a fuzzy logic system to be treated as unknowns that must be solved for rather than fixed constants.
 
 
 Description
 -----------
 
 
-This component acts as a symbolic wrapper for a degree of satisfaction, allowing the magnitude to be represented by an algebraic variable rather than a fixed numeric constant. By bridging the gap between abstract fuzzy logic concepts and linear algebra, it enables the creation of mathematical expressions and constraints where the satisfaction level is an unknown value to be solved for. The implementation supports various algebraic manipulations, such as addition, subtraction, and scalar multiplication, which are essential for constructing the complex linear equations required by the underlying solver. Furthermore, it distinguishes itself from numeric degrees by explicitly identifying as non-numeric, ensuring that the system treats it as a dynamic entity during constraint generation and type checking.
+By encapsulating a ``Variable`` instance, the implementation enables the degree to participate in linear mathematical operations, such as addition, subtraction, and scalar multiplication, by generating the necessary ``Term`` and ``Expression`` objects required by the underlying solver. The design explicitly distinguishes symbolic degrees from numeric values, ensuring that type-checking methods correctly identify the entity as non-numeric while still allowing it to act as a right-hand side operand in inequality constraints. Through factory methods and cloning capabilities, the class facilitates the construction of complex constraint systems where satisfaction levels are dynamically determined during the solving process. Equality and hashing behaviors are delegated directly to the underlying variable to ensure consistency within hash-based collections used during constraint generation.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -78,6 +74,16 @@ Module Contents
       :return: True if the provided object is a DegreeVariable representing the same underlying variable, otherwise False.
 
       :rtype: bool
+
+
+
+   .. py:method:: __hash__() -> int
+
+      Computes a hash value for the `DegreeVariable` instance based on its underlying variable. The method retrieves the variable using `get_variable()` and returns its hash value, ensuring that the hash is consistent with the equality definition. This allows `DegreeVariable` instances to be used effectively in hash-based collections like sets and dictionaries, where two instances representing the same variable will yield the same hash.
+
+      :return: An integer hash value derived from the underlying variable.
+
+      :rtype: int
 
 
 
@@ -212,3 +218,4 @@ Module Contents
 
    .. py:attribute:: variable
       :type:  fuzzy_dl_owl2.fuzzydl.milp.variable.Variable
+

@@ -204,7 +204,7 @@ class FuzzyOwl2(object):
         :type base_iri: str
         """
 
-        self.output_dl: str = os.path.join(constants.RESULTS_PATH, output_file)
+        self.output_dl: str = os.path.join(constants.ensure_results_dir(), output_file)
 
         self.defined_concepts: dict[str, ConceptDefinition] = dict()
         self.defined_properties: dict[str, ConceptDefinition] = dict()
@@ -241,7 +241,8 @@ class FuzzyOwl2(object):
         :rtype: str
         """
 
-        return str(e.iri).split("#")[-1]
+        names: list[str] = str(e.iri).split("#")
+        return names[len(names) - 1]
 
     def translate_owl2ontology(self) -> None:
         """Orchestrates the conversion of the loaded OWL2 ontology into a Fuzzy Description Logic (DL) representation. This method systematically processes various components of the ontology by handling annotations for the ontology itself, datatypes, concepts, and properties, before finally translating the core axioms. It acts as the main entry point for the translation workflow, ensuring that all structural elements are transformed to support fuzzy logic reasoning."""
@@ -258,7 +259,8 @@ class FuzzyOwl2(object):
         if os.path.exists(self.output_dl):
             with open(self.output_dl, "r") as file:
                 old_output: str = file.read()
-            Util.debug(f"Old output:\n{old_output}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"Old output:\n{old_output}")
         sorted_lines: list[str] = sort_by_fuzzydl_pdf_order(self.lines)
         with open(self.output_dl, "w") as file:
             for line in sorted_lines:
@@ -278,11 +280,13 @@ class FuzzyOwl2(object):
                     continue
                 value: OWLAnnotationValue = annotation.annotation_value
                 annotation_str: str = str(value)
-                Util.debug(f"Annotation for ontology -> {annotation_str}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Annotation for ontology -> {annotation_str}")
                 logic: typing.Optional[str] = FuzzyOwl2XMLParser.parse_string(
                     annotation_str
                 )
-                Util.debug(f"Parsed annotation -> {logic}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Parsed annotation -> {logic}")
                 self.write_fuzzy_logic(logic)
 
     def __get_facets(self, name: str) -> list[float]:
@@ -305,7 +309,8 @@ class FuzzyOwl2(object):
             if datatype_def_axioms is None:
                 continue
             for axiom in datatype_def_axioms:
-                Util.debug(f"Getting facets for axiom {axiom}...")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Getting facets for axiom {axiom}...")
                 assert isinstance(axiom, OWLDatatypeDefinition)
                 datatype_name: str = self.get_short_name(axiom.datatype).replace(
                     ":", ""
@@ -314,7 +319,8 @@ class FuzzyOwl2(object):
                     continue
                 f1: typing.Optional[OWLFacet] = None
                 f2: typing.Optional[OWLFacet] = None
-                Util.debug(f"Getting facets for data range {axiom.data_range}...")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Getting facets for data range {axiom.data_range}...")
                 if isinstance(axiom.data_range, OWLDatatypeRestriction):
                     facets: list[OWLFacet] = list(axiom.data_range.restrictions)
                     f1: OWLFacet = facets[0]
@@ -351,8 +357,10 @@ class FuzzyOwl2(object):
                     f1: OWLFacet = facets1[0]
                     f2: OWLFacet = facets2[0]
 
-                Util.debug(f"Facets 1 {f1}.")
-                Util.debug(f"Facets 2 {f2}.")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Facets 1 {f1}.")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Facets 2 {f2}.")
                 if f1:
                     if f1.constraint_to_uriref() == OWLFacet.MIN_INCLUSIVE:
                         facets[0] = float(str(f1.value.value))
@@ -387,7 +395,8 @@ class FuzzyOwl2(object):
                 entity: OWLEntity = axiom.entity
                 if not isinstance(entity, OWLDatatype):
                     continue
-                Util.debug(f"Datatype for ontology -> {entity}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Datatype for ontology -> {entity}")
                 datatype: OWLDatatype = typing.cast(OWLDatatype, entity)
                 annotations: set[OWLAnnotation] = axiom.axiom_annotations
                 if annotations is None or len(annotations) == 0:
@@ -398,17 +407,20 @@ class FuzzyOwl2(object):
                     )
                 annotation: OWLAnnotation = list(annotations)[0].annotation_value
                 annotation_str: str = str(annotation)
-                Util.debug(f"Annotation for {datatype} -> {annotation_str}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Annotation for {datatype} -> {annotation_str}")
                 datatype_name: str = self.get_short_name(datatype)
                 facets: list[OWLFacet] = self.__get_facets(datatype_name)
                 c: typing.Union[ConceptDefinition, FuzzyModifier] = (
                     FuzzyOwl2XMLParser.parse_string(annotation_str)
                 )
-                Util.debug(f"Parsed annotation -> {c}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Parsed annotation -> {c}")
                 if isinstance(c, FuzzyDatatype):
                     c.set_min_value(facets[0])
                     c.set_max_value(facets[1])
-                    Util.debug(f"Concept for {datatype} -> {c}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(f"Concept for {datatype} -> {c}")
                     self.fuzzy_datatypes[datatype_name] = c
                     if isinstance(c, CrispFunction):
                         self.write_crisp_function_definition(datatype_name, c)
@@ -447,7 +459,8 @@ class FuzzyOwl2(object):
                 if not isinstance(entity, OWLClass):
                     continue
                 cls: OWLClass = typing.cast(OWLClass, entity)
-                Util.debug(f"Concept for ontology -> {cls}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Concept for ontology -> {cls}")
                 annotations: set[OWLAnnotation] = axiom.axiom_annotations
                 if annotations is None or len(annotations) == 0:
                     continue
@@ -457,11 +470,13 @@ class FuzzyOwl2(object):
                     )
                 annotation: OWLAnnotation = list(annotations)[0].annotation_value
                 annotation_str: str = str(annotation)
-                Util.debug(f"Annotation for concept {cls} -> {annotation_str}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Annotation for concept {cls} -> {annotation_str}")
                 concept: ConceptDefinition = FuzzyOwl2XMLParser.parse_string(
                     annotation_str
                 )
-                Util.debug(f"Parsed annotation -> {concept}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Parsed annotation -> {concept}")
                 name: str = self.get_short_name(cls)
                 if isinstance(concept, ModifiedConcept):
                     mod_name: str = concept.get_fuzzy_modifier()
@@ -534,11 +549,15 @@ class FuzzyOwl2(object):
                     )
                 annotation: OWLAnnotation = list(annotations)[0].annotation_value
                 annotation_str: str = str(annotation)
-                Util.debug(f"Annotation for property {property} -> {annotation_str}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(
+                        f"Annotation for property {property} -> {annotation_str}"
+                    )
                 prop: typing.Optional[ModifiedProperty] = (
                     FuzzyOwl2XMLParser.parse_string(annotation_str)
                 )
-                Util.debug(f"Parsed annotation -> {prop}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Parsed annotation -> {prop}")
                 if prop is None:
                     continue
                 if not isinstance(prop, ModifiedProperty):
@@ -575,15 +594,20 @@ class FuzzyOwl2(object):
             )
         annotation: OWLAnnotation = list(annotations)[0].annotation_value
         annotation_str: str = str(annotation)
-        Util.debug(f"Annotation for degree -> {annotation_str}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Annotation for degree -> {annotation_str}")
         deg: float = FuzzyOwl2XMLParser.parse_string(annotation_str)
-        Util.debug(f"Parsed annotation -> {deg}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Parsed annotation -> {deg}")
         if not isinstance(deg, constants.NUMBER):
             raise ValueError
         return deg
 
     def __write_subclass_of_axiom(
-        self, ontology: OWLOntology, annotated: bool = True
+        self,
+        ontology: OWLOntology,
+        annotated: bool = True,
+        axioms: typing.Iterable[OWLAxiom] = None,
     ) -> set[str]:
         """
         Processes subclass axioms from the provided ontology, separating them based on their associated fuzzy degree and the `annotated` flag. When `annotated` is True, the method writes axioms with degrees different from 1.0 to the output and records them as processed. Conversely, when `annotated` is False, it writes axioms with a degree of 1.0 only if they have not been previously processed, ensuring no duplication. This method relies on `__get_degree` to determine the fuzzy value and updates the internal `processed_axioms` set to track state.
@@ -592,10 +616,18 @@ class FuzzyOwl2(object):
         :type ontology: OWLOntology
         :param annotated: Determines whether to process axioms annotated with fuzzy degrees. When True, only axioms with degrees different from 1.0 are processed; when False, only non-annotated axioms or those with a degree of 1.0 are processed.
         :type annotated: bool
+        :param axioms: Optional pre-fetched axiom iterable; if ``None``, the method retrieves subclasses from the ontology.
+        :type axioms: typing.Iterable[OWLAxiom]
+
+        :return: The set of class names (as strings) that were processed.
+
+        :rtype: set[str]
         """
 
         processed_classes: set[str] = set()
-        for axiom in ontology.get_axioms(AxiomsType.SUBCLASSES):
+        if axioms is None:
+            axioms = ontology.get_axioms(AxiomsType.SUBCLASSES)
+        for axiom in axioms:
             assert isinstance(axiom, OWLSubClassOf)
             subclass: OWLClassExpression = axiom.sub_class_expression
             superclass: OWLClassExpression = axiom.super_class_expression
@@ -603,7 +635,8 @@ class FuzzyOwl2(object):
             if annotated:
                 if degree == 1.0:
                     continue
-                Util.debug(f"Subjclass of axiom -> {axiom}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Subjclass of axiom -> {axiom}")
                 self.write_subclass_of_axiom(subclass, superclass, degree)
                 self.processed_axioms.add(f"{subclass} => {superclass}")
 
@@ -614,7 +647,8 @@ class FuzzyOwl2(object):
                     degree == 1.0
                     and f"{subclass} => {superclass}" not in self.processed_axioms
                 ):
-                    Util.debug(f"Not annotated subclass of axiom -> {axiom}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(f"Not annotated subclass of axiom -> {axiom}")
                     self.processed_axioms.add(f"{subclass} => {superclass}")
                     self.write_subclass_of_axiom(subclass, superclass, degree)
                     processed_classes.add(str(subclass))
@@ -622,7 +656,10 @@ class FuzzyOwl2(object):
         return processed_classes
 
     def __write_subobject_property_axiom(
-        self, ontology: OWLOntology, annotated: bool = True
+        self,
+        ontology: OWLOntology,
+        annotated: bool = True,
+        axioms: typing.Iterable[OWLAxiom] = None,
     ) -> None:
         """
         Iterates over the sub-object property axioms within the specified ontology to serialize them to the output file, distinguishing between standard axioms and those carrying fuzzy degrees. The method explicitly excludes axioms involving property chains from processing. Depending on the 'annotated' parameter, it either writes axioms with a fuzzy degree other than 1.0 or writes non-fuzzy axioms (degree 1.0) that have not been previously recorded. As a side effect, it updates the internal set of processed axioms to ensure that each relationship is written only once.
@@ -631,9 +668,13 @@ class FuzzyOwl2(object):
         :type ontology: OWLOntology
         :param annotated: Flag indicating whether to process axioms with fuzzy degrees (non-1.0) or standard axioms (degree 1.0).
         :type annotated: bool
+        :param axioms: Optional pre-fetched axiom iterable; if ``None``, the method retrieves sub-object properties from the ontology.
+        :type axioms: typing.Iterable[OWLAxiom]
         """
 
-        for axiom in ontology.get_axioms(AxiomsType.SUB_OBJECT_PROPERTIES):
+        if axioms is None:
+            axioms = ontology.get_axioms(AxiomsType.SUB_OBJECT_PROPERTIES)
+        for axiom in axioms:
             assert isinstance(axiom, OWLSubObjectPropertyOf)
             if isinstance(axiom.sub_object_property_expression, OWLObjectPropertyChain):
                 continue
@@ -646,7 +687,8 @@ class FuzzyOwl2(object):
             degree: float = self.__get_degree(axiom)
             if annotated:
                 if degree != 1.0:
-                    Util.debug(f"Sub-object property axiom -> {axiom}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(f"Sub-object property axiom -> {axiom}")
                     self.write_sub_object_property_of_axiom(
                         sub_property, super_property, degree
                     )
@@ -657,14 +699,20 @@ class FuzzyOwl2(object):
                     and f"{sub_property} => {super_property}"
                     not in self.processed_axioms
                 ):
-                    Util.debug(f"Not annotated sub-object property axiom -> {axiom}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(
+                            f"Not annotated sub-object property axiom -> {axiom}"
+                        )
                     self.processed_axioms.add(f"{sub_property} => {super_property}")
                     self.write_sub_object_property_of_axiom(
                         sub_property, super_property, degree
                     )
 
     def __write_subdata_property_axiom(
-        self, ontology: OWLOntology, annotated: bool = True
+        self,
+        ontology: OWLOntology,
+        annotated: bool = True,
+        axioms: typing.Iterable[OWLAxiom] = None,
     ) -> None:
         """
         Processes sub-data property axioms from the given ontology, filtering them based on the provided `annotated` flag to separate fuzzy degrees from standard relationships. If the flag is True, the method writes axioms that have a fuzzy degree different from 1.0. If the flag is False, it writes axioms with a degree of 1.0, provided they have not already been processed and recorded in the internal tracking set. This method ensures that each relevant axiom is serialized to the output file exactly once by updating the set of processed axioms upon writing.
@@ -673,9 +721,13 @@ class FuzzyOwl2(object):
         :type ontology: OWLOntology
         :param annotated: Determines whether to process axioms annotated with fuzzy degrees. If True, processes axioms with degrees different from 1.0; if False, processes non-annotated axioms or those with a degree of 1.0 that have not been processed previously.
         :type annotated: bool
+        :param axioms: Optional pre-fetched axiom iterable; if ``None``, the method retrieves sub-data properties from the ontology.
+        :type axioms: typing.Iterable[OWLAxiom]
         """
 
-        for axiom in ontology.get_axioms(AxiomsType.SUB_DATA_PROPERTIES):
+        if axioms is None:
+            axioms = ontology.get_axioms(AxiomsType.SUB_DATA_PROPERTIES)
+        for axiom in axioms:
             assert isinstance(axiom, OWLSubDataPropertyOf)
             sub_property: OWLDataPropertyExpression = axiom.sub_data_property_expression
             super_property: OWLDataPropertyExpression = (
@@ -684,7 +736,8 @@ class FuzzyOwl2(object):
             degree: float = self.__get_degree(axiom)
             if annotated:
                 if degree != 1.0:
-                    Util.debug(f"Sub-data property axiom -> {axiom}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(f"Sub-data property axiom -> {axiom}")
                     self.write_sub_data_property_of_axiom(
                         sub_property, super_property, degree
                     )
@@ -695,14 +748,18 @@ class FuzzyOwl2(object):
                     and f"{sub_property} => {super_property}"
                     not in self.processed_axioms
                 ):
-                    Util.debug(f"Not annotated sub-data property axiom -> {axiom}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(f"Not annotated sub-data property axiom -> {axiom}")
                     self.processed_axioms.add(f"{sub_property} => {super_property}")
                     self.write_sub_data_property_of_axiom(
                         sub_property, super_property, degree
                     )
 
     def __write_subproperty_chain_of_axiom(
-        self, ontology: OWLOntology, annotated: bool = True
+        self,
+        ontology: OWLOntology,
+        annotated: bool = True,
+        axioms: typing.Iterable[OWLAxiom] = None,
     ) -> None:
         """
         Iterates through the axioms of the provided ontology to identify and write sub-property chain axioms, specifically handling those involving object property chains. The behavior is controlled by the `annotated` flag: when set to True, the method processes and writes axioms with fuzzy degrees different from 1.0; when set to False, it processes axioms with a degree of exactly 1.0, provided they have not already been processed. In both cases, the method updates an internal set of processed axioms to prevent duplicate writes and delegates the actual writing logic to a separate helper method.
@@ -711,9 +768,13 @@ class FuzzyOwl2(object):
         :type ontology: OWLOntology
         :param annotated: Flag indicating whether to process axioms annotated with fuzzy degrees. If True, only axioms with degrees different from 1.0 are processed. If False, only non-annotated axioms or those with a degree of 1.0 that have not been processed previously are handled.
         :type annotated: bool
+        :param axioms: Optional pre-fetched axiom iterable; if ``None``, the method retrieves sub-object properties from the ontology.
+        :type axioms: typing.Iterable[OWLAxiom]
         """
 
-        for axiom in ontology.get_axioms(AxiomsType.SUB_OBJECT_PROPERTIES):
+        if axioms is None:
+            axioms = ontology.get_axioms(AxiomsType.SUB_OBJECT_PROPERTIES)
+        for axiom in axioms:
             assert isinstance(axiom, OWLSubObjectPropertyOf)
             if not isinstance(
                 axiom.sub_object_property_expression, OWLObjectPropertyChain
@@ -728,7 +789,8 @@ class FuzzyOwl2(object):
             degree: float = self.__get_degree(axiom)
             if annotated:
                 if degree != 1.0:
-                    Util.debug(f"Sub property chain of axiom -> {axiom}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(f"Sub property chain of axiom -> {axiom}")
                     self.write_sub_property_chain_of_axiom(
                         chain, super_property, degree
                     )
@@ -738,14 +800,20 @@ class FuzzyOwl2(object):
                     degree == 1.0
                     and f"{chain} => {super_property}" not in self.processed_axioms
                 ):
-                    Util.debug(f"Not annotated sub property chain of axiom -> {axiom}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(
+                            f"Not annotated sub property chain of axiom -> {axiom}"
+                        )
                     self.processed_axioms.add(f"{chain} => {super_property}")
                     self.write_sub_property_chain_of_axiom(
                         chain, super_property, degree
                     )
 
     def __write_class_assertion_axiom(
-        self, ontology: OWLOntology, annotated: bool = True
+        self,
+        ontology: OWLOntology,
+        annotated: bool = True,
+        axioms: typing.Iterable[OWLAxiom] = None,
     ) -> None:
         """
         Processes class assertion axioms from the provided ontology, writing them to the output based on their fuzzy degree and the `annotated` flag. If `annotated` is True, the method specifically targets axioms with a degree different from 1.0, treating them as fuzzy assertions. If `annotated` is False, it processes axioms with a degree of 1.0, but only if they have not already been handled, as tracked by the `processed_axioms` set. This approach ensures that fuzzy and crisp assertions are handled separately without duplication, while modifying the internal state of the object to record processed items.
@@ -754,26 +822,35 @@ class FuzzyOwl2(object):
         :type ontology: OWLOntology
         :param annotated: Flag indicating whether to process fuzzy class assertions. If True, only axioms with degrees different from 1.0 are processed. If False, only crisp axioms (degree 1.0) that have not been processed previously are handled.
         :type annotated: bool
+        :param axioms: Optional pre-fetched axiom iterable; if ``None``, the method retrieves class assertions from the ontology.
+        :type axioms: typing.Iterable[OWLAxiom]
         """
 
-        for axiom in ontology.get_axioms(AxiomsType.CLASS_ASSERTIONS):
+        if axioms is None:
+            axioms = ontology.get_axioms(AxiomsType.CLASS_ASSERTIONS)
+        for axiom in axioms:
             assert isinstance(axiom, OWLClassAssertion)
             cls: OWLClassExpression = axiom.class_expression
             ind: OWLIndividual = axiom.individual
             degree: float = self.__get_degree(axiom)
             if annotated:
                 if degree != 1.0:
-                    Util.debug(f"Class assertion axiom -> {axiom}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(f"Class assertion axiom -> {axiom}")
                     self.write_concept_assertion_axiom(ind, cls, degree)
                     self.processed_axioms.add(f"{ind}:{cls}")
             else:
                 if degree == 1.0 and f"{ind}:{cls}" not in self.processed_axioms:
-                    Util.debug(f"Not annotated class assertion axiom -> {axiom}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(f"Not annotated class assertion axiom -> {axiom}")
                     self.processed_axioms.add(f"{ind}:{cls}")
                     self.write_concept_assertion_axiom(ind, cls, degree)
 
     def __write_object_property_assertion_axiom(
-        self, ontology: OWLOntology, annotated: bool = True
+        self,
+        ontology: OWLOntology,
+        annotated: bool = True,
+        axioms: typing.Iterable[OWLAxiom] = None,
     ) -> None:
         """
         Iterates through object property assertion axioms in the given ontology and writes them to the output file based on the specified annotation mode. If the `annotated` flag is set to True, the method processes only those axioms with a fuzzy degree different from 1.0; otherwise, it processes axioms with a degree of 1.0, provided they have not already been handled. To prevent duplication, the method maintains a record of processed assertions in the `processed_axioms` set and triggers debug logging for each axiom written.
@@ -782,9 +859,13 @@ class FuzzyOwl2(object):
         :type ontology: OWLOntology
         :param annotated: Flag indicating whether to process fuzzy axioms with degrees different from 1.0 (True) or standard axioms with a degree of 1.0 (False).
         :type annotated: bool
+        :param axioms: Optional pre-fetched axiom iterable; if ``None``, the method retrieves object property assertions from the ontology.
+        :type axioms: typing.Iterable[OWLAxiom]
         """
 
-        for axiom in ontology.get_axioms(AxiomsType.OBJECT_PROPERTY_ASSERTIONS):
+        if axioms is None:
+            axioms = ontology.get_axioms(AxiomsType.OBJECT_PROPERTY_ASSERTIONS)
+        for axiom in axioms:
             assert isinstance(axiom, OWLObjectPropertyAssertion)
             ind1: OWLIndividual = axiom.source_individual
             ind2: OWLIndividual = axiom.target_individual
@@ -792,7 +873,8 @@ class FuzzyOwl2(object):
             degree: float = self.__get_degree(axiom)
             if annotated:
                 if degree != 1.0:
-                    Util.debug(f"Object property assertion axiom -> {axiom}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(f"Object property assertion axiom -> {axiom}")
                     self.write_object_property_assertion_axiom(ind1, ind2, prop, degree)
                     self.processed_axioms.add(f"({ind1}, {ind2}):{prop}")
             else:
@@ -800,14 +882,18 @@ class FuzzyOwl2(object):
                     degree == 1.0
                     and f"({ind1}, {ind2}):{prop}" not in self.processed_axioms
                 ):
-                    Util.debug(
-                        f"Not annotated object property assertion axiom -> {axiom}"
-                    )
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(
+                            f"Not annotated object property assertion axiom -> {axiom}"
+                        )
                     self.processed_axioms.add(f"({ind1}, {ind2}):{prop}")
                     self.write_object_property_assertion_axiom(ind1, ind2, prop, degree)
 
     def __write_data_property_assertion_axiom(
-        self, ontology: OWLOntology, annotated: bool = True
+        self,
+        ontology: OWLOntology,
+        annotated: bool = True,
+        axioms: typing.Iterable[OWLAxiom] = None,
     ) -> None:
         """
         Iterates over all data property assertion axioms within the provided ontology to serialize them to the output, distinguishing between fuzzy and crisp assertions based on the `annotated` flag. When `annotated` is True, the method processes axioms with a fuzzy degree different from 1.0, writing them to the output and recording them in the internal set of processed axioms. When `annotated` is False, the method handles axioms with a degree of exactly 1.0, but only if they have not already been recorded in the processed set, thereby preventing duplicate writes. This method updates the internal state of processed axioms and delegates the actual writing logic to a lower-level writer function.
@@ -816,9 +902,13 @@ class FuzzyOwl2(object):
         :type ontology: OWLOntology
         :param annotated: Flag indicating whether to process fuzzy axioms. If True, processes axioms with degrees different from 1.0. If False, processes axioms with a degree of 1.0 that have not already been processed.
         :type annotated: bool
+        :param axioms: Optional pre-fetched axiom iterable; if ``None``, the method retrieves data property assertions from the ontology.
+        :type axioms: typing.Iterable[OWLAxiom]
         """
 
-        for axiom in ontology.get_axioms(AxiomsType.DATA_PROPERTY_ASSERTIONS):
+        if axioms is None:
+            axioms = ontology.get_axioms(AxiomsType.DATA_PROPERTY_ASSERTIONS)
+        for axiom in axioms:
             assert isinstance(axiom, OWLDataPropertyAssertion)
             ind: OWLIndividual = axiom.source_individual
             value: OWLLiteral = axiom.target_value
@@ -826,7 +916,8 @@ class FuzzyOwl2(object):
             degree: float = self.__get_degree(axiom)
             if annotated:
                 if degree != 1.0:
-                    Util.debug(f"Data property assertion axiom -> {axiom}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(f"Data property assertion axiom -> {axiom}")
                     self.write_data_property_assertion_axiom(ind, value, prop, degree)
                     self.processed_axioms.add(f"({ind}, {value}):{prop}")
             else:
@@ -834,14 +925,18 @@ class FuzzyOwl2(object):
                     degree == 1.0
                     and f"({ind}, {value}):{prop}" not in self.processed_axioms
                 ):
-                    Util.debug(
-                        f"Not annotated data property assertion axiom -> {axiom}"
-                    )
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(
+                            f"Not annotated data property assertion axiom -> {axiom}"
+                        )
                     self.processed_axioms.add(f"({ind}, {value}):{prop}")
                     self.write_data_property_assertion_axiom(ind, value, prop, degree)
 
     def __write_negative_object_property_assertion_axiom(
-        self, ontology: OWLOntology, annotated: bool = True
+        self,
+        ontology: OWLOntology,
+        annotated: bool = True,
+        axioms: typing.Iterable[OWLAxiom] = None,
     ) -> None:
         """
         Iterates through negative object property assertion axioms within the provided ontology to serialize them to the output file, distinguishing between fuzzy and crisp assertions based on the `annotated` flag. When the flag is True, the method processes only axioms with a fuzzy degree different from 1.0; when False, it processes axioms with a degree of exactly 1.0, provided they have not already been handled in a previous pass. As a side effect, the method updates an internal set of processed axioms to prevent duplication and triggers debug logging for the items being written.
@@ -850,11 +945,13 @@ class FuzzyOwl2(object):
         :type ontology: OWLOntology
         :param annotated: If True, processes fuzzy axioms with degrees different from 1.0. If False, processes non-annotated axioms or those with a degree of 1.0 that have not been processed previously.
         :type annotated: bool
+        :param axioms: Optional pre-fetched axiom iterable; if ``None``, the method retrieves negative object property assertions from the ontology.
+        :type axioms: typing.Iterable[OWLAxiom]
         """
 
-        for axiom in ontology.get_axioms(
-            AxiomsType.NEGATIVE_OBJECT_PROPERTY_ASSERTIONS
-        ):
+        if axioms is None:
+            axioms = ontology.get_axioms(AxiomsType.NEGATIVE_OBJECT_PROPERTY_ASSERTIONS)
+        for axiom in axioms:
             assert isinstance(axiom, OWLNegativeObjectPropertyAssertion)
             ind1: OWLIndividual = axiom.source_individual
             ind2: OWLIndividual = axiom.target_individual
@@ -862,7 +959,10 @@ class FuzzyOwl2(object):
             degree: float = self.__get_degree(axiom)
             if annotated:
                 if degree != 1.0:
-                    Util.debug(f"Negative object property assertion axiom -> {axiom}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(
+                            f"Negative object property assertion axiom -> {axiom}"
+                        )
                     self.write_negative_object_property_assertion_axiom(
                         ind1, ind2, prop, degree
                     )
@@ -872,16 +972,20 @@ class FuzzyOwl2(object):
                     degree == 1.0
                     and f"({ind1}, {ind2}):not {prop}" not in self.processed_axioms
                 ):
-                    Util.debug(
-                        f"Not annotated negative object property assertion axiom -> {axiom}"
-                    )
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(
+                            f"Not annotated negative object property assertion axiom -> {axiom}"
+                        )
                     self.processed_axioms.add(f"({ind1}, {ind2}):not {prop}")
                     self.write_negative_object_property_assertion_axiom(
                         ind1, ind2, prop, degree
                     )
 
     def __write_negative_data_property_assertion_axiom(
-        self, ontology: OWLOntology, annotated: bool = True
+        self,
+        ontology: OWLOntology,
+        annotated: bool = True,
+        axioms: typing.Iterable[OWLAxiom] = None,
     ) -> None:
         """
         Iterates over negative data property assertion axioms within the provided ontology and serializes them to the output file based on their fuzzy degree and the `annotated` flag. When `annotated` is True, the method processes only axioms with a fuzzy degree different from 1.0, representing non-crisp fuzzy constraints. Conversely, when `annotated` is False, it handles axioms with a degree of 1.0 (crisp assertions) but only if they have not already been processed, ensuring no duplication occurs. The method maintains an internal set of processed axioms to track this state and delegates the actual writing logic to a separate helper method.
@@ -890,9 +994,13 @@ class FuzzyOwl2(object):
         :type ontology: OWLOntology
         :param annotated: Determines whether to process annotated axioms with fuzzy degrees different from 1.0, or standard axioms with a degree of 1.0 that have not yet been processed.
         :type annotated: bool
+        :param axioms: Optional pre-fetched axiom iterable; if ``None``, the method retrieves negative data property assertions from the ontology.
+        :type axioms: typing.Iterable[OWLAxiom]
         """
 
-        for axiom in ontology.get_axioms(AxiomsType.NEGATIVE_DATA_PROPERTY_ASSERTIONS):
+        if axioms is None:
+            axioms = ontology.get_axioms(AxiomsType.NEGATIVE_DATA_PROPERTY_ASSERTIONS)
+        for axiom in axioms:
             assert isinstance(axiom, OWLNegativeDataPropertyAssertion)
             ind: OWLIndividual = axiom.source_individual
             value: OWLLiteral = axiom.target_value
@@ -900,7 +1008,8 @@ class FuzzyOwl2(object):
             degree: float = self.__get_degree(axiom)
             if annotated:
                 if degree != 1.0:
-                    Util.debug(f"Negative data property assertion axiom -> {axiom}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(f"Negative data property assertion axiom -> {axiom}")
                     self.write_negative_data_property_assertion_axiom(
                         ind, value, prop, degree
                     )
@@ -910,9 +1019,10 @@ class FuzzyOwl2(object):
                     degree == 1.0
                     and f"({ind}, {value}):not {prop}" not in self.processed_axioms
                 ):
-                    Util.debug(
-                        f"Not annotated negative data property assertion axiom -> {axiom}"
-                    )
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(
+                            f"Not annotated negative data property assertion axiom -> {axiom}"
+                        )
                     self.processed_axioms.add(f"({ind}, {value}):not {prop}")
                     self.write_negative_data_property_assertion_axiom(
                         ind, value, prop, degree
@@ -922,16 +1032,115 @@ class FuzzyOwl2(object):
         """Iterates through the loaded ontologies to systematically process and write axioms to the output file, covering the TBox, RBox, and ABox components of the knowledge base. It handles a wide variety of axiom types, including class declarations, property characteristics, and individual assertions, distinguishing between annotated and non-annotated versions of specific relationships. To ensure no redundancy, the method checks an internal set of processed axioms before writing; if an axiom has already been serialized, it is skipped. This process effectively flattens the ontology structure into a serialized format while preserving the logical distinctions defined in the source ontologies."""
 
         for ontology in self.ontologies:
+            # Fetch all axioms once per ontology to avoid repeated scans
+            type_to_axioms: dict[AxiomsType, list[OWLAxiom]] = {
+                AxiomsType.DISJOINT_CLASSES: list(
+                    ontology.get_axioms(AxiomsType.DISJOINT_CLASSES) or []
+                ),
+                AxiomsType.DISJOINT_UNIONS: list(
+                    ontology.get_axioms(AxiomsType.DISJOINT_UNIONS) or []
+                ),
+                AxiomsType.SUBCLASSES: list(
+                    ontology.get_axioms(AxiomsType.SUBCLASSES) or []
+                ),
+                AxiomsType.EQUIVALENT_CLASSES: list(
+                    ontology.get_axioms(AxiomsType.EQUIVALENT_CLASSES) or []
+                ),
+                AxiomsType.CLASSES: list(ontology.get_axioms(AxiomsType.CLASSES) or []),
+                AxiomsType.EQUIVALENT_OBJECT_PROPERTIES: list(
+                    ontology.get_axioms(AxiomsType.EQUIVALENT_OBJECT_PROPERTIES) or []
+                ),
+                AxiomsType.EQUIVALENT_DATA_PROPERTIES: list(
+                    ontology.get_axioms(AxiomsType.EQUIVALENT_DATA_PROPERTIES) or []
+                ),
+                AxiomsType.TRANSITIVE_OBJECT_PROPERTIES: list(
+                    ontology.get_axioms(AxiomsType.TRANSITIVE_OBJECT_PROPERTIES) or []
+                ),
+                AxiomsType.SYMMETRIC_OBJECT_PROPERTIES: list(
+                    ontology.get_axioms(AxiomsType.SYMMETRIC_OBJECT_PROPERTIES) or []
+                ),
+                AxiomsType.ASYMMETRIC_OBJECT_PROPERTIES: list(
+                    ontology.get_axioms(AxiomsType.ASYMMETRIC_OBJECT_PROPERTIES) or []
+                ),
+                AxiomsType.REFLEXIVE_OBJECT_PROPERTIES: list(
+                    ontology.get_axioms(AxiomsType.REFLEXIVE_OBJECT_PROPERTIES) or []
+                ),
+                AxiomsType.IRREFLEXIVE_OBJECT_PROPERTIES: list(
+                    ontology.get_axioms(AxiomsType.IRREFLEXIVE_OBJECT_PROPERTIES) or []
+                ),
+                AxiomsType.FUNCTIONAL_OBJECT_PROPERTIES: list(
+                    ontology.get_axioms(AxiomsType.FUNCTIONAL_OBJECT_PROPERTIES) or []
+                ),
+                AxiomsType.FUNCIONAL_DATA_PROPERTIES: list(
+                    ontology.get_axioms(AxiomsType.FUNCIONAL_DATA_PROPERTIES) or []
+                ),
+                AxiomsType.INVERSE_OBJECT_PROPERTIES: list(
+                    ontology.get_axioms(AxiomsType.INVERSE_OBJECT_PROPERTIES) or []
+                ),
+                AxiomsType.INVERSE_FUNCTIONAL_OBJECT_PROPERTIES: list(
+                    ontology.get_axioms(AxiomsType.INVERSE_FUNCTIONAL_OBJECT_PROPERTIES)
+                    or []
+                ),
+                AxiomsType.OBJECT_PROPERTY_DOMAIN: list(
+                    ontology.get_axioms(AxiomsType.OBJECT_PROPERTY_DOMAIN) or []
+                ),
+                AxiomsType.OBJECT_PROPERTY_RANGE: list(
+                    ontology.get_axioms(AxiomsType.OBJECT_PROPERTY_RANGE) or []
+                ),
+                AxiomsType.DATA_PROPERTY_DOMAIN: list(
+                    ontology.get_axioms(AxiomsType.DATA_PROPERTY_DOMAIN) or []
+                ),
+                AxiomsType.DATA_PROPERTY_RANGE: list(
+                    ontology.get_axioms(AxiomsType.DATA_PROPERTY_RANGE) or []
+                ),
+                AxiomsType.DISJOINT_OBJECT_PROPERTIES: list(
+                    ontology.get_axioms(AxiomsType.DISJOINT_OBJECT_PROPERTIES) or []
+                ),
+                AxiomsType.DISJOINT_DATA_PROPERTIES: list(
+                    ontology.get_axioms(AxiomsType.DISJOINT_DATA_PROPERTIES) or []
+                ),
+                AxiomsType.SAME_INDIVIDUALS: list(
+                    ontology.get_axioms(AxiomsType.SAME_INDIVIDUALS) or []
+                ),
+                AxiomsType.DIFFERENT_INDIVIDUALS: list(
+                    ontology.get_axioms(AxiomsType.DIFFERENT_INDIVIDUALS) or []
+                ),
+                AxiomsType.SUB_OBJECT_PROPERTIES: list(
+                    ontology.get_axioms(AxiomsType.SUB_OBJECT_PROPERTIES) or []
+                ),
+                AxiomsType.SUB_DATA_PROPERTIES: list(
+                    ontology.get_axioms(AxiomsType.SUB_DATA_PROPERTIES) or []
+                ),
+                AxiomsType.CLASS_ASSERTIONS: list(
+                    ontology.get_axioms(AxiomsType.CLASS_ASSERTIONS) or []
+                ),
+                AxiomsType.OBJECT_PROPERTY_ASSERTIONS: list(
+                    ontology.get_axioms(AxiomsType.OBJECT_PROPERTY_ASSERTIONS) or []
+                ),
+                AxiomsType.DATA_PROPERTY_ASSERTIONS: list(
+                    ontology.get_axioms(AxiomsType.DATA_PROPERTY_ASSERTIONS) or []
+                ),
+                AxiomsType.NEGATIVE_OBJECT_PROPERTY_ASSERTIONS: list(
+                    ontology.get_axioms(AxiomsType.NEGATIVE_OBJECT_PROPERTY_ASSERTIONS)
+                    or []
+                ),
+                AxiomsType.NEGATIVE_DATA_PROPERTY_ASSERTIONS: list(
+                    ontology.get_axioms(AxiomsType.NEGATIVE_DATA_PROPERTY_ASSERTIONS)
+                    or []
+                ),
+            }
+
             # ########
             #  TBox
             # ########
 
             # Set of classes that have been processed in the current ontology to avoid redundant processing of class declarations when they are already covered by other axioms (e.g., disjointness or equivalence axioms).
             processed_classes: set[str] = set()
-            for axiom in ontology.get_axioms(AxiomsType.DISJOINT_CLASSES):
+            for axiom in type_to_axioms[AxiomsType.DISJOINT_CLASSES]:
                 assert isinstance(axiom, OWLDisjointClasses)
                 if str(axiom) not in self.processed_axioms:
-                    Util.debug(f"Disjoint axiom -> {axiom}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(f"Disjoint axiom -> {axiom}")
                     self.processed_axioms.add(str(axiom))
                     self.write_disjoint_classes_axiom(axiom.class_expressions)
 
@@ -941,10 +1150,11 @@ class FuzzyOwl2(object):
                         for cls in axiom.class_expressions
                         if isinstance(cls, OWLClass)
                     )
-            for axiom in ontology.get_axioms(AxiomsType.DISJOINT_UNIONS):
+            for axiom in type_to_axioms[AxiomsType.DISJOINT_UNIONS]:
                 assert isinstance(axiom, OWLDisjointUnion)
                 if str(axiom) not in self.processed_axioms:
-                    Util.debug(f"Disjoint union axiom -> {axiom}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(f"Disjoint union axiom -> {axiom}")
                     self.processed_axioms.add(str(axiom))
                     self.write_disjoint_union_axiom(
                         [axiom.union_class] + axiom.disjoint_class_expressions
@@ -958,12 +1168,17 @@ class FuzzyOwl2(object):
                         if isinstance(cls, OWLClass)
                     )
             processed_classes.update(
-                self.__write_subclass_of_axiom(ontology, annotated=True)
+                self.__write_subclass_of_axiom(
+                    ontology,
+                    annotated=True,
+                    axioms=type_to_axioms[AxiomsType.SUBCLASSES],
+                )
             )
-            for axiom in ontology.get_axioms(AxiomsType.EQUIVALENT_CLASSES):
+            for axiom in type_to_axioms[AxiomsType.EQUIVALENT_CLASSES]:
                 assert isinstance(axiom, OWLEquivalentClasses)
                 if str(axiom) not in self.processed_axioms:
-                    Util.debug(f"Equivalent classes axiom -> {axiom}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(f"Equivalent classes axiom -> {axiom}")
                     self.processed_axioms.add(str(axiom))
                     self.write_equivalent_classes_axiom(axiom.class_expressions)
 
@@ -975,17 +1190,19 @@ class FuzzyOwl2(object):
                     )
 
             # Primitive concept declarations are processed after handling disjointness and equivalence axioms to avoid redundant processing of classes that are already covered by these axioms. If a class is involved in a disjointness or equivalence axiom, its declaration is implicitly handled through those axioms, so we can skip writing a separate declaration for it. This approach optimizes the processing by reducing redundancy and ensuring that each class is declared only once, either explicitly or through its participation in other axioms.
-            for axiom in ontology.get_axioms(AxiomsType.CLASSES):
+            for axiom in type_to_axioms[AxiomsType.CLASSES]:
                 assert isinstance(axiom, OWLDeclaration)
                 cls: OWLEntity = axiom.entity
                 assert isinstance(cls, OWLClass)
                 if str(cls) in processed_classes:
-                    Util.debug(
-                        f"Skipping concept declaration axiom for {cls} as it is already processed."
-                    )
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(
+                            f"Skipping concept declaration axiom for {cls} as it is already processed."
+                        )
                     continue
                 if cls != OWLClass.thing() and str(cls) not in self.processed_axioms:
-                    Util.debug(f"Concept declaration axiom -> {cls}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(f"Concept declaration axiom -> {cls}")
                     self.processed_axioms.add(str(cls))
                     self.write_concept_declaration(cls)
                     processed_classes.add(str(cls))
@@ -993,144 +1210,175 @@ class FuzzyOwl2(object):
             # ########
             #  RBox
             # ########
-            self.__write_subobject_property_axiom(ontology, annotated=True)
-            self.__write_subdata_property_axiom(ontology, annotated=True)
-            self.__write_subproperty_chain_of_axiom(ontology, annotated=True)
-            for axiom in ontology.get_axioms(AxiomsType.EQUIVALENT_OBJECT_PROPERTIES):
+            self.__write_subobject_property_axiom(
+                ontology,
+                annotated=True,
+                axioms=type_to_axioms[AxiomsType.SUB_OBJECT_PROPERTIES],
+            )
+            self.__write_subdata_property_axiom(
+                ontology,
+                annotated=True,
+                axioms=type_to_axioms[AxiomsType.SUB_DATA_PROPERTIES],
+            )
+            self.__write_subproperty_chain_of_axiom(
+                ontology,
+                annotated=True,
+                axioms=type_to_axioms[AxiomsType.SUB_OBJECT_PROPERTIES],
+            )
+            for axiom in type_to_axioms[AxiomsType.EQUIVALENT_OBJECT_PROPERTIES]:
                 assert isinstance(axiom, OWLEquivalentObjectProperties)
-                Util.debug(f"Equivalent object properties axiom -> {axiom}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Equivalent object properties axiom -> {axiom}")
                 if str(axiom) not in self.processed_axioms:
                     self.processed_axioms.add(str(axiom))
                     self.write_equivalent_object_properties_axiom(
                         axiom.object_property_expressions
                     )
-            for axiom in ontology.get_axioms(AxiomsType.EQUIVALENT_DATA_PROPERTIES):
+            for axiom in type_to_axioms[AxiomsType.EQUIVALENT_DATA_PROPERTIES]:
                 assert isinstance(axiom, OWLEquivalentDataProperties)
                 if str(axiom) not in self.processed_axioms:
-                    Util.debug(f"Equivalent data properties axiom -> {axiom}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(f"Equivalent data properties axiom -> {axiom}")
                     self.processed_axioms.add(str(axiom))
                     self.write_equivalent_data_properties_axiom(
                         axiom.data_property_expressions
                     )
-            for axiom in ontology.get_axioms(AxiomsType.TRANSITIVE_OBJECT_PROPERTIES):
+            for axiom in type_to_axioms[AxiomsType.TRANSITIVE_OBJECT_PROPERTIES]:
                 assert isinstance(axiom, OWLTransitiveObjectProperty)
                 if str(axiom) not in self.processed_axioms:
-                    Util.debug(f"Transitive object property axiom -> {axiom}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(f"Transitive object property axiom -> {axiom}")
                     self.processed_axioms.add(str(axiom))
                     self.write_transitive_object_property_axiom(
                         axiom.object_property_expression
                     )
-            for axiom in ontology.get_axioms(AxiomsType.SYMMETRIC_OBJECT_PROPERTIES):
+            for axiom in type_to_axioms[AxiomsType.SYMMETRIC_OBJECT_PROPERTIES]:
                 assert isinstance(axiom, OWLSymmetricObjectProperty)
                 if str(axiom) not in self.processed_axioms:
-                    Util.debug(f"Symmetric object property axiom -> {axiom}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(f"Symmetric object property axiom -> {axiom}")
                     self.processed_axioms.add(str(axiom))
                     self.write_symmetric_object_property_axiom(
                         axiom.object_property_expression
                     )
-            for axiom in ontology.get_axioms(AxiomsType.ASYMMETRIC_OBJECT_PROPERTIES):
+            for axiom in type_to_axioms[AxiomsType.ASYMMETRIC_OBJECT_PROPERTIES]:
                 assert isinstance(axiom, OWLAsymmetricObjectProperty)
                 if str(axiom) not in self.processed_axioms:
-                    Util.debug(f"Asymmetric object property axiom -> {axiom}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(f"Asymmetric object property axiom -> {axiom}")
                     self.processed_axioms.add(str(axiom))
                     self.write_asymmetric_object_property_axiom(
                         axiom.object_property_expression
                     )
-            for axiom in ontology.get_axioms(AxiomsType.REFLEXIVE_OBJECT_PROPERTIES):
+            for axiom in type_to_axioms[AxiomsType.REFLEXIVE_OBJECT_PROPERTIES]:
                 assert isinstance(axiom, OWLReflexiveObjectProperty)
                 if str(axiom) not in self.processed_axioms:
-                    Util.debug(f"Reflexive object property axiom -> {axiom}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(f"Reflexive object property axiom -> {axiom}")
                     self.processed_axioms.add(str(axiom))
                     self.write_reflexive_object_property_axiom(
                         axiom.object_property_expression
                     )
-            for axiom in ontology.get_axioms(AxiomsType.IRREFLEXIVE_OBJECT_PROPERTIES):
+            for axiom in type_to_axioms[AxiomsType.IRREFLEXIVE_OBJECT_PROPERTIES]:
                 assert isinstance(axiom, OWLIrreflexiveObjectProperty)
                 if str(axiom) not in self.processed_axioms:
-                    Util.debug(f"Irreflexive object property axiom -> {axiom}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(f"Irreflexive object property axiom -> {axiom}")
                     self.processed_axioms.add(str(axiom))
                     self.write_irreflexive_object_property_axiom(
                         axiom.object_property_expression
                     )
-            for axiom in ontology.get_axioms(AxiomsType.FUNCTIONAL_OBJECT_PROPERTIES):
+            for axiom in type_to_axioms[AxiomsType.FUNCTIONAL_OBJECT_PROPERTIES]:
                 assert isinstance(axiom, OWLFunctionalObjectProperty)
                 if str(axiom) not in self.processed_axioms:
-                    Util.debug(f"Functional object property axiom -> {axiom}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(f"Functional object property axiom -> {axiom}")
                     self.processed_axioms.add(str(axiom))
                     self.write_functional_object_property_axiom(
                         axiom.object_property_expression
                     )
-            for axiom in ontology.get_axioms(AxiomsType.FUNCIONAL_DATA_PROPERTIES):
+            for axiom in type_to_axioms[AxiomsType.FUNCIONAL_DATA_PROPERTIES]:
                 assert isinstance(axiom, OWLFunctionalDataProperty)
                 if str(axiom) not in self.processed_axioms:
-                    Util.debug(f"Functional data property axiom -> {axiom}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(f"Functional data property axiom -> {axiom}")
                     self.processed_axioms.add(str(axiom))
                     self.write_functional_data_property_axiom(
                         axiom.data_property_expression
                     )
-            for axiom in ontology.get_axioms(AxiomsType.INVERSE_OBJECT_PROPERTIES):
+            for axiom in type_to_axioms[AxiomsType.INVERSE_OBJECT_PROPERTIES]:
                 assert isinstance(axiom, OWLInverseObjectProperties)
                 if str(axiom) not in self.processed_axioms:
-                    Util.debug(f"Inverse object properties axiom -> {axiom}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(f"Inverse object properties axiom -> {axiom}")
                     self.processed_axioms.add(str(axiom))
                     self.write_inverse_object_property_axiom(
                         axiom.object_property_expression,
                         axiom.inverse_object_property_expression,
                     )
-            for axiom in ontology.get_axioms(
+            for axiom in type_to_axioms[
                 AxiomsType.INVERSE_FUNCTIONAL_OBJECT_PROPERTIES
-            ):
+            ]:
                 assert isinstance(axiom, OWLInverseFunctionalObjectProperty)
                 if str(axiom) not in self.processed_axioms:
-                    Util.debug(f"Inverse functional object property axiom -> {axiom}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(
+                            f"Inverse functional object property axiom -> {axiom}"
+                        )
                     self.processed_axioms.add(str(axiom))
                     self.write_inverse_functional_object_property_axiom(
                         axiom.object_property_expression
                     )
-            for axiom in ontology.get_axioms(AxiomsType.OBJECT_PROPERTY_DOMAIN):
+            for axiom in type_to_axioms[AxiomsType.OBJECT_PROPERTY_DOMAIN]:
                 assert isinstance(axiom, OWLObjectPropertyDomain)
                 if str(axiom) not in self.processed_axioms:
-                    Util.debug(f"Object property domain axiom -> {axiom}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(f"Object property domain axiom -> {axiom}")
                     self.processed_axioms.add(str(axiom))
                     self.write_object_property_domain_axiom(
                         axiom.object_property_expression, axiom.class_expression
                     )
-            for axiom in ontology.get_axioms(AxiomsType.OBJECT_PROPERTY_RANGE):
+            for axiom in type_to_axioms[AxiomsType.OBJECT_PROPERTY_RANGE]:
                 assert isinstance(axiom, OWLObjectPropertyRange)
                 if str(axiom) not in self.processed_axioms:
-                    Util.debug(f"Object property range axiom -> {axiom}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(f"Object property range axiom -> {axiom}")
                     self.processed_axioms.add(str(axiom))
                     self.write_object_property_range_axiom(
                         axiom.object_property_expression, axiom.class_expression
                     )
-            for axiom in ontology.get_axioms(AxiomsType.DATA_PROPERTY_DOMAIN):
+            for axiom in type_to_axioms[AxiomsType.DATA_PROPERTY_DOMAIN]:
                 assert isinstance(axiom, OWLDataPropertyDomain)
                 if str(axiom) not in self.processed_axioms:
-                    Util.debug(f"Data property domain axiom -> {axiom}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(f"Data property domain axiom -> {axiom}")
                     self.processed_axioms.add(str(axiom))
                     self.write_data_property_domain_axiom(
                         axiom.data_property_expression, axiom.class_expression
                     )
-            for axiom in ontology.get_axioms(AxiomsType.DATA_PROPERTY_RANGE):
+            for axiom in type_to_axioms[AxiomsType.DATA_PROPERTY_RANGE]:
                 assert isinstance(axiom, OWLDataPropertyRange)
                 if str(axiom) not in self.processed_axioms:
-                    Util.debug(f"Data property range axiom -> {axiom}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(f"Data property range axiom -> {axiom}")
                     self.processed_axioms.add(str(axiom))
                     self.write_data_property_range_axiom(
                         axiom.data_property_expression, axiom.data_range
                     )
-            for axiom in ontology.get_axioms(AxiomsType.DISJOINT_OBJECT_PROPERTIES):
+            for axiom in type_to_axioms[AxiomsType.DISJOINT_OBJECT_PROPERTIES]:
                 assert isinstance(axiom, OWLDisjointObjectProperties)
                 if str(axiom) not in self.processed_axioms:
-                    Util.debug(f"Disjoint object properties axiom -> {axiom}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(f"Disjoint object properties axiom -> {axiom}")
                     self.processed_axioms.add(str(axiom))
                     self.write_disjoint_object_properties_axiom(
                         axiom.object_property_expressions
                     )
-            for axiom in ontology.get_axioms(AxiomsType.DISJOINT_DATA_PROPERTIES):
+            for axiom in type_to_axioms[AxiomsType.DISJOINT_DATA_PROPERTIES]:
                 assert isinstance(axiom, OWLDisjointDataProperties)
                 if str(axiom) not in self.processed_axioms:
-                    Util.debug(f"Disjoint data properties axiom -> {axiom}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(f"Disjoint data properties axiom -> {axiom}")
                     self.processed_axioms.add(str(axiom))
                     self.write_disjoint_data_properties_axiom(
                         axiom.data_property_expressions
@@ -1138,43 +1386,93 @@ class FuzzyOwl2(object):
             # ########
             #  ABox
             # ########
-            self.__write_class_assertion_axiom(ontology, annotated=True)
-            self.__write_object_property_assertion_axiom(ontology, annotated=True)
-            self.__write_data_property_assertion_axiom(ontology, annotated=True)
+            self.__write_class_assertion_axiom(
+                ontology,
+                annotated=True,
+                axioms=type_to_axioms[AxiomsType.CLASS_ASSERTIONS],
+            )
+            self.__write_object_property_assertion_axiom(
+                ontology,
+                annotated=True,
+                axioms=type_to_axioms[AxiomsType.OBJECT_PROPERTY_ASSERTIONS],
+            )
+            self.__write_data_property_assertion_axiom(
+                ontology,
+                annotated=True,
+                axioms=type_to_axioms[AxiomsType.DATA_PROPERTY_ASSERTIONS],
+            )
             self.__write_negative_object_property_assertion_axiom(
-                ontology, annotated=True
+                ontology,
+                annotated=True,
+                axioms=type_to_axioms[AxiomsType.NEGATIVE_OBJECT_PROPERTY_ASSERTIONS],
             )
             self.__write_negative_data_property_assertion_axiom(
-                ontology, annotated=True
+                ontology,
+                annotated=True,
+                axioms=type_to_axioms[AxiomsType.NEGATIVE_DATA_PROPERTY_ASSERTIONS],
             )
-            for axiom in ontology.get_axioms(AxiomsType.SAME_INDIVIDUALS):
+            for axiom in type_to_axioms[AxiomsType.SAME_INDIVIDUALS]:
                 assert isinstance(axiom, OWLSameIndividual)
                 if str(axiom) not in self.processed_axioms:
-                    Util.debug(f"Same individual axiom -> {axiom}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(f"Same individual axiom -> {axiom}")
                     self.processed_axioms.add(str(axiom))
                     self.write_same_individual_axiom(axiom.individuals)
-            for axiom in ontology.get_axioms(AxiomsType.DIFFERENT_INDIVIDUALS):
+            for axiom in type_to_axioms[AxiomsType.DIFFERENT_INDIVIDUALS]:
                 assert isinstance(axiom, OWLDifferentIndividuals)
                 if str(axiom) not in self.processed_axioms:
-                    Util.debug(f"Different individuals axiom -> {axiom}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(f"Different individuals axiom -> {axiom}")
                     self.processed_axioms.add(str(axiom))
                     self.write_different_individuals_axiom(axiom.individuals)
 
             # ########
             # Not annotated subclass axioms
             # ########
-            self.__write_subclass_of_axiom(ontology, annotated=False)
-            self.__write_subobject_property_axiom(ontology, annotated=False)
-            self.__write_subdata_property_axiom(ontology, annotated=False)
-            self.__write_subproperty_chain_of_axiom(ontology, annotated=False)
-            self.__write_class_assertion_axiom(ontology, annotated=False)
-            self.__write_object_property_assertion_axiom(ontology, annotated=False)
-            self.__write_data_property_assertion_axiom(ontology, annotated=False)
+            self.__write_subclass_of_axiom(
+                ontology,
+                annotated=False,
+                axioms=type_to_axioms[AxiomsType.SUBCLASSES],
+            )
+            self.__write_subobject_property_axiom(
+                ontology,
+                annotated=False,
+                axioms=type_to_axioms[AxiomsType.SUB_OBJECT_PROPERTIES],
+            )
+            self.__write_subdata_property_axiom(
+                ontology,
+                annotated=False,
+                axioms=type_to_axioms[AxiomsType.SUB_DATA_PROPERTIES],
+            )
+            self.__write_subproperty_chain_of_axiom(
+                ontology,
+                annotated=False,
+                axioms=type_to_axioms[AxiomsType.SUB_OBJECT_PROPERTIES],
+            )
+            self.__write_class_assertion_axiom(
+                ontology,
+                annotated=False,
+                axioms=type_to_axioms[AxiomsType.CLASS_ASSERTIONS],
+            )
+            self.__write_object_property_assertion_axiom(
+                ontology,
+                annotated=False,
+                axioms=type_to_axioms[AxiomsType.OBJECT_PROPERTY_ASSERTIONS],
+            )
+            self.__write_data_property_assertion_axiom(
+                ontology,
+                annotated=False,
+                axioms=type_to_axioms[AxiomsType.DATA_PROPERTY_ASSERTIONS],
+            )
             self.__write_negative_object_property_assertion_axiom(
-                ontology, annotated=False
+                ontology,
+                annotated=False,
+                axioms=type_to_axioms[AxiomsType.NEGATIVE_OBJECT_PROPERTY_ASSERTIONS],
             )
             self.__write_negative_data_property_assertion_axiom(
-                ontology, annotated=False
+                ontology,
+                annotated=False,
+                axioms=type_to_axioms[AxiomsType.NEGATIVE_DATA_PROPERTY_ASSERTIONS],
             )
 
     def get_class_name(self, c: OWLClassExpression) -> str:
@@ -1191,7 +1489,8 @@ class FuzzyOwl2(object):
         :rtype: str
         """
 
-        Util.debug(f"Getting class name for expression: {c}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Getting class name for expression: {c}")
         if isinstance(c, OWLClass):
             d: OWLClass = typing.cast(OWLClass, c)
             if d.is_thing():
@@ -1343,7 +1642,8 @@ class FuzzyOwl2(object):
         :rtype: str
         """
 
-        Util.debug(f"Getting object property name for expression: {p}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Getting object property name for expression: {p}")
         if p.is_top_object_property():
             return self.get_top_object_property_name()
         elif p.is_bottom_object_property():
@@ -1363,7 +1663,8 @@ class FuzzyOwl2(object):
         :rtype: str
         """
 
-        Util.debug(f"Getting data property name for expression: {p}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Getting data property name for expression: {p}")
         if p.is_top_data_property():
             return self.get_top_data_property_name()
         elif p.is_bottom_data_property():
@@ -1383,7 +1684,8 @@ class FuzzyOwl2(object):
         :rtype: typing.Optional[str]
         """
 
-        Util.debug(f"Getting individual name for expression: {i}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Getting individual name for expression: {i}")
         if isinstance(i, OWLAnonymousIndividual):
             Util.info(f"Anonymous individual not supported")
             return None

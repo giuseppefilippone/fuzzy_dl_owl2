@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.fuzzy_modifier
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-An abstract base class is established to define the structural contract for fuzzy modifiers that alter membership degrees within the FuzzyOWL2 framework.
+Defines an abstract base class that structures fuzzy modifiers acting as linguistic hedges to alter the membership degree of fuzzy concepts.
 
 
 Description
 -----------
 
 
-The component serves as a foundational contract within the FuzzyOWL2 framework, specifically designed to represent linguistic hedges that modify the membership degree of fuzzy concepts. By enforcing a standard interface, it ensures that concrete implementations can mathematically adjust truth values associated with fuzzy axioms, enabling the representation of nuances such as intensification or dilution. Subclasses must provide the specific logic required to transform these values, allowing the system to apply distinct operations like "very" or "somewhat" to fuzzy expressions. Because the definition is abstract, direct instantiation is impossible, guaranteeing that only specialized classes with defined transformation logic are utilized throughout the system.
+Acting as a foundational contract within the FuzzyOWL2 framework, the abstract base class enforces a standard structure for linguistic hedges that mathematically adjust the truth values of fuzzy axioms. These modifiers serve to transform membership degrees through specific operations, such as intensifying a concept with terms like "very" or diluting it with terms like "somewhat." Because the definition is abstract, direct instantiation is impossible, requiring developers to subclass this component to provide concrete implementations that apply the necessary mathematical logic to fuzzy expressions.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -63,3 +59,4 @@ Module Contents
 
 
    This abstract base class defines the structure for fuzzy modifiers used within the FuzzyOWL2 framework, serving as a linguistic hedge that alters the membership degree of fuzzy concepts. It acts as a contract for implementing specific transformations, such as intensifiers like "very" or dilutors like "somewhat," which mathematically adjust the truth values of fuzzy axioms. Since this class is abstract, it cannot be instantiated directly; instead, it should be subclassed to create concrete modifier implementations that apply specific logic to fuzzy expressions.
+

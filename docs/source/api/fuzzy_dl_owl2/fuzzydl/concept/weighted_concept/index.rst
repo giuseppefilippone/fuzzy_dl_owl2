@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.concept.weighted_concept
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A class representing a concept modified by a numerical weight within a fuzzy description logic framework.
+A Python class representing a fuzzy description logic concept modified by a numerical weight to denote importance or relevance.
 
 
 Description
 -----------
 
 
-The implementation models a logical construct where a specific concept is qualified by a numerical value, typically representing importance or relevance in a fuzzy logic context. By inheriting from a base concept class and utilizing an interface for holding nested concepts, the design allows the object to act as a wrapper that preserves the structure of the underlying logic while adding a quantitative modifier. Structural queries, such as retrieving atomic concepts or roles, are delegated directly to the encapsulated concept, ensuring that the wrapper does not obscure the internal details of the logic it modifies. Furthermore, the class supports standard logical operations like negation, conjunction, and disjunction through operator overloading, enabling these weighted constructs to participate seamlessly in complex logical expressions.
+The software implements a wrapper for logical concepts within a fuzzy description logic framework, allowing a numerical weight to be associated with a base concept to represent its significance or priority. By inheriting from a base concept class and utilizing an interface for concept containment, the design ensures that the weighted entity behaves like a standard concept while maintaining a distinct scalar value. Structural queries, such as retrieving atomic concepts or roles, are delegated directly to the encapsulated inner concept, ensuring that the wrapper remains transparent to the underlying logical structure. The implementation also supports standard logical operations like negation, conjunction, and disjunction through operator overloading, which relies on a separate operator utility to construct new concept instances. Furthermore, the logic includes mechanisms for cloning the object and replacing internal components, while the hashing strategy ensures that the identity of the object is determined by a combination of its weight, the hash of its inner concept, and its type.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -48,7 +44,7 @@ Module Contents
     .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzydl_concept_weighted_concept_WeightedConcept.pdf
        :alt: UML Class Diagram for WeightedConcept
        :align: center
-       :width: 10.7cm
+       :width: 8.9cm
        :class: uml-diagram
 
        UML Class Diagram for **WeightedConcept**
@@ -85,9 +81,9 @@ Module Contents
 
    .. py:method:: __hash__() -> int
 
-      Computes the hash value for the `WeightedConcept` instance, making the object hashable and suitable for use as a dictionary key or set element. The implementation calculates the hash based on the string representation of the object, effectively delegating to the `__str__` method. This implies that the hash value is intrinsically linked to the textual output of the instance, and any changes to the string representation will result in a different hash.
+      Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-      :return: An integer hash value derived from the object's string representation.
+      :return: An integer hash value representing the structural identity of this object.
 
       :rtype: int
 
@@ -176,20 +172,15 @@ Module Contents
 
 
    .. py:attribute:: name
-      :value: '(Uninferable Uninferable)'
-
-
-      Updates the name of the Concept instance to the specified string value. This setter modifies the object's internal state by assigning the provided value to the private `_name` attribute, effectively replacing any previously stored name.
-
-      :param value: The new name to assign to the object.
-      :type value: str
 
 
    .. py:property:: weight
       :type: float
 
 
-      Sets the weight of the concept to the specified floating-point value. This method acts as the setter for the `weight` property, directly updating the internal `_weight` attribute. Modifying this value changes the object's state, potentially influencing any downstream logic or calculations that depend on the concept's weight.
+      Returns the weight applied to the wrapped concept, i.e. the scalar factor by which this weighted concept scales the membership degree of its inner concept in a weighted aggregation. The value is read from the private ``_weight`` attribute without modifying the instance.
 
-      :param value: The new weight to assign to the object.
-      :type value: float
+      :return: The weight applied to the wrapped concept.
+
+      :rtype: float
+

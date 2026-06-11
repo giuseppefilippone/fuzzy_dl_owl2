@@ -16,7 +16,7 @@ fuzzy_dl_owl2
     .. figure:: /_uml/module_fuzzy_dl_owl2.pdf
        :alt: UML Class Diagram for fuzzy_dl_owl2
        :align: center
-       :width: 100%
+       :width: 4.4cm
        :class: uml-diagram
 
        UML Class Diagram for **fuzzy_dl_owl2**

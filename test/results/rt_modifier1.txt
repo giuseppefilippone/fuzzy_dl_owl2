@@ -1,0 +1,2 @@
+(define-fuzzy-logic lukasiewicz)
+(define-modifier very triangular-modifier(0.8, 1.0, 1.0))

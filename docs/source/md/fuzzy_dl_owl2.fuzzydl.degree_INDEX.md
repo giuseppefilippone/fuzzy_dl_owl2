@@ -1,14 +1,14 @@
 # Summary
 
-A polymorphic framework for quantifying fuzzy logic satisfaction levels through numeric, variable, and symbolic expression representations designed for constraint solving.
+A polymorphic framework for representing fuzzy logic degrees as concrete numeric values or symbolic algebraic entities to support arithmetic operations and constraint generation within mixed-integer linear programming models.
 
 ## Description
 
-An abstract base class establishes a unified interface for handling various representations of satisfaction metrics, enabling the system to treat raw numbers, algebraic variables, and complex expressions interchangeably. Concrete implementations wrap floating-point values for fixed constants or utilize symbolic wrappers to represent unknowns and dynamic formulas, ensuring that all types support essential arithmetic operations like addition, subtraction, and scalar multiplication. This polymorphic design facilitates the generation of mathematical inequalities and constraints required by mixed-integer linear programming solvers, allowing the reasoning engine to formulate optimization problems where satisfaction levels act as boundaries or targets. By explicitly distinguishing between numeric and non-numeric entities, the architecture ensures that type-specific logic is applied correctly during the resolution of fuzzy constraints and the construction of linear equations.
+The architecture establishes a unified interface for quantifying concept satisfaction, allowing the system to treat fixed numbers, dynamic expressions, and unknown variables interchangeably through a shared abstract contract. By enforcing standard arithmetic manipulations such as addition, subtraction, and scalar multiplication, the design enables these diverse degree types to seamlessly integrate into mathematical modeling workflows without exposing their underlying implementation details. Concrete implementations distinguish between numeric constants and symbolic entities, ensuring that type checking and evaluation logic correctly handle static values versus dynamic components that require solving. This abstraction facilitates the automatic generation of linear programming constraints and inequalities, bridging the gap between high-level fuzzy logic reasoning and low-level solver mechanics.
 
 ## Modules
 
-- [`fuzzy_dl_owl2.fuzzydl.degree.degree`] — An abstract base class defines the interface for a degree metric used to quantify the extent to which a concept is satisfied within a fuzzy logic system.
-- [`fuzzy_dl_owl2.fuzzydl.degree.degree_expression`] — A symbolic wrapper for algebraic expressions that represents non-numeric degrees within a fuzzy logic framework, enabling dynamic constraint generation and mathematical manipulation.
-- [`fuzzy_dl_owl2.fuzzydl.degree.degree_numeric`] — Encapsulates a specific floating-point value to represent a degree of satisfaction within a fuzzy logic framework.
-- [`fuzzy_dl_owl2.fuzzydl.degree.degree_variable`] — Defines a symbolic representation of a degree of satisfaction using an algebraic variable to enable dynamic constraint generation within a fuzzy logic system.
+- [`fuzzy_dl_owl2.fuzzydl.degree.degree`] — An abstract base class defines the interface for representing degrees used to quantify concept satisfaction within a fuzzy logic system.
+- [`fuzzy_dl_owl2.fuzzydl.degree.degree_expression`] — A symbolic wrapper for algebraic expressions that functions as a non-numeric degree within a fuzzy logic system, enabling dynamic satisfaction measures through mathematical manipulation.
+- [`fuzzy_dl_owl2.fuzzydl.degree.degree_numeric`] — A concrete implementation of a fuzzy logic degree that encapsulates a specific numeric value to facilitate arithmetic operations and constraint generation within a mathematical model.
+- [`fuzzy_dl_owl2.fuzzydl.degree.degree_variable`] — A symbolic wrapper for algebraic variables allows degrees of satisfaction in a fuzzy logic system to be treated as unknowns that must be solved for rather than fixed constants.

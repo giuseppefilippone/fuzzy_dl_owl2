@@ -27,14 +27,22 @@ class HasConceptsInterface(abc.ABC):
     @property
     def concepts(self) -> list[Concept]:
         """
-        Replaces the internal collection of concepts with the provided iterable of Concept objects. The method converts the input iterable into a list before assignment, ensuring that the underlying `_concepts` attribute stores a concrete, mutable sequence. This operation overwrites any previously stored concepts rather than appending to them.
+        Returns the list of concepts held by this object, i.e. the operands that the implementing concept combines. The value is read from the private ``_concepts`` attribute without modifying the instance.
 
-        :param value: An iterable of Concept objects to assign to the internal concepts list.
-        :type value: typing.Iterable[Concept]
+        :return: The wrapped operand concepts.
+
+        :rtype: list[Concept]
         """
 
         return self._concepts
 
     @concepts.setter
     def concepts(self, value: typing.Iterable[Concept]) -> None:
+        """
+        Sets the list of concepts held by this object. The provided iterable is materialized into a list and stored in the private ``_concepts`` attribute, overwriting the previous operands rather than appending to them.
+
+        :param value: The new operand concepts.
+        :type value: typing.Iterable[Concept]
+        """
+
         self._concepts = list(value)

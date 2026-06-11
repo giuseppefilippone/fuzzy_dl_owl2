@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.concept.concrete.fuzzy_concrete_concept
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-An abstract base class defines fuzzy concepts operating over numerical intervals with configurable lower and upper bounds.
+An abstract base class defines the structure and behavior for fuzzy concepts operating within specific numerical intervals.
 
 
 Description
 -----------
 
 
-It serves as a foundational template for evaluating the degree of membership for specific numerical values within a defined range, distinguishing concrete data handling from abstract conceptual relationships. The implementation manages interval parameters through properties that enforce structural integrity, specifically ensuring that the upper bound is never less than the lower bound. By declaring an abstract method for calculating membership degrees, the design delegates the specific mathematical logic—such as triangular or trapezoidal functions—to subclasses while centralizing common state management. It integrates into the broader fuzzy description logic framework by identifying itself as a concrete entity type, thereby enabling the system to process quantitative data rather than purely qualitative or structural definitions.
+Fuzzy logic concepts often rely on numerical ranges to determine partial truth values, and this class provides the foundational framework for such interval-based definitions. By enforcing a specific structure where a lower bound cannot exceed an upper bound, the implementation ensures that the mathematical domain remains valid for subsequent calculations. Subclasses are expected to provide the specific algorithm for determining membership degrees, allowing for various shapes of fuzzy sets, such as triangular or trapezoidal functions, to be built upon this consistent interval management. The class also integrates with the broader ontology system by identifying itself as a concrete type and handling standard operations like name retrieval and role management, although it does not support complex concept replacement or decomposition into atomic parts.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -160,28 +156,24 @@ Module Contents
       :type: float
 
 
-      Sets the value of the `k1` attribute for the instance, converting the input to a float to ensure type consistency. This method updates the private `_k1` variable, effectively modifying the internal state of the `FuzzyConcreteConcept` object. Any subsequent operations relying on this parameter will reflect the new value.
+      Returns the lower bound of the numerical interval ``[k1, k2]`` over which this concrete concept is defined. The value is held internally as a float and is read without modifying the instance.
 
-      :param value: The new value for the k1 attribute.
-      :type value: float
+      :return: The lower bound ``k1`` of the definition interval.
+
+      :rtype: float
 
 
    .. py:property:: k2
       :type: float
 
 
-      Sets the upper bound parameter k2 for the fuzzy concrete concept. This method enforces a constraint ensuring that the new value is greater than or equal to the existing k1 parameter; if k1 is larger than the provided value, a ValueError is raised. Upon successful validation, the input is converted to a float and stored in the internal state.
+      Returns the upper bound of the numerical interval ``[k1, k2]`` over which this concrete concept is defined. The value is held internally as a float and is read without modifying the instance.
 
-      :param value: The value to assign to the k2 parameter, which must be greater than or equal to k1.
-      :type value: float
+      :return: The upper bound ``k2`` of the definition interval.
 
-      :raises ValueError: Raised if the provided value is less than `k1`, as `k2` must be greater than or equal to `k1`.
+      :rtype: float
 
 
    .. py:attribute:: name
       :type:  str
 
-      Updates the name of the Concept instance to the specified string value. This setter modifies the object's internal state by assigning the provided value to the private `_name` attribute, effectively replacing any previously stored name.
-
-      :param value: The new name to assign to the object.
-      :type value: str

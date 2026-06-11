@@ -17,6 +17,9 @@ Welcome to fuzzy_dl_owl2's documentation!
    install_and_config
    grammar
    concepts
+   queries
+   modifiers_degrees
+   architecture
    xml
    usage
    api/index

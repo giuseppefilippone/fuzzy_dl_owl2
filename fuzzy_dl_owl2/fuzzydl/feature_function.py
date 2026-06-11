@@ -4,8 +4,8 @@ from fuzzy_dl_owl2.fuzzydl.individual.created_individual import CreatedIndividua
 from fuzzy_dl_owl2.fuzzydl.individual.individual import Individual
 from fuzzy_dl_owl2.fuzzydl.milp.expression import Expression
 from fuzzy_dl_owl2.fuzzydl.milp.milp_helper import MILPHelper
-from fuzzy_dl_owl2.fuzzydl.milp.term import Term
-from fuzzy_dl_owl2.fuzzydl.milp.variable import Variable
+from fuzzy_dl_owl2.fuzzydl.milp.term import Term  # Term
+from fuzzy_dl_owl2.fuzzydl.milp.variable import Variable  # Variable
 from fuzzy_dl_owl2.fuzzydl.relation import Relation
 from fuzzy_dl_owl2.fuzzydl.util import constants
 from fuzzy_dl_owl2.fuzzydl.util.constants import FeatureFunctionType
@@ -17,7 +17,6 @@ class FeatureFunction:
 
     :raises ValueError: Raised if the arguments passed to the constructor do not match any of the valid signatures for defining a feature function, such as having an incorrect number of arguments or incompatible type combinations.
     """
-
 
     @typing.overload
     def __init__(self, feature: typing.Self) -> None: ...
@@ -55,7 +54,7 @@ class FeatureFunction:
                 self.__feature_function_init_1(*args)
             elif isinstance(args[0], constants.NUMBER):
                 self.__feature_function_init_2(*args)
-            elif isinstance(args[0], typing.Sequence) and all(
+            elif isinstance(args[0], list) and all(
                 isinstance(a, FeatureFunction) for a in args[0]
             ):
                 self.__feature_function_init_3(*args)
@@ -227,8 +226,8 @@ class FeatureFunction:
                 CreatedIndividual, rel_set[0].get_object_individual()
             )
             # Get the variable xB
-            x_b: Variable = milp.get_variable(b)
-            return Expression(Term(1.0, x_b))
+            x_b: Variable = milp.get_variable(b)  # Variable
+            return Expression(Term(1.0, x_b))  # Term
         elif self.type == FeatureFunctionType.NUMBER:
             return Expression(self.n)
         elif self.type == FeatureFunctionType.PRODUCT:

@@ -1,0 +1,15 @@
+(define-fuzzy-concept LowAlcohol triangular(0.0, 100.0, 1.0, 3.0, 5.0))
+
+(functional hasAlcohol)
+
+(range hasAlcohol *real* 0.0 100.0)
+
+(define-primitive-concept Beer *top*)
+(define-primitive-concept Stout *top*)
+(define-primitive-concept Stout Beer)
+
+(define-concept LowAlcoholicBeer (and Beer (some hasAlcohol LowAlcohol)))
+
+(instance GuinessDraught (= hasAlcohol 4.1) 1.0)
+(instance GuinessDraught Stout 1.0)
+

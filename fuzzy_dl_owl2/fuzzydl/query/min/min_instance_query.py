@@ -9,10 +9,10 @@ from fuzzy_dl_owl2.fuzzydl.individual.individual import Individual
 from fuzzy_dl_owl2.fuzzydl.knowledge_base import KnowledgeBase
 from fuzzy_dl_owl2.fuzzydl.milp.expression import Expression
 from fuzzy_dl_owl2.fuzzydl.milp.solution import Solution
-from fuzzy_dl_owl2.fuzzydl.milp.term import Term
-from fuzzy_dl_owl2.fuzzydl.milp.variable import Variable
+from fuzzy_dl_owl2.fuzzydl.milp.term import Term  # Term
+from fuzzy_dl_owl2.fuzzydl.milp.variable import Variable  # Variable
 from fuzzy_dl_owl2.fuzzydl.query.instance_query import InstanceQuery
-from fuzzy_dl_owl2.fuzzydl.util.constants import VariableType
+from fuzzy_dl_owl2.fuzzydl.util.constants import VariableType  # Variable
 
 
 class MinInstanceQuery(InstanceQuery):
@@ -39,9 +39,9 @@ class MinInstanceQuery(InstanceQuery):
         :type kb: KnowledgeBase
         """
 
-        q: Variable = kb.milp.get_new_variable(VariableType.SEMI_CONTINUOUS)
+        q: Variable = kb.milp.get_new_variable(VariableType.SEMI_CONTINUOUS)  # Variable
         kb.old_01_variables += 1
-        self.obj_expr: Expression = Expression(Term(1.0, q))
+        self.obj_expr: Expression = Expression(Term(1.0, q))  # Term
 
         if "(some " in str(self.conc) or "(b-some " in str(self.conc):
             kb.set_dynamic_blocking()
@@ -50,7 +50,7 @@ class MinInstanceQuery(InstanceQuery):
         kb.add_assertion(
             self.ind,
             -self.conc,
-            DegreeExpression.get_degree(Expression(1.0, Term(-1.0, q))),
+            DegreeExpression.get_degree(Expression(1.0, Term(-1.0, q))),  # Term
         )
         kb.solve_assertions()
 

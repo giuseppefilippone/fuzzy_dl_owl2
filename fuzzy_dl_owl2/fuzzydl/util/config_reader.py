@@ -2,13 +2,16 @@ from __future__ import annotations
 
 import configparser
 import math
+import os
+
+from dotenv import dotenv_values, find_dotenv, load_dotenv
 
 from fuzzy_dl_owl2.fuzzydl.util import constants
 
 
 class ConfigReader:
     """
-    A centralized configuration manager for a reasoning engine, defining default parameters that control precision, optimization levels, blocking strategies, and the selection of the Mixed-Integer Linear Programming (MILP) solver. It allows users to customize the reasoner's behavior by loading settings from a configuration file and overriding specific values via command-line arguments. When parameters are loaded, the manager automatically adjusts internal precision calculations and updates global constants within the application to match the capabilities of the selected solver provider.
+    A centralized configuration manager for a reasoning engine, defining default parameters that control precision, optimization levels, blocking strategies, and the selection of the Mixed-Integer Linear Programming (MILP) solver. It allows users to customize the reasoner's behavior by loading settings from a configuration file (INI) or, when that file is missing or unspecified, from a ``.env`` file located in the current working directory. Specific values can be overridden via command-line arguments. When parameters are loaded, the manager automatically adjusts internal precision calculations and updates global constants within the application to match the capabilities of the selected solver provider.
 
     :param ANYWHERE_DOUBLE_BLOCKING: Determines whether the anywhere double blocking optimization is applied.
     :type ANYWHERE_DOUBLE_BLOCKING: bool
@@ -32,13 +35,12 @@ class ConfigReader:
     :type MILP_PROVIDER: constants.MILPProvider
     """
 
-
     # Anywhere pairwise blocking applied. false disables anywhere double blocking; true enables anywher edouble blocking.
     ANYWHERE_DOUBLE_BLOCKING: bool = True
     # Anywhere simple blocking applied. false disables anywhere simple blocking; true enables anywhere simple blocking.
     ANYWHERE_SIMPLE_BLOCKING: bool = True
     # Debugging mode
-    DEBUG_PRINT: bool = True
+    DEBUG_PRINT: bool = False
     # Precision of the reasoner
     EPSILON: float = 0.001
     # Maximum number of new individuals that will be created
@@ -55,43 +57,115 @@ class ConfigReader:
     MILP_PROVIDER: constants.MILPProvider = constants.MILPProvider.GUROBI
 
     @staticmethod
-    def load_parameters(config_file: str, args: list[str]) -> None:
+    def _read_ini(config_file: str) -> dict[str, str]:
         """
-        Reads configuration settings from the specified file and applies overrides from the provided argument list, which is interpreted as sequential key-value pairs. This method updates class-level attributes of `ConfigReader` and modifies global constants within the application's `constants` module based on the loaded settings, such as the MILP provider and epsilon value. It also calculates derived values like `NUMBER_DIGITS` and prints a debug message if enabled. The provided argument list must contain an even number of elements to form valid key-value pairs; otherwise, a generic exception is triggered. Errors during file reading or parsing are caught and printed to standard output without halting execution, potentially leaving the configuration in a partially updated state.
+        Reads an INI-style configuration file and returns the key/value pairs of its ``DEFAULT`` section as a plain dictionary. Parsing is delegated to :class:`configparser.ConfigParser`; if the file cannot be found or read, a ``FileNotFoundError`` is raised rather than silently returning an empty mapping.
 
-        :param config_file: Filesystem path to the configuration file containing default parameters.
+        :param config_file: Path to the INI configuration file to read.
         :type config_file: str
-        :param args: A list of strings representing key-value pairs to override configuration settings, interpreted as alternating keys and values.
-        :type args: list[str]
+
+        :raises FileNotFoundError: if the configuration file does not exist or cannot be read.
+
+        :return: The ``DEFAULT`` section entries as a ``{key: value}`` mapping.
+
+        :rtype: dict[str, str]
         """
 
         config = configparser.ConfigParser()
         read_files = config.read(config_file)
         if not read_files:
             raise FileNotFoundError(f"Config file not found: {config_file}")
+        return {k: v for k, v in config["DEFAULT"].items()}
 
-        # Caller convention: args[0] is the KB filename (consumed elsewhere).
-        # args[1:] are optional key/value override pairs.
-        overrides = args[1:]
-        if len(overrides) % 2 != 0:
-            raise ValueError(
-                f"CLI overrides must come in key/value pairs; got {len(overrides)}: {overrides}"
-            )
-        for i in range(0, len(overrides), 2):
-            config["DEFAULT"][overrides[i]] = overrides[i + 1]
+    @staticmethod
+    def _read_env() -> dict[str, str] | None:
+        """
+        Loads the default ``.env`` discovered by python-dotenv.
 
-        ConfigReader.DEBUG_PRINT = config.getboolean("DEFAULT", "debugPrint")
-        ConfigReader.EPSILON = config.getfloat("DEFAULT", "epsilon")
-        ConfigReader.MAX_INDIVIDUALS = config.getint("DEFAULT", "maxIndividuals")
-        ConfigReader.OWL_ANNOTATION_LABEL = config.get(
-            "DEFAULT", "owlAnnotationLabel"
+        python-dotenv's default ``find_dotenv()`` walks up from the *caller's
+        file* (``config_reader.py``), not from the current working directory,
+        so a ``.env`` placed in the user's working directory was previously
+        invisible. Pass ``usecwd=True`` so discovery starts at ``os.getcwd()``
+        and walks up from there.
+
+        :return: The file-only key/value mapping, or ``None`` when no ``.env``
+            file is discovered.
+
+        :rtype: dict[str, str] | None
+        """
+        dotenv_path = find_dotenv(usecwd=True)
+        if not dotenv_path or not load_dotenv(dotenv_path, override=True):
+            return None
+        return {k: v for k, v in dotenv_values(dotenv_path).items() if v is not None}
+
+    @staticmethod
+    def load_parameters(config_file: str | None, **kwargs: list[str]) -> None:
+        """
+        Loads configuration settings and applies overrides from the provided argument list.
+
+        When ``config_file`` is ``None`` or points to a non-existent path, the loader falls
+        back to a ``.env`` file located in the current working directory (``./.env``). The
+        ``.env`` file uses the standard ``KEY=VALUE`` format; keys are matched against the
+        INI configuration keys in a case- and underscore-insensitive way, so either
+        ``DEBUG_PRINT=True`` or ``debugPrint=True`` is accepted.
+
+        Overrides are supplied as keyword arguments and applied on top of the values read
+        from the INI/``.env`` source before case- and underscore-insensitive normalisation.
+
+        :param config_file: Filesystem path to the INI configuration file. If ``None`` or
+            missing, ``./.env`` is used as a fallback.
+        :type config_file: str | None
+        :param kwargs: A dictionary of key-value pairs to override configuration settings.
+        :type kwargs: dict[str, typing.Any]
+
+        :raises FileNotFoundError: if ``config_file`` is ``None`` or missing and no ``.env``
+            file can be discovered by python-dotenv.
+        """
+
+        if config_file is not None and os.path.isfile(config_file):
+            settings = ConfigReader._read_ini(config_file)
+        else:
+            settings = ConfigReader._read_env()
+            if settings is None:
+                raise FileNotFoundError(
+                    f"No configuration source found: config_file={config_file!r}, "
+                    "no .env discovered by python-dotenv"
+                )
+
+        # kwargs are optional key/value override pairs.
+        for key, value in kwargs.items():
+            settings[key] = value
+
+        # Match keys case- and underscore-insensitively so INI keys
+        # (``milpProvider``) and ``.env`` keys (``MILP_PROVIDER``) both resolve.
+        settings = {k.replace("_", "").lower(): v for k, v in settings.items()}
+
+        # Apply settings with appropriate type conversions and defaults.
+        debug_print = settings.get("debugprint", ConfigReader.DEBUG_PRINT)
+        ConfigReader.DEBUG_PRINT = (
+            debug_print
+            if isinstance(debug_print, bool)
+            else str(debug_print).strip().lower() in ("1", "true", "yes", "on")
+        )
+        ConfigReader.EPSILON = float(settings.get("epsilon", ConfigReader.EPSILON))
+        ConfigReader.MAX_INDIVIDUALS = int(
+            settings.get("maxindividuals", ConfigReader.MAX_INDIVIDUALS)
+        )
+        ConfigReader.OWL_ANNOTATION_LABEL = settings.get(
+            "owlannotationlabel", ConfigReader.OWL_ANNOTATION_LABEL
         )
         ConfigReader.MILP_PROVIDER = constants.MILPProvider(
-            config.get("DEFAULT", "milpProvider").lower()
+            str(
+                settings.get("milpprovider", ConfigReader.MILP_PROVIDER.name)
+            ).lower()
         )
+
+        # Compute the number of digits of precision based on the epsilon value and set global constants based on the selected MILP provider.
         ConfigReader.NUMBER_DIGITS = int(
             round(abs(math.log10(ConfigReader.EPSILON) - 1.0))
         )
+
+        # Set global constants based on the selected MILP provider, adjusting MAXVAL accordingly to ensure compatibility with the solver's capabilities.
         if ConfigReader.MILP_PROVIDER in (
             constants.MILPProvider.MIP,
             constants.MILPProvider.PULP,
@@ -99,8 +173,8 @@ class ConfigReader:
             constants.MAXVAL = (1 << 31) - 1
         elif ConfigReader.MILP_PROVIDER in (
             constants.MILPProvider.PULP_GLPK,
-            constants.MILPProvider.PULP_HIGHS,
             constants.MILPProvider.PULP_CPLEX,
+            constants.MILPProvider.PULP_HIGHS,
         ):
             constants.MAXVAL = (1 << 28) - 1
         constants.MAXVAL2 = constants.MAXVAL * 2

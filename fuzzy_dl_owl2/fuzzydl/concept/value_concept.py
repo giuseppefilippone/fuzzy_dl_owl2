@@ -16,7 +16,6 @@ class ValueConcept(Concept, HasValueInterface):
     :type name: typing.Any
     """
 
-
     def __init__(self, c_type: ConceptType, role: str, value: typing.Any) -> None:
         """
         Initializes a value-based concept by setting up the necessary type, role, and value attributes. This constructor validates that the provided concept type is strictly one of the value-related constraints: AT_MOST_VALUE, AT_LEAST_VALUE, or EXACT_VALUE. It chains initialization to the base Concept class and the HasValueInterface mixin to establish the core structure and value storage. Finally, it automatically computes and assigns a descriptive name based on the provided parameters.
@@ -197,11 +196,13 @@ class ValueConcept(Concept, HasValueInterface):
 
     def __hash__(self) -> int:
         """
-        Computes a hash value for the instance based on its string representation, enabling the object to be used as a key in dictionaries or as a member of sets. The implementation delegates the hashing logic to the built-in hash function applied to the result of the object's string conversion, ensuring that two instances with identical string representations yield the same hash. Because the hash is derived from the string representation, any internal state changes that alter the output of `str(self)` will result in a different hash value, which may cause issues if the object is used in hash-based collections after being modified.
+        Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-        :return: An integer hash value derived from the string representation of the object.
+        :return: An integer hash value representing the structural identity of this object.
 
         :rtype: int
         """
+        # return hash(str(self))
+        # return id(self)
+        return hash((self.name, hash(self.type), self.role, hash(self.value)))
 
-        return hash(str(self))

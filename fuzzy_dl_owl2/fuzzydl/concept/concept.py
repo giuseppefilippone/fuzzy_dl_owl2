@@ -2,12 +2,12 @@ from __future__ import annotations
 
 import re
 import typing
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 
 from fuzzy_dl_owl2.fuzzydl.util.constants import ConceptType
 
 
-class Thing(ABC):
+class Thing:
     """This abstract base class serves as the foundational representation for logical entities, such as concepts and operators, within a formal logic system. It defines a comprehensive interface for constructing, analyzing, and transforming logical formulas, offering utilities for structural inspection (e.g., retrieving atoms, clauses, roles, and nominals) and logical manipulation (e.g., simplification, distribution, and the application of De Morgan's laws). The class supports conversion into various normal forms, including standard Conjunctive and Disjunctive Normal Forms (CNF/DNF) as well as variants for fuzzy logic systems like Gödel and Łukasiewicz. While it provides default implementations for many reduction and traversal operations, it is designed to be extended by subclasses, which are required to implement core abstract methods for cloning, negation, equality comparison, and name computation. Additionally, the class overloads standard Python operators to enable intuitive syntax for negation and ordering comparisons between logical expressions."""
 
     def is_simplified(self) -> bool:
@@ -258,6 +258,18 @@ class Thing(ABC):
         """
 
         pass
+
+    def __hash__(self) -> int:
+        """
+        Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
+
+        :return: An integer hash value representing the structural identity of this object.
+
+        :rtype: int
+        """
+
+        # return hash(str(self))
+        return id(self)
 
     def get_atoms(self) -> list[typing.Self]:
         """
@@ -519,7 +531,7 @@ class Concept(Thing):
     num_new_concepts = 1
 
     def __init__(
-        self, c_type: ConceptType = ConceptType.ATOMIC, name: str = ""
+        self, c_type: ConceptType = ConceptType.ATOMIC, name: typing.Optional[str] = ""
     ) -> None:
         # Type of the concept
         """
@@ -528,41 +540,57 @@ class Concept(Thing):
         :param c_type: Specifies the classification or category of the concept.
         :type c_type: fuzzy_dl_owl2.fuzzydl.util.constants.ConceptType
         :param name: The identifier or label for the concept.
-        :type name: str
+        :type name: typing.Optional[str]
         """
 
         self._type: ConceptType = c_type
         # Name of the concept
-        self._name: str = name
+        self._name: typing.Optional[str] = name
 
     @property
     def type(self) -> ConceptType:
         """
-        Updates the type classification of the Concept instance to the specified value. This setter method assigns the provided `ConceptType` to the internal `_type` attribute, effectively overwriting the previous type definition. The operation modifies the object's state in place and does not return a value.
+        Returns the structural classification of this concept (e.g. atomic, complement, conjunction), stored as a :class:`ConceptType` enumeration value. This classification drives the reasoner's dispatch logic. The value is read from the private ``_type`` attribute without modifying the instance.
 
-        :param new_type: The classification or category to assign to the concept.
-        :type new_type: fuzzy_dl_owl2.fuzzydl.util.constants.ConceptType
+        :return: The concept's structural type.
+
+        :rtype: ConceptType
         """
 
         return self._type
 
     @type.setter
     def type(self, new_type: ConceptType) -> None:
+        """
+        Sets the structural classification of this concept. The provided :class:`ConceptType` is stored directly in the private ``_type`` attribute, overwriting the previous classification.
+
+        :param new_type: The new structural type to assign to the concept.
+        :type new_type: ConceptType
+        """
+
         self._type = new_type
 
     @property
-    def name(self) -> str:
+    def name(self) -> typing.Optional[str]:
         """
-        Updates the name of the Concept instance to the specified string value. This setter modifies the object's internal state by assigning the provided value to the private `_name` attribute, effectively replacing any previously stored name.
+        Returns the name of this concept, or ``None`` for anonymous (compound) concepts that have no atomic name. The value is read from the private ``_name`` attribute without modifying the instance.
 
-        :param value: The new name to assign to the object.
-        :type value: str
+        :return: The concept's name, or ``None`` if it is anonymous.
+
+        :rtype: typing.Optional[str]
         """
 
         return self._name
 
     @name.setter
-    def name(self, value: str) -> None:
+    def name(self, value: typing.Optional[str]) -> None:
+        """
+        Sets the name of this concept. The provided value is stored directly in the private ``_name`` attribute, replacing any previously stored name; ``None`` marks the concept as anonymous.
+
+        :param value: The new name to assign, or ``None`` to mark the concept anonymous.
+        :type value: typing.Optional[str]
+        """
+
         self._name = value
 
     def is_atomic(self) -> bool:
@@ -712,7 +740,7 @@ class Concept(Thing):
 
         :rtype: str
         """
-
-        if self.name is None:
-            self.name = self.compute_name()
-        return self.name
+        if self._name is not None:
+            return self._name
+        self._name = self.compute_name()
+        return self._name

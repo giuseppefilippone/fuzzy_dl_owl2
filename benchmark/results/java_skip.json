@@ -1,0 +1,17 @@
+{
+    "files": [
+        "AirSystem.txt",
+        "PRO.txt",
+        "biochemistry-complex.txt",
+        "chebi.txt",
+        "chemistry-complex.txt",
+        "heart.txt",
+        "legal-action.txt",
+        "norm.txt",
+        "organic-compound-complex.txt",
+        "propreo.txt",
+        "reaction.txt",
+        "time-modification.txt",
+        "yowl-complex.txt"
+    ]
+}

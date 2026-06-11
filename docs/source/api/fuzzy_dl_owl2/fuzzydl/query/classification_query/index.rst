@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.query.classification_query
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A specialized query implementation that triggers the classification of a knowledge base and handles potential inconsistencies by returning specific solution states.
+A specialized query that executes the classification process on a knowledge base to verify consistency.
 
 
 Description
 -----------
 
 
-Extending the base query interface, this component serves as a mechanism to initiate the classification process within a fuzzy description logic system. The core logic focuses on invoking the classification routine of the provided knowledge base, ensuring that the structural hierarchy is computed or validated. Unlike other query types that might require complex parameter resolution or preprocessing steps, this implementation bypasses such setup to directly execute the classification task. Error handling is a critical aspect of the design, where any exceptions raised during the classification process are caught and translated into a solution state indicating an inconsistent knowledge base, thereby preventing runtime failures and allowing the system to report the issue gracefully. The textual representation of the query is standardized to a specific prompt, facilitating clear identification within user interfaces or logging outputs.
+Extending the base ``Query`` interface, the logic focuses specifically on triggering the classification routine within a given knowledge base. During execution, the system invokes the classification method of the provided knowledge base, returning a successful solution with a maximum score if the process completes without error. Any exceptions raised during this operation are caught and interpreted as an indication that the knowledge base is inconsistent, resulting in a specific error state rather than propagating the failure. Unlike other query types that might require parameter resolution or setup, the design bypasses preprocessing steps entirely, relying solely on the internal state of the knowledge base to perform the operation.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -48,7 +44,7 @@ Module Contents
     .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzydl_query_classification_query_ClassificationQuery.pdf
        :alt: UML Class Diagram for ClassificationQuery
        :align: center
-       :width: 11.2cm
+       :width: 8.4cm
        :class: uml-diagram
 
        UML Class Diagram for **ClassificationQuery**
@@ -94,3 +90,5 @@ Module Contents
       :return: A Solution object representing the outcome of the classification attempt. It indicates success with a value of 1.0 or failure due to an inconsistent knowledge base.
 
       :rtype: Solution
+
+

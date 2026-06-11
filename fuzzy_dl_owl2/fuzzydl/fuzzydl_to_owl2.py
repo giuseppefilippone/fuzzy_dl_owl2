@@ -61,7 +61,9 @@ from fuzzy_dl_owl2.fuzzydl.individual.individual import Individual
 from fuzzy_dl_owl2.fuzzydl.modifier.linear_modifier import LinearModifier
 from fuzzy_dl_owl2.fuzzydl.modifier.modifier import Modifier
 from fuzzy_dl_owl2.fuzzydl.modifier.triangular_modifier import TriangularModifier
-from fuzzy_dl_owl2.fuzzydl.parser.dl_parser import DLParser
+
+# from fuzzy_dl_owl2.fuzzydl.parser.dl_parser import DLParser
+from fuzzy_dl_owl2.fuzzydl.parser import DLParserFast as DLParser
 from fuzzy_dl_owl2.fuzzydl.primitive_concept_definition import (
     PrimitiveConceptDefinition,
 )
@@ -220,8 +222,12 @@ class FuzzydlToOwl2:
         self.concepts: dict[str, OWLClassExpression] = dict()
         self.datatypes: dict[str, OWLDatatype] = dict()
         self.modifiers: dict[str, OWLDatatype] = dict()
+        self.declared_individuals: set[str] = set()
+        self.declared_properties: set[str] = set()
         self.input_FDL: str = input_file
-        self.output_FOWL: str = os.path.join(constants.RESULTS_PATH, output_file)
+        self.output_FOWL: str = os.path.join(
+            constants.ensure_results_dir(), output_file
+        )
 
     def iri(self, o: object, iri_type: type = OWLClass) -> IRI:
         """
@@ -238,18 +244,21 @@ class FuzzydlToOwl2:
         """
 
         namespace: URIRef = self.ontology_iri.namespace
+        length: int = len(self.ontology_iri.namespace)
         if iri_type == OWLClass:
-            namespace = Namespace(f"{self.ontology_path[:-1]}/class#")
+            namespace = Namespace(f"{self.ontology_path[:length-1]}/class#")
         elif iri_type == OWLDataProperty:
-            namespace = Namespace(f"{self.ontology_path[:-1]}/data-property#")
+            namespace = Namespace(f"{self.ontology_path[:length-1]}/data-property#")
         elif iri_type == OWLObjectProperty:
-            namespace = Namespace(f"{self.ontology_path[:-1]}/object-property#")
+            namespace = Namespace(f"{self.ontology_path[:length-1]}/object-property#")
         elif iri_type == OWLNamedIndividual:
-            namespace = Namespace(f"{self.ontology_path[:-1]}/individual#")
+            namespace = Namespace(f"{self.ontology_path[:length-1]}/individual#")
         elif iri_type == OWLDatatype:
-            namespace = Namespace(f"{self.ontology_path[:-1]}/datatype#")
+            namespace = Namespace(f"{self.ontology_path[:length-1]}/datatype#")
         elif iri_type == OWLAnnotationProperty:
-            namespace = Namespace(f"{self.ontology_path[:-1]}/annotation-property#")
+            namespace = Namespace(
+                f"{self.ontology_path[:length-1]}/annotation-property#"
+            )
         return IRI(namespace, str(o))
 
     def individual_iri(self, o: object) -> IRI:
@@ -417,7 +426,8 @@ class FuzzydlToOwl2:
         :rtype: OWLClassExpression
         """
 
-        Util.debug(f"Getting class for concept -> {c}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Getting class for concept -> {c}")
         c_type: ConceptType = c.type
         if c_type in (ConceptType.ATOMIC, ConceptType.CONCRETE):
             cls = self.get_class(str(c))
@@ -475,32 +485,24 @@ class FuzzydlToOwl2:
         elif c_type == ConceptType.SOME:
             c: AllSomeConcept = typing.cast(AllSomeConcept, c)
             if str(c.curr_concept) in self.datatypes:
-                dp: typing.Union[OWLDataProperty, OWLObjectProperty] = (
-                    self.get_data_property(c.role)
-                )
+                dp: OWLDataProperty = self.get_data_property(c.role)
                 assert isinstance(dp, OWLDataProperty)
                 d: OWLDatatype = self.datatypes.get(str(c.curr_concept))
                 return OWLDataSomeValuesFrom([dp], d)
             else:
-                op: typing.Union[OWLDataProperty, OWLObjectProperty] = (
-                    self.get_object_property(c.role)
-                )
+                op: OWLObjectProperty = self.get_object_property(c.role)
                 assert isinstance(op, OWLObjectProperty)
                 c2: OWLClassExpression = self.get_class(c.curr_concept)
                 return OWLObjectSomeValuesFrom(op, c2)
         elif c_type == ConceptType.ALL:
             c: AllSomeConcept = typing.cast(AllSomeConcept, c)
             if str(c.curr_concept) in self.datatypes:
-                dp: typing.Union[OWLDataProperty, OWLObjectProperty] = (
-                    self.get_data_property(c.role)
-                )
+                dp: OWLDataProperty = self.get_data_property(c.role)
                 assert isinstance(dp, OWLDataProperty)
                 d: OWLDatatype = self.datatypes.get(str(c.curr_concept))
                 return OWLDataAllValuesFrom([dp], d)
             else:
-                op: typing.Union[OWLDataProperty, OWLObjectProperty] = (
-                    self.get_object_property(c.role)
-                )
+                op: OWLObjectProperty = self.get_object_property(c.role)
                 assert isinstance(op, OWLObjectProperty)
                 c2: OWLClassExpression = self.get_class(c.curr_concept)
                 return OWLObjectAllValuesFrom(op, c2)
@@ -533,14 +535,14 @@ class FuzzydlToOwl2:
         elif c_type == ConceptType.SELF:
             c: SelfConcept = typing.cast(SelfConcept, c)
             owl_obj_property: typing.Union[OWLDataProperty, OWLObjectProperty] = (
-                self.get_object_property(c.role)
+                self.get_property(c.role)
             )
             assert isinstance(owl_obj_property, OWLObjectProperty)
             return OWLObjectHasSelf(owl_obj_property)
         elif c_type == ConceptType.HAS_VALUE:
             c: HasValueConcept = typing.cast(HasValueConcept, c)
             owl_obj_property: typing.Union[OWLDataProperty, OWLObjectProperty] = (
-                self.get_object_property(c.role)
+                self.get_property(c.role)
             )
             assert isinstance(owl_obj_property, OWLObjectProperty)
             ind: OWLNamedIndividual = self.get_individual(str(c.value))
@@ -566,14 +568,14 @@ class FuzzydlToOwl2:
                 data_range: OWLDataRange = OWLDatatypeRestriction(
                     datatype, [OWLFacet(OWLFacet.MIN_INCLUSIVE, literal)]
                 )
-                return OWLDataSomeValuesFrom(self.get_data_property(c.role), data_range)
+                return OWLDataSomeValuesFrom([self.get_property(c.role)], data_range)
             elif c_type == ConceptType.AT_MOST_VALUE:
                 data_range: OWLDataRange = OWLDatatypeRestriction(
                     datatype, [OWLFacet(OWLFacet.MAX_INCLUSIVE, literal)]
                 )
-                return OWLDataSomeValuesFrom(self.get_data_property(c.role), data_range)
+                return OWLDataSomeValuesFrom([self.get_property(c.role)], data_range)
             else:
-                return OWLDataHasValue(self.get_data_property(c.role), literal)
+                return OWLDataHasValue(self.get_property(c.role), literal)
         elif c_type == ConceptType.WEIGHTED:
             c: WeightedConcept = typing.cast(WeightedConcept, c)
             c4: OWLClassExpression = self.get_new_atomic_class(str(c))
@@ -802,13 +804,15 @@ class FuzzydlToOwl2:
         :rtype: OWLClassExpression
         """
 
-        Util.debug(f"Getting new atomic concept -> {name}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Getting new atomic concept -> {name}")
         c = self.concepts.get(name)
         if c is not None:
             return c
 
         self.num_classes += 1
-        Util.debug(f"Creating new atomic concept -> {name}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Creating new atomic concept -> {name}")
         c2: OWLClass = OWLClass(self.class_iri(f"class__{self.num_classes}"))
         self.concepts[name] = c2
         self.ontology.add_axiom(
@@ -864,6 +868,26 @@ class FuzzydlToOwl2:
         #     for prop in self.ontology.get_axioms(RDFXMLGetterTypes.DATA_PROPERTIES)
         # )
 
+    def get_property(
+        self, role: str
+    ) -> typing.Union[OWLDataProperty, OWLObjectProperty]:
+        """
+        Retrieves an existing property from the ontology based on the provided role name, checking for both object and data properties. The method first checks if an object property with the given role exists; if found, it returns that object property. If no object property is found, it then checks for a data property with the same role name and returns it if it exists. If neither an object nor a data property is found, the method raises a ValueError indicating that no property with the specified role exists in the ontology. This approach ensures that the method can flexibly return either type of property while providing clear error handling for missing properties.
+
+        :param role: The name of the property to retrieve, which may correspond to either an object or a data property in the ontology.
+        :type role: str
+
+        :raises ValueError: If no property (object or data) with the specified role exists in the ontology.
+
+        :return: The OWLDataProperty or OWLObjectProperty instance corresponding to the provided role name.
+
+        :rtype: typing.Union[OWLDataProperty, OWLObjectProperty]
+        """
+        if role in self.kb.concrete_features:
+            return self.get_data_property(role)
+        else:
+            return self.get_object_property(role)
+
     def get_object_property(
         self, role: str
     ) -> typing.Union[OWLDataProperty, OWLObjectProperty]:
@@ -878,11 +902,15 @@ class FuzzydlToOwl2:
         :rtype: typing.Union[OWLDataProperty, OWLObjectProperty]
         """
 
-        Util.debug(f"Getting object property -> {role}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Getting object property -> {role}")
         if self.exist_data_property(role):
             return self.get_data_property(role)
+        if role in self.declared_properties:
+            return OWLObjectProperty(self.object_property_iri(role))
 
         obj = OWLObjectProperty(self.object_property_iri(role))
+        self.declared_properties.add(role)
         self.ontology.add_axiom(
             OWLDeclaration(
                 obj,
@@ -910,11 +938,15 @@ class FuzzydlToOwl2:
         :rtype: typing.Union[OWLDataProperty, OWLObjectProperty]
         """
 
-        Util.debug(f"Getting data property -> {role}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Getting data property -> {role}")
         if self.exist_object_property(role):
             return self.get_object_property(role)
+        if role in self.declared_properties:
+            return OWLDataProperty(self.data_property_iri(role))
 
         data = OWLDataProperty(self.data_property_iri(role))
+        self.declared_properties.add(role)
         self.ontology.add_axiom(
             OWLDeclaration(
                 data,
@@ -940,8 +972,12 @@ class FuzzydlToOwl2:
         :rtype: OWLNamedIndividual
         """
 
-        Util.debug(f"Getting individual -> {name}")
-        ind = OWLNamedIndividual(self.individual_iri(f"{name}"))
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Getting individual -> {name}")
+        if name in self.declared_individuals:
+            return OWLNamedIndividual(self.individual_iri(name))
+        ind = OWLNamedIndividual(self.individual_iri(name))
+        self.declared_individuals.add(name)
         self.ontology.add_axiom(
             OWLDeclaration(
                 ind,
@@ -967,7 +1003,8 @@ class FuzzydlToOwl2:
         :rtype: OWLAnnotation
         """
 
-        Util.debug(f"Converting annotation to OWL -> {annotation}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Converting annotation to OWL -> {annotation}")
         return OWLAnnotation(
             self.fuzzyLabel,
             OWLLiteral(
@@ -983,7 +1020,8 @@ class FuzzydlToOwl2:
         :type annotation: str
         """
 
-        Util.debug(f"Adding annotation to ontology -> {annotation}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Adding annotation to ontology -> {annotation}")
         comment: OWLAnnotation = self.to_owl_annotation(annotation)
         self.ontology.add_annotation(comment)
 
@@ -998,7 +1036,8 @@ class FuzzydlToOwl2:
         """
 
         # define_datatype_in_ontology(entity, self.iri(entity), self.ontology)
-        Util.debug(f"Adding annotation to entity {entity} -> {annotation}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Adding annotation to entity {entity} -> {annotation}")
         owl_annotation: OWLAnnotation = self.to_owl_annotation(annotation)
         # axiom: OWLAnnotationAssertion = OWLAnnotationAssertion(
         #     entity.iri, self.fuzzyLabel, owl_annotation
@@ -1049,7 +1088,8 @@ class FuzzydlToOwl2:
         c1: OWLClassExpression = self.get_class(gci.get_subsumed())
         c2: OWLClassExpression = self.get_class(gci.get_subsumer())
         deg: Degree = gci.get_degree()
-        Util.debug(f"Annotate GCI -> {c1} - {c2} - {deg}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Annotate GCI -> {c1} - {c2} - {deg}")
         if deg.is_number_not_one():
             new_annotations: set[OWLAnnotation] = self.get_annotations_for_axiom(deg)
             axiom: OWLSubClassOf = OWLSubClassOf(c1, c2, list(new_annotations))
@@ -1071,7 +1111,8 @@ class FuzzydlToOwl2:
 
         c2: OWLClassExpression = self.get_class(pcd.get_definition())
         n: float = pcd.get_degree()
-        Util.debug(f"Annotate PCD -> {c1} - {c2} - {n}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Annotate PCD -> {c1} - {c2} - {n}")
         if n != 1.0:
             new_annotations: set[OWLAnnotation] = self.get_annotations_for_axiom(n)
             axiom: OWLSubClassOf = OWLSubClassOf(c1, c2, list(new_annotations))
@@ -1139,35 +1180,41 @@ class FuzzydlToOwl2:
             c1: OWLClassExpression = self.get_class(a)
             for c in self.kb.axioms_A_equiv_C[a]:
                 c2: OWLClassExpression = self.get_class(c)
-                Util.debug(f"Process axioms_A_equiv_C -> {c1} - {c2}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Process axioms_A_equiv_C -> {c1} - {c2}")
                 axiom: OWLAxiom = OWLEquivalentClasses([c1, c2])
                 self.ontology.add_axiom(axiom)
 
         for a in self.kb.axioms_A_is_a_B:
             c1: OWLClassExpression = self.get_class(a)
             for pcd in self.kb.axioms_A_is_a_B[a]:
-                Util.debug(f"Process axioms_A_is_a_B -> {c1} - {pcd}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Process axioms_A_is_a_B -> {c1} - {pcd}")
                 self.annotate_pcd(c1, pcd)
 
         for a in self.kb.axioms_A_is_a_C:
             c1: OWLClassExpression = self.get_class(a)
             for pcd in self.kb.axioms_A_is_a_C[a]:
-                Util.debug(f"Process axioms_A_is_a_C -> {c1} - {pcd}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Process axioms_A_is_a_C -> {c1} - {pcd}")
                 self.annotate_pcd(c1, pcd)
 
         for gcis in self.kb.axioms_C_is_a_D.values():
             for gci in gcis:
-                Util.debug(f"Process axioms_C_is_a_D -> {gci}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Process axioms_C_is_a_D -> {gci}")
                 self.annotate_gci(gci)
 
         for gcis in self.kb.axioms_C_is_a_A.values():
             for gci in gcis:
-                Util.debug(f"Process axioms_C_is_a_A -> {gci}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Process axioms_C_is_a_A -> {gci}")
                 self.annotate_gci(gci)
 
         for ce in self.kb.axioms_C_equiv_D:
             ce: ConceptEquivalence = typing.cast(ConceptEquivalence, ce)
-            Util.debug(f"Process axioms_C_equiv_D -> {ce}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"Process axioms_C_equiv_D -> {ce}")
             c1: OWLClassExpression = self.get_class(ce.get_c1())
             c2: OWLClassExpression = self.get_class(ce.get_c2())
             axiom: OWLAxiom = OWLEquivalentClasses([c1, c2])
@@ -1176,7 +1223,8 @@ class FuzzydlToOwl2:
         for a in self.kb.t_disjoints:
             c1: OWLClassExpression = self.get_class(a)
             for disj_C in self.kb.t_disjoints[a]:
-                Util.debug(f"Process t_dis -> {c1} - {disj_C}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Process t_dis -> {c1} - {disj_C}")
                 if a >= disj_C:
                     continue
                 c2: OWLClassExpression = self.get_class(disj_C)
@@ -1184,11 +1232,10 @@ class FuzzydlToOwl2:
                 self.ontology.add_axiom(axiom)
 
         for r in self.kb.domain_restrictions:
-            op: typing.Union[OWLDataProperty, OWLObjectProperty] = (
-                self.get_object_property(r)
-            )
+            op: typing.Union[OWLDataProperty, OWLObjectProperty] = self.get_property(r)
             for c in self.kb.domain_restrictions[r]:
-                Util.debug(f"Process domain restriction -> {c}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Process domain restriction -> {c}")
                 cl: OWLClassExpression = self.get_class(c)
                 if isinstance(op, OWLObjectProperty):
                     axiom: OWLAxiom = OWLObjectPropertyDomain(op, cl)
@@ -1197,11 +1244,10 @@ class FuzzydlToOwl2:
                 self.ontology.add_axiom(axiom)
 
         for r in self.kb.range_restrictions:
-            op: typing.Union[OWLDataProperty, OWLObjectProperty] = (
-                self.get_object_property(r)
-            )
+            op: typing.Union[OWLDataProperty, OWLObjectProperty] = self.get_property(r)
             for c in self.kb.range_restrictions[r]:
-                Util.debug(f"Process range restriction -> {c}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Process range restriction -> {c}")
                 cl: OWLClassExpression = self.get_class(c)
                 if isinstance(op, OWLObjectProperty):
                     axiom: OWLAxiom = OWLObjectPropertyRange(op, cl)
@@ -1210,41 +1256,38 @@ class FuzzydlToOwl2:
                 self.ontology.add_axiom(axiom)
 
         for r in self.kb.reflexive_roles:
-            Util.debug(f"Process reflexive role -> {r}")
-            op: typing.Union[OWLDataProperty, OWLObjectProperty] = (
-                self.get_object_property(r)
-            )
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"Process reflexive role -> {r}")
+            op: typing.Union[OWLDataProperty, OWLObjectProperty] = self.get_property(r)
             assert isinstance(op, OWLObjectProperty)
             axiom: OWLAxiom = OWLReflexiveObjectProperty(op)
             self.ontology.add_axiom(axiom)
 
         for r in self.kb.symmetric_roles:
-            Util.debug(f"Process symmetric role -> {r}")
-            op: typing.Union[OWLDataProperty, OWLObjectProperty] = (
-                self.get_object_property(r)
-            )
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"Process symmetric role -> {r}")
+            op: typing.Union[OWLDataProperty, OWLObjectProperty] = self.get_property(r)
             assert isinstance(op, OWLObjectProperty)
             axiom: OWLAxiom = OWLSymmetricObjectProperty(op)
             self.ontology.add_axiom(axiom)
 
         for r in self.kb.transitive_roles:
-            Util.debug(f"Process transitive role -> {r}")
-            op: typing.Union[OWLDataProperty, OWLObjectProperty] = (
-                self.get_object_property(r)
-            )
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"Process transitive role -> {r}")
+            op: typing.Union[OWLDataProperty, OWLObjectProperty] = self.get_property(r)
             assert isinstance(op, OWLObjectProperty)
             axiom: OWLAxiom = OWLTransitiveObjectProperty(op)
             self.ontology.add_axiom(axiom)
 
         for r, r_set in self.kb.inverse_roles.items():
-            Util.debug(f"Process inverse role -> inv_role = {r}")
-            op: typing.Union[OWLDataProperty, OWLObjectProperty] = (
-                self.get_object_property(r)
-            )
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"Process inverse role -> inv_role = {r}")
+            op: typing.Union[OWLDataProperty, OWLObjectProperty] = self.get_property(r)
             for s in r_set:
-                Util.debug(f"Process inverse role -> role = {s}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Process inverse role -> role = {s}")
                 op2: typing.Union[OWLDataProperty, OWLObjectProperty] = (
-                    self.get_object_property(s)
+                    self.get_property(s)
                 )
                 assert isinstance(op, OWLObjectProperty) and isinstance(
                     op2, OWLObjectProperty
@@ -1253,15 +1296,15 @@ class FuzzydlToOwl2:
                 self.ontology.add_axiom(axiom)
 
         for r in self.kb.roles_with_parents:
-            Util.debug(f"Process role with parents -> role = {r}")
-            op: typing.Union[OWLDataProperty, OWLObjectProperty] = (
-                self.get_object_property(r)
-            )
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"Process role with parents -> role = {r}")
+            op: typing.Union[OWLDataProperty, OWLObjectProperty] = self.get_property(r)
             par: dict[str, float] = self.kb.roles_with_parents.get(r, dict())
             for s in par:
-                Util.debug(f"Process role with parents -> parent = {s}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"Process role with parents -> parent = {s}")
                 op2: typing.Union[OWLDataProperty, OWLObjectProperty] = (
-                    self.get_object_property(s)
+                    self.get_property(s)
                 )
                 if isinstance(op, OWLObjectProperty) and isinstance(
                     op2, OWLObjectProperty
@@ -1278,10 +1321,11 @@ class FuzzydlToOwl2:
                 self.ontology.add_axiom(axiom)
 
         for r in self.kb.functional_roles:
-            Util.debug(f"Process functional role -> {r}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"Process functional role -> {r}")
             if r in self.kb.concrete_features:
                 dp: typing.Union[OWLDataProperty, OWLObjectProperty] = (
-                    self.get_data_property(r)
+                    self.get_property(r)
                 )
                 if isinstance(dp, OWLDataProperty):
                     axiom: OWLAxiom = OWLFunctionalDataProperty(dp)
@@ -1289,7 +1333,7 @@ class FuzzydlToOwl2:
                     axiom: OWLAxiom = OWLFunctionalObjectProperty(dp)
             else:
                 op: typing.Union[OWLDataProperty, OWLObjectProperty] = (
-                    self.get_object_property(r)
+                    self.get_property(r)
                 )
                 if isinstance(op, OWLObjectProperty):
                     axiom: OWLAxiom = OWLFunctionalObjectProperty(op)
@@ -1300,10 +1344,11 @@ class FuzzydlToOwl2:
         for cf_name, cf in self.kb.concrete_features.items():
             if cf is None:
                 continue
-            Util.debug(f"Process concrete feature {cf_name} -> {cf}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"Process concrete feature {cf_name} -> {cf}")
             cf_type: ConcreteFeatureType = cf.get_type()
-            dp: typing.Union[OWLDataProperty, OWLObjectProperty] = (
-                self.get_data_property(cf_name)
+            dp: typing.Union[OWLDataProperty, OWLObjectProperty] = self.get_property(
+                cf_name
             )
             if cf_type == ConcreteFeatureType.BOOLEAN:
                 dt: OWLDatatype = OWLDatatype(XSD.boolean)
@@ -1337,7 +1382,8 @@ class FuzzydlToOwl2:
         :type c: FuzzyConcreteConcept
         """
 
-        Util.debug(f"Process concrete concept -> {c}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Process concrete concept -> {c}")
         current_datatype: OWLDatatype = OWLDatatype(self.datatype_iri(c))
         self.datatypes[str(c)] = current_datatype
 
@@ -1467,7 +1513,8 @@ class FuzzydlToOwl2:
         :raises ValueError: Raised when the provided modifier is not an instance of `LinearModifier` or `TriangularModifier`.
         """
 
-        Util.debug(f"Process modifier -> {mod}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Process modifier -> {mod}")
 
         main_xml = FuzzyXML.build_main_xml(FuzzyOWL2Keyword.MODIFIER.get_str_value())
 
@@ -1524,7 +1571,8 @@ class FuzzydlToOwl2:
         :type ass: Assertion
         """
 
-        Util.debug(f"Process assertion -> {ass}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Process assertion -> {ass}")
         i: OWLNamedIndividual = self.get_individual(str(ass.get_individual()))
         c: OWLClassExpression = self.get_class(ass.get_concept())
         deg: Degree = ass.get_lower_limit()
@@ -1543,12 +1591,13 @@ class FuzzydlToOwl2:
         :type ind: Individual
         """
 
-        Util.debug(f"Process individual -> {ind}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Process individual -> {ind}")
         i: OWLClassExpression = self.get_individual(str(ind))
         for a in ind.role_relations.values():
             for rel in a:
-                r: typing.Union[OWLDataProperty, OWLObjectProperty] = (
-                    self.get_object_property(rel.get_role_name())
+                r: typing.Union[OWLDataProperty, OWLObjectProperty] = self.get_property(
+                    rel.get_role_name()
                 )  # Retrieve or create the object property
                 i2: OWLNamedIndividual = self.get_individual(
                     str(rel.get_object_individual())

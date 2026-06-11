@@ -11,11 +11,11 @@ from fuzzy_dl_owl2.fuzzydl.knowledge_base import KnowledgeBase
 from fuzzy_dl_owl2.fuzzydl.milp.expression import Expression
 from fuzzy_dl_owl2.fuzzydl.milp.milp_helper import MILPHelper
 from fuzzy_dl_owl2.fuzzydl.milp.solution import Solution
-from fuzzy_dl_owl2.fuzzydl.milp.term import Term
-from fuzzy_dl_owl2.fuzzydl.milp.variable import Variable
+from fuzzy_dl_owl2.fuzzydl.milp.term import Term  # Term
+from fuzzy_dl_owl2.fuzzydl.milp.variable import Variable  # Variable
 from fuzzy_dl_owl2.fuzzydl.query.min.min_instance_query import MinInstanceQuery
 from fuzzy_dl_owl2.fuzzydl.query.query import Query
-from fuzzy_dl_owl2.fuzzydl.util.constants import VariableType
+from fuzzy_dl_owl2.fuzzydl.util.constants import VariableType  # Variable
 from fuzzy_dl_owl2.fuzzydl.util.util import Util
 
 
@@ -107,7 +107,7 @@ class AllInstancesQuery(Query):
         """
 
         self.name: str = ""
-        new_variables: list[Variable] = list()
+        new_variables: list[Variable] = list()  # Variable
         var_names: dict[str, str] = dict()
         self.individuals: list[Individual] = list(kb.individuals.values())
         cloned: KnowledgeBase = kb.clone()
@@ -120,7 +120,7 @@ class AllInstancesQuery(Query):
         for i in self.individuals:
             if isinstance(i, CreatedIndividual):
                 continue
-            q: Variable = cloned.milp.get_new_variable(VariableType.SEMI_CONTINUOUS)
+            q: Variable = cloned.milp.get_new_variable(VariableType.SEMI_CONTINUOUS)  # Variable
             cloned.old_01_variables += 1
             s: str = f"Is {i} instance of {self.conc}? >= "
             var_names[str(q)] = s
@@ -130,12 +130,12 @@ class AllInstancesQuery(Query):
             cloned.add_assertion(
                 i,
                 -self.conc,
-                DegreeExpression.get_degree(Expression(1.0, Term(-1.0, q))),
+                DegreeExpression.get_degree(Expression(1.0, Term(-1.0, q))),  # Term
             )
         cloned.solve_assertions()
         obj_expr: Expression = Expression()
         for var in new_variables:
-            obj_expr.add_term(Term(1.0, var))
+            obj_expr.add_term(Term(1.0, var))  # Term
 
         MILPHelper.PRINT_LABELS = False
         MILPHelper.PRINT_VARIABLES = False

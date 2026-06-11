@@ -1,7 +1,7 @@
 # Summary
 
-A specialized class within the FuzzyOWL2 framework represents a fuzzy logic constraint defined by a weighted sum of component concepts equating to zero.
+Defines a fuzzy logic constraint where a weighted sum of concepts equals zero within the FuzzyOWL2 framework.
 
 ## Description
 
-It extends the base definition to encapsulate a collection of subordinate concept definitions that act as the operands for this specific calculation. The design facilitates the storage and retrieval of these internal components while providing a standardized string representation that identifies the constraint type and its elements. By treating the zero-sum condition as a distinct entity, the implementation allows the ontology to express complex mathematical relationships and constraints as first-class objects.
+A specialized component within the FuzzyOWL2 framework models a fuzzy logic constraint requiring that the weighted sum of specific operands equals zero. By extending the base definition for concepts, the structure aggregates a collection of subordinate concept definitions that serve as the terms involved in the calculation. During instantiation, the logic registers the entity as a weighted sum zero type and preserves the provided list of components for later retrieval. To facilitate debugging and serialization, the logic includes a string representation that formats the internal elements within a parenthesized expression labeled with the appropriate identifier.

@@ -19,7 +19,6 @@ class OwaConcept(Concept, HasWeightedConceptsInterface):
     :type name: typing.Any
     """
 
-
     def __init__(self, weights: list[float], concepts: list[Concept]) -> None:
         """
         Initializes a new instance representing an Ordered Weighted Averaging (OWA) concept by configuring the base `Concept` class with the OWA type and initializing the `HasWeightedConceptsInterface` with the provided weights and concepts. The method performs a validation check to ensure that the number of weights exactly matches the number of concepts; if these lists differ in length, an error is raised. Additionally, it triggers the computation of the concept's name based on the input parameters.
@@ -147,11 +146,15 @@ class OwaConcept(Concept, HasWeightedConceptsInterface):
 
     def __hash__(self) -> int:
         """
-        Computes an integer hash value for the instance based on its string representation, enabling the object to be used as a key in dictionaries or as an element in sets. The implementation delegates to the built-in hash function applied to the result of the object's string conversion. It is critical that the string representation remains consistent throughout the object's lifetime; if the string output changes due to internal state mutation, the hash value will also change, potentially causing the object to become inaccessible or behave incorrectly within hash-based collections.
+        Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-        :return: An integer hash value derived from the string representation of the object.
+        :return: An integer hash value representing the structural identity of this object.
 
         :rtype: int
         """
 
-        return hash(str(self))
+        # return hash(str(self))
+        # return id(self)
+        return hash(
+            (tuple(self.weights), tuple(hash(c) for c in self.concepts), self.name, hash(self.type))
+        )

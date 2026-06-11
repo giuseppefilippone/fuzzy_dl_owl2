@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.range_axiom
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Defines a logical constraint that restricts the permissible types of individuals that can serve as the target of a specific role within a fuzzy description logic system.
+Encapsulates a range axiom to enforce that individuals related by a specific role must belong to a defined concept.
 
 
 Description
 -----------
 
 
-The implementation encapsulates the relationship between a named role and a concept, ensuring that any entity connected via this role adheres to the defined type restrictions. By storing the role identifier and the associated concept object, the structure facilitates the enforcement of domain rules where specific relationships must link to instances of particular classes. This component serves as a fundamental building block for knowledge representation, enabling the system to validate or reason about the properties and connections of entities based on logical constraints. The design relies on simple attribute storage to maintain the necessary context for semantic checks, integrating seamlessly with broader logic processing tasks.
+The software implements a structural component used within fuzzy description logics to define the permissible range of values for a specific role or relationship. By associating a string identifier representing a role with a specific concept object, the logic ensures that any individual connected via this relationship is an instance of the defined concept. This mechanism serves as a fundamental building block for knowledge representation, enabling the validation of entity relationships and supporting reasoning tasks regarding the properties of the system. The design relies on simple data storage to maintain the association between the role and its constraints, facilitating easy integration into broader logical frameworks.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -69,3 +65,4 @@ Module Contents
 
    .. py:attribute:: role
       :type:  str
+

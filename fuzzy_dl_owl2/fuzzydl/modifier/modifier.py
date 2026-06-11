@@ -14,7 +14,6 @@ class Modifier(ABC):
     :type name: str
     """
 
-
     def __init__(self, name: str) -> None:
         """
         Initializes a new instance of the `Modifier` class by assigning the provided identifier to the object. The method accepts a single string argument, `name`, which is stored directly as the `name` attribute of the instance. This operation modifies the instance's state but does not perform any validation on the input type or value, relying on the caller to provide the correct string format.
@@ -99,6 +98,17 @@ class Modifier(ABC):
         """
 
         return str(self)
+
+    def __hash__(self) -> int:
+        """
+        Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
+
+        :return: An integer hash value representing the structural identity of this object.
+
+        :rtype: int
+        """
+        # return hash(str(self))
+        return hash((self.name,))
 
     def __str__(self) -> str:
         """

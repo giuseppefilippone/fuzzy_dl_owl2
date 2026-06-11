@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.assertion.assertion
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Models a fuzzy logic assertion that associates an individual with a concept subject to a minimum membership degree threshold.
+Models a fuzzy logic constraint stating that an individual belongs to a concept with a minimum degree of membership.
 
 
 Description
 -----------
 
 
-The software represents a logical constraint where an individual entity belongs to a concept with a specific lower bound, effectively capturing the expression :math:`a:C \ge d`. It maintains references to the subject, the category, and the required degree, providing mechanisms to access and modify these internal states. A distinctive feature of the implementation is its custom equality logic, which treats two assertions as equivalent if they share the same subject and concept while the numeric degree of the first is strictly less than the second, alongside standard string-based equality. Furthermore, the design supports object cloning and produces a string representation that clearly delineates the individual, concept, and threshold value.
+Encapsulating the logical expression :math:`a:C \ge d`, the implementation links a specific entity to a category while enforcing a threshold for the strength of that association. Three primary components define the structure: the subject individual, the target concept, and a degree value that acts as a lower bound for the assertion's validity. Beyond simple data storage, the design supports cloning and dynamic modification of the individual or degree, allowing the constraint to be adjusted during reasoning processes. A distinctive aspect of the behavior is the equality comparison, which considers two assertions equivalent if they share the same individual and concept while the current instance holds a numerically lower degree than the compared instance, facilitating the ordering of fuzzy constraints. The textual representation follows a standard format combining the individual, concept, and degree to clearly display the logical constraint.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -212,3 +208,4 @@ Module Contents
 
    .. py:attribute:: individual
       :type:  fuzzy_dl_owl2.fuzzydl.individual.individual.Individual
+

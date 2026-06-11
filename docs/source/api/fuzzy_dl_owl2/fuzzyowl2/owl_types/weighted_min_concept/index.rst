@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_min_concept
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Implements a weighted minimum aggregation operator within the FuzzyOWL2 framework to construct complex fuzzy concepts from a collection of sub-concepts.
+Implements a weighted minimum aggregation operator within the FuzzyOWL2 framework to construct complex fuzzy concepts by combining a collection of sub-concepts.
 
 
 Description
 -----------
 
 
-The software models a specific type of fuzzy logic operator known as a weighted minimum, which is essential for constructing complex concepts by aggregating multiple sub-concepts within the FuzzyOWL2 framework. By inheriting from the base concept definition, it establishes itself as a distinct entity capable of holding a collection of component concepts that are subject to this specific aggregation logic. Internally, the implementation maintains a list of these component definitions, allowing the structure to represent hierarchical relationships where the overall truth value is derived from the weighted minimum of its parts. Functionality includes providing access to the underlying collection of concepts and generating a human-readable string representation that explicitly denotes the weighted minimum operation using a specific parenthetical syntax.
+The software models a specific type of fuzzy logic operator that aggregates multiple concept definitions using a weighted minimum strategy. By inheriting from the base definition class, it integrates seamlessly into the broader ontology structure while specifically identifying itself as a weighted minimum type. Internally, the logic maintains a collection of component concepts that serve as the operands for the aggregation, allowing these elements to be retrieved and manipulated as a group. For display and serialization purposes, the implementation generates a human-readable string representation that prefixes the aggregated components with "w-min" to clearly denote the operation being performed.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -90,3 +86,4 @@ Module Contents
 
    .. py:attribute:: _wc
       :type:  list[fuzzy_dl_owl2.fuzzyowl2.owl_types.concept_definition.ConceptDefinition]
+

@@ -25,33 +25,29 @@ fuzzy_dl_owl2.fuzzydl.milp
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A mathematical modeling framework that translates fuzzy description logic constructs into mixed-integer linear programming problems for optimization and consistency checking.
+A Mixed-Integer Linear Programming framework designed to translate fuzzy description logic constructs into solvable mathematical optimization models.
 
 
 Description
 -----------
 
 
-Algebraic primitives such as symbolic variables, linear terms, and mathematical expressions form the foundational layer, enabling the representation of satisfaction degrees and constraints through operator overloading and automatic term consolidation. A central management layer bridges the gap between abstract fuzzy logic entities and mathematical optimization models by generating unique identifiers, enforcing specific constraints like crispness and cardinality, and abstracting interactions with external solver backends such as Gurobi, Python-MIP, and PuLP. To handle complex scenarios, the architecture supports graph-based partitioning for decomposing large models into manageable sub-problems while maintaining granular control over variable visibility and display settings through configuration management. Query outcomes are encapsulated to distinguish between numerical satisfaction degrees and knowledge base consistency, providing access to variable bindings and detailed result states for analysis.
+The architecture relies on a hierarchy of algebraic primitives—ranging from symbolic variables and linear terms to complex expressions—to construct objective functions and constraints through intuitive operator overloading. A central management layer bridges the gap between abstract fuzzy logic concepts and concrete solver backends, handling variable registries, constraint translation, and interfacing with external libraries like Gurobi or PuLP. Supporting infrastructure ensures that query results are encapsulated with consistency status and variable bindings, while configuration utilities manage the visibility and display of ontology components during analysis.
 
 
 Modules
 -------
 
 
-* [``fuzzy_dl_owl2.fuzzydl.milp.expression``] — A linear mathematical expression model represents the degree of satisfaction of concepts within fuzzy description logic ontologies.
-* [``fuzzy_dl_owl2.fuzzydl.milp.inequation``] — Encapsulates mathematical inequalities of the form expression compared to zero for use in fuzzy description logic ontologies.
-* [``fuzzy_dl_owl2.fuzzydl.milp.milp_helper``] — A comprehensive manager for Mixed-Integer Linear Programming (MILP) problems that translates high-level fuzzy logic constructs into mathematical optimization models and interfaces with various solver backends.
-* [``fuzzy_dl_owl2.fuzzydl.milp.show_variables_helper``] — A configuration manager controls the visibility and display settings of variables, concepts, individuals, and role fillers within a fuzzy description logic system.
-* [``fuzzy_dl_owl2.fuzzydl.milp.solution``] — Encapsulates the outcome of a query performed on a fuzzy knowledge base, distinguishing between a numerical degree of satisfaction and the consistency status of the base itself.
-* [``fuzzy_dl_owl2.fuzzydl.milp.term``] — A Python class representing a linear term consisting of a coefficient and a variable for use in fuzzy description logic MILP formulations.
-* [``fuzzy_dl_owl2.fuzzydl.milp.variable``] — A symbolic variable class for linear expressions that manages types, bounds, and naming within mixed-integer linear programming contexts.
+* [``fuzzy_dl_owl2.fuzzydl.milp.expression``] — A linear algebraic representation class used to construct and manipulate mathematical expressions within a Mixed-Integer Linear Programming (MILP) framework.
+* [``fuzzy_dl_owl2.fuzzydl.milp.inequation``] — Encapsulates linear constraints of the form $E \bowtie 0$ within a mixed-integer linear programming framework, normalizing the right-hand side to zero while supporting equality, less-than, and greater-than relations.
+* [``fuzzy_dl_owl2.fuzzydl.milp.milp_helper``] — A comprehensive manager for Mixed-Integer Linear Programming problems that translates fuzzy description logic constructs into mathematical optimization models and interfaces with various external solvers.
+* [``fuzzy_dl_owl2.fuzzydl.milp.show_variables_helper``] — A configuration manager that controls the visibility and display settings for concepts, individuals, roles, and variables within a fuzzy description logic ontology.
+* [``fuzzy_dl_owl2.fuzzydl.milp.solution``] — A data container encapsulates the outcome of a query on a fuzzy knowledge base, distinguishing between a numerical degree of satisfaction and the logical consistency status of the base.
+* [``fuzzy_dl_owl2.fuzzydl.milp.term``] — A class representing a linear term defined by a coefficient and a variable, designed to construct mathematical expressions within fuzzy description logic ontologies.
+* [``fuzzy_dl_owl2.fuzzydl.milp.variable``] — Defines a symbolic variable structure used to represent degrees of satisfaction within linear expressions for fuzzy description logic ontologies.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -68,3 +64,4 @@ Submodules
    /api/fuzzy_dl_owl2/fuzzydl/milp/solution/index
    /api/fuzzy_dl_owl2/fuzzydl/milp/term/index
    /api/fuzzy_dl_owl2/fuzzydl/milp/variable/index
+

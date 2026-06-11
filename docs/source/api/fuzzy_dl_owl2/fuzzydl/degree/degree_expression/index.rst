@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.degree.degree_expression
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A symbolic wrapper for algebraic expressions that represents non-numeric degrees within a fuzzy logic framework, enabling dynamic constraint generation and mathematical manipulation.
+A symbolic wrapper for algebraic expressions that functions as a non-numeric degree within a fuzzy logic system, enabling dynamic satisfaction measures through mathematical manipulation.
 
 
 Description
 -----------
 
 
-Symbolic degree representations extend the abstract concept of a degree by encapsulating an algebraic expression, allowing for dynamic and context-dependent measures of satisfaction rather than fixed numeric values. Wrapping an ``Expression`` object facilitates the construction of mathematical constraints and inequalities required for mixed-integer linear programming formulations within a fuzzy logic system. Algebraic manipulations such as addition, subtraction, and scalar multiplication are supported by delegating operations to the underlying expression, ensuring compatibility with the broader constraint-solving architecture. Explicitly distinguishing the entity as non-numeric ensures the system handles optimization and comparison logic differently than it would for concrete constant degrees during the resolution of fuzzy constraints.
+The software implements a mechanism to handle degrees of truth or satisfaction that are not fixed numbers but are instead defined by symbolic algebraic expressions. By encapsulating an ``Expression`` object, the implementation allows these degrees to participate in complex mathematical operations such as addition, subtraction, and scalar multiplication, which are essential for formulating constraints in mixed-integer linear programming models. Unlike concrete numeric degrees, this symbolic approach treats the degree as a dynamic entity that can be compared against other expressions to generate inequalities, thereby facilitating the construction of logical constraints within the broader fuzzy logic framework. The design explicitly identifies these entities as non-numeric to ensure correct handling during type checking and evaluation, while still supporting standard object-oriented features like cloning, hashing, and equality comparison based on the underlying expression.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -78,6 +74,16 @@ Module Contents
       :return: True if the provided object is a DegreeExpression equal to the expression represented by this instance, otherwise False.
 
       :rtype: bool
+
+
+
+   .. py:method:: __hash__() -> int
+
+      Computes a hash value for the `DegreeExpression` instance based on its underlying expression. This method returns the hash of the internal `expr` attribute, allowing instances of `DegreeExpression` to be used in hash-based collections like sets and dictionaries. The hash value is derived solely from the expression, meaning that two `DegreeExpression` instances with equivalent expressions will produce the same hash value.
+
+      :return: An integer hash value representing the instance.
+
+      :rtype: int
 
 
 
@@ -212,3 +218,4 @@ Module Contents
 
    .. py:attribute:: expr
       :type:  fuzzy_dl_owl2.fuzzydl.milp.expression.Expression
+

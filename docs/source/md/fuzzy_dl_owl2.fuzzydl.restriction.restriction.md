@@ -1,7 +1,7 @@
 # Summary
 
-A universal restriction in a fuzzy description logic system that enforces a minimum membership degree for a specific role and concept combination.
+Defines a data structure for modeling universal restrictions within a fuzzy description logic framework by combining a role, a target concept, and a specific degree threshold.
 
 ## Description
 
-The software models a universal restriction within a logical framework by combining a specific role, a target concept, and a lower bound degree to define a constraint. It represents the condition that for all entities connected via the given role, they must belong to the specified concept with a certainty or membership level that meets or exceeds the provided degree. The implementation stores these three core components—role name, concept, and degree—and provides mechanisms to create independent copies of the restriction object to ensure data integrity during processing. String representations are generated to reflect the logical syntax, offering formats that either explicitly include the degree threshold or focus solely on the universal scope of the role and concept relationship.
+Models a constraint where entities connected by a specific role must belong to a defined concept with a certainty level that meets or exceeds a given lower bound. The design encapsulates three core components: the identifier of the role, the target concept object, and the degree object representing the threshold. Functionality includes the ability to create independent copies of the instance to preserve state during manipulations, ensuring that modifications do not affect the original object. String representations are provided to visualize the logical syntax, offering formats that either display the full constraint including the threshold or a simplified version focusing solely on the role and concept relationship.

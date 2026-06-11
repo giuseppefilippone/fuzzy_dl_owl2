@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.concept.all_some_concept
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Implements a class for representing universal and existential quantified role restrictions within a fuzzy description logic system.
+Implements a class representing universal and existential role restrictions within a fuzzy description logic framework.
 
 
 Description
 -----------
 
 
-The software provides a mechanism to model complex logical constraints involving roles and concepts, specifically focusing on universal ("all") and existential ("some") quantification. It employs a static factory pattern to instantiate these restrictions, allowing for logical optimizations such as reducing trivial cases where a universal restriction applies to the top concept or an existential restriction applies to the bottom concept. By implementing a specific interface for role-based concepts, the design ensures that operations like negation, cloning, and sub-concept replacement are handled consistently, with negation specifically inverting the quantifier type while recursively negating the nested concept. The implementation delegates the retrieval of atomic components and roles to the underlying child concept, thereby maintaining a hierarchical structure that supports complex reasoning within the broader fuzzy description logic framework.
+Quantified role restrictions are modeled to handle universal and existential constraints, ensuring that individuals satisfy specific conditions regarding their relationships to other concepts. A factory pattern is employed to manage instantiation, applying logical optimizations that reduce trivial cases—such as an existential restriction on the bottom concept—to their simplest forms before construction. The design integrates with the broader logic system by inheriting from a base concept class and adhering to an interface for role handling, which allows for consistent manipulation of complex expressions. Operations such as negation are implemented by swapping the quantifier type and recursively negating the nested concept, preserving logical validity while maintaining immutability through cloning and replacement methods. Structural identity is determined by the role, quantifier type, and nested concept, which are used to generate hash values and string representations for comparison and storage.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -57,7 +53,7 @@ Module Contents
     .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzydl_concept_all_some_concept_AllSomeConcept.pdf
        :alt: UML Class Diagram for AllSomeConcept
        :align: center
-       :width: 100%
+       :width: 13.4cm
        :class: uml-diagram
 
        UML Class Diagram for **AllSomeConcept**
@@ -79,9 +75,9 @@ Module Contents
 
    .. py:method:: __hash__() -> int
 
-      Returns an integer hash value for the instance based on its string representation, enabling the object to be used as a dictionary key or stored in a set. The implementation delegates to the built-in `hash` function applied to `str(self)`, meaning the hash value is intrinsically linked to the output of the object's string conversion. Consequently, if the object is mutable and its string representation changes, the hash value will also change, which violates the immutability requirement for objects used in hash-based collections and may lead to unpredictable behavior.
+      Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-      :return: An integer hash value derived from the string representation of the object.
+      :return: An integer hash value representing the structural identity of this object.
 
       :rtype: int
 
@@ -226,7 +222,9 @@ Module Contents
 
 
    .. py:attribute:: _name
-      :type:  str
+      :type:  Optional[str]
+      :value: None
+
 
 
 .. py:data:: All

@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.concept.concrete.modified_concrete_concept
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A fuzzy concrete concept wrapper that applies a linguistic modifier to the membership degree of an underlying base concept.
+A fuzzy concrete concept wrapper that applies a specific modifier to an underlying concept to transform membership degrees.
 
 
 Description
 -----------
 
 
-The implementation models a composite fuzzy concept where a specific linguistic modifier, such as "very" or "somewhat," transforms the truth values of a base concrete concept. By wrapping an existing fuzzy concept, the logic applies a mathematical transformation to the membership degrees, effectively allowing the creation of complex expressions like "very tall" from simpler primitives. During evaluation, the software strictly enforces a domain constraint where inputs outside the range of zero to one result in a zero membership degree, while valid inputs are processed by first determining the base concept's membership and then applying the modifier's function to that intermediate result. The design integrates with broader fuzzy logic operations by delegating logical conjunctions, disjunctions, and negations to a central operator handler, ensuring consistent behavior across the system while maintaining a distinct identity through a generated naming convention.
+Designed to model linguistic hedges or intensifiers within a fuzzy description logic framework, the software wraps an existing fuzzy concrete concept and applies a transformation function to its membership values. By combining a base concept, such as "tall," with a modifier like "very," the system creates composite expressions that mathematically adjust the truth values of simpler definitions. The architecture relies on a composition strategy where the membership degree of an input is first determined by the underlying concept and then passed through the modifier's function to produce the final result. During evaluation, strict domain constraints are enforced to ensure that inputs outside the valid range result in a zero membership degree, maintaining logical consistency. The core logic delegates the calculation of the base degree to the wrapped concept before applying the modifier, allowing for dynamic and flexible construction of complex fuzzy sets. Furthermore, the implementation supports standard logical operations such as negation, conjunction, and disjunction by delegating these tasks to a central operator utility, ensuring consistent behavior across different concept types. To facilitate identification and storage, the software generates a structured string representation and computes hash values based on the internal state, including the modifier and the modified concept. This approach allows the modified concept to function seamlessly within larger knowledge bases or reasoning engines where unique identification and efficient comparison are required.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -89,9 +85,9 @@ Module Contents
 
    .. py:method:: __hash__() -> int
 
-      Computes the hash value for the instance by generating a hash of the object's string representation. This implementation delegates the hashing logic to the result of `str(self)`, ensuring that objects with identical string representations produce the same hash code. Consequently, any modification to the object that alters its string representation will result in a different hash value, which can lead to unexpected behavior if the object is used as a key in a dictionary or stored in a set.
+      Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-      :return: An integer hash value derived from the string representation of the object.
+      :return: An integer hash value representing the structural identity of this object.
 
       :rtype: int
 
@@ -166,40 +162,31 @@ Module Contents
       :value: 0.0
 
 
-      Sets the value of the `k1` attribute for the instance, converting the input to a float to ensure type consistency. This method updates the private `_k1` variable, effectively modifying the internal state of the `FuzzyConcreteConcept` object. Any subsequent operations relying on this parameter will reflect the new value.
-
-      :param value: The new value for the k1 attribute.
-      :type value: float
-
 
    .. py:attribute:: k2
       :type:  float
       :value: 1.0
 
 
-      Sets the upper bound parameter k2 for the fuzzy concrete concept. This method enforces a constraint ensuring that the new value is greater than or equal to the existing k1 parameter; if k1 is larger than the provided value, a ValueError is raised. Upon successful validation, the input is converted to a float and stored in the internal state.
-
-      :param value: The value to assign to the k2 parameter, which must be greater than or equal to k1.
-      :type value: float
-
-      :raises ValueError: Raised if the provided value is less than `k1`, as `k2` must be greater than or equal to `k1`.
-
 
    .. py:property:: modified
       :type: fuzzy_dl_owl2.fuzzydl.concept.concrete.fuzzy_concrete_concept.FuzzyConcreteConcept
 
 
-      Sets the internal modification state of the object to the provided `FuzzyConcreteConcept` value. This method acts as the setter for the `modified` property, replacing the existing value stored in the private `_modified` attribute. It directly mutates the instance's state and does not perform any validation or return a value.
+      Returns the underlying fuzzy concrete concept that this modified concept wraps and whose membership degrees are transformed by the modifier. The value is read from the private ``_modified`` attribute without modifying the instance.
 
-      :param value: The concept instance to assign as the modified state.
-      :type value: FuzzyConcreteConcept
+      :return: The wrapped concrete concept being modified.
+
+      :rtype: FuzzyConcreteConcept
 
 
    .. py:property:: modifier
       :type: fuzzy_dl_owl2.fuzzydl.modifier.modifier.Modifier
 
 
-      Sets the value of the `modifier` property for the `ModifiedConcreteConcept` instance. This method accepts a `Modifier` object and assigns it to the internal `_modifier` attribute, effectively updating the instance's state. No validation or additional side effects are performed during this assignment.
+      Returns the fuzzy modifier (e.g. "very", "somewhat") applied to the wrapped concrete concept. The modifier transforms the membership degrees produced by the underlying concept. The value is read from the private ``_modifier`` attribute without modifying the instance.
 
-      :param value: The new modifier instance to assign to the object.
-      :type value: Modifier
+      :return: The modifier applied to the wrapped concept.
+
+      :rtype: Modifier
+

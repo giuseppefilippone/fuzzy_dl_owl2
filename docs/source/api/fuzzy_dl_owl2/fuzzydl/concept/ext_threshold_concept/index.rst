@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.concept.ext_threshold_concept
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A Python class representing extended threshold concepts that apply variable-based constraints to the satisfaction degree of a nested concept within a fuzzy description logic framework.
+Implements a logical construct for fuzzy description logic that applies a variable-based threshold to the satisfaction degree of a nested concept.
 
 
 Description
 -----------
 
 
-The software implements a specialized logical construct designed to evaluate fuzzy concepts against a dynamic threshold defined by a variable. By encapsulating a base concept and a weight variable, it determines satisfaction based on whether the nested concept's degree meets or exceeds, or falls below, the specified threshold value. This design allows for the creation of both positive and negative constraints, effectively modeling complex conditions where the boundaries of concept satisfaction are not fixed but depend on external variables. Functionality includes static factory methods for instantiating specific threshold types, as well as mechanisms for cloning and replacing internal components to support structural manipulation. Logical operations such as negation, conjunction, and disjunction are handled by delegating to a central operator utility, ensuring consistent behavior across the system. Furthermore, the implementation delegates the extraction of atomic concepts and roles to the underlying nested concept, maintaining a clean separation of concerns while providing a comprehensive string representation for hashing and identification.
+The software models a specific type of fuzzy logic constraint where the satisfaction degree of a base concept is compared against a dynamic threshold represented by a solver variable. Unlike fixed thresholds, this approach allows the reasoning engine to determine the optimal boundary value during the solving process, supporting both positive and negative logical conditions. By inheriting from core concept interfaces, the implementation integrates seamlessly into the broader description logic framework while maintaining the ability to nest complex conceptual structures. Functionality includes static factory methods for instantiating positive or negative threshold constraints, as well as support for standard logical operators such as negation, conjunction, and disjunction. The design ensures that structural manipulations, like cloning or replacing nested components, propagate correctly through the concept hierarchy without side effects, while delegating the extraction of atomic concepts and roles to the underlying nested concept to maintain consistent structural metadata.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -57,7 +53,7 @@ Module Contents
     .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzydl_concept_ext_threshold_concept_ExtThresholdConcept.pdf
        :alt: UML Class Diagram for ExtThresholdConcept
        :align: center
-       :width: 13.0cm
+       :width: 100%
        :class: uml-diagram
 
        UML Class Diagram for **ExtThresholdConcept**
@@ -94,9 +90,9 @@ Module Contents
 
    .. py:method:: __hash__() -> int
 
-      Computes the hash value for the instance by delegating to the hash of its string representation. This allows the object to be used as a dictionary key or stored in a set. The resulting integer hash depends entirely on the output of the object's `__str__` method.
+      Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-      :return: An integer hash value computed from the string representation of the object, intended for use in hashed collections.
+      :return: An integer hash value representing the structural identity of this object.
 
       :rtype: int
 
@@ -128,6 +124,10 @@ Module Contents
    .. py:method:: clone()
 
       Generates a duplicate of the current object by creating a new instance of `ExtThresholdConcept` initialized with the existing `type`, `curr_concept`, and `weight_variable` attributes. This method ensures that the original object remains unmodified, effectively providing a snapshot of the object's state at the time of the call. Note that because the constructor receives direct references to the attributes, the resulting clone performs a shallow copy, meaning any mutable objects referenced by these attributes will be shared between the original and the new instance.
+
+      :return: A shallow copy of this concept.
+
+      :rtype: ExtThresholdConcept
 
 
 
@@ -216,23 +216,17 @@ Module Contents
 
    .. py:attribute:: name
       :type:  str
-      :value: '([>= Uninferable] Uninferable)'
-
-
-      Updates the name of the Concept instance to the specified string value. This setter modifies the object's internal state by assigning the provided value to the private `_name` attribute, effectively replacing any previously stored name.
-
-      :param value: The new name to assign to the object.
-      :type value: str
 
 
    .. py:property:: weight_variable
       :type: fuzzy_dl_owl2.fuzzydl.milp.variable.Variable
 
 
-      Sets the weight variable associated with this concept instance. This method accepts a Variable object and assigns it to the internal `_weight_variable` attribute, replacing any existing value. It serves as the setter for the `weight_variable` property, enabling external modification of the concept's internal state.
+      Returns the MILP :class:`Variable` that carries the threshold weight of this extended-threshold concept. Unlike the plain :class:`ThresholdConcept`, the weight here is a solver variable rather than a fixed constant, allowing the reasoner to determine it. The value is read from the private ``_weight_variable`` attribute without modifying the instance.
 
-      :param value: The instance to assign as the weight variable.
-      :type value: Variable
+      :return: The variable holding the threshold weight.
+
+      :rtype: Variable
 
 
 .. py:data:: ExtendedNegThreshold

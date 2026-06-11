@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzyowl2.util.fuzzy_xml
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A utility builder for generating XML elements that conform to the FuzzyOWL2 ontology specification.
+A utility builder class that programmatically constructs XML elements conforming to the FuzzyOWL2 ontology specification.
 
 
 Description
 -----------
 
 
-The software abstracts the low-level details of XML manipulation by providing a suite of static factory methods that create specific nodes required for fuzzy ontology definitions. By leveraging a centralized set of constants for tag names and attributes, the implementation ensures that generated XML structures strictly adhere to the FuzzyOWL2 standard while allowing for optional custom attributes. It handles the construction of various components, ranging from root ontology elements and logic definitions to complex structures like weights and concept names, effectively acting as a domain-specific language for XML generation. Additionally, a serialization helper transforms the constructed element trees into formatted, human-readable strings, facilitating debugging and output generation without requiring external formatting libraries.
+Static methods within this utility programmatically construct XML elements that conform to the FuzzyOWL2 ontology specification, serving as a factory for various node types. Logic definitions, datatypes, modifiers, truth degrees, and concept names are generated through dedicated builders that automatically handle mandatory attributes and allow for the merging of optional metadata. Tag names and attribute keys are centralized via a constant class to ensure consistency, while a helper function converts the resulting element trees into formatted strings for readability.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -203,3 +199,5 @@ Module Contents
       :return: A pretty-printed string representation of the XML element, excluding the XML declaration header.
 
       :rtype: str
+
+

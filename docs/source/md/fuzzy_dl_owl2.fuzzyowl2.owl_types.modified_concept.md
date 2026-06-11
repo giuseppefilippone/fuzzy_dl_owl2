@@ -1,7 +1,7 @@
 # Summary
 
-Encapsulates a fuzzy concept that has been modified by a specific linguistic hedge or modifier within the FuzzyOWL2 framework.
+Defines a specialized data structure for representing fuzzy logic concepts that have been altered by linguistic hedges or modifiers.
 
 ## Description
 
-Inheriting from the core definition structure allows this component to represent nuanced or graded logical expressions where a standard concept is qualified by a fuzzy modifier. The design stores the modifier and the underlying concept name as distinct string attributes, ensuring that the specific linguistic hedge applied to the logic is preserved alongside the core concept. Access to these internal components is provided through dedicated retrieval methods, allowing external logic to inspect the specific nature of the modification while maintaining encapsulation. Finally, the textual representation is formatted to clearly display the relationship between the modifier and the concept, typically appearing as a parenthesized pair to reflect the logical structure.
+The implementation extends the base definition of a concept to support fuzzy logic operations where a specific nuance or qualification is applied to a standard concept. By storing both a linguistic hedge and the target concept name, the design allows for the creation of graded logical expressions that represent uncertainty or vagueness inherent in fuzzy ontologies. Internal state management relies on private attributes to hold the modifier and the underlying concept, ensuring that these core elements are encapsulated and accessed only through dedicated retrieval methods. The string representation is formatted to clearly display the relationship between the modifier and the concept, typically appearing as a parenthesized pair, which aids in debugging and serialization processes within the broader framework.

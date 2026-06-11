@@ -1,7 +1,7 @@
 # Summary
 
-A fuzzy logic modifier that applies a configurable piecewise linear transformation to the membership degrees of concepts.
+Implements a fuzzy logic modifier that transforms concept membership degrees using a configurable piecewise linear function.
 
 ## Description
 
-Software designed to adjust the intensity of fuzzy concepts by mapping input membership values through a piecewise linear function. The transformation is governed by a single coefficient that determines the slope and intercept of the function, allowing for precise control over how membership degrees are scaled. By deriving internal parameters from this coefficient, the implementation ensures that the resulting values remain strictly bounded between 0 and 1, effectively clamping inputs that fall outside the valid range. Integration with the broader fuzzy logic framework is achieved through the ability to wrap existing concepts into modified forms and support standard logical operators such as negation, conjunction, and disjunction.
+The software defines a mechanism for altering the membership degrees of fuzzy concepts through a piecewise linear transformation, controlled by a single shape coefficient. Upon initialization, the coefficient is used to derive two internal weights that define the inflection point and slope of the transformation, ensuring the output remains normalized within the zero-to-one range. When applied to a concept, the logic generates a specialized wrapper object that encapsulates both the original concept and the transformation rules, allowing the modified membership to be calculated dynamically based on input values. To support complex logical reasoning, the implementation includes operator overloading for conjunction, disjunction, and negation, delegating these operations to a central factory for concept construction while maintaining immutability of the original modifier.

@@ -9,7 +9,7 @@ Represents the logic inference type used in the fuzzy ontology.
 
 ```xml
 <fuzzyOwl2 fuzzyType="ontology">
-    <FuzzyLogic logic="lukasiewicz|zadeh|classical" />
+    <Fuzzylogic logic="lukasiewicz|zadeh|classical" />
 </fuzzyOwl2>
 ```
 
@@ -120,7 +120,7 @@ Represents a concept type that employs Quantified Ordered Weighted Averaging (OW
 
 **Keys:**
 *   `type`: The type of the concept, which is "qowa".
-*   `quantifier`: The quantifier IRI defining the aggregation is a `FuzzyConcreteConcept`.
+*   `quantifier`: The IRI of the quantifier that defines the aggregation weights; it must refer to a `FuzzyConcreteConcept`.
 *   `Names`: Container for the list of concept IRIs.
     *   `Name`: The IRI of a concept included in the aggregation.
 

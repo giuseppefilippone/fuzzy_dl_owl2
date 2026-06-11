@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import copy
 import typing
 from collections import deque
 
@@ -15,6 +14,7 @@ from fuzzy_dl_owl2.fuzzydl.individual.representative_individual import (
 )
 from fuzzy_dl_owl2.fuzzydl.relation import Relation
 from fuzzy_dl_owl2.fuzzydl.util import constants
+from fuzzy_dl_owl2.fuzzydl.util.config_reader import ConfigReader
 from fuzzy_dl_owl2.fuzzydl.util.constants import (
     CreatedIndividualBlockingType,
     InequalityType,
@@ -28,7 +28,6 @@ class CreatedIndividual(Individual):
 
     :raises NotImplementedError: Raised when the constructor is invoked with an unsupported number of arguments; the class only supports initialization with a single name or with a name, parent, and role name.
     """
-
 
     @typing.overload
     def __init__(
@@ -83,6 +82,13 @@ class CreatedIndividual(Individual):
 
         super().__init__(name)
 
+        self.individual_number: int = (
+            int(self.name[len(Individual.DEFAULT_NAME) :])
+            if self.name.startswith(Individual.DEFAULT_NAME)
+            and self.name[len(Individual.DEFAULT_NAME) :].isdigit()
+            else -1
+        )
+
         # Array of representative individuals
         self.representatives: list[RepresentativeIndividual] = list()
 
@@ -121,9 +127,10 @@ class CreatedIndividual(Individual):
         self._is_concrete: bool = False
 
         if parent is not None:
-            Util.debug(
-                f"Created new individual {name}, ID = {self.get_integer_id()} with parent {parent}"
-            )
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(
+                    f"Created new individual {name}, ID = {self.get_integer_id()} with parent {parent}"
+                )
 
     def __created_ind_init_2(self, name: str) -> None:
         """
@@ -134,7 +141,8 @@ class CreatedIndividual(Individual):
         """
 
         self.__created_ind_init_1(name, None, None)
-        Util.debug(f"Created new individual {name}, ID = {self.get_integer_id()}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Created new individual {name}, ID = {self.get_integer_id()}")
 
     def clone(self) -> typing.Self:
         """
@@ -158,7 +166,8 @@ class CreatedIndividual(Individual):
         """
 
         self.clone_attributes(ind)
-        ind.representatives = copy.deepcopy(self.representatives)
+        # ind.representatives = copy.deepcopy(self.representatives)
+        ind.representatives = list(self.representatives)
         ind.blocking_ancestor = (
             self.blocking_ancestor if self.blocking_ancestor is not None else None
         )
@@ -170,10 +179,12 @@ class CreatedIndividual(Individual):
             if self.blocking_ancestor_y_prime is not None
             else None
         )
-        ind.concept_list = copy.deepcopy(self.concept_list)
+        # ind.concept_list = copy.deepcopy(self.concept_list)
+        ind.concept_list = set(self.concept_list)
         ind.depth = self.depth
         ind.directly_blocked = self.directly_blocked
-        ind.indirectly_blocked = copy.deepcopy(self.indirectly_blocked)
+        # ind.indirectly_blocked = copy.deepcopy(self.indirectly_blocked)
+        ind.indirectly_blocked = self.indirectly_blocked
         ind._is_concrete = self._is_concrete
         if self.parent is not None:
             ind.parent = self.parent.clone()
@@ -188,8 +199,9 @@ class CreatedIndividual(Individual):
         :rtype: int
         """
 
-        prefix_len: int = len(Individual.DEFAULT_NAME)
-        return int(self.name[prefix_len:])
+        # prefix_len: int = len(Individual.DEFAULT_NAME)
+        # return int(self.name[prefix_len:])
+        return self.individual_number
 
     def get_depth(self) -> int:
         """
@@ -238,7 +250,7 @@ class CreatedIndividual(Individual):
     def get_representative_if_exists(
         self,
         type: InequalityType,
-        f_name: str,
+        f_name: typing.Optional[str],
         f: TriangularFuzzyNumber,
     ) -> typing.Optional[typing.Self]:
         """
@@ -247,7 +259,7 @@ class CreatedIndividual(Individual):
         :param type: Specifies the inequality condition (e.g., GREATER_EQUAL or LESS_EQUAL) that defines the representative individual relative to the fuzzy number.
         :type type: InequalityType
         :param f_name: The name of the feature associated with the representative individual.
-        :type f_name: str
+        :type f_name: typing.Optional[str]
         :param f: The fuzzy number defining the representative individual to retrieve.
         :type f: TriangularFuzzyNumber
 
@@ -271,9 +283,10 @@ class CreatedIndividual(Individual):
     def mark_indirectly_blocked(self) -> None:
         """Performs a breadth-first traversal of the subtree rooted at the current individual, marking all reachable descendants as indirectly blocked. During traversal, the method follows role relations but explicitly skips the parent node to prevent backtracking via inverse roles. Only individuals that satisfy the `is_blockable` condition are modified; their `indirectly_blocked` attribute is updated to reflect the blocked state."""
 
-        Util.debug(
-            f"{constants.SEPARATOR}Mark subtree of {self.name} indirectly blocked"
-        )
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(
+                f"{constants.SEPARATOR}Mark subtree of {self.name} indirectly blocked"
+            )
         queue: deque[CreatedIndividual] = deque()
         queue.append(self)
         while len(queue) > 0:
@@ -282,26 +295,31 @@ class CreatedIndividual(Individual):
             if len(ind.role_relations) == 0:
                 break
             for role in ind.role_relations:
-                rels: list[Relation] = copy.deepcopy(ind.role_relations[role])
+                # rels: list[Relation] = copy.deepcopy(ind.role_relations[role])
+                rels: list[Relation] = list(ind.role_relations[role])
                 for rel in rels:
-                    Util.debug(
-                        f"{rel.get_subject_individual()} has role {rel.get_role_name()} with filler {rel.get_object_individual()}"
-                    )
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(
+                            f"{rel.get_subject_individual()} has role {rel.get_role_name()} with filler {rel.get_object_individual()}"
+                        )
                     son: Individual = rel.get_object_individual()
                     if son != ind.parent:  # son is not the parent via inverse role
                         if not son.is_blockable():
                             continue
                         son: CreatedIndividual = typing.cast(CreatedIndividual, son)
-                        Util.debug(
-                            f"Filler is not {self.name}'s parent, so mark {son} as INDIRECTLY BLOCKED"
-                        )
+                        if ConfigReader.DEBUG_PRINT:
+                            Util.debug(
+                                f"Filler is not {self.name}'s parent, so mark {son} as INDIRECTLY BLOCKED"
+                            )
                         son.indirectly_blocked = CreatedIndividualBlockingType.BLOCKED
                         if rel.get_subject_individual() != rel.get_object_individual():
                             queue.append(son)
-                    Util.debug("Filler is parent, so skip")
-        Util.debug(
-            f"{constants.SEPARATOR}END Mark INDIRECTLY BLOCKED subtree of {self.name}{constants.SEPARATOR}"
-        )
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug("Filler is parent, so skip")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(
+                f"{constants.SEPARATOR}END Mark INDIRECTLY BLOCKED subtree of {self.name}{constants.SEPARATOR}"
+            )
 
     def individual_set_intersection_of(
         self, set1: SortedSet[typing.Self], set2: SortedSet[typing.Self]
@@ -434,14 +452,29 @@ class CreatedIndividual(Individual):
 
     def __hash__(self) -> int:
         """
-        Returns an integer hash value for the instance, derived from the string representation of the object. This method enables `CreatedIndividual` instances to be used as keys in dictionaries or members of sets. Because the hash is calculated based on the output of `__str__`, any changes to the object's state that affect its string representation will alter its hash value, potentially causing issues if the object is already stored in a hash-based collection. Consequently, instances should be treated as immutable regarding their string representation if used in such contexts.
+        Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-        :return: An integer hash value computed from the string representation of the object.
+        :return: An integer hash value representing the structural identity of this object.
 
         :rtype: int
         """
-
-        return hash(str(self))
+        # return hash(str(self))
+        return hash(
+            (
+                self.name,
+                self.depth,
+                self.role_name,
+                self.parent.name if self.parent else str(None),
+                tuple(self.concept_list),
+                tuple(map(hash, self.representatives)),
+                self.directly_blocked,
+                self.indirectly_blocked,
+                self._is_concrete,
+                self.blocking_ancestor,
+                self.blocking_ancestor_y,
+                self.blocking_ancestor_y_prime,
+            )
+        )
 
     def __str__(self) -> str:
         """

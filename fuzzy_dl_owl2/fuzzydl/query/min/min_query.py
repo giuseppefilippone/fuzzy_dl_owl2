@@ -40,12 +40,16 @@ class MinQuery(Query):
 
         pass
 
-    def solve(self, kb: KnowledgeBase) -> None:
+    def solve(self, kb: KnowledgeBase) -> Solution:
         """
         Executes the minimization query by first resolving the ABox of the provided knowledge base and then optimizing a clone of that base against the query's objective expression. The method tracks the total execution time required for these operations. If the knowledge base is found to be inconsistent, the method catches the resulting exception and returns a specific `Solution` object indicating an inconsistent state; otherwise, it returns the `Solution` obtained from the optimization process.
 
         :param kb: The knowledge base containing the ontology and data to be solved and optimized. The ABox is solved directly on this instance, while optimization is performed on a clone.
         :type kb: KnowledgeBase
+
+        :return: The optimization `Solution`, or a `Solution` flagged as inconsistent when the knowledge base is inconsistent.
+
+        :rtype: Solution
         """
 
         try:

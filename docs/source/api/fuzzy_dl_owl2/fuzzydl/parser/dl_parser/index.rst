@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.parser.dl_parser
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A comprehensive parser for Fuzzy Description Logic that utilizes the pyparsing library to transform textual definitions into a structured knowledge base and executable queries.
+A specialized parser for Fuzzy Description Logic that interprets textual definitions to construct a knowledge base and associated queries using the pyparsing library.
 
 
 Description
 -----------
 
 
-The software implements a robust grammar using the ``pyparsing`` library to interpret a domain-specific language for Fuzzy Description Logic, enabling the translation of raw text into a structured object model. It supports a wide array of fuzzy logic constructs, including abstract and concrete concepts, modifiers, weighted aggregations, and integral operators, while dynamically adapting to different logic semantics such as Zadeh, Lukasiewicz, and classical logic. During the parsing process, static callback methods validate the input and instantiate domain-specific objects like ``Concept``, ``Individual``, and ``Degree``, which are subsequently registered within a central ``KnowledgeBase`` instance. Beyond constructing the domain model, the system extracts and compiles query definitions—ranging from satisfiability checks to instance retrieval—into executable objects that can be processed by the underlying reasoning engine. The design relies heavily on side effects within parsing actions to populate the global knowledge base state, ensuring that the parsed syntax directly corresponds to the runtime data structures required for inference and Mixed-Integer Linear Programming (MILP) solving.
+The software utilizes the ``pyparsing`` library to define a comprehensive grammar capable of interpreting a wide array of fuzzy logic constructs, including concepts, roles, modifiers, and axioms. Through a series of static callback methods, raw string tokens are transformed into domain-specific objects such as ``Concept``, ``Individual``, and ``Degree`` instances, effectively bridging the gap between textual syntax and an executable object model. The parsing logic enforces semantic validation and logic-specific constraints, ensuring that constructs like weighted sums or integral operators adhere to the mathematical rules of the selected fuzzy logic, whether it be Zadeh, Lukasiewicz, or classical. Ultimately, the process populates a central ``KnowledgeBase`` with the parsed domain model while simultaneously extracting and instantiating query objects that can be executed against the constructed model.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -56,7 +52,7 @@ Module Contents
     .. figure:: /_uml/class_fuzzy_dl_owl2_fuzzydl_parser_dl_parser_DLParser.pdf
        :alt: UML Class Diagram for DLParser
        :align: center
-       :width: 12.7cm
+       :width: 12.4cm
        :class: uml-diagram
 
        UML Class Diagram for **DLParser**
@@ -127,6 +123,20 @@ Module Contents
       :return: The `Modifier` object associated with the specified name.
 
       :rtype: Modifier
+
+
+
+   .. py:method:: _is_non_decreasing(v: list[Any]) -> bool
+      :staticmethod:
+
+
+      Utility method to check if a list is sorted in non-decreasing order. It iterates through the list and compares each element with the next one, returning `False` if it finds any pair of elements that are out of order. If the entire list is traversed without finding any such pair, it returns `True`, indicating that the list is sorted.
+
+      :param v: The list to be checked for sorted order.
+      :type v: list[typing.Any]
+
+      :return: A boolean value indicating whether the list is sorted in non-decreasing order.
+      :rtype: bool
 
 
 
@@ -452,6 +462,10 @@ Module Contents
       :param tokens: The parsed elements of a threshold expression, structured as an operator, a threshold value (numeric or variable), and a concept.
       :type tokens: pp.ParseResults
 
+      :return: A single-element ``ParseResults`` wrapping the constructed ``ThresholdConcept`` or ``ExtThresholdConcept``.
+
+      :rtype: pp.ParseResults
+
 
 
    .. py:method:: _parse_truth_constants(tokens: pyparsing.ParseResults) -> pyparsing.ParseResults
@@ -721,14 +735,19 @@ Module Contents
 
 
 
-   .. py:method:: get_kb(*args) -> tuple[fuzzy_dl_owl2.fuzzydl.knowledge_base.KnowledgeBase, list[fuzzy_dl_owl2.fuzzydl.query.query.Query]]
+   .. py:method:: get_kb(file_path: str, **kwargs) -> tuple[fuzzy_dl_owl2.fuzzydl.knowledge_base.KnowledgeBase, list[fuzzy_dl_owl2.fuzzydl.query.query.Query]]
       :staticmethod:
 
 
-      Parses the input file specified by the arguments to construct a Knowledge Base and a list of Queries, initializing the necessary configuration and internal state. This method resets the class-level knowledge base and query list, sets the global logic semantics to Łukasiewicz fuzzy logic, and processes the file content using either a verbose line-by-line approach or an optimized path based on the debug configuration. It returns a tuple containing the populated `KnowledgeBase` object and the list of `Query` objects. Significant side effects include updates to class attributes and global constants; errors such as missing files or parsing failures are caught and logged rather than raised, resulting in a return value of None in those cases.
+      Parses the input file specified by the arguments to construct a Knowledge Base and a list of Queries, initializing the necessary configuration and internal state. This method resets the class-level knowledge base and query list, sets the global logic semantics to Łukasiewicz fuzzy logic, and processes the file content using either a verbose line-by-line approach or an optimized path based on the debug configuration. It returns a tuple containing the populated `KnowledgeBase` object and the list of `Query` objects. Significant side effects include updates to class attributes and global constants. A missing input file is logged and re-raised as `FileNotFoundError`; any other parsing failure is logged and re-raised wrapped in a `FuzzyOntologyException`.
 
-      :param args: Variable-length arguments where the first argument is the path to the input file, and any remaining arguments are passed to the configuration loader.
-      :type args: typing.Any
+      :param file_path: Path to the input file.
+      :type file_path: str
+      :param kwargs: Additional configuration parameters to load.
+      :type kwargs: typing.Any
+
+      :raises FileNotFoundError: if the input file at ``file_path`` does not exist.
+      :raises FuzzyOntologyException: if parsing fails for any other reason; the original exception is chained as the cause.
 
       :return: A tuple containing the KnowledgeBase instance and the list of Query instances parsed from the input file.
 
@@ -736,25 +755,27 @@ Module Contents
 
 
 
-   .. py:method:: load_config(*args) -> None
+   .. py:method:: load_config(**kwargs) -> None
       :staticmethod:
 
 
       This static method acts as a wrapper to load specific configuration parameters from a predefined INI file located in the current working directory. It constructs the file path for 'CONFIG.ini' and delegates the actual parsing and parameter extraction to the `ConfigReader` class, passing along the provided arguments to determine which specific settings to retrieve. The function relies on the presence of the configuration file in the file system and triggers side effects within the `ConfigReader` rather than returning a value directly. By accepting a variable length argument list, it allows for selective loading of configuration data based on the caller's needs.
 
-      :param args: Keys specifying which configuration parameters to load from the file.
-      :type args: typing.Any
+      :param kwargs: Keys specifying which configuration parameters to load from the file.
+      :type kwargs: typing.Any
 
 
 
-   .. py:method:: main(*args) -> None
+   .. py:method:: main(file_path: str, **kwargs) -> None
       :staticmethod:
 
 
       Serves as the primary entry point for the DLParser program, orchestrating the loading, solving, and querying of a fuzzy description logic knowledge base. It accepts variable arguments to configure the loading process, retrieving the knowledge base and a list of queries via the `get_kb` method. The method first solves the knowledge base to prepare it for inference, then iterates through each query to generate solutions. Special handling is provided for `AllInstancesQuery` instances when the knowledge base lacks individuals, logging a specific informational message. For general queries, it evaluates consistency and logs the solution or a default value of 1.0 if the knowledge base is inconsistent. Additionally, it logs execution time and optionally the description logic language used. The method includes robust error handling, catching ontology inconsistency exceptions to report a default answer and logging stack traces for unexpected errors.
 
-      :param args: Variable length positional arguments used to specify configuration parameters and the input file for parsing.
-      :type args: typing.Any
+      :param file_path: Path to the input file.
+      :type file_path: str
+      :param kwargs: Additional configuration parameters to load.
+      :type kwargs: typing.Any
 
 
 
@@ -801,3 +822,10 @@ Module Contents
 
 
 .. py:function:: _ensure_parser_log_path() -> str
+
+   Builds and returns the path to a timestamped parser log file, creating its containing directory if needed. The file lives under a dated tree ``./logs/parser/<year>/<month>/<day>`` and is named from the current hour, minute and second, so each parser run writes to its own log without collisions.
+
+   :return: The full path to the parser log file for the current run.
+
+   :rtype: str
+

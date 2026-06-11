@@ -1,0 +1,8 @@
+(reflexive hasSelf)
+
+(symmetric hasFriend)
+
+(transitive hasAncestor)
+
+(inverse hasChild hasParent)
+

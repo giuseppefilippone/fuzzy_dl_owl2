@@ -18,7 +18,6 @@ class ThresholdConcept(Concept, HasConceptInterface):
     :type name: typing.Any
     """
 
-
     def __init__(self, c_type: ConceptType, c: Concept, weight: float) -> None:
         """
         Initializes a threshold concept entity by configuring its type, the underlying concept it references, and a specific weight value. This method enforces a strict constraint on the concept type, requiring it to be either a positive or negative threshold; otherwise, an assertion error is raised. During initialization, it sets up the base `Concept` and `HasConceptInterface` components, stores the provided weight, and automatically computes the instance's name based on these parameters.
@@ -45,16 +44,24 @@ class ThresholdConcept(Concept, HasConceptInterface):
     @property
     def weight(self) -> float:
         """
-        Sets the weight of the `ThresholdConcept` instance to the specified floating-point value. This method updates the internal `_weight` attribute, effectively modifying the object's state without performing additional validation or triggering side effects beyond the assignment. It allows the weight to be redefined dynamically, accepting any float provided as an argument.
+        Returns the threshold value of this threshold concept, i.e. the cut-off degree against which the wrapped concept's membership is compared (as a positive or negative threshold). The value is read from the private ``_weight`` attribute without modifying the instance.
 
-        :param value: The new weight value.
-        :type value: float
+        :return: The threshold cut-off degree.
+
+        :rtype: float
         """
 
         return self._weight
 
     @weight.setter
     def weight(self, value: float) -> None:
+        """
+        Sets the threshold value of this threshold concept. The provided value is stored directly in the private ``_weight`` attribute without validation.
+
+        :param value: The new threshold cut-off degree.
+        :type value: float
+        """
+
         self._weight = value
 
     @staticmethod
@@ -203,14 +210,17 @@ class ThresholdConcept(Concept, HasConceptInterface):
 
     def __hash__(self) -> int:
         """
-        Computes the hash value for the instance by hashing its string representation, enabling the object to be used as a key in dictionaries or as a member of sets. The implementation delegates to the built-in hash function applied to the result of `str(self)`. Note that if the object is mutable and its string representation changes over time, the hash value will also change, which can lead to unexpected behavior if the object is modified while stored in a hash-based collection.
+        Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-        :return: An integer hash value computed from the string representation of the object.
+        :return: An integer hash value representing the structural identity of this object.
 
         :rtype: int
         """
-
-        return hash(str(self))
+        # return hash(str(self))
+        # return id(self)
+        return hash(
+            (hash(self.curr_concept), hash(self.type), self.weight)
+        )
 
 
 PosThreshold = ThresholdConcept.pos_threshold

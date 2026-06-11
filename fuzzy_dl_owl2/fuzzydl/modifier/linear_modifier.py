@@ -22,7 +22,6 @@ class LinearModifier(Modifier):
     :type _b: float
     """
 
-
     def __init__(self, name: str, c: float) -> None:
         """
         Initializes the modifier with a unique identifier and a coefficient that determines the weighting behavior. The coefficient `c` is stored directly, and two derived attributes, `_a` and `_b`, are calculated to represent normalized weights such that their sum equals 1. Specifically, `_a` is set to `c / (c + 1)` and `_b` to `1 / (c + 1)`. This setup ensures that the modifier can apply a linear transformation based on the relative strength of the coefficient. The method propagates the name to the parent class for initialization. A critical edge case to consider is that providing a coefficient value of `-1.0` will cause a `ZeroDivisionError` during the calculation of the internal weights.
@@ -41,46 +40,70 @@ class LinearModifier(Modifier):
     @property
     def a(self) -> float:
         """
-        Sets the value of the 'a' coefficient for the linear modifier. This method updates the object's internal state by assigning the provided floating-point value to the private attribute `_a`. It allows the linear parameter to be modified dynamically after the object has been initialized.
+        Returns the first derived weight of the linear modifier, computed at construction as ``c / (c + 1)``. Together with ``b`` it forms the pair of weights (summing to ``1``) that define the piecewise-linear membership transformation. The value is read from the private ``_a`` attribute without modifying the instance.
 
-        :param value: The new float value to assign to the property.
-        :type value: float
+        :return: The derived weight ``a`` of the modifier.
+
+        :rtype: float
         """
 
         return self._a
 
     @a.setter
     def a(self, value: float) -> None:
+        """
+        Sets the first derived weight ``a`` of the linear modifier. The provided value is stored directly in the private ``_a`` attribute without coercion or re-deriving it from ``c``.
+
+        :param value: The new derived weight ``a``.
+        :type value: float
+        """
+
         self._a = value
 
     @property
     def b(self) -> float:
         """
-        Sets the internal coefficient 'b' for the linear modifier to the specified floating-point value. This method updates the object's state by assigning the input directly to the private attribute `_b`. Since no validation logic is present in the implementation, any float value is accepted, potentially including edge cases like infinity or NaN.
+        Returns the second derived weight of the linear modifier, computed at construction as ``1 / (c + 1)``. Together with ``a`` it forms the pair of weights (summing to ``1``) that define the piecewise-linear membership transformation. The value is read from the private ``_b`` attribute without modifying the instance.
 
-        :param value: The new value to assign to the b attribute.
-        :type value: float
+        :return: The derived weight ``b`` of the modifier.
+
+        :rtype: float
         """
 
         return self._b
 
     @b.setter
     def b(self, value: float) -> None:
+        """
+        Sets the second derived weight ``b`` of the linear modifier. The provided value is stored directly in the private ``_b`` attribute without coercion or re-deriving it from ``c``.
+
+        :param value: The new derived weight ``b``.
+        :type value: float
+        """
+
         self._b = value
 
     @property
     def c(self) -> float:
         """
-        Updates the value of the 'c' property, which likely represents a constant term or coefficient in the linear modification logic. This setter assigns the provided floating-point value to the internal `_c` attribute, thereby modifying the object's state. Since the implementation performs a direct assignment without explicit type enforcement, passing incompatible types may result in unexpected behavior during subsequent calculations that rely on this value.
+        Returns the shape coefficient ``c`` of the linear modifier, the single parameter from which the derived weights ``a`` and ``b`` are computed and which controls the intensity of the modification. The value is read from the private ``_c`` attribute without modifying the instance.
 
-        :param value: The new value to assign to the internal c attribute.
-        :type value: float
+        :return: The shape coefficient ``c`` of the modifier.
+
+        :rtype: float
         """
 
         return self._c
 
     @c.setter
     def c(self, value: float) -> None:
+        """
+        Sets the shape coefficient ``c`` of the linear modifier. The provided value is stored directly in the private ``_c`` attribute; note that the derived weights ``a`` and ``b`` are not recomputed.
+
+        :param value: The new shape coefficient ``c``.
+        :type value: float
+        """
+
         self._c = value
 
     def clone(self) -> typing.Self:
@@ -180,14 +203,14 @@ class LinearModifier(Modifier):
 
     def __hash__(self) -> int:
         """
-        Computes the integer hash value for the `LinearModifier` instance based on its string representation, enabling the object to be used as a key in dictionaries or as a member of sets. The implementation delegates the hashing logic to the result of `str(self)`, ensuring that two instances with identical string representations produce the same hash. However, because the hash is derived from the string form, any changes to the object's state that alter its string representation will result in a different hash value, which violates the immutability requirement for objects used in hashed collections and may lead to lookup errors.
+        Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-        :return: An integer hash value derived from the string representation of the object.
+        :return: An integer hash value representing the structural identity of this object.
 
         :rtype: int
         """
-
-        return hash(str(self))
+        # return hash(str(self))
+        return hash((self.name, self.c, self.a, self.b))
 
     # def __str__(self) -> str:
     #     return self.compute_name()

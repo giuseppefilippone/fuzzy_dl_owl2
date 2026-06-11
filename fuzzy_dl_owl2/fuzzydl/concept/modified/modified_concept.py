@@ -39,16 +39,24 @@ class ModifiedConcept(Concept, HasConceptInterface, ABC):
     @property
     def modifier(self) -> Modifier:
         """
-        Sets the modifier applied to the concept by updating the internal state. This setter accepts a `Modifier` instance and assigns it to the private `_modifier` attribute, effectively replacing any previously associated modifier. It enables dynamic modification of the concept's behavior or properties after the object has been instantiated.
+        Returns the fuzzy modifier (e.g. "very", "slightly") applied to the wrapped concept by this modified concept. The value is read from the private ``_modifier`` attribute without modifying the instance.
 
-        :param value: 
-        :type value: Modifier
+        :return: The modifier applied to the wrapped concept.
+
+        :rtype: Modifier
         """
 
         return self._modifier
 
     @modifier.setter
     def modifier(self, value: Modifier) -> None:
+        """
+        Sets the fuzzy modifier applied to the wrapped concept. The provided modifier is stored directly in the private ``_modifier`` attribute without validation.
+
+        :param value: The new modifier to apply.
+        :type value: Modifier
+        """
+
         self._modifier = value
 
     def compute_name(self) -> str | None:

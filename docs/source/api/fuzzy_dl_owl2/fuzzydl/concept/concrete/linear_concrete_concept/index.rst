@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.concept.concrete.linear_concrete_concept
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A fuzzy concept implementation that models a piecewise linear membership function operating on a normalized domain between zero and one.
+A concrete implementation of a fuzzy concept that utilizes a piecewise linear membership function defined over a normalized domain.
 
 
 Description
 -----------
 
 
-The implementation extends the base fuzzy concrete concept to represent a specific type of membership function characterized by a piecewise linear shape. It relies on a normalized domain ranging from zero to one, where the shape of the function is determined by a specific "knee" point defined by parameters ``a`` and ``b``, creating a linear ramp from the origin to this point and a second ramp to the maximum value. While the constructor accepts interval bounds, the core membership calculation logic strictly utilizes the normalized input and the internal coefficients to determine the degree of truth through linear interpolation. Validation logic ensures that the definition parameters adhere to mathematical constraints, specifically requiring that the lower bound does not exceed the threshold and that the membership degree at the threshold remains within valid limits. Beyond calculating membership degrees, the design integrates with broader fuzzy logic operations by delegating tasks like negation, conjunction, and disjunction to an external operator handler to support complex logical expressions.
+This software component models a specific type of fuzzy concept characterized by a piecewise linear membership function operating on a normalized domain ranging from zero to one. The mathematical behavior is governed by a "knee" point defined by parameters ``a`` and ``b``, which creates a linear ramp from the origin to the knee and a second ramp from the knee to full membership, effectively ignoring the interval bounds ``k1`` and ``k2`` during the actual calculation of the membership degree. Validation logic ensures that the definition interval and the knee point adhere to specific constraints, such as requiring the lower bound to be less than or equal to the knee position and the membership degree at the knee to not exceed one. Beyond calculating membership degrees through linear interpolation, the implementation supports standard fuzzy logic operations like negation, conjunction, and disjunction by delegating these tasks to a central operator handler. It also provides functionality for cloning instances and generating a canonical string representation based on its defining parameters.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -89,9 +85,9 @@ Module Contents
 
    .. py:method:: __hash__() -> int
 
-      Computes the hash value for the instance based on its string representation, enabling the object to be used as a key in dictionaries or as a member of sets. The implementation delegates to the built-in hash function applied to the result of `str(self)`, meaning the hash value is intrinsically linked to the object's string output. Consequently, if the object is mutable and its string representation changes during its lifetime, the hash value will also change, which violates the standard contract for hashable objects and can lead to errors if the instance is used as a dictionary key after modification. Furthermore, the efficiency of this operation depends on the computational cost of generating the string representation.
+      Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-      :return: An integer hash value computed from the string representation of the object.
+      :return: An integer hash value representing the structural identity of this object.
 
       :rtype: int
 
@@ -165,37 +161,28 @@ Module Contents
       :type: float
 
 
-      Sets the value of the coefficient 'a' for the linear concept. This method accepts a value, converts it to a float, and assigns it to the internal attribute `_a`. It ensures type consistency by forcing the storage format to be a float, which may raise a `ValueError` or `TypeError` if the input is not a valid number. Modifying this property updates the internal state of the object, which may influence subsequent calculations or behaviors relying on this coefficient.
+      Returns the x-coordinate of the knee of this piecewise-linear membership function, i.e. the threshold on the normalized domain at which the slope of the ramp changes. The value is held internally as a float and is read without modifying the instance.
 
-      :param value: The new value to assign to the internal attribute, converted to a float.
-      :type value: float
+      :return: The knee position ``a`` of the linear function.
+
+      :rtype: float
 
 
    .. py:property:: b
       :type: float
 
 
-      Updates the internal state of the instance by assigning a new value to the underlying attribute. The input is coerced to a floating-point number before storage to ensure type consistency, regardless of whether the original input was an integer or a numeric string. This setter modifies the private attribute `_b` and will propagate standard exceptions if the provided value cannot be converted to a float.
+      Returns the membership degree reached at the knee ``a`` of this piecewise-linear function, i.e. the y-coordinate of the breakpoint that fixes the slope of the two linear segments. The value is held internally as a float and is read without modifying the instance.
 
-      :param value: The new value for the 'b' attribute, converted to a float.
-      :type value: float
+      :return: The membership degree ``b`` at the knee.
+
+      :rtype: float
 
 
    .. py:attribute:: k1
       :type:  float
 
-      Sets the value of the `k1` attribute for the instance, converting the input to a float to ensure type consistency. This method updates the private `_k1` variable, effectively modifying the internal state of the `FuzzyConcreteConcept` object. Any subsequent operations relying on this parameter will reflect the new value.
-
-      :param value: The new value for the k1 attribute.
-      :type value: float
-
 
    .. py:attribute:: k2
       :type:  float
 
-      Sets the upper bound parameter k2 for the fuzzy concrete concept. This method enforces a constraint ensuring that the new value is greater than or equal to the existing k1 parameter; if k1 is larger than the provided value, a ValueError is raised. Upon successful validation, the input is converted to a float and stored in the internal state.
-
-      :param value: The value to assign to the k2 parameter, which must be greater than or equal to k1.
-      :type value: float
-
-      :raises ValueError: Raised if the provided value is less than `k1`, as `k2` must be greater than or equal to `k1`.

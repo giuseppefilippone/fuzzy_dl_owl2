@@ -3,7 +3,7 @@ from __future__ import annotations
 from fuzzy_dl_owl2.fuzzydl.concept.concept import Concept
 from fuzzy_dl_owl2.fuzzydl.concept.has_value_concept import HasValueConcept
 from fuzzy_dl_owl2.fuzzydl.degree.degree_expression import DegreeExpression
-from fuzzy_dl_owl2.fuzzydl.degree.degree_variable import DegreeVariable
+from fuzzy_dl_owl2.fuzzydl.degree.degree_variable import DegreeVariable  # Variable
 from fuzzy_dl_owl2.fuzzydl.exception.inconsistent_ontology_exception import (
     InconsistentOntologyException,
 )
@@ -11,8 +11,8 @@ from fuzzy_dl_owl2.fuzzydl.individual.individual import Individual
 from fuzzy_dl_owl2.fuzzydl.knowledge_base import KnowledgeBase
 from fuzzy_dl_owl2.fuzzydl.milp.expression import Expression
 from fuzzy_dl_owl2.fuzzydl.milp.solution import Solution
-from fuzzy_dl_owl2.fuzzydl.milp.term import Term
-from fuzzy_dl_owl2.fuzzydl.milp.variable import Variable
+from fuzzy_dl_owl2.fuzzydl.milp.term import Term  # Term
+from fuzzy_dl_owl2.fuzzydl.milp.variable import Variable  # Variable
 from fuzzy_dl_owl2.fuzzydl.query.related_query import RelatedQuery
 
 
@@ -54,10 +54,10 @@ class MinRelatedQuery(RelatedQuery):
         """
 
         conc: Concept = HasValueConcept(self.role, self.ind2)
-        q: Variable = kb.milp.get_variable(self.ind1, conc)
-        kb.add_assertion(self.ind1, conc, DegreeVariable.get_degree(q))
+        q: Variable = kb.milp.get_variable(self.ind1, conc)  # Variable
+        kb.add_assertion(self.ind1, conc, DegreeVariable.get_degree(q))  # Variable
         kb.old_01_variables += 1
-        self.obj_expr: Expression = Expression(Term(1.0, q))
+        self.obj_expr: Expression = Expression(Term(1.0, q))  # Term
 
         if "(some " in str(conc) or "(b-some " in str(conc):
             kb.set_dynamic_blocking()
@@ -66,7 +66,7 @@ class MinRelatedQuery(RelatedQuery):
         kb.add_assertion(
             self.ind1,
             -conc,
-            DegreeExpression.get_degree(Expression(1.0, Term(-1.0, q))),
+            DegreeExpression.get_degree(Expression(1.0, Term(-1.0, q))),  # Term
         )
         kb.solve_assertions()
 

@@ -14,7 +14,6 @@ class SelfConcept(Concept, HasRoleInterface):
     :type name: typing.Any
     """
 
-
     def __init__(self, role: str) -> None:
         """
         Initializes a new instance representing a self-concept, configuring it with the specific type `ConceptType.SELF`. It accepts a string argument defining the role, which is applied via the `HasRoleInterface`, and automatically derives and assigns the instance's name based on the provided role.
@@ -43,7 +42,13 @@ class SelfConcept(Concept, HasRoleInterface):
         return SelfConcept(role)
 
     def clone(self):
-        """Creates and returns a new `SelfConcept` instance that duplicates the current object, initialized with the same `role` attribute. This method performs a shallow copy of the object's state, meaning the new instance shares the reference to the original `role` object if it is mutable. The operation has no side effects on the original instance."""
+        """
+        Creates and returns a new `SelfConcept` instance that duplicates the current object, initialized with the same `role` attribute. This method performs a shallow copy of the object's state, meaning the new instance shares the reference to the original `role` object if it is mutable. The operation has no side effects on the original instance.
+
+        :return: A shallow copy of this concept.
+
+        :rtype: SelfConcept
+        """
 
         return SelfConcept(self.role)
 
@@ -137,11 +142,12 @@ class SelfConcept(Concept, HasRoleInterface):
 
     def __hash__(self) -> int:
         """
-        Computes an integer hash value for the object based on its string representation. By delegating to the hash of `str(self)`, this method ensures that the hash is consistent with the object's textual output, allowing instances to be used as dictionary keys or stored in sets. This implementation implies that the hashability of the object is directly tied to the stability and uniqueness of its string representation.
+        Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-        :return: An integer representing the hash of the object's string representation.
+        :return: An integer hash value representing the structural identity of this object.
 
         :rtype: int
         """
 
-        return hash(str(self))
+        # return hash(str(self))
+        return id(self)

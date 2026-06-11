@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.concept_definition
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-An abstract base class representing concept definitions within the FuzzyOWL2 framework.
+An abstract base class that establishes a common interface and type categorization for fuzzy concept definitions within the FuzzyOWL2 framework.
 
 
 Description
 -----------
 
 
-Designed to serve as a foundational interface for various fuzzy logic constructs, this class enforces a standard structure for concept definitions by requiring a specific classification upon initialization. Subclasses are expected to inherit from this base to implement specific behaviors, while the base class itself manages the storage and retrieval of the associated ``ConceptType`` enumeration. By encapsulating the type information and providing an accessor method, the design ensures that every concept definition can be categorized and identified consistently throughout the system. The implementation relies on Python's abstract base class module to prevent direct instantiation, thereby guiding developers to create concrete implementations for specific logical scenarios.
+Designed to serve as the root for a hierarchy of fuzzy logic constructs, this class ensures that all derived implementations share a uniform mechanism for type identification. By mandating the inclusion of a specific ``ConceptType`` during instantiation, it enforces a strict categorization system that distinguishes between various kinds of fuzzy concepts. The architecture relies on inheritance, allowing concrete subclasses to define specific behaviors while inheriting the core responsibility of exposing their classification through a standardized accessor. This abstraction facilitates polymorphism, enabling the broader system to interact with diverse concept definitions generically without needing to know their specific internal details.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -90,3 +86,4 @@ Module Contents
 
    .. py:attribute:: _type
       :type:  fuzzy_dl_owl2.fuzzyowl2.util.constants.ConceptType
+

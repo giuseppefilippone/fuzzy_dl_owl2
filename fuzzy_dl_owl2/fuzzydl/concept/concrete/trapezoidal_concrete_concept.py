@@ -29,11 +29,10 @@ class TrapezoidalConcreteConcept(FuzzyConcreteConcept):
     :type _d: float
     """
 
-
     def __init__(
         self, name: str, k1: float, k2: float, a: float, b: float, c: float, d: float
     ) -> None:
-        """
+        r"""
         Initializes the trapezoidal concept with a specific name and geometric parameters defining its shape and domain. The method enforces strict ordering constraints on the trapezoid vertices, requiring $a \le b \le c \le d$, and ensures the domain limits $k1$ and $k2$ fully contain the trapezoid by mandating $k1 \le a$ and $k2 \ge d$. If these validation checks fail, an error is triggered. Upon successful validation, the parameters are stored as instance attributes, with the vertex coordinates explicitly cast to floating-point numbers, and the parent class constructor is invoked.
 
         :param name: Identifier for the trapezoidal function instance.
@@ -71,61 +70,93 @@ class TrapezoidalConcreteConcept(FuzzyConcreteConcept):
     @property
     def a(self) -> float:
         """
-        Sets the value of the property 'a', representing a specific geometric dimension of the trapezoidal concrete concept. The method accepts a numeric input, casts it to a float, and stores the result in the private attribute `_a`. This type conversion ensures that the internal state maintains floating-point precision for subsequent calculations, even if an integer or compatible numeric type is provided.
+        Returns the left-most breakpoint of the trapezoidal membership function, i.e. the start of the support interval where the membership degree begins rising from zero. The value is held internally as a float and is read without modifying the instance.
 
-        :param value: The value to assign to the attribute, converted to a float.
-        :type value: float
+        :return: The lower support bound ``a`` of the trapezoid.
+
+        :rtype: float
         """
 
         return self._a
 
     @a.setter
     def a(self, value: float) -> None:
+        """
+        Sets the left-most breakpoint ``a`` of the trapezoidal membership function. The provided value is cast to a float and stored in the private ``_a`` attribute; passing a value that cannot be converted to a float raises a ``ValueError`` or ``TypeError``.
+
+        :param value: The new lower support bound, converted to a float.
+        :type value: float
+        """
+
         self._a = float(value)
 
     @property
     def b(self) -> float:
         """
-        Sets the dimension represented by 'b' for the trapezoidal concrete concept, typically corresponding to a width or base length. The method accepts a value, explicitly converts it to a float, and assigns it to the internal attribute `_b`. This ensures the underlying data type remains consistent, though providing a value that cannot be converted to a float will raise an error.
+        Returns the second breakpoint of the trapezoidal membership function, i.e. the lower bound of the core plateau where the membership degree first reaches ``1``. The value is held internally as a float and is read without modifying the instance.
 
-        :param value: The new value to assign to the b attribute.
-        :type value: float
+        :return: The lower core bound ``b`` of the trapezoid.
+
+        :rtype: float
         """
 
         return self._b
 
     @b.setter
     def b(self, value: float) -> None:
+        """
+        Sets the second breakpoint ``b`` of the trapezoidal membership function (the lower bound of the core plateau). The provided value is cast to a float and stored in the private ``_b`` attribute; a non-convertible value raises a ``ValueError`` or ``TypeError``.
+
+        :param value: The new lower core bound, converted to a float.
+        :type value: float
+        """
+
         self._b = float(value)
 
     @property
     def c(self) -> float:
         """
-        Assigns the specified value to the property 'c', which corresponds to a geometric dimension of the trapezoidal concrete concept. The input is explicitly cast to a float to maintain numerical precision and stored in the private attribute `_c`. This setter modifies the object's state and may raise a TypeError or ValueError if the provided value cannot be converted to a float.
+        Returns the third breakpoint of the trapezoidal membership function, i.e. the upper bound of the core plateau where the membership degree starts dropping below ``1``. The value is held internally as a float and is read without modifying the instance.
 
-        :param value: The new value to assign to the property, converted to a float.
-        :type value: float
+        :return: The upper core bound ``c`` of the trapezoid.
+
+        :rtype: float
         """
 
         return self._c
 
     @c.setter
     def c(self, value: float) -> None:
+        """
+        Sets the third breakpoint ``c`` of the trapezoidal membership function (the upper bound of the core plateau). The provided value is cast to a float and stored in the private ``_c`` attribute; a non-convertible value raises a ``ValueError`` or ``TypeError``.
+
+        :param value: The new upper core bound, converted to a float.
+        :type value: float
+        """
+
         self._c = float(value)
 
     @property
     def d(self) -> float:
         """
-        Sets the depth dimension of the trapezoidal concrete concept. This method serves as the setter for the `d` property, converting the provided value to a float and storing it in the private `_d` attribute. While this ensures the internal state is always a float, passing a non-numeric value will result in a `ValueError` or `TypeError` during the conversion process.
+        Returns the right-most breakpoint of the trapezoidal membership function, i.e. the end of the support interval where the membership degree falls back to zero. The value is held internally as a float and is read without modifying the instance.
 
-        :param value: The numeric value to assign to the attribute, converted to a float.
-        :type value: float
+        :return: The upper support bound ``d`` of the trapezoid.
+
+        :rtype: float
         """
 
         return self._d
 
     @d.setter
     def d(self, value: float) -> None:
+        """
+        Sets the right-most breakpoint ``d`` of the trapezoidal membership function. The provided value is cast to a float and stored in the private ``_d`` attribute; a non-convertible value raises a ``ValueError`` or ``TypeError``.
+
+        :param value: The new upper support bound, converted to a float.
+        :type value: float
+        """
+
         self._d = float(value)
 
     def clone(self) -> typing.Self:
@@ -215,14 +246,17 @@ class TrapezoidalConcreteConcept(FuzzyConcreteConcept):
 
     def __hash__(self) -> int:
         """
-        Computes the integer hash value for the instance, enabling its use as a key in dictionary lookups or membership in sets. The implementation derives the hash from the string representation of the object, meaning that two instances with identical string outputs will produce the same hash code. Because the hash is based on the string representation, the efficiency of this method is directly tied to the performance of the `__str__` method, and any mutation that alters the string output will result in a different hash value.
+        Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-        :return: An integer hash value derived from the string representation of the object.
+        :return: An integer hash value representing the structural identity of this object.
 
         :rtype: int
         """
-
-        return hash(str(self))
+        # return hash(str(self))
+        # return id(self)
+        return hash(
+            (self.k1, self.k2, hash(self.a), hash(self.b), hash(self.c), hash(self.d))
+        )
 
     # def __str__(self) -> str:
     #     return self.get_name()

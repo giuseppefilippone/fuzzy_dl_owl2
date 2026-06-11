@@ -49,6 +49,7 @@ from pyowl2.expressions.data_property import OWLDataProperty
 from pyowl2.expressions.object_property import OWLObjectProperty
 from pyowl2.individual.anonymous_individual import OWLAnonymousIndividual
 from pyowl2.literal.literal import OWLLiteral
+from fuzzy_dl_owl2.fuzzydl.util.config_reader import ConfigReader
 
 
 # @utils.timer_decorator
@@ -163,7 +164,8 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
         :type line: str
         """
         try:
-            Util.debug(f"Writing line to FuzzyDL file: {line}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"Writing line to FuzzyDL file: {line}")
             if re.search(
                 r"\bNone\b", line, flags=re.IGNORECASE | re.MULTILINE | re.DOTALL
             ):
@@ -171,11 +173,18 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
                 raise Exception(
                     "Attempting to write 'None' to FuzzyDL file, which indicates an unsupported construct or error in the conversion process."
                 )
-            with open(self.output_dl, "a") as file:
-                file.write(f"{line}\n")
+            if line in self.lines:
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(
+                        f"Line already written to FuzzyDL file, skipping duplicate: {line}"
+                    )
+                return
+            # with open(self.output_dl, "a") as file:
+            #     file.write(f"{line}\n")
             self.lines.append(line)
         except Exception as e:
-            Util.debug(f"Error writing to FuzzyDL file the line {line}: {e}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"Error writing to FuzzyDL file the line {line}: {e}")
 
     def get_short_name(self, s: typing.Union[OWLEntity, str]) -> str:
         """
@@ -191,7 +200,8 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
 
         if isinstance(s, OWLEntity):
             # s = str(self.pm.getShortForm(s))
-            s = str(s.iri).split("#")[-1]
+            s_list: list[str] = str(s.iri).split("#")
+            s = s_list[len(s_list) - 1]
         s = s.replace(r"\\(", "")
         s = s.replace(r"\\)", "")
         if FuzzyOwl2ToFuzzyDL.is_reserved_word(s):
@@ -422,6 +432,30 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
             literat_set: list[OWLLiteral] = o.literals
             if len(literat_set) > 0:
                 return f"(= {self.get_data_property_name(p)} {literat_set})"
+        elif isinstance(range, OWLDatatypeRestriction):
+            r: OWLDatatypeRestriction = typing.cast(OWLDatatypeRestriction, range)
+            d: OWLDatatype = r.datatype
+            dp_name: str = self.get_data_property_name(p)
+            if self.__is_real_datatype(d) or self.__is_integer_datatype(d):
+                restrictions: dict[int | float, str] = {}
+                for facet in r.restrictions:
+                    if facet.constraint == OWLFacet.MIN_INCLUSIVE:
+                        restrictions[facet.value] = f"(>= {dp_name} {facet.value})"
+                    elif facet.constraint == OWLFacet.MIN_EXCLUSIVE:
+                        restrictions[facet.value] = f"(> {dp_name} {facet.value})"
+                    elif facet.constraint == OWLFacet.MAX_INCLUSIVE:
+                        restrictions[facet.value] = f"(<= {dp_name} {facet.value})"
+                    elif facet.constraint == OWLFacet.MAX_EXCLUSIVE:
+                        restrictions[facet.value] = f"(< {dp_name} {facet.value})"
+                if len(restrictions) == 1:
+                    return list(restrictions.values())[0]
+                elif len(restrictions) > 1:
+                    keys = sorted(
+                        [(float(str(k)), k) for k in restrictions.keys()],
+                        key=lambda x: x[0],
+                    )
+                    return f"(and {' '.join([restrictions[k] for _, k in keys])})"
+
         Util.error(
             f"Data some values restriction with range {range} and type {type(range)} not supported -- DataSomeValuesFrom({p} {range})"
         )
@@ -782,7 +816,8 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
         :rtype: typing.Optional[str]
         """
 
-        Util.debug("Top object property not supported")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug("Top object property not supported")
         return None
 
     def get_bottom_object_property_name(self) -> typing.Optional[str]:
@@ -794,7 +829,8 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
         :rtype: typing.Optional[str]
         """
 
-        Util.debug("Bottom object property not supported")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug("Bottom object property not supported")
         return None
 
     def get_atomic_object_property_name(self, p: OWLObjectProperty) -> str:
@@ -825,7 +861,8 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
         :rtype: typing.Optional[str]
         """
 
-        Util.debug("Top data property not supported")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug("Top data property not supported")
         return None
 
     def get_bottom_data_property_name(self) -> typing.Optional[str]:
@@ -837,7 +874,8 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
         :rtype: typing.Optional[str]
         """
 
-        Util.debug("Bottom data property not supported")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug("Bottom data property not supported")
         return None
 
     def get_atomic_data_property_name(self, p: OWLDataProperty) -> str:
@@ -997,7 +1035,7 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
                             self.__write(
                                 f"(range {dp_name} *real* {FuzzyOwl2ToFuzzyDL.DOUBLE_MIN_VALUE} {FuzzyOwl2ToFuzzyDL.DOUBLE_MAX_VALUE})"
                             )
-                    value: typing.Any = None
+                    value: typing.Optional[float | int] = 0.0
                     if self.__is_real_datatype(lit):
                         value = float(str(lit.value))
                     else:
@@ -1494,8 +1532,8 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
         elif isinstance(range, OWLDataIntersectionOf):
             correctness: int = 0
             is_integer: int = 0
-            min: float = 0.0
-            max: float = 0.0
+            min_value: float = 0.0
+            max_value: float = 0.0
             data_range: set[OWLDataRange] = typing.cast(
                 OWLDataIntersectionOf, range
             ).data_ranges
@@ -1513,28 +1551,28 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
                             is_integer += 1
                         k: float = float(val)
                         if facet.constraint_to_uriref() == OWLFacet.MIN_INCLUSIVE:
-                            min = k
+                            min_value = k
                             correctness += 1
                         elif facet.constraint_to_uriref() == OWLFacet.MIN_EXCLUSIVE:
                             if is_integer != 0:
-                                min = k + 1
+                                min_value = k + 1
                             else:
-                                min = k + FuzzyOwl2ToFuzzyDL.EPSILON
+                                min_value = k + FuzzyOwl2ToFuzzyDL.EPSILON
                             correctness += 1
                         elif facet.constraint_to_uriref() == OWLFacet.MAX_INCLUSIVE:
-                            max = k
+                            max_value = k
                             correctness += 1
                         elif facet.constraint_to_uriref() == OWLFacet.MAX_EXCLUSIVE:
                             if is_integer != 0:
-                                min = k - 1
+                                max_value = k - 1
                             else:
-                                min = k - FuzzyOwl2ToFuzzyDL.EPSILON
+                                max_value = k - FuzzyOwl2ToFuzzyDL.EPSILON
                             correctness += 1
             if correctness == 2:
                 if is_integer == 2:
-                    range_str = f"*integer* {min} {max}"
+                    range_str = f"*integer* {min_value} {max_value}"
                 else:
-                    range_str = f"*real* {min} {max}"
+                    range_str = f"*real* {min_value} {max_value}"
                 self.numerical_datatypes.add(dp_name)
             else:
                 Util.error(

@@ -1,7 +1,7 @@
 # Summary
 
-Encapsulates a specific floating-point value to represent a degree of satisfaction within a fuzzy logic framework.
+A concrete implementation of a fuzzy logic degree that encapsulates a specific numeric value to facilitate arithmetic operations and constraint generation within a mathematical model.
 
 ## Description
 
-Concrete floating-point values are wrapped to enable the quantification of concept satisfaction levels in a manner compatible with mathematical solvers. Arithmetic operations and inequality generation are supported to integrate these numeric values seamlessly into mixed-integer linear programming expressions. Utility functions for instance creation, cloning, and type verification ensure that the system can efficiently manage and distinguish numeric degrees from other abstract representations. Functionality is provided to handle comparisons, string representation, and specific checks for unit or zero values, fulfilling the requirements of the broader degree hierarchy.
+The software provides a concrete representation of a degree within a fuzzy logic system by wrapping a specific floating-point number, enabling precise quantification of concept satisfaction levels. Designed to bridge abstract logical concepts and mathematical modeling, the implementation allows the encapsulated value to participate directly in arithmetic operations and inequality generation required for mixed-integer linear programming. By offering factory methods for standard values and supporting integration with algebraic expressions, the class ensures that numeric degrees can be seamlessly manipulated alongside other mathematical entities without losing their semantic meaning. Functionality includes type checking to distinguish numeric values from symbolic ones, as well as standard comparison and hashing capabilities to support complex data structures and logical reasoning workflows.

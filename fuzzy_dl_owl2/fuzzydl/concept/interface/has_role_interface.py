@@ -1,4 +1,5 @@
 import abc
+import typing
 
 
 class HasRoleInterface(abc.ABC):
@@ -23,14 +24,22 @@ class HasRoleInterface(abc.ABC):
     @property
     def role(self) -> str:
         """
-        Assigns a new role to the object, replacing any previously stored value. This setter method accepts a string argument representing the role and updates the internal state by assigning it to the `_role` attribute. While the type hint indicates a string is expected, the implementation performs no runtime validation, allowing any object to be assigned if necessary.
+        Returns the name of the role (binary relation) associated with this concept, such as the role quantified over by an existential or universal restriction. The value is read from the private ``_role`` attribute without modifying the instance.
 
-        :param value: The new role to assign.
-        :type value: str
+        :return: The associated role name.
+
+        :rtype: str
         """
 
         return self._role
 
     @role.setter
     def role(self, value: str) -> None:
+        """
+        Sets the name of the role associated with this concept, replacing the previously stored value. The provided value is stored directly in the private ``_role`` attribute without validation.
+
+        :param value: The new role name.
+        :type value: str
+        """
+
         self._role = value

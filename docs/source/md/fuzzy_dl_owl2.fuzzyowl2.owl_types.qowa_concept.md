@@ -1,7 +1,7 @@
 # Summary
 
-Encapsulates the definition of a Quantified Ordered Weighted Averaging (OWA) concept used in fuzzy logic ontology modeling.
+Defines a specialized data structure for modeling **Quantified Ordered Weighted Averaging (OWA)** concepts within the FuzzyOWL2 ontology language.
 
 ## Description
 
-It extends the base definition for concepts to specifically handle scenarios where a set of fuzzy concepts is aggregated according to a linguistic quantifier. By accepting a string representing the quantifier and a collection of underlying concept identifiers, the implementation allows for the representation of complex, weighted aggregations required by the FuzzyOWL2 specification. The internal state is managed through private attributes that store the aggregation logic and the target concepts, which can be retrieved via accessor methods for use in broader reasoning tasks. A string representation is provided to output the structure in a parenthetical syntax, facilitating easy visualization or serialization of the logical expression.
+The implementation extends the base definition for concepts to encapsulate the logic required for quantified aggregations, specifically handling how a set of fuzzy concepts is weighted and combined based on a linguistic quantifier. By storing a quantifier string alongside a collection of concept identifiers, the structure allows for the representation of complex, weighted decision-making processes inherent in fuzzy logic systems. Accessor methods expose the internal state, enabling other components of the system to retrieve the specific quantification rules and the underlying concepts involved in the aggregation. Furthermore, the logic includes a string representation that formats the data into a specific parenthetical syntax, facilitating easy serialization and human-readable output for debugging or data exchange.

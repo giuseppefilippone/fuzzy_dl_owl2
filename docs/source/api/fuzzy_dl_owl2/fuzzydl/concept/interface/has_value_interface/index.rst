@@ -5,20 +5,16 @@ fuzzy_dl_owl2.fuzzydl.concept.interface.has_value_interface
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-An abstract base class that extends role management capabilities by incorporating a generic value attribute protected by deep copy operations to ensure state isolation.
+An abstract interface is provided for managing concepts that require both a specific role and an associated generic value.
 
 
 Description
 -----------
 
 
-Building upon the foundation of role management, this abstract class introduces a mechanism to associate an arbitrary value with a specific role. The design prioritizes data integrity by utilizing a deep copy operation whenever the value is modified, ensuring that the internal state remains isolated from any subsequent changes to the original input object. By combining role and value attributes into a single interface, it provides a consistent structure for representing complex data relationships within the broader system. This approach allows subclasses to leverage robust encapsulation, where the stored value is effectively shielded from external side effects, which is particularly important for maintaining consistency in fuzzy logic or description logic operations.
+Building upon the foundation of role management, this abstract class introduces the capability to associate an arbitrary value with a specific role. It encapsulates this data through a private attribute that is accessible and modifiable via public properties, ensuring that subclasses can represent or manipulate specific data within a defined context. The initialization process delegates role handling to the parent class while simultaneously storing the provided value, thereby combining role and value attributes into a cohesive interface. Although the documentation suggests isolation of state, the current implementation of the value setter assigns the object by reference rather than creating a deep copy, meaning that modifications to mutable objects will affect the internal state directly.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -76,7 +72,8 @@ Module Contents
       :type: Any
 
 
-      Updates the internal state of the instance by assigning a deep copy of the provided argument to the `_value` attribute. This setter accepts any Python object and ensures that subsequent modifications to the original input object do not affect the stored value. Because it relies on `copy.deepcopy`, the operation may be computationally expensive for complex objects and will raise an error if the input cannot be deep-copied.
+      Retrieves the current value stored in the instance. This getter provides access to the internal `_value` attribute without creating a copy, meaning that modifications to the returned object will affect the internal state if the object is mutable.
 
-      :param value: The value to set. A deep copy of this object is stored internally to prevent external mutations from affecting the internal state.
-      :type value: typing.Any
+      :return: The value currently stored in the instance.
+      :rtype: typing.Any
+

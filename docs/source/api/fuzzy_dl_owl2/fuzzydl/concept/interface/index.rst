@@ -13,56 +13,40 @@ fuzzy_dl_owl2.fuzzydl.concept.interface
 
 .. only:: latex
 
-    .. raw:: latex
-
-       \begin{landscape}
-
-       \vspace*{\fill}
-
     .. figure:: /_uml/module_fuzzy_dl_owl2_fuzzydl_concept_interface.pdf
        :alt: UML Class Diagram for fuzzy_dl_owl2.fuzzydl.concept.interface
        :align: center
-       :width: 19.2cm
+       :width: 100%
        :class: uml-diagram
 
        UML Class Diagram for **fuzzy_dl_owl2.fuzzydl.concept.interface**
-
-    .. raw:: latex
-
-       \vspace*{\fill}
-
-       \end{landscape}
 
 .. py:module:: fuzzy_dl_owl2.fuzzydl.concept.interface
 
 
 
-
-
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A collection of abstract interfaces defining the structural contracts for managing concepts, roles, values, and weights within a fuzzy description logic system.
+Abstract base classes define standard interfaces for managing conceptual entities, roles, and associated values within a fuzzy description logic system.
 
 
 Description
 -----------
 
 
-These interfaces establish a foundational architecture by separating the definition of data relationships from their concrete implementation. Specific extensions allow for the association of arbitrary values with roles while enforcing strict state isolation through deep copy operations to prevent unintended side effects. Furthermore, the design supports the representation of magnitude or significance by integrating numerical weights directly into concept management structures. Together, these abstract contracts ensure consistency and encapsulation across the system, enabling robust handling of complex fuzzy logic operations.
+These interfaces leverage the Abstract Base Class pattern to enforce a consistent structure across components that need to store and manipulate logical data. By encapsulating references to single concepts, collections of entities, or specific roles, the architecture allows subclasses to initialize with specific data and dynamically update it without re-implementing storage mechanisms. The design utilizes property decorators to control access to internal state, ensuring that data like numerical weights or string identifiers remain private yet accessible through a clean API. Through inheritance and composition, these structural blueprints enable the creation of complex fuzzy logic constructs, such as binary relations or weighted expressions, by combining distinct capabilities like role handling and concept management into cohesive contracts.
 
 
 Modules
 -------
 
 
-* [``fuzzy_dl_owl2.fuzzydl.concept.interface.has_concept_interface``] — 
-* [``fuzzy_dl_owl2.fuzzydl.concept.interface.has_concepts_interface``] — 
-* [``fuzzy_dl_owl2.fuzzydl.concept.interface.has_role_concept_interface``] — 
-* [``fuzzy_dl_owl2.fuzzydl.concept.interface.has_role_interface``] — 
-* [``fuzzy_dl_owl2.fuzzydl.concept.interface.has_value_interface``] — An abstract base class that extends role management capabilities by incorporating a generic value attribute protected by deep copy operations to ensure state isolation.
-* [``fuzzy_dl_owl2.fuzzydl.concept.interface.has_weighted_concepts_interface``] — An abstract interface that extends concept management to include associated numerical weights.
+* [``fuzzy_dl_owl2.fuzzydl.concept.interface.has_concept_interface``] — An abstract base class providing a standard interface for objects to manage and update a mutable reference to a specific conceptual entity.
+* [``fuzzy_dl_owl2.fuzzydl.concept.interface.has_concepts_interface``] — An abstract base class that standardizes the storage and management of a collection of conceptual entities within the fuzzy description logic system.
+* [``fuzzy_dl_owl2.fuzzydl.concept.interface.has_role_concept_interface``] — An abstract interface that unifies role and concept management capabilities for fuzzy description logic entities.
+* [``fuzzy_dl_owl2.fuzzydl.concept.interface.has_role_interface``] — An abstract base class that defines a standard interface for managing a role attribute associated with a concept.
+* [``fuzzy_dl_owl2.fuzzydl.concept.interface.has_value_interface``] — An abstract interface is provided for managing concepts that require both a specific role and an associated generic value.
+* [``fuzzy_dl_owl2.fuzzydl.concept.interface.has_weighted_concepts_interface``] — An abstract interface extending the basic concept management contract to include support for numerical weights associated with each concept.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -78,3 +62,4 @@ Submodules
    /api/fuzzy_dl_owl2/fuzzydl/concept/interface/has_role_interface/index
    /api/fuzzy_dl_owl2/fuzzydl/concept/interface/has_value_interface/index
    /api/fuzzy_dl_owl2/fuzzydl/concept/interface/has_weighted_concepts_interface/index
+

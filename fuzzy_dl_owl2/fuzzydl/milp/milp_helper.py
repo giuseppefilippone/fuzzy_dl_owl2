@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import copy
 import os
 import re
 import time
@@ -17,26 +16,81 @@ from fuzzy_dl_owl2.fuzzydl.concept.interface.has_value_interface import (
 from fuzzy_dl_owl2.fuzzydl.concept.sigma_count import SigmaCount
 from fuzzy_dl_owl2.fuzzydl.degree.degree import Degree
 from fuzzy_dl_owl2.fuzzydl.degree.degree_numeric import DegreeNumeric
-from fuzzy_dl_owl2.fuzzydl.degree.degree_variable import DegreeVariable
+from fuzzy_dl_owl2.fuzzydl.degree.degree_variable import DegreeVariable  # Variable
 from fuzzy_dl_owl2.fuzzydl.individual.created_individual import CreatedIndividual
 from fuzzy_dl_owl2.fuzzydl.individual.individual import Individual
 from fuzzy_dl_owl2.fuzzydl.milp.expression import Expression
-from fuzzy_dl_owl2.fuzzydl.milp.inequation import Inequation
-from fuzzy_dl_owl2.fuzzydl.milp.show_variables_helper import ShowVariablesHelper
+from fuzzy_dl_owl2.fuzzydl.milp.inequation import Inequation  # Inequation
+from fuzzy_dl_owl2.fuzzydl.milp.show_variables_helper import (
+    ShowVariablesHelper,
+)  # Variable
 from fuzzy_dl_owl2.fuzzydl.milp.solution import Solution
-from fuzzy_dl_owl2.fuzzydl.milp.term import Term
-from fuzzy_dl_owl2.fuzzydl.milp.variable import Variable
+from fuzzy_dl_owl2.fuzzydl.milp.term import Term  # Term
+from fuzzy_dl_owl2.fuzzydl.milp.variable import Variable  # Variable
 from fuzzy_dl_owl2.fuzzydl.relation import Relation
 from fuzzy_dl_owl2.fuzzydl.restriction.restriction import Restriction
 from fuzzy_dl_owl2.fuzzydl.util import constants
 from fuzzy_dl_owl2.fuzzydl.util.config_reader import ConfigReader
+from fuzzy_dl_owl2.fuzzydl.util.constants import VariableType  # Variable
 from fuzzy_dl_owl2.fuzzydl.util.constants import (
     ConceptType,
     InequalityType,
     MILPProvider,
-    VariableType,
 )
 from fuzzy_dl_owl2.fuzzydl.util.util import Util
+
+
+def _find_cplex_executable() -> typing.Optional[str]:
+    """
+    Locates the CPLEX command-line binary across macOS, Linux, and Windows.
+
+    Discovery proceeds in order: the system ``PATH`` (via ``shutil.which``), the
+    ``CPLEX_STUDIO_BINARIES`` / ``CPLEX_HOME`` / ``CPLEX_STUDIO_DIR`` environment
+    variables, and finally a set of platform-specific install-location globs.
+
+    :return: The absolute path to the CPLEX executable, or ``None`` when no
+        binary is found.
+
+    :rtype: typing.Optional[str]
+    """
+    import glob
+    import platform
+    import shutil
+
+    system = platform.system()
+    exe_name = "cplex.exe" if system == "Windows" else "cplex"
+    found = shutil.which(exe_name)
+    if found:
+        return found
+
+    for env_var in ("CPLEX_STUDIO_BINARIES", "CPLEX_HOME", "CPLEX_STUDIO_DIR"):
+        base = os.environ.get(env_var)
+        if not base:
+            continue
+        candidates = glob.glob(os.path.join(base, "**", exe_name), recursive=True)
+        if candidates:
+            return max(candidates)
+
+    if system == "Darwin":
+        patterns = ["/Applications/CPLEX_Studio*/cplex/bin/*/cplex"]
+    elif system == "Windows":
+        patterns = [
+            r"C:\Program Files\IBM\ILOG\CPLEX_Studio*\cplex\bin\*\cplex.exe",
+            r"C:\Program Files (x86)\IBM\ILOG\CPLEX_Studio*\cplex\bin\*\cplex.exe",
+        ]
+    else:
+        patterns = [
+            "/opt/ibm/ILOG/CPLEX_Studio*/cplex/bin/*/cplex",
+            "/opt/CPLEX_Studio*/cplex/bin/*/cplex",
+            os.path.expanduser("~/CPLEX_Studio*/cplex/bin/*/cplex"),
+        ]
+
+    for pattern in patterns:
+        matches = glob.glob(pattern)
+        if matches:
+            return max(matches)
+
+    return None
 
 
 # @utils.singleton
@@ -74,7 +128,6 @@ class MILPHelper:
     :raises ValueError: Raised if the configured MILP provider is unsupported or if methods are called with invalid arguments.
     """
 
-
     PARTITION: bool = False
     # Indicates whether we want to show the membership degrees to linguistic labels or not.
     PRINT_LABELS: bool = True
@@ -82,18 +135,18 @@ class MILPHelper:
     PRINT_VARIABLES: bool = True
 
     def __init__(self) -> None:
-        """Initializes the MILP helper instance by resetting all internal state attributes to their default values. This involves setting boolean flags to false and creating empty collections to hold model components such as variables, constraints, and cardinalities. It also prepares storage structures for specific features, including crisp concepts, crisp roles, and string-based attributes. Additionally, the constructor instantiates a `ShowVariablesHelper` object to manage the display and tracking of variables within the model."""
+        """Initializes the MILP helper instance by resetting all internal state attributes to their default values. This involves setting boolean flags to false and creating empty collections to hold model components such as variables, constraints, and cardinalities. It also prepares storage structures for specific features, including crisp concepts, crisp roles, and string-based attributes. Additionally, the constructor instantiates a `ShowVariablesHelper` object to manage the display and tracking of variables within the model."""  # Variable
 
         self.nominal_variables: bool = False
         self.cardinalities: list[SigmaCount] = list()
-        self.constraints: list[Inequation] = list()
+        self.constraints: list[Inequation] = list()  # Inequation
         self.crisp_concepts: set[str] = set()
         self.crisp_roles: set[str] = set()
         self.number_of_variables: dict[str, int] = dict()
-        self.show_vars: ShowVariablesHelper = ShowVariablesHelper()
+        self.show_vars: ShowVariablesHelper = ShowVariablesHelper()  # Variable
         self.string_features: set[str] = set()
         self.string_values: dict[int, str] = dict()
-        self.variables: list[Variable] = []
+        self.variables: list[Variable] = []  # Variable
 
     def clone(self) -> typing.Self:
         """
@@ -108,12 +161,17 @@ class MILPHelper:
         milp.nominal_variables = self.nominal_variables
         milp.cardinalities = [c.clone() for c in self.cardinalities]
         milp.constraints = [c.clone() for c in self.constraints]
-        milp.crisp_concepts = copy.deepcopy(self.crisp_concepts)
-        milp.crisp_roles = copy.deepcopy(self.crisp_roles)
-        milp.number_of_variables = copy.deepcopy(self.number_of_variables)
+        # milp.crisp_concepts = copy.deepcopy(self.crisp_concepts)
+        # milp.crisp_roles = copy.deepcopy(self.crisp_roles)
+        # milp.number_of_variables = copy.deepcopy(self.number_of_variables)
+        milp.crisp_concepts = set(self.crisp_concepts)
+        milp.crisp_roles = set(self.crisp_roles)
+        milp.number_of_variables = dict(self.number_of_variables)
         milp.show_vars = self.show_vars.clone()
-        milp.string_features = copy.deepcopy(self.string_features)
-        milp.string_values = copy.deepcopy(self.string_values)
+        # milp.string_features = copy.deepcopy(self.string_features)
+        # milp.string_values = copy.deepcopy(self.string_values)
+        milp.string_features = set(self.string_features)
+        milp.string_values = dict(self.string_values)
         milp.variables = [v.clone() for v in self.variables]
         return milp
 
@@ -131,7 +189,8 @@ class MILPHelper:
         :rtype: typing.Optional[Solution]
         """
 
-        Util.debug(f"Running MILP solver: {ConfigReader.MILP_PROVIDER.name}")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Running MILP solver: {ConfigReader.MILP_PROVIDER.name}")
         if ConfigReader.MILP_PROVIDER == MILPProvider.GUROBI:
             return self.solve_gurobi(objective)
         elif ConfigReader.MILP_PROVIDER == MILPProvider.MIP:
@@ -213,7 +272,7 @@ class MILPHelper:
                 f"{name} is {f.compute_name()} = {f.get_membership_degree(value)}"
             )
 
-    def get_new_variable(self, v_type: VariableType) -> Variable:
+    def get_new_variable(self, v_type: VariableType) -> Variable:  # Variable
         """
         Creates a new variable of the specified type and registers it within the MILP helper instance. The method guarantees a unique variable name by checking against the internal registry of existing variables; if a name collision is detected, it regenerates the variable until a unique identifier is found. As a side effect, the new variable is appended to the internal list of variables, and its name is recorded in the tracking dictionary with its corresponding index.
 
@@ -226,7 +285,7 @@ class MILPHelper:
         """
 
         while True:
-            new_var: Variable = Variable.get_new_variable(v_type)
+            new_var: Variable = Variable.get_new_variable(v_type)  # Variable
             var_name = str(new_var)
             if var_name not in self.number_of_variables:
                 break
@@ -236,46 +295,56 @@ class MILPHelper:
         return new_var
 
     @typing.overload
-    def get_variable(self, var_name: str) -> Variable: ...
-
-    @typing.overload
-    def get_variable(self, var_name: str, v_type: VariableType) -> Variable: ...
-
-    @typing.overload
-    def get_variable(self, ass: Assertion) -> Variable: ...
-
-    @typing.overload
-    def get_variable(self, rel: Relation) -> Variable: ...
-
-    @typing.overload
-    def get_variable(self, ind: Individual, restrict: Restriction) -> Variable: ...
-
-    @typing.overload
-    def get_variable(self, ind: Individual, c: Concept) -> Variable: ...
-
-    @typing.overload
-    def get_variable(self, ind: Individual, concept_name: str) -> Variable: ...
-
-    @typing.overload
-    def get_variable(self, a: Individual, b: Individual, role: str) -> Variable: ...
+    def get_variable(self, var_name: str) -> Variable: ...  # Variable
 
     @typing.overload
     def get_variable(
-        self, a: Individual, b: Individual, role: str, v_type: VariableType
-    ) -> Variable: ...
+        self, var_name: str, v_type: VariableType
+    ) -> Variable: ...  # Variable
+
+    @typing.overload
+    def get_variable(self, ass: Assertion) -> Variable: ...  # Variable
+
+    @typing.overload
+    def get_variable(self, rel: Relation) -> Variable: ...  # Variable
 
     @typing.overload
     def get_variable(
-        self, a: str, b: str, role: str, v_type: VariableType
-    ) -> Variable: ...
+        self, ind: Individual, restrict: Restriction
+    ) -> Variable: ...  # Variable
 
     @typing.overload
-    def get_variable(self, ind: CreatedIndividual) -> Variable: ...
+    def get_variable(self, ind: Individual, c: Concept) -> Variable: ...  # Variable
 
     @typing.overload
-    def get_variable(self, ind: CreatedIndividual, v_type: VariableType) -> None: ...
+    def get_variable(
+        self, ind: Individual, concept_name: str
+    ) -> Variable: ...  # Variable
 
-    def get_variable(self, *args) -> Variable:
+    @typing.overload
+    def get_variable(
+        self, a: Individual, b: Individual, role: str
+    ) -> Variable: ...  # Variable
+
+    @typing.overload
+    def get_variable(
+        self, a: Individual, b: Individual, role: str, v_type: VariableType  # Variable
+    ) -> Variable: ...  # Variable
+
+    @typing.overload
+    def get_variable(
+        self, a: str, b: str, role: str, v_type: VariableType  # Variable
+    ) -> Variable: ...  # Variable
+
+    @typing.overload
+    def get_variable(self, ind: CreatedIndividual) -> Variable: ...  # Variable
+
+    @typing.overload
+    def get_variable(
+        self, ind: CreatedIndividual, v_type: VariableType
+    ) -> None: ...  # Variable
+
+    def get_variable(self, *args) -> Variable:  # Variable
         """
         Retrieves a `Variable` instance by acting as a polymorphic dispatcher that delegates to specific internal handlers based on the number and types of arguments provided. The method supports a wide variety of signatures involving strings, domain entities such as `Individual`, `Concept`, `Restriction`, and `CreatedIndividual`, as well as logical constructs like `Assertion` and `Relation`. Depending on the specific combination of inputs, the method may infer the variable type or accept an explicit `VariableType` argument. If the argument count is not between one and four, or if the provided types do not correspond to any defined overload, a `ValueError` is raised.
 
@@ -302,14 +371,16 @@ class MILPHelper:
             else:
                 raise ValueError
         elif len(args) == 2:
-            if isinstance(args[0], str) and isinstance(args[1], VariableType):
+            if isinstance(args[0], str) and isinstance(
+                args[1], VariableType
+            ):  # Variable
                 return self.__get_variable_2(*args)
             elif isinstance(args[0], Individual) and isinstance(args[1], Restriction):
                 return self.__get_variable_5(*args)
             elif isinstance(args[0], Individual) and isinstance(args[1], Concept):
                 return self.__get_variable_6(*args)
             elif isinstance(args[0], CreatedIndividual) and isinstance(
-                args[1], VariableType
+                args[1], VariableType  # Variable
             ):
                 return self.__get_variable_12(*args)
             elif isinstance(args[0], Individual) and isinstance(args[1], str):
@@ -330,14 +401,14 @@ class MILPHelper:
                 isinstance(args[0], Individual)
                 and isinstance(args[1], Individual)
                 and isinstance(args[2], str)
-                and isinstance(args[3], VariableType)
+                and isinstance(args[3], VariableType)  # Variable
             ):
                 return self.__get_variable_9(*args)
             elif (
                 isinstance(args[0], str)
                 and isinstance(args[1], str)
                 and isinstance(args[2], str)
-                and isinstance(args[3], VariableType)
+                and isinstance(args[3], VariableType)  # Variable
             ):
                 return self.__get_variable_10(*args)
             else:
@@ -345,7 +416,7 @@ class MILPHelper:
         else:
             raise ValueError
 
-    def __get_variable_1(self, var_name: str) -> Variable:
+    def __get_variable_1(self, var_name: str) -> Variable:  # Variable
         """
         Retrieves a variable instance corresponding to the specified name, creating it if necessary. If a variable with the provided name already exists in the internal registry, the existing object is returned. Otherwise, a new variable of type `SEMI_CONTINUOUS` is instantiated, appended to the internal list of variables, and registered in the variable count dictionary. This method modifies the internal state of the helper whenever a new variable is generated.
 
@@ -357,16 +428,17 @@ class MILPHelper:
         :rtype: Variable
         """
 
-        if var_name in self.number_of_variables:
-            for variable in self.variables:
-                if str(variable) == var_name:
-                    return variable
-        var: Variable = Variable(var_name, VariableType.SEMI_CONTINUOUS)
+        idx: int | None = self.number_of_variables.get(var_name)
+        if idx is not None:
+            return self.variables[idx - 1]
+        var: Variable = Variable(var_name, VariableType.SEMI_CONTINUOUS)  # Variable
         self.variables.append(var)
-        self.number_of_variables[str(var)] = len(self.variables)
+        self.number_of_variables[var_name] = len(self.variables)
         return var
 
-    def __get_variable_2(self, var_name: str, v_type: VariableType) -> Variable:
+    def __get_variable_2(
+        self, var_name: str, v_type: VariableType
+    ) -> Variable:  # Variable
         """
         Retrieves a variable instance identified by the given name and explicitly sets its type to the specified value. This method first fetches the variable using the standard retrieval mechanism, mutates the variable's type attribute, and then returns the modified object. It is primarily utilized by the DatatypeReasoner to ensure variables are configured with the correct constraints during the reasoning process.
 
@@ -380,11 +452,11 @@ class MILPHelper:
         :rtype: Variable
         """
 
-        var: Variable = self.get_variable(var_name)
+        var: Variable = self.get_variable(var_name)  # Variable
         var.set_type(v_type)
         return var
 
-    def __get_variable_3(self, ass: Assertion) -> Variable:
+    def __get_variable_3(self, ass: Assertion) -> Variable:  # Variable
         """
         Retrieves the decision variable associated with a specific concept assertion, ensuring that the variable exists within the model. If the variable has not been previously defined, this method instantiates a new semi-continuous variable constrained to the interval [0, 1]. The returned variable represents the degree of truth or membership for the specified individual and concept pair.
 
@@ -398,7 +470,7 @@ class MILPHelper:
 
         return self.get_variable(ass.get_individual(), ass.get_concept())
 
-    def __get_variable_4(self, rel: Relation) -> Variable:
+    def __get_variable_4(self, rel: Relation) -> Variable:  # Variable
         """
         Retrieves a variable representing the truth value of a specific fuzzy role assertion, creating it if necessary. The method extracts the subject individual, object individual, and role name from the provided `Relation` object and delegates to the underlying variable management system. If a variable for this specific assertion does not already exist, a new semi-continuous variable bounded between 0 and 1 is instantiated and added to the model. The function returns the variable associated with the assertion.
 
@@ -415,7 +487,9 @@ class MILPHelper:
         role: str = rel.get_role_name()
         return self.get_variable(a, b, role)
 
-    def __get_variable_5(self, ind: Individual, restrict: Restriction) -> Variable:
+    def __get_variable_5(
+        self, ind: Individual, restrict: Restriction
+    ) -> Variable:  # Variable
         """
         Retrieves a decision variable representing a universal restriction applied to a specific individual, generating a unique key by combining the individual's identifier with the restriction's name. The method relies on the `get_variable` helper to fetch or instantiate the variable, ensuring it is available for the Mixed-Integer Linear Programming model. As a side effect, if the display configuration flags the individual for visibility, the variable is added to the display manager for tracking or logging.
 
@@ -429,12 +503,14 @@ class MILPHelper:
         :rtype: Variable
         """
 
-        var: Variable = self.get_variable(f"{ind}:{restrict.get_name_without_degree()}")
+        var: Variable = self.get_variable(
+            f"{ind}:{restrict.get_name_without_degree()}"
+        )  # Variable
         if self.show_vars.show_individuals(str(ind)):
             self.show_vars.add_variable(var, str(var))
         return var
 
-    def __get_variable_6(self, ind: Individual, c: Concept) -> Variable:
+    def __get_variable_6(self, ind: Individual, c: Concept) -> Variable:  # Variable
         """
         Retrieves or creates a variable representing the truth value of a concept assertion for a specific individual. If the concept is a `HAS_VALUE` restriction, the method extracts the role and value to define a semi-continuous variable bounded between 0 and 1. For other concept types, it generates the variable based on the individual and the string representation of the concept. The actual variable instantiation or lookup is delegated to the `get_variable` method, which handles the creation if the variable does not already exist.
 
@@ -453,10 +529,14 @@ class MILPHelper:
 
             r: str = c.role
             b: str = str(c.value)
-            return self.get_variable(str(ind), b, r, VariableType.SEMI_CONTINUOUS)
+            return self.get_variable(
+                str(ind), b, r, VariableType.SEMI_CONTINUOUS
+            )  # Variable
         return self.get_variable(ind, str(c))
 
-    def __get_variable_7(self, ind: Individual, concept_name: str) -> Variable:
+    def __get_variable_7(
+        self, ind: Individual, concept_name: str
+    ) -> Variable:  # Variable
         """
         Retrieves a variable representing the truth value of a concept assertion for a specific individual, identified by the combination of the individual and concept name. If the concept is defined as a crisp concept, the method ensures the variable is configured as a binary variable. Additionally, if the display settings are configured to show either the specific individual or the concept, the variable is added to the display tracker. The method returns the resulting variable object.
 
@@ -470,7 +550,7 @@ class MILPHelper:
         :rtype: Variable
         """
 
-        var: Variable = self.get_variable(f"{ind}:{concept_name}")
+        var: Variable = self.get_variable(f"{ind}:{concept_name}")  # Variable
         if concept_name in self.crisp_concepts:
             var.set_binary_variable()
         if self.show_vars.show_individuals(str(ind)) or self.show_vars.show_concepts(
@@ -479,7 +559,9 @@ class MILPHelper:
             self.show_vars.add_variable(var, str(var))
         return var
 
-    def __get_variable_8(self, a: Individual, b: Individual, role: str) -> Variable:
+    def __get_variable_8(
+        self, a: Individual, b: Individual, role: str
+    ) -> Variable:  # Variable
         """
         Retrieves the decision variable representing the assertion of a specific role between a subject individual and an object individual. If a variable for this specific relationship does not already exist, the method creates a new one defined as a semi-continuous variable within the bounds of 0 and 1. This ensures that the Mixed-Integer Linear Programming model has a corresponding variable to track the state or validity of the role assertion.
 
@@ -495,11 +577,11 @@ class MILPHelper:
         :rtype: Variable
         """
 
-        return self.get_variable(a, b, role, VariableType.SEMI_CONTINUOUS)
+        return self.get_variable(a, b, role, VariableType.SEMI_CONTINUOUS)  # Variable
 
     def __get_variable_9(
-        self, a: Individual, b: Individual, role: str, v_type: VariableType
-    ) -> Variable:
+        self, a: Individual, b: Individual, role: str, v_type: VariableType  # Variable
+    ) -> Variable:  # Variable
         """
         Retrieves or creates a variable representing a role assertion between two individuals within the mixed-integer linear programming model. This method serves as a wrapper that converts the subject and object individuals to their string representations before delegating to the underlying `get_variable` method, passing the role name and the specified variable type. If a variable for this specific role assertion does not already exist, the delegated call handles its instantiation, ensuring consistent access to variables modeling relationships between entities.
 
@@ -520,8 +602,8 @@ class MILPHelper:
         return self.get_variable(str(a), str(b), role, v_type)
 
     def __get_variable_10(
-        self, a: str, b: str, role: str, v_type: VariableType
-    ) -> Variable:
+        self, a: str, b: str, role: str, v_type: VariableType  # Variable
+    ) -> Variable:  # Variable
         """
         Retrieves or creates a decision variable representing a specific relationship between two entities, identified by the strings `a` and `b`, and characterized by the provided `role`. The method constructs a unique identifier for the variable by combining these inputs and fetches the corresponding object from an internal registry. If the role is designated as "crisp," the variable is constrained to be binary; otherwise, its mathematical type is set according to the `v_type` argument. Additionally, the method checks visibility conditions based on abstract or concrete fillers for the role and entity `a`, registering the variable with a display manager if these conditions are met. The fully configured variable object is then returned.
 
@@ -540,7 +622,7 @@ class MILPHelper:
         """
 
         var_name: str = f"({a},{b}):{role}"
-        var: Variable = self.get_variable(var_name)
+        var: Variable = self.get_variable(var_name)  # Variable
         if role in self.crisp_roles:
             var.set_binary_variable()
         if self.show_vars.show_abstract_role_fillers(
@@ -550,7 +632,7 @@ class MILPHelper:
         var.set_type(v_type)
         return var
 
-    def __get_variable_11(self, ind: CreatedIndividual) -> Variable:
+    def __get_variable_11(self, ind: CreatedIndividual) -> Variable:  # Variable
         """
         Retrieves or creates a continuous optimization variable associated with the provided concrete individual. This method acts as a specialized wrapper around the general variable retrieval logic, explicitly enforcing that the resulting variable is of the continuous type to accommodate real-valued constraints. It ensures that the MILP model correctly represents the individual's assertion using a non-discrete variable, potentially modifying the solver's internal state if the variable does not yet exist.
 
@@ -562,9 +644,11 @@ class MILPHelper:
         :rtype: Variable
         """
 
-        return self.get_variable(ind, VariableType.CONTINUOUS)
+        return self.get_variable(ind, VariableType.CONTINUOUS)  # Variable
 
-    def __get_variable_12(self, ind: CreatedIndividual, v_type: VariableType) -> None:
+    def __get_variable_12(
+        self, ind: CreatedIndividual, v_type: VariableType
+    ) -> Variable:  # Variable
         """
         Retrieves or creates a MILP variable associated with a specific concrete individual, deriving a unique identifier from the individual's role and parent context. The method constructs the variable name by combining the role name and parent string, substituting default placeholders or the individual's string representation if these attributes are missing. If the variable does not already exist in the internal registry, it is initialized, assigned the specified variable type, and conditionally added to the display tracking system based on visibility settings for concrete fillers.
 
@@ -572,6 +656,10 @@ class MILPHelper:
         :type ind: CreatedIndividual
         :param v_type: The type classification to assign to the variable representing the individual's value.
         :type v_type: VariableType
+
+        :return: The existing or newly created MILP variable for the concrete individual.
+
+        :rtype: Variable
         """
 
         if ind.get_parent() is None:
@@ -586,9 +674,9 @@ class MILPHelper:
             name = str(ind)
 
         if name in self.number_of_variables:
-            x_c: Variable = self.get_variable(name)
+            x_c: Variable = self.get_variable(name)  # Variable
         else:
-            x_c: Variable = self.get_variable(name)
+            x_c: Variable = self.get_variable(name)  # Variable
             if self.show_vars.show_concrete_fillers(feture_name, parent_name):
                 self.show_vars.add_variable(x_c, name)
             x_c.set_type(v_type)
@@ -670,12 +758,12 @@ class MILPHelper:
         return self.has_variable(ass.get_name_without_degree())
 
     @typing.overload
-    def get_nominal_variable(self, i1: str) -> Variable: ...
+    def get_nominal_variable(self, i1: str) -> Variable: ...  # Variable
 
     @typing.overload
-    def get_nominal_variable(self, i1: str, i2: str) -> Variable: ...
+    def get_nominal_variable(self, i1: str, i2: str) -> Variable: ...  # Variable
 
-    def get_nominal_variable(self, *args) -> Variable:
+    def get_nominal_variable(self, *args) -> Variable:  # Variable
         """
         Retrieves a nominal variable instance associated with the provided string identifiers, supporting two distinct calling conventions based on the number of arguments. The method validates that the input consists of either one or two strings, raising an assertion error otherwise, and delegates the actual retrieval logic to private helper methods. It returns the corresponding Variable object, which serves as a fundamental component within the Mixed-Integer Linear Programming model managed by the helper.
 
@@ -695,7 +783,7 @@ class MILPHelper:
             assert isinstance(args[1], str)
             return self.__get_nominal_variable_2(*args)
 
-    def __get_nominal_variable_1(self, i1: str) -> Variable:
+    def __get_nominal_variable_1(self, i1: str) -> Variable:  # Variable
         """
         Retrieves the decision variable representing the assertion that a specific individual belongs to its corresponding nominal concept. This method serves as a convenience wrapper that calls the general `get_nominal_variable` method, passing the same identifier for both the individual and the concept parameters. The resulting variable is used within the MILP formulation to encode the membership of the individual in the singleton set defined by itself.
 
@@ -709,7 +797,7 @@ class MILPHelper:
 
         return self.get_nominal_variable(i1, i1)
 
-    def __get_nominal_variable_2(self, i1: str, i2: str) -> Variable:
+    def __get_nominal_variable_2(self, i1: str, i2: str) -> Variable:  # Variable
         """
         Retrieves or creates a binary decision variable representing the assertion that a specific individual belongs to a nominal concept. The method generates a unique variable name by combining the individual identifier and the nominal concept identifier, formatted as 'i1:{ i2 }'. It ensures the returned variable is configured as a binary type, delegating the actual variable lookup or instantiation to the underlying `get_variable` helper method.
 
@@ -724,8 +812,8 @@ class MILPHelper:
         """
 
         var_name = f"{i1}:{{ {i2} }}"
-        v: Variable = self.get_variable(var_name)
-        v.set_type(VariableType.BINARY)
+        v: Variable = self.get_variable(var_name)  # Variable
+        v.set_type(VariableType.BINARY)  # Variable
         return v
 
     def is_nominal_variable(self, i: str) -> bool:
@@ -747,7 +835,7 @@ class MILPHelper:
         pattern = re.compile(r"([^:]+):\{\1\}")
         return len(pattern.findall(i)) > 0
 
-    def has_nominal_variable(self, terms: list[Term]) -> bool:
+    def has_nominal_variable(self, terms: list[Term]) -> bool:  # Term
         """
         Determines whether the provided list of terms contains at least one variable that is classified as nominal. The method iterates through the collection, extracting the variable identifier from each term and verifying its status using the `is_nominal_variable` helper. It returns `True` immediately upon finding the first nominal variable and `False` if the list is empty or no such variable is found. This function performs a read-only check and does not modify the input terms.
 
@@ -779,9 +867,16 @@ class MILPHelper:
         var_name: str = f"{i}:{{ {i} }}"
         return var_name in list(map(str, self.variables))
 
-    def get_negated_nominal_variable(self, i1: str, i2: str) -> Variable:
-        """
-        Retrieves or creates a binary decision variable representing the assertion that a specific individual does not belong to the nominal concept defined by another individual. The variable is identified by the string pattern "{i1}: not { {i2} }". If this variable is being created for the first time, the method sets its type to binary and adds a linear constraint to the model enforcing the relationship that the sum of this negated variable and its corresponding positive nominal variable equals one, ensuring they are mutually exclusive. If the variable already exists within the helper's variable set, it is returned directly without adding new constraints.
+    def get_negated_nominal_variable(self, i1: str, i2: str) -> Variable:  # Variable
+        r"""
+        Retrieves or creates the binary variable representing  $x_{i_1:\neg\{i_2\}}$.
+        On first creation it pins the nominal complement with the partition
+        equation
+
+        .. math::
+            x_{i_1:\{i_2\}} + x_{i_1:\neg\{i_2\}} = 1
+
+        which enforces the law of excluded middle for crisp nominals.
 
         :param i1: The individual representing the entity that is the subject of the negated assertion.
         :type i1: str
@@ -789,19 +884,20 @@ class MILPHelper:
         :type i2: str
 
         :return: A binary variable representing the assertion that individual `i1` does not belong to the nominal concept `{i2}`. If the variable is created for the first time, it is constrained to be the logical complement of the corresponding nominal variable.
-
         :rtype: Variable
         """
 
         var_name: str = f"{i1}: not {{ {i2} }}"
         flag: bool = var_name in list(map(str, self.variables))
-        v: Variable = self.get_variable(var_name)
+        v: Variable = self.get_variable(var_name)  # Variable
         # First time the variable is created, x_{a:{o} } = 1 - x_{a: not {o} }
         if not flag:
-            v.set_type(VariableType.BINARY)
-            not_v: Variable = self.get_nominal_variable(i1, i2)
+            v.set_type(VariableType.BINARY)  # Variable
+            not_v: Variable = self.get_nominal_variable(i1, i2)  # Variable
+            # 1 - v - not_v = 0  (nominal partition)
             self.add_new_constraint(
-                Expression(1.0, Term(-1.0, v), Term(-1.0, not_v)), InequalityType.EQUAL
+                Expression(1.0, Term(-1.0, v), Term(-1.0, not_v)),
+                InequalityType.EQUAL,  # Term
             )
         return v
 
@@ -811,13 +907,13 @@ class MILPHelper:
     ) -> None: ...
 
     @typing.overload
-    def add_new_constraint(self, x: Variable, n: float) -> None: ...
+    def add_new_constraint(self, x: Variable, n: float) -> None: ...  # Variable
 
     @typing.overload
     def add_new_constraint(self, ass: Assertion, n: float) -> None: ...
 
     @typing.overload
-    def add_new_constraint(self, x: Variable, d: Degree) -> None: ...
+    def add_new_constraint(self, x: Variable, d: Degree) -> None: ...  # Variable
 
     @typing.overload
     def add_new_constraint(self, ass: Assertion) -> None: ...
@@ -833,8 +929,22 @@ class MILPHelper:
     ) -> None: ...
 
     def add_new_constraint(self, *args) -> None:
-        """
-        Adds a new constraint to the MILP model, supporting multiple overloads based on the provided arguments to accommodate various ways of defining linear constraints. Depending on the number and types of arguments, the method dispatches to specific internal handlers for cases such as a single `Assertion`; a pair consisting of an `Expression` and `InequalityType`, a `Variable` and a numeric value, an `Assertion` and a numeric value, or a `Variable` and a `Degree`; or a triplet consisting of an `Expression`, an `InequalityType`, and either a `Degree` or a numeric value. If the number of arguments is not between 1 and 3, or if the specific type combination does not match a supported signature, a `ValueError` is raised. This operation modifies the internal state of the helper object by incorporating the new constraint into the underlying model.
+        r"""
+        Adds a linear constraint to the MILP model.
+
+        Core overloads and their normalised forms:
+
+        * ``(Expression E, InequalityType op)``              →  $E \bowtie 0$
+        * ``(Expression E, InequalityType op, Degree d)``  →  $E \bowtie d$
+        * ``(Expression E, InequalityType op, float n)``   →  $E \bowtie n$
+        * ``(Variable x, float n)``                        →  $x \ge n$
+        * ``(Assertion ass)``                              →  $x_{ass} \ge \ell_{ass}$
+        * ``(Assertion ass, float n)``                       →  $x_{ass} \ge n$
+        * ``(Variable x, Degree d)``                         →  $x \ge d$
+
+        Dispatches to the appropriate private ``__add_new_constraint_*`` handler.
+        Modifies the internal state of the helper object by appending the
+        resulting ``Inequation`` to ``self.constraints``.
 
         :param args: Variable-length arguments defining the constraint, accepting an Assertion or combinations of Expressions, Variables, InequalityTypes, Degrees, or numeric constants.
         :type args: typing.Any
@@ -849,7 +959,7 @@ class MILPHelper:
         elif len(args) == 2:
             if isinstance(args[0], Expression) and isinstance(args[1], InequalityType):
                 self.__add_new_constraint_1(*args)
-            elif isinstance(args[0], Variable) and isinstance(
+            elif isinstance(args[0], Variable) and isinstance(  # Variable
                 args[1], constants.NUMBER
             ):
                 self.__add_new_constraint_2(*args)
@@ -857,7 +967,9 @@ class MILPHelper:
                 args[1], constants.NUMBER
             ):
                 self.__add_new_constraint_3(*args)
-            elif isinstance(args[0], Variable) and isinstance(args[1], Degree):
+            elif isinstance(args[0], Variable) and isinstance(
+                args[1], Degree
+            ):  # Variable
                 self.__add_new_constraint_4(*args)
             else:
                 raise ValueError
@@ -891,9 +1003,9 @@ class MILPHelper:
         :type constraint_type: InequalityType
         """
 
-        self.constraints.append(Inequation(expr, constraint_type))
+        self.constraints.append(Inequation(expr, constraint_type))  # Inequation
 
-    def __add_new_constraint_2(self, x: Variable, n: float) -> None:
+    def __add_new_constraint_2(self, x: Variable, n: float) -> None:  # Variable
         """
         Adds a linear inequality constraint to the model that enforces the variable `x` to be greater than or equal to the numeric value `n`. This method constructs a linear expression representing the variable and delegates to the main constraint addition routine using a greater-than inequality type. As a side effect, the internal state of the optimization model is modified to include this new restriction, which may alter the feasible region of the problem.
 
@@ -904,7 +1016,7 @@ class MILPHelper:
         """
 
         self.add_new_constraint(
-            Expression(Term(1.0, x)),
+            Expression(Term(1.0, x)),  # Term
             InequalityType.GREATER_THAN,
             DegreeNumeric.get_degree(n),
         )
@@ -921,7 +1033,7 @@ class MILPHelper:
 
         self.add_new_constraint(self.get_variable(ass), n)
 
-    def __add_new_constraint_4(self, x: Variable, d: Degree) -> None:
+    def __add_new_constraint_4(self, x: Variable, d: Degree) -> None:  # Variable
         """
         Adds a linear inequality constraint to the optimization model requiring the specified variable to be greater than or equal to the given degree. This helper method constructs a linear expression representing the variable and delegates to the core constraint addition logic, effectively enforcing a lower bound on the variable within the problem formulation. The operation modifies the internal state of the model by appending this new constraint to the set of defined conditions, assuming that the provided variable and degree are valid types compatible with the underlying solver.
 
@@ -932,7 +1044,7 @@ class MILPHelper:
         """
 
         self.add_new_constraint(
-            Expression(Term(1.0, x)), InequalityType.GREATER_THAN, d
+            Expression(Term(1.0, x)), InequalityType.GREATER_THAN, d  # Term
         )
 
     def __add_new_constraint_5(self, ass: Assertion) -> None:
@@ -943,11 +1055,13 @@ class MILPHelper:
         :type ass: Assertion
         """
 
-        x_ass: Variable = self.get_variable(ass)
+        x_ass: Variable = self.get_variable(ass)  # Variable
         ass_name: str = str(x_ass)
         deg: Degree = ass.get_lower_limit()
-        if isinstance(deg, DegreeVariable):
-            deg_name: str = str(typing.cast(DegreeVariable, deg).get_variable())
+        if isinstance(deg, DegreeVariable):  # Variable
+            deg_name: str = str(
+                typing.cast(DegreeVariable, deg).get_variable()
+            )  # Variable
             if ass_name == deg_name:
                 return
         self.add_new_constraint(x_ass, deg)
@@ -986,9 +1100,14 @@ class MILPHelper:
 
         self.add_new_constraint(expr, constraint_type, DegreeNumeric.get_degree(n))
 
-    def add_equality(self, var1: Variable, var2: Variable) -> None:
-        """
-        Adds a linear constraint to the optimization model that enforces the equivalence of two specified variables. By creating an expression representing the difference between the first and second variable and setting it to zero, this method ensures that the solver assigns the same value to both variables. This action updates the internal model state, potentially affecting the feasibility or optimality of the solution depending on other existing constraints.
+    def add_equality(self, var1: Variable, var2: Variable) -> None:  # Variable
+        r"""
+        Enforces  $x_{v_1} = x_{v_2}$  by emitting
+
+        .. math::
+            x_{v_1} - x_{v_2} = 0
+
+        This identifies two MILP variables (used when individuals are merged).
 
         :param var1: The first variable in the equality constraint.
         :type var1: Variable
@@ -996,15 +1115,16 @@ class MILPHelper:
         :type var2: Variable
         """
 
+        # var1 - var2 = 0
         self.add_new_constraint(
-            Expression(Term(1.0, var1), Term(-1.0, var2)), InequalityType.EQUAL
+            Expression(Term(1.0, var1), Term(-1.0, var2)), InequalityType.EQUAL  # Term
         )
 
     def add_string_feature(self, role: str) -> None:
         """
         Appends a specified string role to the internal collection of string features maintained by the helper. This operation modifies the object's state by adding the input to the `string_features` set. If the provided role is already present in the collection, the set ensures that no duplicate entry is created, making the operation idempotent.
 
-        :param role: 
+        :param role:
         :type role: str
         """
 
@@ -1025,8 +1145,18 @@ class MILPHelper:
     def change_variable_names(
         self, old_name: str, new_name: str, old_is_created_individual: bool
     ) -> None:
-        """
-        Updates the MILP model by renaming variables that include a specific individual identifier, replacing the old name with the new one within variable definitions. It iterates through existing variables to identify matches and establishes constraints linking the original variables to their renamed counterparts. The specific constraint logic depends on whether the old individual is a created individual: if true, an equality constraint is enforced to ensure the variables remain equivalent; otherwise, an inequality constraint is added involving a nominal variable to enforce that the value of the variable associated with the new name is greater than or equal to the value associated with the old name when the nominal condition is met.
+        r"""
+        Renames variables that contain ``old_name`` and links the renamed copies.
+
+        * If ``old_is_created_individual`` is ``True``, emits an equality
+          $x_{\text{old}} = x_{\text{new}}$.
+        * Otherwise emits the Big-M relaxation
+
+          .. math::
+              x_{v_2} \le 1 - x_{a:\{b\}} + x_{v_1}
+
+          which forces  $x_{v_2} \le x_{v_1}$  when the nominal merge
+          $x_{a:\{b\}} = 1$  is active.
 
         :param old_name: The existing individual name to be replaced within the variable definitions.
         :type old_name: str
@@ -1036,32 +1166,38 @@ class MILPHelper:
         :type old_is_created_individual: bool
         """
 
-
         old_values: list[str] = [f"{old_name},", f",{old_name}", f"{old_name}:"]
         new_values: list[str] = [f"{new_name},", f",{new_name}", f"{new_name}:"]
-        to_process: list[Variable] = copy.deepcopy(self.variables)
+        # to_process: list[Variable] = copy.deepcopy(self.variables)  # Variable
+        to_process: list[Variable] = list(self.variables)  # Variable
         for v1 in to_process:
             name: str = str(v1)
             for old_value, new_value in zip(old_values, new_values):
                 if old_value not in name:
                     continue
                 name2: str = name.replace(old_value, new_value, 1)
-                v2: Variable = self.get_variable(name2)
+                v2: Variable = self.get_variable(name2)  # Variable
                 if self.check_if_replacement_is_needed(v1, old_value, v2, new_value):
                     if old_is_created_individual:
                         self.add_equality(v1, v2)
                     else:
-                        # a:{b} => x_{a:C}) \geq  x_{b:C}
-                        a_is_b: Variable = self.get_nominal_variable(new_name, old_name)
+                        # a:{b} => x_{a:C} >= x_{b:C}
+                        # 1 - a_is_b + v1 - v2 >= 0
+                        a_is_b: Variable = self.get_nominal_variable(
+                            new_name, old_name
+                        )  # Variable
                         self.add_new_constraint(
                             Expression(
-                                1.0, Term(-1.0, a_is_b), Term(1.0, v1), Term(-1.0, v2)
+                                1.0,
+                                Term(-1.0, a_is_b),
+                                Term(1.0, v1),
+                                Term(-1.0, v2),  # Term
                             ),
                             InequalityType.GREATER_THAN,
                         )
 
     def check_if_replacement_is_needed(
-        self, v1: Variable, s1: str, v2: Variable, s2: str
+        self, v1: Variable, s1: str, v2: Variable, s2: str  # Variable
     ) -> bool:
         """
         Determines whether the string representations of two variables are structurally identical except for specific substrings located at the same position. The method compares the names of the variables by checking if the substrings `s1` and `s2` appear at the same starting index and if the characters preceding and following these substrings are exactly the same. This effectively verifies if the names follow a pattern of `prefix + s1 + suffix` and `prefix + s2 + suffix`. Note that the method will raise a `ValueError` if either `s1` is not found in the name of `v1` or `s2` is not found in the name of `v2`.
@@ -1094,16 +1230,36 @@ class MILPHelper:
         )
 
     @typing.overload
-    def get_ordered_permutation(self, x: list[Variable]) -> list[Variable]: ...
+    def get_ordered_permutation(
+        self, x: list[Variable]
+    ) -> list[Variable]: ...  # Variable
 
     @typing.overload
     def get_ordered_permutation(
-        self, x: list[Variable], z: list[list[Variable]]
-    ) -> list[Variable]: ...
+        self, x: list[Variable], z: list[list[Variable]]  # Variable
+    ) -> list[Variable]: ...  # Variable
 
-    def get_ordered_permutation(self, *args) -> list[Variable]:
-        """
-        Generates and returns a list of decision variables used to model an ordered permutation within a Mixed-Integer Linear Programming (MILP) context. The method acts as a dispatcher based on the number of arguments provided: it accepts either a single list of variables or a list of variables paired with a two-dimensional list of variables. Input validation is performed to ensure the first argument is a list of `Variable` objects and, if present, the second argument is a list of lists containing `Variable` objects. Depending on the argument count, the logic delegates to internal helper methods to construct the specific variable set required for the permutation constraints.
+    def get_ordered_permutation(self, *args) -> list[Variable]:  # Variable
+        r"""
+        Sorting network as MILP — returns variables $y_1,\dots,y_n$ that are a
+        non-increasing permutation of the input $x_1,\dots,x_n$.
+
+        Overloads:
+
+        * ``get_ordered_permutation(x)``  → introduces an $n\times n$ binary
+          permutation matrix $z$ internally and delegates to overload 2.
+        * ``get_ordered_permutation(x, z)``  → uses the supplied matrix $z$.
+
+        The full encoding (see ``__get_ordered_permutation_2``) is:
+
+        .. math::
+            \begin{aligned}
+            y_i - y_{i+1} &\ge 0 && \forall i < n \\
+            x_j - y_i + z_{ij} &\ge 0 && \forall i,j \\
+            x_j - y_i - z_{ij} &\le 0 && \forall i,j \\
+            \sum_j z_{ij} &= n-1 && \forall i \\
+            \sum_i z_{ij} &= n-1 && \forall j
+            \end{aligned}
 
         :param args: A variable-length argument list accepting either a single list of Variables, or a list of Variables followed by a list of lists of Variables.
         :type args: typing.Any
@@ -1111,26 +1267,28 @@ class MILPHelper:
         :raises ValueError: Raised if the number of provided arguments is not 1 or 2.
 
         :return: A list of Variable objects representing the ordered permutation derived from the input arguments.
-
         :rtype: list[Variable]
         """
 
         assert len(args) in [1, 2]
         assert isinstance(args[0], list) and all(
-            isinstance(a, Variable) for a in args[0]
+            isinstance(a, Variable) for a in args[0]  # Variable
         )
         if len(args) == 1:
             return self.__get_ordered_permutation_1(*args)
         elif len(args) == 2:
             assert isinstance(args[1], list) and all(
-                isinstance(a, list) and all(isinstance(ai, Variable) for ai in a)
+                isinstance(a, list)
+                and all(isinstance(ai, Variable) for ai in a)  # Variable
                 for a in args[1]
             )
             return self.__get_ordered_permutation_2(*args)
         else:
             raise ValueError
 
-    def __get_ordered_permutation_1(self, x: list[Variable]) -> list[Variable]:
+    def __get_ordered_permutation_1(
+        self, x: list[Variable]
+    ) -> list[Variable]:  # Variable
         """
         Constructs an ordered permutation of the input variables by introducing an $n \times n$ matrix of auxiliary binary decision variables to model the sorting constraints. This method generates the necessary binary variables to represent the permutation mapping and delegates the actual constraint formulation and variable ordering to the `get_ordered_permutation` method. As a side effect of this operation, new binary variables are added to the underlying model.
 
@@ -1143,15 +1301,15 @@ class MILPHelper:
         """
 
         n: int = len(x)
-        z: list[list[Variable]] = [
-            [self.get_new_variable(VariableType.BINARY) for _ in range(n)]
+        z: list[list[Variable]] = [  # Variable
+            [self.get_new_variable(VariableType.BINARY) for _ in range(n)]  # Variable
             for _ in range(n)
         ]
         return self.get_ordered_permutation(x, z)
 
     def __get_ordered_permutation_2(
-        self, x: list[Variable], z: list[list[Variable]]
-    ) -> list[Variable]:
+        self, x: list[Variable], z: list[list[Variable]]  # Variable
+    ) -> list[Variable]:  # Variable
         """
         Constructs a set of new variables representing the input variables sorted in non-increasing order. The method creates `n` semi-continuous variables `y` and adds constraints to enforce the sequence `y[0] >= y[1] >= ... >= y[n-1]`. It utilizes the provided matrix `z` to establish a system of linear constraints that ensures `y` is a permutation of the input list `x`, specifically by linking the values of `x` and `y` through `z` and enforcing that the sum of each row and column in `z` equals `n-1`. This process modifies the underlying model by adding these constraints and introducing the new variables.
 
@@ -1167,40 +1325,50 @@ class MILPHelper:
 
         n: int = len(x)
         # New n [0,1] variables yi
-        y: list[Variable] = [
-            self.get_new_variable(VariableType.SEMI_CONTINUOUS) for _ in range(n)
+        y: list[Variable] = [  # Variable
+            self.get_new_variable(VariableType.SEMI_CONTINUOUS)
+            for _ in range(n)  # Variable
         ]
         # y1 >= y2 >= ... >= yn
         for i in range(n - 1):
+            # y_i - y_{i+1} >= 0
             self.add_new_constraint(
-                Expression(Term(1.0, y[i]), Term(-1.0, y[i + 1])),
+                Expression(Term(1.0, y[i]), Term(-1.0, y[i + 1])),  # Term
                 InequalityType.GREATER_THAN,
             )
-        # for each i,j : yi - kz_{ij} <= xj
+        # for each i,j : xj - yi + zij >= 0
         for i in range(n):
             for j in range(n):
+                # x_j - y_i + z_{ij} >= 0
                 self.add_new_constraint(
-                    Expression(Term(1.0, x[j]), Term(-1.0, y[i]), Term(1.0, z[i][j])),
+                    Expression(
+                        Term(1.0, x[j]), Term(-1.0, y[i]), Term(1.0, z[i][j])
+                    ),  # Term
                     InequalityType.GREATER_THAN,
                 )
-        # for each i,j : xj <= yi + kz_{ij}
+        # for each i,j : xj - yi - zij <= 0
         for i in range(n):
             for j in range(n):
+                # x_j - y_i - z_{ij} <= 0
                 self.add_new_constraint(
-                    Expression(Term(1.0, x[j]), Term(-1.0, y[i]), Term(-1.0, z[i][j])),
+                    Expression(
+                        Term(1.0, x[j]), Term(-1.0, y[i]), Term(-1.0, z[i][j])
+                    ),  # Term
                     InequalityType.LESS_THAN,
                 )
-        # for each i : \sum_{j} z_{ij} = n - 1
+        # for each i : sum_j z_{ij} = n - 1
         for i in range(n):
+            # sum_j z_{ij} = n - 1
             exp: Expression = Expression(1.0 - n)
             for j in range(n):
-                exp.add_term(Term(1.0, z[i][j]))
+                exp.add_term(Term(1.0, z[i][j]))  # Term
             self.add_new_constraint(exp, InequalityType.EQUAL)
-        # for each j : \sum_{i} z_{ij} = n - 1
+        # for each j : sum_i z_{ij} = n - 1
         for i in range(n):
+            # sum_i z_{ij} = n - 1
             exp: Expression = Expression(1.0 - n)
             for j in range(n):
-                exp.add_term(Term(1.0, z[j][i]))
+                exp.add_term(Term(1.0, z[j][i]))  # Term
             self.add_new_constraint(exp, InequalityType.EQUAL)
         return y
 
@@ -1246,7 +1414,6 @@ class MILPHelper:
     def __compute_partition(
         self, queue: list[int], solution: dict[int, int], p: int, graph: nx.Graph
     ) -> None:
-
         """
         Propagates a partition identifier through a graph starting from the nodes provided in the queue. The method iteratively processes nodes, assigning the specified partition ID `p` to all adjacent neighbors that have not yet been assigned a value in the solution dictionary. This traversal continues until the queue is exhausted, effectively marking a connected region of the graph. The `solution` dictionary is modified in-place to reflect these assignments, and the input `queue` is consumed during the operation.
 
@@ -1287,7 +1454,7 @@ class MILPHelper:
         constraints_to_remove: set[int] = set()
         variable_to_remove: set[int] = set()
         for i, constraint in enumerate(self.constraints):
-            terms: list[Term] = constraint.get_terms()
+            terms: list[Term] = constraint.get_terms()  # Term
             if self.has_nominal_variable(terms):
                 constraints_to_remove.add(i)
         for i, variable in enumerate(self.variables):
@@ -1322,12 +1489,14 @@ class MILPHelper:
             g.add_node(i)
 
         # Index variables for O(1) lookup
-        var_idx: dict[Variable, int] = {v: i for i, v in enumerate(self.variables)}
+        var_idx: dict[Variable, int] = {
+            v: i for i, v in enumerate(self.variables)
+        }  # Variable
 
         # Create edges
         edge: int = 0
         for constraint in self.constraints:
-            terms: list[Term] = constraint.get_terms()
+            terms: list[Term] = constraint.get_terms()  # Term
             if len(terms) == 0:
                 continue
             first_var: int = var_idx[terms[0].get_var()]
@@ -1341,8 +1510,7 @@ class MILPHelper:
 
     def __common_partition_part(
         self, objective: Expression
-    ) -> tuple[list[Variable], dict[int, int], int, list[int], int, int]:
-
+    ) -> tuple[list[Variable], dict[int, int], int, list[int], int, int]:  # Variable
         """
         Performs a graph-based partitioning of the variables involved in the provided objective expression to analyze their distribution across the problem structure. It utilizes a breadth-first search (BFS) algorithm on the internal graph to group variables into partitions, then maps the specific variables from the objective to these partitions. The method returns a tuple containing the list of objective variables, the mapping of variable indices to partition IDs, the total number of partitions, a breakdown of variable counts per partition, and statistics identifying partitions that contain multiple objective variables. This operation relies on the internal graph and variable list, logs the execution time for debugging, and assumes that all variables found in the objective are present within the graph structure.
 
@@ -1354,7 +1522,7 @@ class MILPHelper:
         :rtype: tuple[list[Variable], dict[int, int], int, list[int], int, int]
         """
 
-        objectives: list[Variable] = list()
+        objectives: list[Variable] = list()  # Variable
 
         # Partition time
         init_time: int = time.perf_counter_ns()
@@ -1368,7 +1536,7 @@ class MILPHelper:
 
         # Compute objective coefficients
         for term in objective.get_terms():
-            v: Variable = term.get_var()
+            v: Variable = term.get_var()  # Variable
             objectives.append(v)
             index: int = self.variables.index(v)
             num_partition: int = solution.get(index) - 1
@@ -1384,7 +1552,8 @@ class MILPHelper:
 
         end_time: int = time.perf_counter_ns()
         total_time: float = (end_time - init_time) * 1e-9
-        Util.debug(f"Partition time: {total_time} s")
+        if ConfigReader.DEBUG_PRINT:
+            Util.debug(f"Partition time: {total_time} s")
         return (
             objectives,
             solution,
@@ -1426,14 +1595,16 @@ class MILPHelper:
 
         # Specific algorithm starts here
         try:
-            Util.debug(
-                f"There are {two_or_more} partitions with {count} dependent objective variables"
-            )
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(
+                    f"There are {two_or_more} partitions with {count} dependent objective variables"
+                )
 
             # PROBLEMS with 1 or less
             env = gp.Env(empty=True)
             if not ConfigReader.DEBUG_PRINT:
                 env.setParam("OutputFlag", 0)
+
             env.setParam("IntFeasTol", 1e-9)
             env.setParam("BarConvTol", 0)
             env.start()
@@ -1443,11 +1614,11 @@ class MILPHelper:
             # Create variables
             vars_gurobi: dict[str, gp.Var] = dict()
 
-            var_types: dict[VariableType, str] = {
-                VariableType.BINARY: GRB.BINARY,
-                VariableType.INTEGER: GRB.INTEGER,
-                VariableType.CONTINUOUS: GRB.CONTINUOUS,
-                VariableType.SEMI_CONTINUOUS: GRB.SEMICONT,
+            var_types: dict[VariableType, str] = {  # Variable
+                VariableType.BINARY: GRB.BINARY,  # Variable
+                VariableType.INTEGER: GRB.INTEGER,  # Variable
+                VariableType.CONTINUOUS: GRB.CONTINUOUS,  # Variable
+                VariableType.SEMI_CONTINUOUS: GRB.SEMICONT,  # Variable
             }
             var_name_map: dict[str, str] = {
                 str(v): f"x{i}" for i, v in enumerate(self.variables)
@@ -1456,17 +1627,18 @@ class MILPHelper:
                 num_partition: int = solution.get(i) - 1
                 if num_variables_in_partition[num_partition] > 1:
                     continue  # Next variable
-                v_type: VariableType = curr_variable.get_type()
+                v_type: VariableType = curr_variable.get_type()  # Variable
 
-                Util.debug(
-                    (
-                        f"Variable -- "
-                        f"[{curr_variable.get_lower_bound()}, {curr_variable.get_upper_bound()}] - "
-                        f"Obj value = 0 - "
-                        f"Var type = {v_type.name} -- "
-                        f"Var = {curr_variable}"
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(
+                        (
+                            f"Variable -- "  # Variable
+                            f"[{curr_variable.get_lower_bound()}, {curr_variable.get_upper_bound()}] - "
+                            f"Obj value = 0 - "
+                            f"Var type = {v_type.name} -- "
+                            f"Var = {curr_variable}"
+                        )
                     )
-                )
 
                 vars_gurobi[var_name_map[str(curr_variable)]] = model.addVar(
                     lb=curr_variable.get_lower_bound(),
@@ -1481,9 +1653,12 @@ class MILPHelper:
 
             constraint_name: str = "constraint"
             # Add constraints
+            seen_constraints: set[str] = set()
             for i, constraint in enumerate(self.constraints):
-                if constraint in self.constraints[:i]:
+                _ck: str = str(constraint)
+                if _ck in seen_constraints:
                     continue
+                seen_constraints.add(_ck)
                 if constraint.is_zero():
                     continue
 
@@ -1511,14 +1686,16 @@ class MILPHelper:
                     gp_constraint: gp.Constr = expr >= constraint.get_constant()
 
                 model.addConstr(gp_constraint, curr_name)
-                Util.debug(f"{curr_name}: {constraint}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"{curr_name}: {constraint}")
 
             # Integrate new constraints
             model.update()
 
             # Optimize model
             model.optimize()
-            Util.debug(f"Model:")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"Model:")
 
             # Return solution
             if model.Status == GRB.INFEASIBLE:
@@ -1532,6 +1709,7 @@ class MILPHelper:
                 env = gp.Env(empty=True)
                 if not ConfigReader.DEBUG_PRINT:
                     env.setParam("OutputFlag", 0)
+
                 env.setParam("IntFeasTol", 1e-9)
                 env.setParam("BarConvTol", 0)
                 env.start()
@@ -1549,18 +1727,19 @@ class MILPHelper:
                     if num_partition != problem:
                         continue
 
-                    v_type: VariableType = curr_variable.get_type()
+                    v_type: VariableType = curr_variable.get_type()  # Variable
                     ov: float = 1.0 if i == self.variables.index(obj_var) else 0.0
 
-                Util.debug(
-                    (
-                        f"Variable -- "
-                        f"[{curr_variable.get_lower_bound()}, {curr_variable.get_upper_bound()}] - "
-                        f"Obj value = {ov} - "
-                        f"Var type = {v_type.name} -- "
-                        f"Var = {curr_variable}"
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(
+                        (
+                            f"Variable -- "  # Variable
+                            f"[{curr_variable.get_lower_bound()}, {curr_variable.get_upper_bound()}] - "
+                            f"Obj value = {ov} - "
+                            f"Var type = {v_type.name} -- "
+                            f"Var = {curr_variable}"
+                        )
                     )
-                )
 
                 vars_gurobi[var_name_map[str(curr_variable)]] = model.addVar(
                     lb=curr_variable.get_lower_bound(),
@@ -1575,9 +1754,12 @@ class MILPHelper:
 
                 constraint_name: str = "constraint"
                 # Add constraints
+                seen_constraints: set[str] = set()
                 for i, constraint in enumerate(self.constraints):
-                    if constraint in self.constraints[:i]:
+                    _ck: str = str(constraint)
+                    if _ck in seen_constraints:
                         continue
+                    seen_constraints.add(_ck)
                     if constraint.is_zero():
                         continue
 
@@ -1605,7 +1787,8 @@ class MILPHelper:
                         gp_constraint: gp.Constr = expr >= constraint.get_constant()
 
                     model.addConstr(gp_constraint, curr_name)
-                    Util.debug(f"{curr_name}: {constraint}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(f"{curr_name}: {constraint}")
 
                 # Integrate new constraints
                 model.update()
@@ -1622,8 +1805,9 @@ class MILPHelper:
                     name: str = str(obj_var)
                     sol.add_showed_variable(name, result)
 
-                model.printQuality()
-                model.printStats()
+                if ConfigReader.DEBUG_PRINT:
+                    model.printQuality()
+                    model.printStats()
 
             return sol
         except gp.GurobiError as e:
@@ -1642,7 +1826,6 @@ class MILPHelper:
         :rtype: typing.Optional[Solution]
         """
 
-
         import gurobipy as gp
         from gurobipy import GRB
 
@@ -1653,7 +1836,8 @@ class MILPHelper:
             return self.__solve_gurobi_using_partitions(objective)
 
         try:
-            Util.debug(f"Objective function -> {objective}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"Objective function -> {objective}")
 
             num_binary_vars: int = 0
             num_free_vars: int = 0
@@ -1671,6 +1855,7 @@ class MILPHelper:
             env = gp.Env(empty=True)
             if not ConfigReader.DEBUG_PRINT:
                 env.setParam("OutputFlag", 0)
+
             env.setParam("IntFeasTol", 1e-9)
             env.setParam("BarConvTol", 0)
             env.start()
@@ -1679,13 +1864,13 @@ class MILPHelper:
             vars_gurobi: dict[str, gp.Var] = dict()
             show_variable: list[bool] = [False] * size
 
-            my_vars: list[Variable] = self.show_vars.get_variables()
+            my_vars: list[Variable] = self.show_vars.get_variables()  # Variable
 
-            var_types: dict[VariableType, str] = {
-                VariableType.BINARY: GRB.BINARY,
-                VariableType.INTEGER: GRB.INTEGER,
-                VariableType.CONTINUOUS: GRB.CONTINUOUS,
-                VariableType.SEMI_CONTINUOUS: GRB.SEMICONT,
+            var_types: dict[VariableType, str] = {  # Variable
+                VariableType.BINARY: GRB.BINARY,  # Variable
+                VariableType.INTEGER: GRB.INTEGER,  # Variable
+                VariableType.CONTINUOUS: GRB.CONTINUOUS,  # Variable
+                VariableType.SEMI_CONTINUOUS: GRB.SEMICONT,  # Variable
             }
             var_name_map: dict[str, str] = {
                 str(v): f"x{i}" for i, v in enumerate(self.variables)
@@ -1693,18 +1878,19 @@ class MILPHelper:
 
             # Create variables
             for i, curr_variable in enumerate(self.variables):
-                v_type: VariableType = curr_variable.get_type()
+                v_type: VariableType = curr_variable.get_type()  # Variable
                 ov: float = objective_value[i]
 
-                Util.debug(
-                    (
-                        f"Variable -- "
-                        f"[{curr_variable.get_lower_bound()}, {curr_variable.get_upper_bound()}] - "
-                        f"Obj value = {ov} - "
-                        f"Var type = {v_type.name} -- "
-                        f"Var = {curr_variable}"
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(
+                        (
+                            f"Variable -- "  # Variable
+                            f"[{curr_variable.get_lower_bound()}, {curr_variable.get_upper_bound()}] - "
+                            f"Obj value = {ov} - "
+                            f"Var type = {v_type.name} -- "
+                            f"Var = {curr_variable}"
+                        )
                     )
-                )
 
                 vars_gurobi[var_name_map[str(curr_variable)]] = model.addVar(
                     lb=curr_variable.get_lower_bound(),
@@ -1717,24 +1903,28 @@ class MILPHelper:
                 if curr_variable in my_vars:
                     show_variable[i] = True
 
-                if v_type == VariableType.BINARY:
+                if v_type == VariableType.BINARY:  # Variable
                     num_binary_vars += 1
-                elif v_type == VariableType.CONTINUOUS:
+                elif v_type == VariableType.CONTINUOUS:  # Variable
                     num_free_vars += 1
-                elif v_type == VariableType.INTEGER:
+                elif v_type == VariableType.INTEGER:  # Variable
                     num_integer_vars += 1
-                elif v_type == VariableType.SEMI_CONTINUOUS:
+                elif v_type == VariableType.SEMI_CONTINUOUS:  # Variable
                     num_up_vars += 1
 
             # Integrate new variables
             model.update()
 
-            Util.debug(f"# constraints -> {len(self.constraints)}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"# constraints -> {len(self.constraints)}")
             constraint_name: str = "constraint"
             # Add constraints
+            seen_constraints: set[str] = set()
             for i, constraint in enumerate(self.constraints):
-                if constraint in self.constraints[:i]:
+                _ck: str = str(constraint)
+                if _ck in seen_constraints:
                     continue
+                seen_constraints.add(_ck)
                 if constraint.is_zero():
                     continue
 
@@ -1758,7 +1948,8 @@ class MILPHelper:
                     gp_constraint: gp.Constr = expr >= constraint.get_constant()
 
                 model.addConstr(gp_constraint, curr_name)
-                Util.debug(f"{curr_name}: {constraint}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"{curr_name}: {constraint}")
 
             # Integrate new constraints
             model.update()
@@ -1766,11 +1957,13 @@ class MILPHelper:
             # Optimize model
             model.optimize()
 
-            constants.ensure_results_dir()
-            model.write(os.path.join(constants.RESULTS_PATH, "gurobi_model.lp"))
-            model.write(os.path.join(constants.RESULTS_PATH, "gurobi_solution.json"))
+            model.write(os.path.join(constants.ensure_results_dir(), "gurobi_model.lp"))
+            model.write(
+                os.path.join(constants.ensure_results_dir(), "gurobi_solution.json")
+            )
 
-            Util.debug(f"Model:")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"Model:")
             sol: Solution = None
             # if model.Status == GRB.INFEASIBLE and ConfigReader.RELAX_MILP:
             #     self.__gurobi_handle_model_infeasibility(model)
@@ -1788,25 +1981,35 @@ class MILPHelper:
                         if show_variable[i]:
                             sol.add_showed_variable(name, value)
                         # if self.PRINT_VARIABLES:
-                        Util.debug(f"{name} = {value}")
+                        if ConfigReader.DEBUG_PRINT:
+                            Util.debug(f"{name} = {value}")
                         if self.PRINT_LABELS:
                             self.print_instance_of_labels(name, value)
 
-            model.printQuality()
-            model.printStats()
+            if ConfigReader.DEBUG_PRINT:
+                model.printQuality()
+                model.printStats()
 
-            Util.debug(
-                f"{constants.STAR_SEPARATOR}Statistics{constants.STAR_SEPARATOR}"
-            )
-            Util.debug("MILP problem:")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(
+                    f"{constants.STAR_SEPARATOR}Statistics{constants.STAR_SEPARATOR}"
+                )
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug("MILP problem:")
             # Show number of variables
-            Util.debug(f"\t\tSemi continuous variables: {num_up_vars}")
-            Util.debug(f"\t\tBinary variables: {num_binary_vars}")
-            Util.debug(f"\t\tContinuous variables: {num_free_vars}")
-            Util.debug(f"\t\tInteger variables: {num_integer_vars}")
-            Util.debug(f"\t\tTotal variables: {len(self.variables)}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"\t\tSemi continuous variables: {num_up_vars}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"\t\tBinary variables: {num_binary_vars}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"\t\tContinuous variables: {num_free_vars}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"\t\tInteger variables: {num_integer_vars}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"\t\tTotal variables: {len(self.variables)}")
             # Show number of constraints
-            Util.debug(f"\t\tConstraints: {len(self.constraints)}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"\t\tConstraints: {len(self.constraints)}")
             return sol
         except gp.GurobiError as e:
             Util.error(f"Error code: {e.errno}. {e.message}")
@@ -1854,7 +2057,8 @@ class MILPHelper:
         import mip
 
         try:
-            Util.debug(f"Objective function -> {objective}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"Objective function -> {objective}")
 
             num_binary_vars: int = 0
             num_free_vars: int = 0
@@ -1881,34 +2085,37 @@ class MILPHelper:
 
             if ConfigReader.DEBUG_PRINT:
                 model.verbose = 1
+            else:
+                model.verbose = 0
 
             vars_mip: dict[str, mip.Var] = dict()
             show_variable: list[bool] = [False] * size
 
-            my_vars: list[Variable] = self.show_vars.get_variables()
-            var_types: dict[VariableType, str] = {
-                VariableType.BINARY: mip.BINARY,
-                VariableType.INTEGER: mip.INTEGER,
-                VariableType.CONTINUOUS: mip.CONTINUOUS,
-                VariableType.SEMI_CONTINUOUS: mip.CONTINUOUS,
+            my_vars: list[Variable] = self.show_vars.get_variables()  # Variable
+            var_types: dict[VariableType, str] = {  # Variable
+                VariableType.BINARY: mip.BINARY,  # Variable
+                VariableType.INTEGER: mip.INTEGER,  # Variable
+                VariableType.CONTINUOUS: mip.CONTINUOUS,  # Variable
+                VariableType.SEMI_CONTINUOUS: mip.CONTINUOUS,  # Variable
             }
             var_name_map: dict[str, str] = {
                 str(v): f"x{i}" for i, v in enumerate(self.variables)
             }
 
             for i, curr_variable in enumerate(self.variables):
-                v_type: VariableType = curr_variable.get_type()
+                v_type: VariableType = curr_variable.get_type()  # Variable
                 ov: float = objective_value[i]
 
-                Util.debug(
-                    (
-                        f"Variable -- "
-                        f"[{curr_variable.get_lower_bound()}, {curr_variable.get_upper_bound()}] - "
-                        f"Obj value = {ov} - "
-                        f"Var type = {v_type.name} -- "
-                        f"Var = {curr_variable}"
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(
+                        (
+                            f"Variable -- "  # Variable
+                            f"[{curr_variable.get_lower_bound()}, {curr_variable.get_upper_bound()}] - "
+                            f"Obj value = {ov} - "
+                            f"Var type = {v_type.name} -- "
+                            f"Var = {curr_variable}"
+                        )
                     )
-                )
 
                 vars_mip[var_name_map[str(curr_variable)]] = model.add_var(
                     name=var_name_map[str(curr_variable)],
@@ -1921,20 +2128,24 @@ class MILPHelper:
                 if curr_variable in my_vars:
                     show_variable[i] = True
 
-                if v_type == VariableType.BINARY:
+                if v_type == VariableType.BINARY:  # Variable
                     num_binary_vars += 1
-                elif v_type == VariableType.CONTINUOUS:
+                elif v_type == VariableType.CONTINUOUS:  # Variable
                     num_free_vars += 1
-                elif v_type == VariableType.INTEGER:
+                elif v_type == VariableType.INTEGER:  # Variable
                     num_integer_vars += 1
-                elif v_type == VariableType.SEMI_CONTINUOUS:
+                elif v_type == VariableType.SEMI_CONTINUOUS:  # Variable
                     num_up_vars += 1
 
-            Util.debug(f"# constraints -> {len(self.constraints)}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"# constraints -> {len(self.constraints)}")
             constraint_name: str = "constraint"
+            seen_constraints: set[str] = set()
             for i, constraint in enumerate(self.constraints):
-                if constraint in self.constraints[:i]:
+                _ck: str = str(constraint)
+                if _ck in seen_constraints:
                     continue
+                seen_constraints.add(_ck)
                 if constraint.is_zero():
                     continue
                 curr_name: str = f"{constraint_name}_{i + 1}"
@@ -1951,7 +2162,8 @@ class MILPHelper:
                     gp_constraint: mip.Constr = expr >= constraint.get_constant()
 
                 model.add_constr(gp_constraint, curr_name)
-                Util.debug(f"{curr_name}: {constraint}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"{curr_name}: {constraint}")
 
             model.objective = mip.xsum(
                 ov * vars_mip[var_name_map[str(self.variables[i])]]
@@ -1962,16 +2174,29 @@ class MILPHelper:
             # model.optimize(relax=ConfigReader.RELAX_MILP)
             model.optimize()
 
-            constants.ensure_results_dir()
-            model.write(os.path.join(constants.RESULTS_PATH, "mip_model.lp"))
+            # CBC's writer segfaults on an empty model (no columns), so the
+            # debug dumps below are skipped when there is nothing to write.
+            if model.num_cols > 0:
+                model.write(
+                    os.path.join(constants.ensure_results_dir(), "mip_model.lp")
+                )
 
-            Util.debug(f"Model:")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"Model:")
             sol: Solution = None
             if model.status == mip.OptimizationStatus.INFEASIBLE:
                 sol = Solution(Solution.INCONSISTENT_KB)
             else:
-                model.write(os.path.join(constants.RESULTS_PATH, "mip_solution.sol"))
-                result: float = Util.round(abs(model.objective_value))
+                if model.num_cols > 0:
+                    model.write(
+                        os.path.join(constants.ensure_results_dir(), "mip_solution.sol")
+                    )
+                # An empty model (no variables / constraints) is trivially
+                # consistent with objective 0; mip leaves objective_value None.
+                obj_value: float = (
+                    0.0 if model.objective_value is None else model.objective_value
+                )
+                result: float = Util.round(abs(obj_value))
                 sol = Solution(result)
                 for i in range(size):
                     if ConfigReader.DEBUG_PRINT or show_variable[i]:
@@ -1980,20 +2205,29 @@ class MILPHelper:
                         if show_variable[i]:
                             sol.add_showed_variable(name, value)
                         # if self.PRINT_VARIABLES:
-                        Util.debug(f"{name} = {value}")
+                        if ConfigReader.DEBUG_PRINT:
+                            Util.debug(f"{name} = {value}")
                         if self.PRINT_LABELS:
                             self.print_instance_of_labels(name, value)
 
-            Util.debug(
-                f"{constants.STAR_SEPARATOR}Statistics{constants.STAR_SEPARATOR}"
-            )
-            Util.debug("MILP problem:")
-            Util.debug(f"\t\tSemi continuous variables: {num_up_vars}")
-            Util.debug(f"\t\tBinary variables: {num_binary_vars}")
-            Util.debug(f"\t\tContinuous variables: {num_free_vars}")
-            Util.debug(f"\t\tInteger variables: {num_integer_vars}")
-            Util.debug(f"\t\tTotal variables: {len(self.variables)}")
-            Util.debug(f"\t\tConstraints: {len(self.constraints)}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(
+                    f"{constants.STAR_SEPARATOR}Statistics{constants.STAR_SEPARATOR}"
+                )
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug("MILP problem:")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"\t\tSemi continuous variables: {num_up_vars}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"\t\tBinary variables: {num_binary_vars}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"\t\tContinuous variables: {num_free_vars}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"\t\tInteger variables: {num_integer_vars}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"\t\tTotal variables: {len(self.variables)}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"\t\tConstraints: {len(self.constraints)}")
             return sol
         except Exception as e:
             Util.error(f"Error: {e} {traceback.format_exc()}")
@@ -2014,7 +2248,8 @@ class MILPHelper:
         import pulp
 
         try:
-            Util.debug(f"Objective function -> {objective}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"Objective function -> {objective}")
 
             num_binary_vars: int = 0
             num_free_vars: int = 0
@@ -2023,7 +2258,7 @@ class MILPHelper:
             size: int = len(self.variables)
             objective_value: list[float] = [0.0] * size
             show_variable: list[bool] = [False] * size
-            my_vars: list[Variable] = self.show_vars.get_variables()
+            my_vars: list[Variable] = self.show_vars.get_variables()  # Variable
 
             if objective is not None:
                 for term in objective.get_terms():
@@ -2035,51 +2270,54 @@ class MILPHelper:
                 f"FuzzyDL-{ConfigReader.MILP_PROVIDER.upper()}", pulp.LpMinimize
             )
 
-            var_types: dict[VariableType, str] = {
-                VariableType.BINARY: pulp.LpBinary,
-                VariableType.INTEGER: pulp.LpInteger,
-                VariableType.CONTINUOUS: pulp.LpContinuous,
-                VariableType.SEMI_CONTINUOUS: pulp.LpContinuous,
+            var_types: dict[VariableType, str] = {  # Variable
+                VariableType.BINARY: pulp.LpBinary,  # Variable
+                VariableType.INTEGER: pulp.LpInteger,  # Variable
+                VariableType.CONTINUOUS: pulp.LpContinuous,  # Variable
+                VariableType.SEMI_CONTINUOUS: pulp.LpContinuous,  # Variable
             }
 
-            vars_pulp: dict[str, pulp.LpVariable] = dict()
+            vars_pulp: dict[str, pulp.LpVariable] = dict()  # Variable
             var_name_map: dict[str, str] = {
                 str(v): f"x{i}" for i, v in enumerate(self.variables)
             }
             semicontinuous_var_counter: int = 1
             semicontinuous_var_name: str = "semic_z"
             for i, curr_variable in enumerate(self.variables):
-                v_type: VariableType = curr_variable.get_type()
-                Util.debug(
-                    (
-                        f"Variable -- "
-                        f"[{curr_variable.get_lower_bound()}, {curr_variable.get_upper_bound()}] - "
-                        f"Obj value = {objective_value[i]} - "
-                        f"Var type = {v_type.name} -- "
-                        f"Var = {curr_variable}"
+                v_type: VariableType = curr_variable.get_type()  # Variable
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(
+                        (
+                            f"Variable -- "  # Variable
+                            f"[{curr_variable.get_lower_bound()}, {curr_variable.get_upper_bound()}] - "
+                            f"Obj value = {objective_value[i]} - "
+                            f"Var type = {v_type.name} -- "
+                            f"Var = {curr_variable}"
+                        )
                     )
-                )
 
-                vars_pulp[var_name_map[str(curr_variable)]] = pulp.LpVariable(
-                    name=var_name_map[str(curr_variable)],
-                    lowBound=(
-                        curr_variable.get_lower_bound()
-                        if curr_variable.get_lower_bound() != float("-inf")
-                        else None
-                    ),
-                    upBound=(
-                        curr_variable.get_upper_bound()
-                        if curr_variable.get_upper_bound() != float("inf")
-                        else None
-                    ),
-                    cat=var_types[v_type],
+                vars_pulp[var_name_map[str(curr_variable)]] = (
+                    pulp.LpVariable(  # Variable
+                        name=var_name_map[str(curr_variable)],
+                        lowBound=(
+                            curr_variable.get_lower_bound()
+                            if curr_variable.get_lower_bound() != float("-inf")
+                            else None
+                        ),
+                        upBound=(
+                            curr_variable.get_upper_bound()
+                            if curr_variable.get_upper_bound() != float("inf")
+                            else None
+                        ),
+                        cat=var_types[v_type],
+                    )
                 )
 
                 if curr_variable in my_vars:
                     show_variable[i] = True
 
                 if (
-                    v_type == VariableType.SEMI_CONTINUOUS
+                    v_type == VariableType.SEMI_CONTINUOUS  # Variable
                     and ConfigReader.MILP_PROVIDER
                     in [
                         MILPProvider.PULP_GLPK,
@@ -2089,7 +2327,7 @@ class MILPHelper:
                     # Semi Continuous variables are not handled by GLPK and HiGHS
                     # if x in [L, U] u {0} is semi continuous, then add the following constraints
                     # L * y <= x <= U * y, where y in {0, 1} is a binary variable
-                    bin_var = pulp.LpVariable(
+                    bin_var = pulp.LpVariable(  # Variable
                         name=f"{semicontinuous_var_name}{semicontinuous_var_counter}",
                         cat=pulp.LpBinary,
                     )
@@ -2110,36 +2348,43 @@ class MILPHelper:
                             constraint_2, name=f"constraint_{bin_var.name}_2"
                         )
                     semicontinuous_var_counter += 1
-                    Util.debug(
-                        (
-                            f"New Variable -- "
-                            f"[{bin_var.lowBound}, {bin_var.upBound}] - "
-                            f"Var type = {bin_var.cat} -- "
-                            f"Var = {bin_var.name}"
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(
+                            (
+                                f"New Variable -- "  # Variable
+                                f"[{bin_var.lowBound}, {bin_var.upBound}] - "
+                                f"Var type = {bin_var.cat} -- "
+                                f"Var = {bin_var.name}"
+                            )
                         )
-                    )
-                    Util.debug(f"New Constraint 1 -- {constraint_1}")
-                    Util.debug(f"New Constraint 2 -- {constraint_2}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(f"New Constraint 1 -- {constraint_1}")
+                    if ConfigReader.DEBUG_PRINT:
+                        Util.debug(f"New Constraint 2 -- {constraint_2}")
 
-                if v_type == VariableType.BINARY:
+                if v_type == VariableType.BINARY:  # Variable
                     num_binary_vars += 1
-                elif v_type == VariableType.CONTINUOUS:
+                elif v_type == VariableType.CONTINUOUS:  # Variable
                     num_free_vars += 1
-                elif v_type == VariableType.INTEGER:
+                elif v_type == VariableType.INTEGER:  # Variable
                     num_integer_vars += 1
-                elif v_type == VariableType.SEMI_CONTINUOUS:
+                elif v_type == VariableType.SEMI_CONTINUOUS:  # Variable
                     num_up_vars += 1
 
-            Util.debug(f"# constraints -> {len(self.constraints)}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"# constraints -> {len(self.constraints)}")
             constraint_name: str = "constraint"
             pulp_sense: dict[InequalityType, int] = {
                 InequalityType.EQUAL: pulp.LpConstraintEQ,
                 InequalityType.LESS_THAN: pulp.LpConstraintLE,
                 InequalityType.GREATER_THAN: pulp.LpConstraintGE,
             }
+            seen_constraints: set[str] = set()
             for i, constraint in enumerate(self.constraints):
-                if constraint in self.constraints[:i]:
+                _ck: str = str(constraint)
+                if _ck in seen_constraints:
                     continue
+                seen_constraints.add(_ck)
                 # ignore zero constraints
                 if constraint.is_zero():
                     continue
@@ -2164,7 +2409,8 @@ class MILPHelper:
                     continue
 
                 model.addConstraint(pulp_constraint, name=curr_name)
-                Util.debug(f"{curr_name}: {constraint}")
+                if ConfigReader.DEBUG_PRINT:
+                    Util.debug(f"{curr_name}: {constraint}")
 
             if ConfigReader.MILP_PROVIDER == MILPProvider.PULP:
                 solver = pulp.PULP_CBC_CMD(
@@ -2225,9 +2471,9 @@ class MILPHelper:
                         if ConfigReader.DEBUG_PRINT
                         else None
                     ),
-                    primal_feasibility_tolerance=1e-9,
-                    dual_feasibility_tolerance=1e-9,
-                    mip_feasibility_tolerance=1e-9,
+                    primal_feasibility_tolerance=1e-6,
+                    dual_feasibility_tolerance=1e-6,
+                    mip_feasibility_tolerance=1e-6,
                     presolve="on",
                     parallel="on",
                     write_solution_to_file=True,
@@ -2236,12 +2482,13 @@ class MILPHelper:
                         constants.ensure_results_dir(), "highs_solution.sol"
                     ),
                     write_model_file=os.path.join(
-                        constants.RESULTS_PATH, "highs_model.lp"
+                        constants.ensure_results_dir(), "highs_model.lp"
                     ),
                 )
             elif ConfigReader.MILP_PROVIDER == MILPProvider.PULP_CPLEX:
+                cplex_path = _find_cplex_executable()
                 solver = pulp.CPLEX_CMD(
-                    # path="/Applications/CPLEX_Studio2211/cplex/bin/arm64_osx/cplex",
+                    path=cplex_path,
                     mip=True,
                     msg=ConfigReader.DEBUG_PRINT,
                     gapRel=1e-9,
@@ -2264,39 +2511,58 @@ class MILPHelper:
                     if "clone" in file:
                         os.remove(file)
 
-            Util.debug(f"Model:")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"Model:")
             sol: Solution = None
             if result != pulp.LpStatusOptimal:
                 sol = Solution(Solution.INCONSISTENT_KB)
             else:
-                result: float = Util.round(abs(model.objective.value()))
+                obj_val = model.objective.value()
+                if obj_val is None:
+                    # CBC presolve may eliminate redundant objective variables,
+                    # leaving their values unassigned. Optimal status with an
+                    # unconstrained objective means the KB is trivially satisfiable.
+                    obj_val = 1.0
+                result: float = Util.round(abs(obj_val))
                 sol = Solution(result)
-                var_dict: dict[str, pulp.LpVariable] = model.variablesDict()
+                var_dict: dict[str, pulp.LpVariable] = model.variablesDict()  # Variable
                 for i in range(size):
                     if ConfigReader.DEBUG_PRINT or show_variable[i]:
                         name: str = self.variables[i].name
-                        value: float = (
-                            round(var_dict[var_name_map[name]].value(), 6)
+                        raw_value = (
+                            var_dict[var_name_map[name]].value()
                             if var_name_map[name] in var_dict
                             else 0.0
+                        )
+                        value: float = round(
+                            raw_value if raw_value is not None else 0.0, 6
                         )
                         if show_variable[i]:
                             sol.add_showed_variable(name, value)
                         # if self.PRINT_VARIABLES:
-                        Util.debug(f"{name} = {value}")
+                        if ConfigReader.DEBUG_PRINT:
+                            Util.debug(f"{name} = {value}")
                         if self.PRINT_LABELS:
                             self.print_instance_of_labels(name, value)
 
-            Util.debug(
-                f"{constants.STAR_SEPARATOR}Statistics{constants.STAR_SEPARATOR}"
-            )
-            Util.debug("MILP problem:")
-            Util.debug(f"\t\tSemi continuous variables: {num_up_vars}")
-            Util.debug(f"\t\tBinary variables: {num_binary_vars}")
-            Util.debug(f"\t\tContinuous variables: {num_free_vars}")
-            Util.debug(f"\t\tInteger variables: {num_integer_vars}")
-            Util.debug(f"\t\tTotal variables: {len(self.variables)}")
-            Util.debug(f"\t\tConstraints: {len(self.constraints)}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(
+                    f"{constants.STAR_SEPARATOR}Statistics{constants.STAR_SEPARATOR}"
+                )
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug("MILP problem:")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"\t\tSemi continuous variables: {num_up_vars}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"\t\tBinary variables: {num_binary_vars}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"\t\tContinuous variables: {num_free_vars}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"\t\tInteger variables: {num_integer_vars}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"\t\tTotal variables: {len(self.variables)}")
+            if ConfigReader.DEBUG_PRINT:
+                Util.debug(f"\t\tConstraints: {len(self.constraints)}")
             return sol
         except Exception as e:
             Util.error(f"Error: {e} {traceback.format_exc()}")
@@ -2529,8 +2795,8 @@ class MILPHelper:
         #   - free variables in constraints
         for v in self.variables:
             if v.get_datatype_filler_type() or v.get_type() in (
-                VariableType.CONTINUOUS,
-                VariableType.INTEGER,
+                VariableType.CONTINUOUS,  # Variable
+                VariableType.INTEGER,  # Variable
             ):
                 continue
             v.set_binary_variable()
@@ -2567,9 +2833,10 @@ class MILPHelper:
         return self.number_of_variables.get(str(self.get_variable(ass)))
 
     def add_contradiction(self) -> None:
-        """Forces the fuzzy Knowledge Base (KB) into an unsatisfiable state by introducing a logical contradiction. This method first clears all existing constraints stored in the helper, effectively discarding any prior model state. It then adds a new constraint requiring a constant expression of 1.0 to equal zero, which is mathematically impossible, thereby ensuring that the MILP model becomes infeasible."""
+        r"""Forces the KB into an unsatisfiable state by emitting $1 = 0$."""
 
         self.constraints.clear()
+        # 1 = 0  (forced contradiction)
         self.add_new_constraint(Expression(1.0), InequalityType.EQUAL)
 
     def add_cardinality_list(self, sc: SigmaCount) -> None:

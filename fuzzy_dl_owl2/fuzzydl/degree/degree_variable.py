@@ -2,13 +2,13 @@ import typing
 
 from fuzzy_dl_owl2.fuzzydl.degree.degree import Degree
 from fuzzy_dl_owl2.fuzzydl.milp.expression import Expression
-from fuzzy_dl_owl2.fuzzydl.milp.inequation import Inequation
-from fuzzy_dl_owl2.fuzzydl.milp.term import Term
-from fuzzy_dl_owl2.fuzzydl.milp.variable import Variable
+from fuzzy_dl_owl2.fuzzydl.milp.inequation import Inequation  # Inequation
+from fuzzy_dl_owl2.fuzzydl.milp.term import Term  # Term
+from fuzzy_dl_owl2.fuzzydl.milp.variable import Variable  # Variable
 from fuzzy_dl_owl2.fuzzydl.util.constants import InequalityType
 
 
-class DegreeVariable(Degree):
+class DegreeVariable(Degree):  # Variable
     """
     This class encapsulates a symbolic representation of a degree of satisfaction, where the magnitude is not a fixed numeric value but is instead defined by a variable. It serves as a bridge between the abstract concept of a "degree" and the algebraic manipulation of variables, allowing the degree to participate in mathematical expressions and constraints. By wrapping a `Variable` instance, it enables operations such as addition, subtraction, and scalar multiplication within expressions, as well as the creation of inequalities where the variable acts as the right-hand side. Unlike numeric degrees, this entity is identified as non-numeric, making it suitable for contexts where the satisfaction level is dynamic or unknown and must be solved for rather than hardcoded.
 
@@ -17,7 +17,7 @@ class DegreeVariable(Degree):
     """
 
 
-    def __init__(self, variable: Variable) -> None:
+    def __init__(self, variable: Variable) -> None:  # Variable
         """
         Initializes a new instance of the `DegreeVariable` class, associating it with a specific `Variable` object. The constructor stores the provided variable directly as an instance attribute, effectively wrapping the input without creating a copy. No validation is performed on the input, so the instance will hold a reference to whatever object is passed to the constructor.
 
@@ -25,10 +25,10 @@ class DegreeVariable(Degree):
         :type variable: Variable
         """
 
-        self.variable: Variable = variable
+        self.variable: Variable = variable  # Variable
 
     @staticmethod
-    def get_degree(value: Variable) -> typing.Self:
+    def get_degree(value: Variable) -> typing.Self:  # Variable
         """
         Constructs a `DegreeVariable` instance using the provided `Variable` object as its underlying value. This static method serves as a factory function to explicitly wrap or cast a generic variable into a degree-specific representation. It does not modify the input variable but rather creates a new instance, delegating the actual initialization logic to the `DegreeVariable` constructor.
 
@@ -40,9 +40,9 @@ class DegreeVariable(Degree):
         :rtype: typing.Self
         """
 
-        return DegreeVariable(value)
+        return DegreeVariable(value)  # Variable
 
-    def get_variable(self) -> Variable:
+    def get_variable(self) -> Variable:  # Variable
         """
         Retrieves the underlying `Variable` instance stored within the `DegreeVariable` object. This method serves as a getter for the internal `variable` attribute, providing access to the symbolic variable associated with the specific degree. It is a read-only operation that does not alter the state of the instance.
 
@@ -62,11 +62,11 @@ class DegreeVariable(Degree):
         :rtype: typing.Self
         """
 
-        return DegreeVariable.get_degree(self.variable)
+        return DegreeVariable.get_degree(self.variable)  # Variable
 
     def create_inequality_with_degree_rhs(
         self, expr: Expression, inequality_type: InequalityType
-    ) -> Inequation:
+    ) -> Inequation:  # Inequation
         """
         Creates an inequality constraint where the degree variable serves as the right-hand side operand relative to the provided expression. The method constructs a new `Inequation` instance by subtracting the degree variable from the input expression using a coefficient of -1.0. This results in a constraint that effectively compares the expression to the degree variable according to the specified `inequality_type` (e.g., less than or equal to). The operation does not modify the input expression or the variable itself.
 
@@ -80,7 +80,7 @@ class DegreeVariable(Degree):
         :rtype: Inequation
         """
 
-        return Inequation(expr + Term(-1.0, self.variable), inequality_type)
+        return Inequation(expr + Term(-1.0, self.variable), inequality_type)  # Inequation, Term
 
     def is_numeric(self) -> bool:
         """
@@ -105,7 +105,7 @@ class DegreeVariable(Degree):
         :rtype: Expression
         """
 
-        return expr + Term(1.0, self.variable)
+        return expr + Term(1.0, self.variable)  # Term
 
     def subtract_from_expression(self, expr: Expression) -> Expression:
         """
@@ -119,7 +119,7 @@ class DegreeVariable(Degree):
         :rtype: Expression
         """
 
-        return expr + Term(-1.0, self.variable)
+        return expr + Term(-1.0, self.variable)  # Term
 
     def multiply_constant(self, constant: float) -> Expression:
         """
@@ -133,7 +133,7 @@ class DegreeVariable(Degree):
         :rtype: Expression
         """
 
-        return Expression(Term(constant, self.variable))
+        return Expression(Term(constant, self.variable))  # Term
 
     def is_number_not_one(self) -> bool:
         """
@@ -169,9 +169,20 @@ class DegreeVariable(Degree):
         :rtype: bool
         """
 
-        if isinstance(degree, DegreeVariable):
+        if isinstance(degree, DegreeVariable):  # Variable
             return degree.get_variable() == self.get_variable()
         return False
+
+    def __hash__(self) -> int:
+        """
+        Computes a hash value for the `DegreeVariable` instance based on its underlying variable. The method retrieves the variable using `get_variable()` and returns its hash value, ensuring that the hash is consistent with the equality definition. This allows `DegreeVariable` instances to be used effectively in hash-based collections like sets and dictionaries, where two instances representing the same variable will yield the same hash.
+
+        :return: An integer hash value derived from the underlying variable.
+
+        :rtype: int
+        """
+
+        return hash(self.get_variable())
 
     def __str__(self) -> str:
         """

@@ -1,0 +1,20 @@
+(functional age)
+(functional height)
+(functional name)
+
+(range age *integer* -100000000 100000000)
+
+(range height *real* -100000000000.0 100000000000.0)
+
+(range name *string*)
+
+(define-primitive-concept Person *top*)
+
+(instance Alice (= age 30) 1.0)
+(instance Alice (= name Alice) 1.0)
+(instance Alice Person 1.0)
+
+(domain age Person)
+(domain height Person)
+(domain name Person)
+

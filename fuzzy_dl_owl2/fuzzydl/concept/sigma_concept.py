@@ -25,7 +25,6 @@ class SigmaConcept(Concept):
     :type name: str
     """
 
-
     def __init__(
         self,
         concept: Concept,
@@ -203,11 +202,14 @@ class SigmaConcept(Concept):
 
     def __hash__(self) -> int:
         """
-        Returns an integer hash value for the instance based on its string representation, enabling the object to be used as a dictionary key or stored in a set. The implementation delegates the hashing logic to the built-in `hash` function applied to the result of `str(self)`, which implies that the object should be treated as immutable or that its string representation must remain constant to maintain consistent behavior within hash-based collections.
+        Return a hash value for this object, computed from its string representation. This approach ensures that the hash value reflects the structural identity of the object without relying on cached values or additional methods. The hash is derived from the output of the `__str__` method, which provides a consistent and unique representation of the concept's structure. This implementation does not utilize any internal caching mechanism and directly computes the hash each time it is called.
 
-        :return: An integer hash value based on the string representation of the object.
+        :return: An integer hash value representing the structural identity of this object.
 
         :rtype: int
         """
-
-        return hash(str(self))
+        # return hash(str(self))
+        # return id(self)
+        return hash(
+            (hash(self.concept), self.role, tuple(hash(i) for i in self.individuals), hash(self.concrete_concept), self.name, hash(self.type))
+        )
