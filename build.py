@@ -237,11 +237,15 @@ def build(setup_kwargs: dict | None = None) -> None:
 
     # Silence harmless Clang warnings on Cython-generated CYTHON_FALLTHROUGH
     # macros in switch cases that Clang's reachability analysis marks as dead.
-    for ext in ext_modules:
-        ext.extra_compile_args = list(ext.extra_compile_args or []) + [
-            "-Wno-unreachable-code-fallthrough",
-            "-O3",  # Maximum optimization
+    if sys.platform == "win32":
+        extra = []  # cl.exe already uses /O2; rejects -Wno-*/-O3 (D8021)
+    else:
+        extra = [
+            "-O3", # Maximum optimization
+            "-Wno-unreachable-code-fallthrough"
         ]
+    for ext in ext_modules:
+        ext.extra_compile_args = list(ext.extra_compile_args or []) + extra
 
     if setup_kwargs is not None:
         setup_kwargs.update({"ext_modules": ext_modules, "zip_safe": False})
