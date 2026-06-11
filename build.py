@@ -111,6 +111,21 @@ _LEXER_CDEF = """
                         int32_t *types, int32_t *starts, int32_t *lens);
 """
 
+def generate(tool: str | None) -> None:
+    output = subprocess.run(
+        [sys.executable, (LEXER_DIR / "generate.py").as_posix(), tool],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    print(output.stdout.strip())
+    if output.returncode != 0:
+        print(
+            f"build_lexer: generate.py failed for {tool} "
+            f"(exit {output.returncode}):\n{output.stderr.strip()}"
+        )
+
+    
 
 def make_lexer_exts() -> list[Extension]:
     """Generate the C tokenizer and return its extensions.
@@ -140,19 +155,8 @@ def make_lexer_exts() -> list[Extension]:
             print(f"build_lexer: {tool} not on PATH, skipping {src}")
             continue
 
-        output = subprocess.run(
-            [sys.executable, (LEXER_DIR / "generate.py").as_posix(), tool],
-            check=False,
-            capture_output=True,
-            text=True,
-        )
-        print(output.stdout.strip())
-        if output.returncode != 0:
-            print(
-                f"build_lexer: generate.py failed for {tool} "
-                f"(exit {output.returncode}):\n{output.stderr.strip()}"
-            )
-
+        generate(tool)
+        
         src_path = LEXER_DIR / src
         if not src_path.is_file():
             # generate.py is the only producer of the scanner source; without
@@ -212,6 +216,7 @@ def make_lexer_exts() -> list[Extension]:
         return exts
 
     print("build_lexer: no lexer generator source available, skipping")
+    generate(None)
     return []
 
 
