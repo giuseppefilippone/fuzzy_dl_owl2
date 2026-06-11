@@ -33,9 +33,11 @@ jobs:
     
       - name: Build release distributions
         run: |
-          # NOTE: put your own distribution build steps here.
           python -m pip install build
-          python -m build
+          # The repo-root build.py (poetry build script) shadows the pypa
+          # `build` package when invoked as `python -m build`; the
+          # pyproject-build console script avoids the sys.path collision.
+          pyproject-build
 
       - name: Upload distributions
         uses: actions/upload-artifact@v4
