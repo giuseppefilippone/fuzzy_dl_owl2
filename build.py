@@ -216,7 +216,7 @@ def make_lexer_exts() -> list[Extension]:
         return exts
 
     print("build_lexer: no lexer generator source available, skipping")
-    generate(None)
+    generate("none")
     return []
 
 
