@@ -32,7 +32,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build wheels
-        uses: pypa/cibuildwheel@v4
+        uses: pypa/cibuildwheel@v3.4.1
         env:
           CIBW_BUILD: "cp311-* cp312-* cp313-*"
           CIBW_SKIP: "*-musllinux_*"
@@ -66,15 +66,6 @@ jobs:
           CIBW_BEFORE_ALL_MACOS: |
               brew install re2c || true
               re2c --version
-      - name: Show wheel sizes
-        shell: bash
-        run: |
-          ls -lh wheelhouse
-          python - <<'PY'
-          from pathlib import Path
-          for p in sorted(Path("wheelhouse").glob("*.whl")):
-              print(f"{p.name}: {p.stat().st_size / 1024 / 1024:.2f} MB")
-          PY
       - name: Strip Linux wheels
         if: runner.os == 'Linux'
         shell: bash
@@ -97,6 +88,15 @@ jobs:
           mv wheelhouse_stripped/*.whl wheelhouse/
       
           ls -lh wheelhouse
+      - name: Show wheel sizes
+        shell: bash
+        run: |
+          ls -lh wheelhouse
+          python - <<'PY'
+          from pathlib import Path
+          for p in sorted(Path("wheelhouse").glob("*.whl")):
+              print(f"{p.name}: {p.stat().st_size / 1024 / 1024:.2f} MB")
+          PY
       - uses: actions/upload-artifact@v4
         with:
           name: wheels-${{ matrix.os }}
