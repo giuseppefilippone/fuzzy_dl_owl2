@@ -10,4 +10,3 @@ The architecture employs a strategy pattern to prioritize compiled C extensions 
 
 - [`fuzzy_dl_owl2.fuzzydl.parser.tokenizer.generate`] — A code generation utility that synchronizes token definitions and lexer source files for the FuzzyDL parser from a central list of keywords.
 - [`fuzzy_dl_owl2.fuzzydl.parser.tokenizer.tokenizer_handler`] — Manages a registry of tokenizer backends for the fuzzy-DL parser, providing a unified interface that abstracts over pure-Python and compiled C implementations.
-- [`fuzzy_dl_owl2.fuzzydl.parser.tokenizer.tokens`] — A high-performance tokenizer for the FuzzyDL language that bridges Python and a C-based lexer using CFFI and memory mapping.
