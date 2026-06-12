@@ -40,7 +40,7 @@ jobs:
           CIBW_BUILD_FRONTEND: "pip"
           CIBW_BEFORE_ALL_LINUX: "(yum install -y epel-release && yum install -y re2c) || true"
           CIBW_BEFORE_ALL_MACOS: "brew install re2c || true"
-      - uses: actions/upload-artifact@v
+      - uses: actions/upload-artifact@v4
         with:
           name: wheels-${{ matrix.os }}
           path: wheelhouse/*.whl
