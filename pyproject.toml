@@ -69,7 +69,6 @@ requires = [
     "setuptools>=70.0",
     "cffi>=1.16",
     "pyparsing>=3.2",
-    "re2c>=3.0",
 ]
 build-backend = "poetry.core.masonry.api"
 
