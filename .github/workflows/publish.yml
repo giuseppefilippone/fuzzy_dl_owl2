@@ -1,0 +1,50 @@
+name: Publish to PyPI
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build_sdist:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pipx run build --sdist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sdist
+          path: dist/*.tar.gz
+
+  build_wheels:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pypa/cibuildwheel@v3.2     # use the latest release tag
+        env:
+          CIBW_BUILD: "cp311-* cp312-* cp313-*"
+          CIBW_SKIP: "*-musllinux_*"
+          # Install re2c inside the manylinux container so Linux wheels
+          # include the fast _fdl_lexer; harmless no-op if unavailable.
+          CIBW_BEFORE_ALL_LINUX: "(yum install -y epel-release && yum install -y re2c) || true"
+          CIBW_BEFORE_ALL_MACOS: "brew install re2c || true"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wheels-${{ matrix.os }}
+          path: wheelhouse/*.whl
+
+  pypi-publish:
+    needs: [build_sdist, build_wheels]
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write        # trusted publishing
+    # environment: pypi      # keep if your current job uses one
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true   # flatten every artifact into dist/
+      - uses: pypa/gh-action-pypi-publish@release/v1
