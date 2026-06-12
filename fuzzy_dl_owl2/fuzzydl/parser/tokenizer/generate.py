@@ -401,7 +401,10 @@ def gen_tokens_py() -> str:
         "try:",
         "    from fuzzy_dl_owl2.fuzzydl.parser.tokenizer._fdl_lexer import ffi, lib",
         "except ImportError:  # pragma: no cover",
-        "    from _fdl_lexer import ffi, lib",
+        "    try:",
+        "        from _fdl_lexer import ffi, lib",
+        "    except ImportError:",
+        "        ffi = lib = None",
         "",
         "TOK_NAMES = {",
     ]
