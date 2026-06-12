@@ -32,16 +32,15 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
-      - uses: pypa/cibuildwheel@v3.2
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v3.2
         env:
           CIBW_BUILD: "cp311-* cp312-* cp313-*"
           CIBW_SKIP: "*-musllinux_*"
           CIBW_BUILD_FRONTEND: "pip"
           CIBW_BEFORE_ALL_LINUX: "(yum install -y epel-release && yum install -y re2c) || true"
           CIBW_BEFORE_ALL_MACOS: "brew install re2c || true"
-
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v
         with:
           name: wheels-${{ matrix.os }}
           path: wheelhouse/*.whl
