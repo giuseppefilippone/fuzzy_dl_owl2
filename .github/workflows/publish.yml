@@ -12,7 +12,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - name: Build sdist
         run: |
           pipx run --spec build pyproject-build --sdist --outdir dist
@@ -38,8 +37,13 @@ jobs:
           CIBW_BUILD: "cp311-* cp312-* cp313-*"
           CIBW_SKIP: "*-musllinux_*"
           CIBW_BUILD_FRONTEND: "pip"
-          CIBW_BEFORE_ALL_LINUX: "(yum install -y epel-release && yum install -y re2c) || true"
-          CIBW_BEFORE_ALL_MACOS: "brew install re2c || true"
+          CIBW_BEFORE_ALL_LINUX: |
+              /opt/python/cp311-cp311/bin/python -m pip install --upgrade --only-binary=:all: "re2c>=4.0"
+              ln -sf /opt/python/cp311-cp311/bin/re2c /usr/local/bin/re2c
+              re2c --version
+          CIBW_BEFORE_ALL_MACOS: |
+              brew install re2c || true
+              re2c --version
       - uses: actions/upload-artifact@v4
         with:
           name: wheels-${{ matrix.os }}
