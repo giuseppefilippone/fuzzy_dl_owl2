@@ -245,15 +245,14 @@ def build(setup_kwargs: dict | None = None) -> None:
 
     # Silence harmless Clang warnings on Cython-generated CYTHON_FALLTHROUGH
     # macros in switch cases that Clang's reachability analysis marks as dead.
-    if sys.platform == "win32":
-        extra = []  # cl.exe already uses /O2; rejects -Wno-*/-O3 (D8021)
-    else:
-        extra = [
+    if sys.platform != "win32":
+        # cl.exe already uses /O
+        # rejects -Wno-*/-O3 (D8021)
+        for ext in ext_modules:
+            ext.extra_compile_args = list(ext.extra_compile_args or []) + [
             "-O3", # Maximum optimization
             "-Wno-unreachable-code-fallthrough"
         ]
-    for ext in ext_modules:
-        ext.extra_compile_args = list(ext.extra_compile_args or []) + extra
 
     if setup_kwargs is not None:
         setup_kwargs.update({"ext_modules": ext_modules, "zip_safe": False})
@@ -262,7 +261,12 @@ def build(setup_kwargs: dict | None = None) -> None:
     cmd = build_ext(dist)
     cmd.inplace = 1
     cmd.ensure_finalized()
-    cmd.run()
+    
+    try:
+        cmd.run()
+    except Exception as exc:
+        # No C compiler (e.g. Windows without MSVC): install pure-Python.
+        print(f"WARNING: C extensions failed ({exc}); pure-Python install.")
 
 
 if __name__ == "__main__":
