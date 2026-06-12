@@ -11,6 +11,10 @@ compare_parsers.py
 docstrings.json
 *.sh
 docs/**/*.sh
+tokens.h
+lexer_gen.c
+lexer_flex.l
+lexer_re2c.re
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
