@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fuzzy-dl-owl2"
-version = "1.0.18"
+version = "1.0.19"
 description = "A python porting of the Fuzzy Description Language (see https://www.umbertostraccia.it/cs/software/fuzzyDL/fuzzyDL.html) and the Fuzzy OWL 2 framework (see https://www.umbertostraccia.it/cs/software/FuzzyOWL/index.html)."
 license = "CC-BY-SA-4.0"
 readme = "README.md"
@@ -13,6 +13,8 @@ authors = ["Giuseppe Filippone <filipponegiuseppe94@gmail.com>"]
 include = [
     { path = "fuzzy_dl_owl2/**/*.so", format = "wheel" },
     { path = "fuzzy_dl_owl2/**/*.pyd", format = "wheel" },
+    { path = "fuzzy_dl_owl2/**/*.c", format = "wheel" },
+    { path = "fuzzy_dl_owl2/**/*.h", format = "wheel" },
 ]
 
 [tool.poetry.dependencies]
@@ -26,8 +28,8 @@ sortedcontainers = "^2.4.0"
 trycast = "^1.2.0"
 defusedxml = "^0.7.1"
 python-dotenv = "^1.0"
-cffi        = "^1.17.1"
-cython      = "^3.1.2"
+cffi = "^1.17.1"
+cython = "^3.1.2"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3"
