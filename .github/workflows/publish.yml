@@ -31,6 +31,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+      - name: Build release distributions
+        run: |
+          python -m pip install build
+          # The repo-root build.py (poetry build script) shadows the pypa
+          # `build` package when invoked as `python -m build`; the
+          # pyproject-build console script avoids the sys.path collision.
+          pyproject-build
       - name: Build wheels
         uses: pypa/cibuildwheel@v3.4.1
         env:
@@ -41,7 +52,6 @@ jobs:
           CIBW_BEFORE_BUILD: python -c "import pathlib; [p.unlink() for g in ('*.so','*.pyd') for p in pathlib.Path('.').rglob(g)]"
           # Refuse to publish wheels that cannot even be imported.
           CIBW_TEST_COMMAND: python -c "import fuzzy_dl_owl2"
-          CIBW_BUILD_FRONTEND: "pip"
           CIBW_BEFORE_ALL_LINUX: |
               /opt/python/cp311-cp311/bin/python -m pip install \
                 --upgrade \
