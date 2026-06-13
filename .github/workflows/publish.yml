@@ -35,24 +35,18 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
-      - name: Build release distributions
-        run: |
-          python -m pip install build
-          # The repo-root build.py (poetry build script) shadows the pypa
-          # `build` package when invoked as `python -m build`; the
-          # pyproject-build console script avoids the sys.path collision.
-          pyproject-build
+
       - name: Build wheels
         uses: pypa/cibuildwheel@v3.4.1
         env:
           CIBW_BUILD: "cp311-* cp312-* cp313-*"
           CIBW_SKIP: "*-musllinux_*"
+          CIBW_BUILD_FRONTEND: "pip"
           # build.py compiles in-place: delete binaries left by the previous
           # Python version so they don't leak into the next wheel.
           CIBW_BEFORE_BUILD: python -c "import pathlib; [p.unlink() for g in ('*.so','*.pyd') for p in pathlib.Path('.').rglob(g)]"
           # Refuse to publish wheels that cannot even be imported.
           CIBW_TEST_COMMAND: python -c "import fuzzy_dl_owl2"
-          CIBW_BUILD_FRONTEND: "pip"
           CIBW_BEFORE_ALL_LINUX: |
               /opt/python/cp311-cp311/bin/python -m pip install \
                 --upgrade \
@@ -77,6 +71,7 @@ jobs:
           CIBW_BEFORE_ALL_MACOS: |
               brew install re2c || true
               re2c --version
+
       - name: Strip Linux wheels
         if: runner.os == 'Linux'
         shell: bash
@@ -99,6 +94,7 @@ jobs:
           mv wheelhouse_stripped/*.whl wheelhouse/
       
           ls -lh wheelhouse
+
       - name: Show wheel sizes
         shell: bash
         run: |
@@ -108,6 +104,7 @@ jobs:
           for p in sorted(Path("wheelhouse").glob("*.whl")):
               print(f"{p.name}: {p.stat().st_size / 1024 / 1024:.2f} MB")
           PY
+
       - uses: actions/upload-artifact@v4
         with:
           name: wheels-${{ matrix.os }}
