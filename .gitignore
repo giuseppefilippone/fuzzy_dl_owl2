@@ -1,92 +1,104 @@
+# ───────────────────────── OS / editor cruft ─────────────────────────
 .DS_Store
-._.DS_Store
-**/.DS_Store
-**/._.DS_Store
-autodoc*
-comparison_logs/
-_CONFIG.ini
-code_docs.py
-code_stats.py
-compare_parsers.py
-docstrings.json
-*.sh
-docs/**/*.sh
+._.*
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+*.swp
+*.swo
+
+# ───────────────────────────── IDEs ──────────────────────────────────
+.vscode/
+.vs/
+.idea/
+
+# ──────────────────────── Python bytecode ────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ─────────────── Compiled native extensions (Cython / CFFI) ───────────
+# Everything here is generated in-place by build.py. The wheel re-bundles
+# the .c/.so/.pyd via pyproject's [tool.poetry] include, so they don't
+# need to live in git.
+*.so
+*.pyd
+*.c
+*.o
+*.obj
+*.lib
+*.exp
+*.pdb
+
+# ───────────── Generated lexer/tokenizer sources (build.py) ───────────
+# tokens.py is hand-maintainable output and stays tracked; the rest are
+# regenerated from generate.py + re2c/flex on every build.
 tokens.h
 lexer_gen.c
 lexer_flex.l
 lexer_re2c.re
 
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*$py.class
-
-# C extensions
-*.so
-*.c
-
-# Virtual environments
-.env/
-.venv/
-env/
-venv/
-
-# Jupyter Notebook checkpoints
-.ipynb_checkpoints/
-
-# Jupyter Notebook
-*.ipynb
-
-# VSCode and other IDEs
-.vscode/
-.idea/
-
-# Distribution / packaging
+# ─────────────────────── Packaging / build output ────────────────────
 build/
 dist/
 *.egg-info/
-
-# PyInstaller
+*.egg
+.eggs/
+*.whl
 *.manifest
 *.spec
 
-# pytest
-.cache/
+# ───────────────────────── Virtual environments ──────────────────────
+.venv/
+venv/
+env/
+ENV/
+.env/
 
-# mypy
+# ──────────────────────── dotenv / local config ──────────────────────
+.env
+.env.*
+*.env
+_CONFIG.ini
+
+# ──────────── Test / coverage / type-check / lint caches ──────────────
+.cache/
+.pytest_cache/
 .mypy_cache/
 .dmypy.json
-
-# coverage
+.ruff_cache/
+.tox/
 .coverage
+.coverage.*
 htmlcov/
 coverage.xml
 
-# tox
-.tox/
-
-# pipenv
+# ─────────────────────────────── pipenv ──────────────────────────────
+# This project uses poetry; poetry.lock stays tracked.
 Pipfile.lock
 
-# local dev settings
-*.env
-.env.*
+# ────────────────────────────── Jupyter ──────────────────────────────
+.ipynb_checkpoints/
+*.ipynb
 
-# logs
+# ─────────────────────────── Logs & results ──────────────────────────
 *.log
 **/logs
-
-# results
 /results
+comparison_logs/
 
-# wheel files
-*.whl
-
-# owl
+# ───────────────── Domain output (OWL / MILP solver) ─────────────────
 *.owl
-
-# MILP
 *.mps
 *.sol
 *.lp
 *.HiGHS
+
+# ───────────── Project-specific dev scripts & scratch files ───────────
+# Local tooling that isn't part of the distributed package.
+autodoc*
+code_docs.py
+code_stats.py
+compare_parsers.py
+docstrings.json
+*.sh

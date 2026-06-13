@@ -355,6 +355,10 @@ class FdlStringTokenizer(BaseTokenizer):
             if ConfigReader.DEBUG_PRINT:
                 Util.warning(f"Failed to import tokens: {e}\n{traceback.format_exc()}")
 
+        from fuzzy_dl_owl2.fuzzydl.parser.tokenizer.tokens import AVAILABLE_LEXER
+
+        self._available: bool = AVAILABLE_LEXER
+
     @property
     def name(self) -> str:
         """
@@ -376,7 +380,7 @@ class FdlStringTokenizer(BaseTokenizer):
         :rtype: bool
         """
 
-        return (
+        return self._available and (
             self._tokenize_tuples is not None or self._get_tokens_from_bytes is not None
         )
 
