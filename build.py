@@ -154,6 +154,7 @@ def make_lexer_exts() -> list[Extension]:
         ("lexer_flex.l", "flex", ["flex", "-o", gen_c]),
     )
     for src, tool, cmd in candidates:
+        print(f"build_lexer: {shutil.which(tool)=}, {(LEXER_DIR / src).is_file()=}")
         if shutil.which(tool) is None:
             print(f"build_lexer: {tool} not on PATH, skipping {src}")
             continue
@@ -183,7 +184,7 @@ def make_lexer_exts() -> list[Extension]:
                 "_fdl_lexer",
                 f.read(),
                 include_dirs=[LEXER_DIR.as_posix()],
-                extra_compile_args=["-O3"],
+                extra_compile_args=["-O3"] if sys.platform != "win32" else [],
             )
         wrapper_c = (LEXER_DIR / "_fdl_lexer.c").as_posix()
         ffibuilder.emit_c_code(wrapper_c)
@@ -192,7 +193,7 @@ def make_lexer_exts() -> list[Extension]:
                 "fuzzy_dl_owl2.fuzzydl.parser.tokenizer._fdl_lexer",
                 sources=[wrapper_c],
                 include_dirs=[LEXER_DIR.as_posix()],
-                extra_compile_args=["-O3"],
+                extra_compile_args=["-O3"] if sys.platform != "win32" else [],
             )
         )
 
@@ -205,7 +206,7 @@ def make_lexer_exts() -> list[Extension]:
                         "fuzzy_dl_owl2.fuzzydl.parser.tokenizer._fdl_tuples",
                         sources=[pyx.as_posix(), gen_c],
                         include_dirs=[LEXER_DIR.as_posix()],
-                        extra_compile_args=["-O3"],
+                        extra_compile_args=["-O3"] if sys.platform != "win32" else [],
                     )
                 ],
                 language_level=3,

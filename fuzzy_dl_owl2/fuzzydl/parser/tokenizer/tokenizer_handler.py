@@ -484,6 +484,10 @@ class FdlFileTokenizer(BaseTokenizer):
             self._get_tokens = _gt
         except Exception:
             pass
+        
+        from fuzzy_dl_owl2.fuzzydl.parser.tokenizer.tokens import AVAILABLE_LEXER
+
+        self._available: bool = AVAILABLE_LEXER
 
     @property
     def name(self) -> str:
@@ -506,7 +510,7 @@ class FdlFileTokenizer(BaseTokenizer):
         :rtype: bool
         """
 
-        return self._FdlScan is not None or self._get_tokens is not None
+        return self._available and (self._FdlScan is not None or self._get_tokens is not None)
 
     def tokenize_file(self, path: str) -> typing.Iterator[typing.List[Token]]:
         """
