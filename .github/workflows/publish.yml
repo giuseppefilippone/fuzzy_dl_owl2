@@ -52,6 +52,7 @@ jobs:
           CIBW_BEFORE_BUILD: python -c "import pathlib; [p.unlink() for g in ('*.so','*.pyd') for p in pathlib.Path('.').rglob(g)]"
           # Refuse to publish wheels that cannot even be imported.
           CIBW_TEST_COMMAND: python -c "import fuzzy_dl_owl2"
+          CIBW_BUILD_FRONTEND: "pip"
           CIBW_BEFORE_ALL_LINUX: |
               /opt/python/cp311-cp311/bin/python -m pip install \
                 --upgrade \
