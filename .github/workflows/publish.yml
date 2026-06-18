@@ -37,10 +37,10 @@ jobs:
           cache: 'pip'
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v3.4.1
+        uses: pypa/cibuildwheel@v4.0.0
         env:
-          CIBW_BUILD: "cp311-* cp312-* cp313-*"
-          CIBW_SKIP: "*-musllinux_*"
+          CIBW_BUILD: "cp311-* cp312-* cp313-* cp314-*"
+          CIBW_SKIP: "*-win32 *_i686 *-musllinux_*"
           CIBW_BUILD_FRONTEND: "pip"
           # build.py compiles in-place: delete binaries left by the previous
           # Python version so they don't leak into the next wheel.
@@ -71,6 +71,7 @@ jobs:
           CIBW_BEFORE_ALL_MACOS: |
               brew install re2c || true
               re2c --version
+          CIBW_BEFORE_ALL_WINDOWS: "choco install -y re2c winflexbison3"
 
       - name: Strip Linux wheels
         if: runner.os == 'Linux'
