@@ -74,7 +74,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.cibuildwheel]
 build = ["cp311-*", "cp312-*", "cp313-*", "cp314-*"]
-skip  = ["*-win32", "*_i686"
+skip  = ["*-win32", "*_i686"]
 build-frontend = "build"           # respects [build-system].requires (cython, cffi…)
 test-command = "python -c \"import fuzzy_dl_owl2\""   # smoke-test each wheel
 
