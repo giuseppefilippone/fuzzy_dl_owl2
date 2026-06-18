@@ -72,11 +72,22 @@ requires = [
 ]
 build-backend = "poetry.core.masonry.api"
 
+[tool.cibuildwheel]
+build = ["cp311-*", "cp312-*", "cp313-*", "cp314-*"]
+skip  = ["*-win32", "*_i686"
+build-frontend = "build"           # respects [build-system].requires (cython, cffi…)
+test-command = "python -c \"import fuzzy_dl_owl2\""   # smoke-test each wheel
+
 [tool.semantic_release]
-version_variable = [
-    "pyproject.toml:version"
-]
+version_toml = ["pyproject.toml:tool.poetry.version"]  # Poetry stores version here
+build_command = false      # don't build here — the wheel jobs do it
 branch = "main"
 upload_to_pypi = true
 upload_to_release = true
-build_command = "pip install poetry && poetry build"
+
+# [tool.semantic_release]
+# version_variable = ["pyproject.toml:version"]
+# branch = "main"
+# upload_to_pypi = true
+# upload_to_release = true
+# build_command = "pip install poetry && poetry build"
