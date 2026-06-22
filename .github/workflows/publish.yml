@@ -53,19 +53,19 @@ jobs:
                 --only-binary=:all: \
                 --target /opt/re2c-python \
                 "re2c>=4.0"
-            
+
               cat > /usr/local/bin/re2c <<'EOF'
               #!/bin/sh
               export PYTHONPATH=/opt/re2c-python
               exec /opt/python/cp311-cp311/bin/python -c 'import sys; sys.argv[0] = "re2c"; from re2c import re2c; raise SystemExit(re2c())' "$@"
               EOF
-            
+
               chmod +x /usr/local/bin/re2c
-            
+
               ln -sf /usr/local/bin/re2c /opt/python/cp311-cp311/bin/re2c
               ln -sf /usr/local/bin/re2c /opt/python/cp312-cp312/bin/re2c
               ln -sf /usr/local/bin/re2c /opt/python/cp313-cp313/bin/re2c
-            
+
               which re2c
               re2c --version
           CIBW_BEFORE_ALL_MACOS: |
@@ -79,21 +79,21 @@ jobs:
         run: |
           python -m pip install --upgrade wheel
           mkdir -p wheelhouse_stripped
-      
+
           for whl in wheelhouse/*.whl; do
             tmp="$(mktemp -d)"
             python -m wheel unpack "$whl" -d "$tmp"
             unpacked="$(find "$tmp" -mindepth 1 -maxdepth 1 -type d | head -n 1)"
-      
+
             find "$unpacked" -name "*.so" -exec strip --strip-unneeded {} + || true
-      
+
             python -m wheel pack "$unpacked" -d wheelhouse_stripped
             rm -rf "$tmp"
           done
-      
+
           rm -f wheelhouse/*.whl
           mv wheelhouse_stripped/*.whl wheelhouse/
-      
+
           ls -lh wheelhouse
 
       - name: Show wheel sizes
@@ -120,7 +120,7 @@ jobs:
       contents: read
     environment:
       name: pypi
-      url: https://pypi.org/project/fuzzy-dl-owl2/
+      url: https://pypi.org/project/fuzzy-dl-owl2/${{ github.event.release.name }}
     steps:
       - uses: actions/download-artifact@v4
         with:

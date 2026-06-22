@@ -443,14 +443,14 @@ reference = "pypi-mirror"
 
 [[package]]
 name = "pyowl2"
-version = "1.0.8"
+version = "1.0.9"
 description = "A python implementation of the OWL 2 standard. See https://www.w3.org/TR/owl2-syntax/ and https://www.w3.org/TR/owl2-mapping-to-rdf/"
 optional = false
 python-versions = ">=3.11,<4.0"
 groups = ["main"]
 files = [
-    {file = "pyowl2-1.0.8-py3-none-any.whl", hash = "sha256:2588b988a3c8cead9d5712efc0c8c0a26bb648a51334863202391ba7115f8f1f"},
-    {file = "pyowl2-1.0.8.tar.gz", hash = "sha256:13648a1d0b2d47fa5ca10ea475c4cb70b6c2c875e40a568f2f4525833cacf7f2"},
+    {file = "pyowl2-1.0.9-py3-none-any.whl", hash = "sha256:2588b988a3c8cead9d5712efc0c8c0a26bb648a51334863202391ba7115f8f1f"},
+    {file = "pyowl2-1.0.9.tar.gz", hash = "sha256:13648a1d0b2d47fa5ca10ea475c4cb70b6c2c875e40a568f2f4525833cacf7f2"},
 ]
 
 [package.dependencies]

@@ -399,6 +399,14 @@ class FuzzyOwl2(object):
                     Util.debug(f"Datatype for ontology -> {entity}")
                 datatype: OWLDatatype = typing.cast(OWLDatatype, entity)
                 annotations: set[OWLAnnotation] = axiom.axiom_annotations
+                if annotations is not None:
+                    # Keep only fuzzyLabel annotations; pyowl2 also surfaces
+                    # rdfs:label and other vocab annotations on declarations.
+                    annotations = {
+                        a
+                        for a in annotations
+                        if a.annotation_property == self.fuzzy_label
+                    }
                 if annotations is None or len(annotations) == 0:
                     continue
                 if len(annotations) > 1:
@@ -462,6 +470,14 @@ class FuzzyOwl2(object):
                 if ConfigReader.DEBUG_PRINT:
                     Util.debug(f"Concept for ontology -> {cls}")
                 annotations: set[OWLAnnotation] = axiom.axiom_annotations
+                if annotations is not None:
+                    # Keep only fuzzyLabel annotations; pyowl2 also surfaces
+                    # rdfs:label and other vocab annotations on declarations.
+                    annotations = {
+                        a
+                        for a in annotations
+                        if a.annotation_property == self.fuzzy_label
+                    }
                 if annotations is None or len(annotations) == 0:
                     continue
                 if len(annotations) > 1:
@@ -541,6 +557,14 @@ class FuzzyOwl2(object):
                     else typing.cast(OWLDataProperty, entity)
                 )
                 annotations: set[OWLAnnotation] = axiom.axiom_annotations
+                if annotations is not None:
+                    # Keep only fuzzyLabel annotations; pyowl2 also surfaces
+                    # rdfs:label and other vocab annotations on declarations.
+                    annotations = {
+                        a
+                        for a in annotations
+                        if a.annotation_property == self.fuzzy_label
+                    }
                 if annotations is None or len(annotations) == 0:
                     continue
                 if len(annotations) > 1:

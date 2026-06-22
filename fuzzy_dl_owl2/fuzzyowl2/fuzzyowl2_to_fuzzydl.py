@@ -3,6 +3,7 @@ import re
 import string
 import typing
 
+from fuzzy_dl_owl2.fuzzydl.util.config_reader import ConfigReader
 from fuzzy_dl_owl2.fuzzydl.util.constants import FuzzyDLKeyword
 from fuzzy_dl_owl2.fuzzydl.util.util import Util
 from fuzzy_dl_owl2.fuzzyowl2.fuzzyowl2 import FuzzyOwl2
@@ -49,7 +50,6 @@ from pyowl2.expressions.data_property import OWLDataProperty
 from pyowl2.expressions.object_property import OWLObjectProperty
 from pyowl2.individual.anonymous_individual import OWLAnonymousIndividual
 from pyowl2.literal.literal import OWLLiteral
-from fuzzy_dl_owl2.fuzzydl.util.config_reader import ConfigReader
 
 
 # @utils.timer_decorator
