@@ -1993,19 +1993,23 @@ class DLParser(object):
             pp.Regex("[^\n]+").set_results_name("any_not_newline").suppress()
         )
 
-        digits = pp.Word(pp.nums)
         numbers = (
-            pp.Combine(
-                pp.Opt(pp.one_of(["+", "-"]))
-                + digits
-                + pp.Opt("." + digits)
-                + pp.Opt(
-                    pp.one_of(["e", "E"]) + pp.Opt(pp.one_of(["+", "-"])) + digits
-                )  # support for scientific notation
-            )
+            pp.Regex(r"[+-]?\d+(\.\d+)?([eE][+-]?\d+)?")
             .set_results_name("number", list_all_matches=True)
             .set_parse_action(DLParser._to_number)
         )
+        # numbers = (
+        #     pp.Combine(
+        #         pp.Opt(pp.one_of(["+", "-"]))
+        #         + pp.nums
+        #         + pp.Opt("." + pp.nums)
+        #         + pp.Opt(
+        #             pp.one_of(["e", "E"]) + pp.Opt(pp.one_of(["+", "-"])) + pp.nums
+        #         )  # support for scientific notation
+        #     )
+        #     .set_results_name("number", list_all_matches=True)
+        #     .set_parse_action(DLParser._to_number)
+        # )
 
         simple_string = pp.Word(
             pp.alphanums + "_><", pp.alphanums + "_'/.:><@$!?-"
@@ -2057,11 +2061,9 @@ class DLParser(object):
 
         simple_fuzzy_number = (
             (
-                variables
-                | lbrace
-                + (numbers[3] | pp.DelimitedList(numbers, min=3, max=3))
-                + rbrace
+                lbrace + (numbers[3] | pp.DelimitedList(numbers, min=3, max=3)) + rbrace
                 | numbers
+                | variables
             )
             .set_results_name("simple_fuzzy_numbers", list_all_matches=True)
             .set_parse_action(DLParser._create_fuzzy_number)
@@ -2131,8 +2133,8 @@ class DLParser(object):
             (
                 datatype_restriction_mul_expressions
                 | datatype_restriction_sub_expressions
-                | variables
                 | numbers
+                | variables
             )
             .set_results_name("restrictions", list_all_matches=True)
             .set_parse_action(DLParser._parse_restrictions)
@@ -2159,7 +2161,7 @@ class DLParser(object):
                     ]
                 )
                 + variables
-                + (variables | datatype_restriction_function | fuzzy_number_expr)
+                + (datatype_restriction_function | fuzzy_number_expr | variables)
                 + rbrace
             )
             .set_results_name("datatype_restrictions", list_all_matches=True)
@@ -2168,9 +2170,9 @@ class DLParser(object):
 
         concept <<= (
             (
-                variables
-                | FuzzyDLKeyword.TOP.get_value()
+                FuzzyDLKeyword.TOP.get_value()
                 | FuzzyDLKeyword.BOTTOM.get_value()
+                | variables
             )
             .set_results_name("truth_constants", list_all_matches=True)
             .set_parse_action(DLParser._to_top_bottom_concept)
@@ -2191,7 +2193,7 @@ class DLParser(object):
                                 FuzzyDLKeyword.GREATER_THAN_OR_EQUAL_TO.get_name(),
                             ]
                         )
-                        + (variables | numbers)
+                        + (numbers | variables)
                         + pp.Literal("]").suppress()
                         + concept
                     )
@@ -2217,7 +2219,7 @@ class DLParser(object):
                     | (
                         FuzzyDLKeyword.SOME.get_value()
                         + variables
-                        + (variables | concept)
+                        + (concept | variables)
                     ).set_results_name("some_concepts", list_all_matches=True)
                     | (
                         FuzzyDLKeyword.HAS_VALUE.get_value() + variables[2]
