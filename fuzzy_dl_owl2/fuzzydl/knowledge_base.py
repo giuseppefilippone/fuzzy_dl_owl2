@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import contextlib
+import math
 import pickle
 import sys
 import typing
@@ -5954,6 +5955,20 @@ class KnowledgeBase:
         self.milp.add_new_constraint(exp, InequalityType.EQUAL, degree)
         self.rule_complemented(ind, c)
 
+    @staticmethod
+    def __linear_weights(weights: list[float]) -> bool:
+        """True if the OWA weights are equally spaced (w_i - w_{i+1} constant).
+
+        Yager's identity  OWA_w(x) = (1/n - (w_n - w_1)/2) * sum_i x_i + (w_n - w_1)/(n-1) * sum_{i<j} min(x_i, x_j)
+        (the OPTIMIZATIONS != 0 path of solve_owa_assertion) is exact only for such weights;
+        any other vector needs the sorting network (get_ordered_permutation).
+        With fewer than 3 weights every vector is trivially linear.
+        """
+        steps = [a - b for a, b in zip(weights, weights[1:])]
+        return len(steps) < 2 or all(
+            math.isclose(s, steps[0], rel_tol=1e-5, abs_tol=1e-8) for s in steps
+        )
+
     def solve_owa_assertion(
         self, ind: Individual, c: typing.Union[OwaConcept, QowaConcept]
     ) -> None:
@@ -5984,7 +5999,8 @@ class KnowledgeBase:
         :type c: typing.Union[fuzzy_dl_owl2.fuzzydl.concept.owa_concept.OwaConcept, fuzzy_dl_owl2.fuzzydl.concept.qowa_concept.QowaConcept]
         """
 
-        if ConfigReader.OPTIMIZATIONS == 0:
+        if ConfigReader.OPTIMIZATIONS == 0 or not self.__linear_weights(c.weights):
+            # exact encoding: sorting network (get_ordered_permutation)
             # New n variables x_i
             n: int = len(c.concepts)
             x: list[Variable] = []
@@ -6007,6 +6023,20 @@ class KnowledgeBase:
             # exp = degree
             self.milp.add_new_constraint(exp, InequalityType.EQUAL, degree)
         else:
+            # Yager's identity: for EQUALLY SPACED weights (w_i - w_{i+1} = const, checked by
+            # _linear_weights) the OWA needs no sorting of the arguments, because
+            #
+            #     OWA_w(x) = a * sum_i x_i  +  b * sum_{i<j} min(x_i, x_j)
+            #     with  a = 1/n - (w_n - w_1)/2   and   b = (w_n - w_1)/(n - 1)
+            #
+            # Proof sketch: with y = x sorted decreasingly, sum_{i<j} min(x_i, x_j) = sum_j (j-1) * y_j,
+            # so the right-hand side equals sum_j (a + b*(j-1)) * y_j, i.e. an OWA whose weights are
+            # the arithmetic progression from w_1 to w_n — identical to w only when w is linear.
+            # Each pairwise min is linearised with one binary variable (ZadehSolver.and_equation):
+            # n(n-1)/2 binaries instead of the n^2 permutation variables of get_ordered_permutation.
+            # For non-linear weights (e.g. 0.5 0.25 0.125 0.125) the formula silently computes the
+            # OWA with weights 0.4375 0.3125 0.1875 0.0625, hence the guard above.
+
             n: int = len(c.concepts)
             w1: float = c.weights[0]
             wn: float = c.weights[n - 1]
