@@ -6052,7 +6052,7 @@ class KnowledgeBase:
         assert isinstance(curr_concept.get_atom(), (OwaConcept, QowaConcept))
 
         c: typing.Union[OwaConcept, QowaConcept] = curr_concept.get_atom()
-        x_A_in_not_WS: Variable = self.milp.get_variable(ind, c)
+        x_A_in_not_WS: Variable = self.milp.get_variable(ind, curr_concept)
         n: int = len(c.concepts)
         x: list[Variable] = []
         terms: list[Term] = []
