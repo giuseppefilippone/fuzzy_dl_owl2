@@ -58,7 +58,12 @@ Supported MILP Providers:
 
 ### MIP
 
-- Install Python [MIP](https://www.python-mip.com/): `pip install mip==1.16rc0`
+- Install Python [MIP](https://www.python-mip.com/): `pip install 'mip>=1.17,<2' cbcbox==2.929`
+- Note (macOS Apple Silicon): `mip 2.0.0` requires `cbcbox>=2.935`, whose arm64 wheel ships
+  `libgfortran`/`libgcc_s`/`libquadmath` with invalid code signatures — the process is killed
+  (`Killed: 9`, `CODESIGNING Invalid Page`) as soon as the CBC library is loaded. `cbcbox 2.934`
+  is broken as well (dependencies linked via the CI build path). Keep `cbcbox==2.929` until a
+  newer release loads cleanly.
 
 ### GLPK
 
