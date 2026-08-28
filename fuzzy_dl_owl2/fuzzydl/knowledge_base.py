@@ -544,7 +544,8 @@ class KnowledgeBase:
 
         # Cloner nominal nodes
         # kb.labels_with_nodes = copy.deepcopy(self.labels_with_nodes)
-        kb.labels_with_nodes = dict(self.labels_with_nodes)
+        # kb.labels_with_nodes = dict(self.labels_with_nodes)
+        kb.labels_with_nodes = {k: set(v) for k, v in self.labels_with_nodes.items()}
 
         # Clone milp
         kb.milp = self.milp.clone()
@@ -564,15 +565,25 @@ class KnowledgeBase:
             k: list(ass) for k, ass in self.blocked_exist_assertions.items()
         }
         # kb.directly_blocked_children = copy.deepcopy(self.directly_blocked_children)
-        kb.directly_blocked_children = dict(self.directly_blocked_children)
+        # kb.directly_blocked_children = dict(self.directly_blocked_children)
+        kb.directly_blocked_children = {
+            k: list(v) for k, v in self.directly_blocked_children.items()
+        }
         kb.num_defined_concepts = self.num_defined_concepts
         kb.num_defined_individuals = self.num_defined_individuals
         # kb.r_successors = copy.deepcopy(self.r_successors)
         # kb.x_prime_individuals = copy.deepcopy(self.x_prime_individuals)
         # kb.y_prime_individuals = copy.deepcopy(self.y_prime_individuals)
-        kb.r_successors = dict(self.r_successors)
-        kb.x_prime_individuals = dict(self.x_prime_individuals)
-        kb.y_prime_individuals = dict(self.y_prime_individuals)
+        # kb.r_successors = dict(self.r_successors)
+        # kb.x_prime_individuals = dict(self.x_prime_individuals)
+        # kb.y_prime_individuals = dict(self.y_prime_individuals)
+        kb.r_successors = {k: list(v) for k, v in self.r_successors.items()}
+        kb.x_prime_individuals = {
+            k: list(v) for k, v in self.x_prime_individuals.items()
+        }
+        kb.y_prime_individuals = {
+            k: list(v) for k, v in self.y_prime_individuals.items()
+        }
 
         # Clone data used by DL parser
         # kb.tmp_features = copy.deepcopy(self.tmp_features)
@@ -721,7 +732,8 @@ class KnowledgeBase:
         )
 
         # kb.processed_assertions = copy.deepcopy(self.processed_assertions)
-        kb.processed_assertions = set(self.processed_assertions)
+        # kb.processed_assertions = set(self.processed_assertions)
+        kb.processed_assertions = set()
 
         # kb.range_restrictions = {
         #     k: set([c.clone() for c in v]) for k, v in self.range_restrictions.items()
@@ -5999,7 +6011,9 @@ class KnowledgeBase:
         :type c: typing.Union[fuzzy_dl_owl2.fuzzydl.concept.owa_concept.OwaConcept, fuzzy_dl_owl2.fuzzydl.concept.qowa_concept.QowaConcept]
         """
 
-        if ConfigReader.OPTIMIZATIONS == 0 or not self.__linear_weights(c.weights):
+        if ConfigReader.OPTIMIZATIONS == 0 or not KnowledgeBase.__linear_weights(
+            c.weights
+        ):
             # exact encoding: sorting network (get_ordered_permutation)
             # New n variables x_i
             n: int = len(c.concepts)
