@@ -10269,8 +10269,8 @@ class KnowledgeBase:
         #     ass.get_individual(), self
         # )
 
-        self.solve_concept_complemented_assertion(
-            ass.get_individual(), None, typing.cast(QowaConcept, ass.get_concept())
+        self.solve_concept_assertion(
+            ass.get_individual(), typing.cast(QowaConcept, ass.get_concept())
         )
 
     def rule_complemented_quantified_owa(self, ass: Assertion) -> None:

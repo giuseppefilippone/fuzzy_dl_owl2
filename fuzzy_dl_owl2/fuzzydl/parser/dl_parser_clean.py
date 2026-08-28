@@ -735,6 +735,8 @@ class DLParser(object):
                 f"Error: Fuzzy concept {tokens[0]} cannot be used with the classical reasoner."
             )
         if tokens[1] == FuzzyDLKeyword.CRISP:
+            if len(tokens) < 6:
+                Util.error(f"crisp(k1, k2, a, b) requires four numbers.")
             DLParser.kb.add_concept(
                 tokens[0],
                 CrispConcreteConcept(
@@ -746,6 +748,8 @@ class DLParser(object):
                 ),
             )
         elif tokens[1] == FuzzyDLKeyword.LEFT_SHOULDER:
+            if len(tokens) < 6:
+                Util.error(f"left-shoulder(k1, k2, a, b) requires four numbers.")
             DLParser.kb.add_concept(
                 tokens[0],
                 LeftConcreteConcept(
@@ -758,6 +762,8 @@ class DLParser(object):
             )
             DLParser.kb.concrete_fuzzy_concepts = True
         elif tokens[1] == FuzzyDLKeyword.RIGHT_SHOULDER:
+            if len(tokens) < 6:
+                Util.error(f"right-shoulder(k1, k2, a, b) requires four numbers.")
             DLParser.kb.add_concept(
                 tokens[0],
                 RightConcreteConcept(
@@ -770,6 +776,8 @@ class DLParser(object):
             )
             DLParser.kb.concrete_fuzzy_concepts = True
         elif tokens[1] == FuzzyDLKeyword.TRIANGULAR:
+            if len(tokens) < 7:
+                Util.error(f"triangular(k1, k2, a, b, c) requires five numbers.")
             DLParser.kb.add_concept(
                 tokens[0],
                 TriangularConcreteConcept(
@@ -783,6 +791,8 @@ class DLParser(object):
             )
             DLParser.kb.concrete_fuzzy_concepts = True
         elif tokens[1] == FuzzyDLKeyword.TRAPEZOIDAL:
+            if len(tokens) < 8:
+                Util.error(f"trapezoidal(k1, k2, a, b, c, d) requires six numbers.")
             DLParser.kb.add_concept(
                 tokens[0],
                 TrapezoidalConcreteConcept(
@@ -797,6 +807,8 @@ class DLParser(object):
             )
             DLParser.kb.concrete_fuzzy_concepts = True
         elif tokens[1] == FuzzyDLKeyword.LINEAR:
+            if len(tokens) < 6:
+                Util.error(f"linear(k1, k2, a, b) requires four numbers.")
             DLParser.kb.add_concept(
                 tokens[0],
                 LinearConcreteConcept(
@@ -809,6 +821,10 @@ class DLParser(object):
             )
             DLParser.kb.concrete_fuzzy_concepts = True
         elif tokens[1] == FuzzyDLKeyword.MODIFIED:
+            if len(tokens) < 4:
+                Util.error(
+                    f"modified(modifier, concept) requires a modifier and a concept."
+                )
             mod: Modifier = DLParser._get_modifier(tokens[2])
             if DLParser.kb.concrete_concepts.get(tokens[3]) is None:
                 Util.error(

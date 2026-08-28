@@ -7,6 +7,7 @@ from fuzzy_dl_owl2.fuzzydl.concept.concrete.fuzzy_concrete_concept import (
 from fuzzy_dl_owl2.fuzzydl.concept.operator_concept import OperatorConcept
 from fuzzy_dl_owl2.fuzzydl.concept.owa_concept import OwaConcept
 from fuzzy_dl_owl2.fuzzydl.util.constants import ConceptType
+from fuzzy_dl_owl2.fuzzydl.util.util import Util
 
 
 class QowaConcept(OwaConcept):
@@ -87,11 +88,22 @@ class QowaConcept(OwaConcept):
             return
         if self.weights is None:
             self.weights = []
+        # Clear existing weights before recalculating
+        self.weights.clear()
         previous: float = 0.0
         for i in range(1, n + 1):
-            w: float = i / n
-            self.weights.append(self.quantifier.get_membership_degree(w - previous))
+            # Weight for the current step
+            # w = Q(i / n)
+            w: float = self.quantifier.get_membership_degree(i / n)
+            # Calculate the weight as the difference between the current and previous membership degrees
+            # w_i = Q(i / n) - Q((i-1) / n), with Q(0) assumed to be 0
+            self.weights.append(w - previous)
             previous: float = w
+
+        if any(w < 0 for w in self.weights) or abs(sum(self.weights) - 1.0) > 1e-9:
+            Util.error(
+                f"Quantifier {self.quantifier} must be increasing with Q(0) = 0 and Q(1) = 1 (got weights {self.weights})."
+            )
 
     def replace(self, a: Concept, c: Concept) -> typing.Optional[Concept]:
         """
@@ -107,7 +119,7 @@ class QowaConcept(OwaConcept):
         :rtype: typing.Optional[Concept]
         """
 
-        return -OwaConcept(self.quantifier, [ci.replace(a, c) for ci in self.concepts])
+        return QowaConcept(self.quantifier, [ci.replace(a, c) for ci in self.concepts])
 
     def compute_name(self) -> str:
         """
@@ -122,14 +134,14 @@ class QowaConcept(OwaConcept):
 
     def __neg__(self) -> Concept:
         """
-        Returns the logical negation of the current concept instance, corresponding to the unary minus operator. The method constructs an intermediate `OwaConcept` using the instance's weights and concepts, then applies a logical NOT operation via `OperatorConcept.not_`. This results in a new `Concept` object representing the complement of the original logic without modifying the original instance.
+        Returns the logical negation of the current concept instance, corresponding to the unary minus operator. The method constructs an intermediate `QowaConcept` using the instance's quantifier and concepts, then applies a logical NOT operation via `OperatorConcept.not_`. This results in a new `Concept` object representing the complement of the original logic without modifying the original instance.
 
         :return: Returns a new Concept representing the logical negation of the current instance.
 
         :rtype: Concept
         """
 
-        return OperatorConcept.not_(OwaConcept(self.weights, self.concepts))
+        return OperatorConcept.not_(QowaConcept(self.quantifier, self.concepts))
 
     def __and__(self, value: typing.Self) -> typing.Self:
         """
@@ -171,5 +183,10 @@ class QowaConcept(OwaConcept):
         # return hash(str(self))
         # return id(self)
         return hash(
-            (tuple(self.weights), tuple(hash(c) for c in self.concepts), self.name, hash(self.type))
+            (
+                tuple(self.weights),
+                tuple(hash(c) for c in self.concepts),
+                self.name,
+                hash(self.type),
+            )
         )
