@@ -15,10 +15,10 @@ project = "Fuzzy DL OWL 2"
 copyright = "2025, Giuseppe Filippone"
 author = "Giuseppe Filippone"
 # The short X.Y version
-version = "1.0.28"
+version = "1.0.29"
 
 # The full version, including alpha/beta/rc tags
-release = "1.0.28"
+release = "1.0.29"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

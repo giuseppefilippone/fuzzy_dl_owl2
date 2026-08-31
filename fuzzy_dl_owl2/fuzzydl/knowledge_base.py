@@ -11374,11 +11374,23 @@ class DatatypeReasoner:
                 ind, fun, x_b, x_is_c, x_f, k, InequalityType.LESS_THAN, kb
             )
         elif type == InequalityType.GREATER_THAN:
+            # kb.milp.add_new_constraint(
+            #     Expression(
+            #         constants.MAXVAL2,
+            #         Term(1.0, x_b),
+            #         Term(-constants.MAXVAL2, x_f),
+            #     ),
+            #     InequalityType.GREATER_THAN,
+            #     deg,
+            # )
+            # x_b >= deg - M2(1 - x_f) - M2(1 - x_is_c)
+            # x_b + 2 M2 - M2 x_f - M2 x_is_c >= deg
             kb.milp.add_new_constraint(
                 Expression(
-                    constants.MAXVAL2,
+                    2 * constants.MAXVAL2,
                     Term(1.0, x_b),
                     Term(-constants.MAXVAL2, x_f),
+                    Term(-constants.MAXVAL2, x_is_c),
                 ),
                 InequalityType.GREATER_THAN,
                 deg,
@@ -11394,11 +11406,23 @@ class DatatypeReasoner:
                 deg,
             )
         elif type == InequalityType.LESS_THAN:
+            # kb.milp.add_new_constraint(
+            #     Expression(
+            #         -constants.MAXVAL2,
+            #         Term(1.0, x_b),
+            #         Term(constants.MAXVAL2, x_f),
+            #     ),
+            #     InequalityType.LESS_THAN,
+            #     deg,
+            # )
+            # x_b <= deg + M2(1 - x_f) + M2(1 - x_is_c)
+            # x_b - 2 M2 + M2 x_f + M2 x_is_c <= deg
             kb.milp.add_new_constraint(
                 Expression(
-                    -constants.MAXVAL2,
+                    -2 * constants.MAXVAL2,
                     Term(1.0, x_b),
                     Term(constants.MAXVAL2, x_f),
+                    Term(constants.MAXVAL2, x_is_c),
                 ),
                 InequalityType.LESS_THAN,
                 deg,
@@ -11452,22 +11476,45 @@ class DatatypeReasoner:
             )
         elif type == InequalityType.GREATER_THAN:
             if isinstance(n, constants.NUMBER):
+                # kb.milp.add_new_constraint(
+                #     Expression(
+                #         constants.MAXVAL,
+                #         Term(1.0, x_b),
+                #         Term(-constants.MAXVAL, x_f),
+                #         Term(-n, x_f),
+                #     ),
+                #     InequalityType.GREATER_THAN,
+                # )
+                # x_b >= n - M(1 - x_f) - M(1 - x_is_c)
+                # 2 M - n + x_b - M x_f - M x_is_c >= 0
                 kb.milp.add_new_constraint(
                     Expression(
-                        constants.MAXVAL,
+                        2.0 * constants.MAXVAL - n,
                         Term(1.0, x_b),
                         Term(-constants.MAXVAL, x_f),
-                        Term(-n, x_f),
+                        Term(-constants.MAXVAL, x_is_c),
                     ),
                     InequalityType.GREATER_THAN,
                 )
             elif isinstance(n, Variable):
+                # kb.milp.add_new_constraint(
+                #     Expression(
+                #         constants.MAXVAL2,
+                #         Term(-1.0, n),
+                #         Term(1.0, x_b),
+                #         Term(-constants.MAXVAL2, x_f),
+                #     ),
+                #     InequalityType.GREATER_THAN,
+                # )
+                # x_b >= n - M2(1 - x_f) - M2(1 - x_is_c)
+                # 2 M2 - n + x_b - M2 x_f - M2 x_is_c >= 0
                 kb.milp.add_new_constraint(
                     Expression(
-                        constants.MAXVAL2,
+                        2.0 * constants.MAXVAL2,
                         Term(-1.0, n),
                         Term(1.0, x_b),
                         Term(-constants.MAXVAL2, x_f),
+                        Term(-constants.MAXVAL2, x_is_c),
                     ),
                     InequalityType.GREATER_THAN,
                 )
@@ -11481,22 +11528,45 @@ class DatatypeReasoner:
                 )
         elif type == InequalityType.LESS_THAN:
             if isinstance(n, constants.NUMBER):
+                # kb.milp.add_new_constraint(
+                #     Expression(
+                #         -constants.MAXVAL,
+                #         Term(1.0, x_b),
+                #         Term(constants.MAXVAL, x_f),
+                #         Term(-n, x_f),
+                #     ),
+                #     InequalityType.LESS_THAN,
+                # )
+                # x_b <= n + M(1 - x_f) + M(1 - x_is_c)
+                # - 2 M - n + x_b + M x_f + M x_is_c <= 0
                 kb.milp.add_new_constraint(
                     Expression(
-                        -constants.MAXVAL,
+                        -2.0 * constants.MAXVAL - n,
                         Term(1.0, x_b),
                         Term(constants.MAXVAL, x_f),
-                        Term(-n, x_f),
+                        Term(constants.MAXVAL, x_is_c),
                     ),
                     InequalityType.LESS_THAN,
                 )
             elif isinstance(n, Variable):
+                # kb.milp.add_new_constraint(
+                #     Expression(
+                #         -constants.MAXVAL2,
+                #         Term(-1.0, n),
+                #         Term(1.0, x_b),
+                #         Term(constants.MAXVAL2, x_f),
+                #     ),
+                #     InequalityType.LESS_THAN,
+                # )
+                # x_b <= n + M2(1 - x_f) + M2(1 - x_is_c)
+                # - 2 M2 - n + x_b + M2 x_f + M2 x_is_c <= 0
                 kb.milp.add_new_constraint(
                     Expression(
-                        -constants.MAXVAL2,
+                        -2.0 * constants.MAXVAL2,
                         Term(-1.0, n),
                         Term(1.0, x_b),
                         Term(constants.MAXVAL2, x_f),
+                        Term(constants.MAXVAL2, x_is_c),
                     ),
                     InequalityType.LESS_THAN,
                 )
@@ -11571,12 +11641,32 @@ class DatatypeReasoner:
             elif t.get_type() == ConcreteFeatureType.BOOLEAN:
                 x_b.set_binary_variable()
                 value: int = 1 if n == True else 0
+                # kb.milp.add_new_constraint(
+                #     Expression(1.0 + value, Term(-1.0, x_b), Term(-1.0, x_f)),
+                #     InequalityType.GREATER_THAN,
+                # )
+                # x_b <= value + (1 - x_f) + (1 - x_is_c)
+                # value + 2 - x_f - x_is_c - x_b >= 0
                 kb.milp.add_new_constraint(
-                    Expression(1.0 + value, Term(-1.0, x_b), Term(-1.0, x_f)),
+                    Expression(
+                        2.0 + value,
+                        Term(-1.0, x_b),
+                        Term(-1.0, x_f),
+                        Term(-1.0, x_is_c),
+                    ),
                     InequalityType.GREATER_THAN,
                 )
+                # kb.milp.add_new_constraint(
+                #     Expression(1.0 - value, Term(1.0, x_b), Term(-1.0, x_f)),
+                #     InequalityType.GREATER_THAN,
+                # )
+
+                # x_b >= value - (1 - x_f) - (1 - x_is_c)
+                # 2 - value + x_b - x_f - x_is_c >= 0
                 kb.milp.add_new_constraint(
-                    Expression(1.0 - value, Term(1.0, x_b), Term(-1.0, x_f)),
+                    Expression(
+                        2.0 - value, Term(1.0, x_b), Term(-1.0, x_f), Term(-1.0, x_is_c)
+                    ),
                     InequalityType.GREATER_THAN,
                 )
             else:

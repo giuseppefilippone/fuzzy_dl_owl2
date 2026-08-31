@@ -1032,6 +1032,14 @@ class DLParser(object):
                 return DLParser.kb.add_datatype_restriction(
                     restriction_type, tokens[2], role
                 )
+            if feature_type == ConcreteFeatureType.BOOLEAN:
+                if tokens[2].lower() not in ("true", "false"):
+                    Util.error(
+                        f"Error: Found '{tokens[2]}' instead of a boolean value."
+                    )
+                return DLParser.kb.add_datatype_restriction(
+                    restriction_type, tokens[2].lower() == "true", role
+                )
             if DLParser.kb.check_fuzzy_number_concept_exists(tokens[2]):
                 return DLParser.kb.add_datatype_restriction(
                     restriction_type,
