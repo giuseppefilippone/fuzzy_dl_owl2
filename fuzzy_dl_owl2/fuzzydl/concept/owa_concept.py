@@ -80,19 +80,21 @@ class OwaConcept(Concept, HasWeightedConceptsInterface):
 
     def replace(self, a: Concept, c: Concept) -> typing.Optional[Concept]:
         """
-        Returns a new instance of `OwaConcept` where every sub-concept within `self.concepts` has been transformed by recursively replacing occurrences of concept `a` with concept `c`. The method preserves the original weights of the current instance while constructing the new object, but applies a logical negation to the final result before returning it. This operation does not modify the original object in place, ensuring that side effects are avoided.
+        Returns a new instance of `OwaConcept` where every sub-concept within `self.concepts` has been transformed by recursively replacing occurrences of concept `a` with concept `c`. The method preserves the original weights of the current instance while constructing the new object. This operation does not modify the original object in place, ensuring that side effects are avoided.
 
         :param a: The concept to be replaced.
         :type a: Concept
         :param c: The concept to replace `a` with.
         :type c: Concept
 
-        :return: The negation of the concept resulting from replacing all occurrences of `a` with `c`.
+        :return: The concept resulting from replacing all occurrences of `a` with `c`.
 
         :rtype: typing.Optional[Concept]
         """
 
-        return -OwaConcept(self.weights, [ci.replace(a, c) for ci in self.concepts])
+        # Deliberate divergence from the Java oracle: its replace() toggles
+        # OWA -> NOT_OWA (a copy-paste of complement()). Polarity must be preserved.
+        return OwaConcept(self.weights, [ci.replace(a, c) for ci in self.concepts])
 
     def compute_name(self) -> str:
         """

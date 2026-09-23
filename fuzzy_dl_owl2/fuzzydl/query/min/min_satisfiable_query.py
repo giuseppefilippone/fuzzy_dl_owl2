@@ -30,7 +30,7 @@ class MinSatisfiableQuery(SatisfiableQuery):
 
     def __init__(self, *args) -> None:
         """
-        Initializes the query object by accepting either a single `Concept` or a `Concept` paired with an `Individual`. The method validates the input types and argument count, raising an assertion error if the first argument is not a `Concept` or if the second argument (when provided) is not an `Individual`. Depending on the number of arguments, the initialization logic is delegated to private helper methods to configure the internal state for the specific query type.
+        Initializes the query object by accepting either a single `Concept` or a `Concept` paired with an `Individual`. The method validates the input types and argument count, raising an assertion error if the first argument is not a `Concept` or if the second argument (when provided) is not an `Individual` or `None`. Depending on the number of arguments, the initialization logic is delegated to private helper methods to configure the internal state for the specific query type.
 
         :param args: Variable positional arguments representing either a single Concept or a Concept paired with an Individual.
         :type args: typing.Any
@@ -41,7 +41,7 @@ class MinSatisfiableQuery(SatisfiableQuery):
         if len(args) == 1:
             self.__min_sat_query_init_1(*args)
         else:
-            assert isinstance(args[1], Individual)
+            assert args[1] is None or isinstance(args[1], Individual)
             self.__min_sat_query_init_2(*args)
 
     def __min_sat_query_init_1(self, c: Concept) -> None:

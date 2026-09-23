@@ -1,0 +1,6 @@
+(define-modifier very linear-modifier(2))
+
+(related a b R)
+(instance b C 0.9)
+
+(min-instance? a (some R C) )

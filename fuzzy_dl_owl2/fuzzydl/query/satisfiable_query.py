@@ -57,10 +57,10 @@ class SatisfiableQuery(Query):
 
     def __satisfiable_query_init_2(self, c: Concept) -> None:
         """
-        Initializes the query object to test the general satisfiability of a given fuzzy concept. This method serves as an alternative constructor that delegates to the primary initialization routine, passing `None` as the secondary argument to indicate that the check is not bound to a specific individual or context. By invoking the main initialization logic with these parameters, it configures the internal state necessary to determine if the concept is logically consistent within the current knowledge base.
+        Initializes the query object to test the general satisfiability of a given fuzzy concept. This method serves as an alternative constructor that delegates to the primary initialization routine, passing `None` as the secondary argument to indicate that the check is not bound to a specific individual or context. The private (name-mangled) initializer is called directly — mirroring Java's `this(c, null)` — instead of `self.__init__`, which would dispatch virtually into a subclass constructor whose two-argument branch may reject `None`.
 
         :param c: The fuzzy concept to be checked for satisfiability.
         :type c: Concept
         """
 
-        self.__init__(c, None)
+        self.__satisfiable_query_init_1(c, None)

@@ -1798,7 +1798,9 @@ class DLParserFast(object):
             raise
         except Exception as e:
             Util.warning(traceback.format_exc())
-            raise FuzzyOntologyException(str(e)) from e
+            # Keep the original exception type in the message: a bare
+            # AssertionError would otherwise yield an empty str(e).
+            raise FuzzyOntologyException(f"{type(e).__name__}: {e}") from e
         finally:
             if gc_was_enabled:
                 gc.enable()

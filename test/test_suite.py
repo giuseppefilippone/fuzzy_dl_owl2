@@ -18,12 +18,14 @@ from test_implies_role import TestImpliesRole
 from test_inconsistency import TestInconsistency
 from test_instance import TestInstance
 from test_inverse import TestInverse
+from test_membership import TestMembership
 from test_modifier import TestModifier
 from test_not import TestNot
 from test_or import TestOr
 from test_reflexive import TestReflexive
 from test_related import TestRelated
 from test_rough_sets import TestRoughSets
+from test_replace import TestReplace
 from test_sat import TestSat
 from test_self import TestSelf
 from test_show_statement import TestShowStatement
@@ -55,12 +57,14 @@ def suite():
     suite.addTests(loader.loadTestsFromTestCase(TestInconsistency))
     suite.addTests(loader.loadTestsFromTestCase(TestInstance))
     suite.addTests(loader.loadTestsFromTestCase(TestInverse))
+    suite.addTests(loader.loadTestsFromTestCase(TestMembership))
     suite.addTests(loader.loadTestsFromTestCase(TestModifier))
     suite.addTests(loader.loadTestsFromTestCase(TestNot))
     suite.addTests(loader.loadTestsFromTestCase(TestOr))
     suite.addTests(loader.loadTestsFromTestCase(TestReflexive))
     suite.addTests(loader.loadTestsFromTestCase(TestRelated))
     suite.addTests(loader.loadTestsFromTestCase(TestRoughSets))
+    suite.addTests(loader.loadTestsFromTestCase(TestReplace))
     suite.addTests(loader.loadTestsFromTestCase(TestSat))
     suite.addTests(loader.loadTestsFromTestCase(TestSelf))
     suite.addTests(loader.loadTestsFromTestCase(TestShowStatement))

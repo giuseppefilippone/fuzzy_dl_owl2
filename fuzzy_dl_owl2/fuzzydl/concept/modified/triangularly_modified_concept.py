@@ -36,19 +36,21 @@ class TriangularlyModifiedConcept(ModifiedConcept):
 
     def replace(self, a: Concept, c: Concept) -> Concept:
         """
-        Performs a substitution operation by replacing every instance of concept `a` with concept `c` within the underlying `curr_concept`. This method preserves the current `modifier` and constructs a new `TriangularlyModifiedConcept` instance containing the updated underlying concept. The final result is the logical negation of this newly constructed instance, ensuring that the original object remains unmodified.
+        Performs a substitution operation by replacing every instance of concept `a` with concept `c` within the underlying `curr_concept`. This method preserves the current `modifier` and constructs a new `TriangularlyModifiedConcept` instance containing the updated underlying concept, leaving the original object unmodified.
 
         :param a: The concept to be replaced within the current concept structure.
         :type a: Concept
         :param c: The concept to substitute for the target concept `a`.
         :type c: Concept
 
-        :return: A new Concept representing the result of replacing concept `a` with concept `c` within the current concept, preserving the existing modification context and applying a negation.
+        :return: A new Concept representing the result of replacing concept `a` with concept `c` within the current concept, preserving the existing modification context.
 
         :rtype: Concept
         """
 
-        return -TriangularlyModifiedConcept(
+        # Deliberate divergence from the Java oracle: its replace() negates the
+        # result (a copy-paste of complement()). Polarity must be preserved.
+        return TriangularlyModifiedConcept(
             self.curr_concept.replace(a, c), self.modifier
         )
 

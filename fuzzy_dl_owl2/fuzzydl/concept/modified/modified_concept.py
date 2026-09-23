@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import typing
-from abc import ABC
+from abc import ABC, abstractmethod
 
 from fuzzy_dl_owl2.fuzzydl.concept.concept import Concept
 from fuzzy_dl_owl2.fuzzydl.concept.interface.has_concept_interface import (
@@ -103,21 +103,21 @@ class ModifiedConcept(Concept, HasConceptInterface, ABC):
 
         return self.curr_concept.is_concrete()
 
+    @abstractmethod
     def replace(self, concept1: Concept, concept2: Concept) -> Concept:
         """
-        This method serves as a no-operation implementation for the replacement logic, returning the current instance unchanged regardless of the input concepts. Although the signature suggests substituting `concept1` with `concept2`, this specific implementation indicates that the `ModifiedConcept` does not support or require internal modifications of this nature. Consequently, invoking this method has no side effects on the object's state or the provided arguments.
+        Returns a new concept in which every occurrence of `concept1` is replaced by `concept2`. Abstract, mirroring the Java oracle (``ModifiedConcept.replace`` is abstract there): each concrete modified concept must implement its own substitution logic, so a missing override fails fast instead of silently ignoring the substitution.
 
         :param concept1: The concept to be replaced.
         :type concept1: Concept
         :param concept2: The concept to replace the first argument with.
         :type concept2: Concept
 
-        :return: Returns the instance itself after replacing `concept1` with `concept2`.
+        :return: A new Concept with `concept1` replaced by `concept2`.
 
         :rtype: Concept
         """
-
-        return self
+        ...
 
     def __neg__(self) -> typing.Self:
         """

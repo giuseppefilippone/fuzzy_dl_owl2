@@ -1,0 +1,11 @@
+(define-fuzzy-logic lukasiewicz)
+
+(define-fuzzy-concept HighX triangular(0, 100, 20, 50, 80))
+(functional hasX)
+(range hasX *integer* 0 100)
+(define-concept Hot (some hasX HighX))
+
+(instance a Hot 0.6)
+(instance b Hot)
+
+(min-sat? Hot)

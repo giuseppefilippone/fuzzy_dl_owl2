@@ -1173,36 +1173,37 @@ class OperatorConcept(Concept, HasConceptsInterface):
 
     def replace(self, a: Concept, c: Concept) -> Concept:
         """
-        Recursively replaces occurrences of concept `a` with concept `c` within the structure of the current `OperatorConcept` and transforms the current node into the type of `c`. The method first traverses all child concepts to perform the replacement. If `c` is a logical operator such as AND, OR, or their fuzzy logic variants (Gödel, Łukasiewicz), the method returns a new `OperatorConcept` of that specific type containing the updated children. If `c` is a COMPLEMENT, the method checks if the current concept's first child matches `a`; if so, it returns the negation of `c`, otherwise it returns the current concept unchanged without modifying its children. If `c` is an atomic concept or an unsupported type, the method implicitly returns `None`.
+        Recursively replaces occurrences of concept `a` with concept `c` within the structure of the current `OperatorConcept`. The method traverses all child concepts to perform the replacement, then rebuilds a node of the SAME operator type as the receiver with the updated children, preserving polarity. For a COMPLEMENT node the (single) child is replaced and re-negated via `not_`, which also simplifies double negations.
 
         :param a: The concept to be replaced.
         :type a: Concept
-        :param c: The concept to substitute in place of `a`. Its type determines the operator type of the resulting concept structure.
+        :param c: The concept to substitute in place of `a`.
         :type c: Concept
 
-        :return: A new Concept where all occurrences of `a` are recursively replaced by `c`, with the operator type of the resulting concept determined by the type of `c`.
+        :return: A new Concept where all occurrences of `a` are recursively replaced by `c`, with the operator type of the receiver preserved.
 
         :rtype: Concept
         """
 
-        c_type: ConceptType = c.type
+        # Deliberate divergence from the Java oracle: its replace() dispatches on
+        # the REPLACEMENT's type (a copy-paste of the complement() switch), which
+        # returns null for atomic replacements and mangles polarity. Substitution
+        # must preserve the receiver's own operator type.
         replaced_concepts: list[Concept] = [ci.replace(a, c) for ci in self.concepts]
-        if c_type == ConceptType.AND:
-            return OperatorConcept.and_(replaced_concepts)
-        elif c_type == ConceptType.GOEDEL_AND:
-            return OperatorConcept.goedel_and(replaced_concepts)
-        elif c_type == ConceptType.LUKASIEWICZ_AND:
-            return OperatorConcept.lukasiewicz_and(replaced_concepts)
-        if c_type == ConceptType.OR:
-            return OperatorConcept.or_(replaced_concepts)
-        elif c_type == ConceptType.GOEDEL_AND:
-            return OperatorConcept.goedel_or(replaced_concepts)
-        elif c_type == ConceptType.LUKASIEWICZ_AND:
-            return OperatorConcept.lukasiewicz_or(replaced_concepts)
-        elif c_type == ConceptType.COMPLEMENT:
-            if self.concepts[0] == a:
-                return -c
-            return self
+        if self.type == ConceptType.AND:
+            return OperatorConcept.and_(*replaced_concepts)
+        elif self.type == ConceptType.GOEDEL_AND:
+            return OperatorConcept.goedel_and(*replaced_concepts)
+        elif self.type == ConceptType.LUKASIEWICZ_AND:
+            return OperatorConcept.lukasiewicz_and(*replaced_concepts)
+        elif self.type == ConceptType.OR:
+            return OperatorConcept.or_(*replaced_concepts)
+        elif self.type == ConceptType.GOEDEL_OR:
+            return OperatorConcept.goedel_or(*replaced_concepts)
+        elif self.type == ConceptType.LUKASIEWICZ_OR:
+            return OperatorConcept.lukasiewicz_or(*replaced_concepts)
+        # COMPLEMENT (the only remaining OperatorConcept type)
+        return OperatorConcept.not_(replaced_concepts[0])
 
     def compute_name(self) -> typing.Optional[str]:
         """

@@ -7468,7 +7468,7 @@ class KnowledgeBase:
         self, ind: Individual, concept: OperatorConcept, degree: Degree
     ) -> None:
         """
-        Processes a complemented assertion involving a modified concept for a specific individual within the knowledge base. This method validates that the provided concept is an `OperatorConcept` wrapping a `ModifiedConcept` or `ModifiedConcreteConcept`, raising an error if the structure is invalid. It constructs an `Assertion` object from the individual, concept, and degree, and subsequently delegates the resolution logic to the `rule_complemented_complex_assertion` method to update the knowledge base state.
+        Processes a complemented assertion involving a modified concept for a specific individual within the knowledge base. This method validates that the provided concept is an `OperatorConcept` wrapping a `ModifiedConcept` or `ModifiedConcreteConcept`, raising an error if the structure is invalid. It constructs an `Assertion` object from the individual, concept, and degree, and delegates the resolution logic to the `rule_complemented_complex_assertion` method to update the knowledge base state. As a post-step (a deliberate divergence from the Java oracle, see the inline comment), it additionally re-asserts the complement of the modifier's child concept whenever that child is complex or TBox-defined, so that the child's complement rule fires and its degree variable receives a proper lower bound.
 
         :param ind: The individual entity serving as the subject of the complemented modifier assertion.
         :type ind: Individual
@@ -7483,6 +7483,42 @@ class KnowledgeBase:
         )
         ass: Assertion = Assertion(ind, concept, degree)
         self.rule_complemented_complex_assertion(ass)
+
+        # DELIBERATE DIVERGENCE FROM THE JAVA ORACLE (which shares this defect):
+        # rule_complemented_complex_assertion only re-asserts the POSITIVE
+        # a:(mod C) and links it to x_{a:NOT (mod C)} via x + x_not = 1.
+        # For a COMPLEX child C (e.g. a some/all restriction), the positive
+        # assertion alone never yields a LOWER bound on x_{a:C}: that bound
+        # comes from the complement rule of C, which nobody fires, so
+        # x_{a:NOT C} floats to 1, x_{a:C} = 0 and (mod C) collapses to 0 on
+        # min-instance queries. Since (mod C)(x) = f_mod(C(x)) pointwise, the
+        # complement of the modifier's child must also be enforced. We push
+        # a : NOT C >= x_{a:NOT C}, so the complement rule for C actually
+        # fires (mirroring rule_complemented_complex_assertion). PRIMITIVE
+        # atomic, complemented-primitive-atomic and concrete children are
+        # skipped: the ABox (or the membership function) already constrains
+        # their variable directly. A TBox-DEFINED atom (define-concept, or a
+        # synonym) is NOT skipped: its bounds only come from unfolding the
+        # definition, which requires the complement rule to fire (e.g.
+        # D = (some f HighX) would otherwise still collapse through the
+        # defined-concept indirection).
+        atom: Concept = concept.get_atom()
+        if isinstance(atom, ModifiedConcept):
+            inner: Concept = atom.curr_concept
+            skip: bool = self.is_concrete_type(inner)
+            if not skip and (inner.is_atomic() or inner.is_complemented_atomic()):
+                atom_name: str = str(inner if inner.is_atomic() else -inner)
+                skip = (
+                    atom_name not in self.t_definitions
+                    and atom_name not in self.t_synonyms
+                )
+            if not skip:
+                not_inner: Concept = -inner
+                x_not_inner: Variable = self.milp.get_variable(ind, not_inner)
+                self.rule_complemented(ind, not_inner)
+                self.add_assertion(
+                    Assertion(ind, not_inner, DegreeVariable.get_degree(x_not_inner))
+                )
 
     def solve_linear_modifier_assertion(
         self, ind: Individual, con: Concept, modifier: LinearModifier

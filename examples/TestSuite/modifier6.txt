@@ -1,0 +1,11 @@
+(define-modifier very linear-modifier(2))
+(define-fuzzy-concept HighX right-shoulder(0,100,20,60))
+
+(functional f)
+(range f *integer* 0 100)
+
+(define-concept D (some f HighX))
+
+(instance a (= f 30))
+
+(min-instance? a (very D) )

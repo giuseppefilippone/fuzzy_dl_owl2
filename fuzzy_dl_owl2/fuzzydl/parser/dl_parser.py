@@ -2751,10 +2751,19 @@ class DLParser(object):
             | constraints
             | show_statements
             | crisp_declarations
+            # `queries` must be tried before `concept`: otherwise a two-token
+            # query such as "(max-sat? C)" is swallowed by the modifier-concept
+            # alternative and fails with "max-sat? modifier is not defined".
+            # MatchFirst backtracks on failure, so non-query forms still
+            # reach `concept`. Caveat: pp.one_of is not keyword-bounded and
+            # identifiers may contain '?', so a modifier whose name extends
+            # a query keyword (e.g. "max-sat?strong") would prefix-match as
+            # a query in this legacy parser; the fast parser tokenizes whole
+            # tokens and is unaffected.
+            | queries
             | concept
             | fuzzy_similarity
             | fuzzy_equivalence
-            | queries
         )
         return pp.OneOrMore(gformula)
 

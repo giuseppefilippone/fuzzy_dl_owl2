@@ -188,7 +188,10 @@ class TrapezoidalConcreteConcept(FuzzyConcreteConcept):
             return 0.0
         if self.b <= x <= self.c:
             return 1.0
-        if x >= self.a:
+        # Deliberate divergence from the Java oracle (which shares this defect):
+        # its third branch tests "x >= a", always true at this point, so the
+        # descending side (c, d) returned the ascending slope (x-a)/(b-a) > 1.
+        if x < self.b:
             return (x - self.a) / (self.b - self.a)
         return (self.d - x) / (self.d - self.c)
 

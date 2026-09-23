@@ -48,7 +48,10 @@ class LinearlyModifiedConcept(ModifiedConcept):
         :rtype: typing.Self
         """
 
-        return -LinearlyModifiedConcept(self.curr_concept.replace(a, c), self.modifier)
+        # Deliberate divergence from the Java oracle: its replace() negates the
+        # result (a copy-paste of complement()), violating the polarity-preserving
+        # contract every other Concept.replace follows. Dead code today; fixed here.
+        return LinearlyModifiedConcept(self.curr_concept.replace(a, c), self.modifier)
 
     def __neg__(self) -> Concept:
         """
