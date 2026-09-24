@@ -5,16 +5,20 @@ fuzzy_dl_owl2.fuzzydl.concept.modified.triangularly_modified_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A specialized class representing a fuzzy logic concept that has been transformed by a triangular modifier to adjust its membership degree.
+A fuzzy description-logic concept that wraps a base concept with a triangular modifier, non-linearly reshaping its degree of membership while remaining fully composable with other concepts through standard logical operators.
 
 
 Description
 -----------
 
 
-The implementation extends the general framework for modified concepts to specifically handle triangular transformations, which are used to non-linearly adjust the degree of membership or satisfaction of a base concept. By associating a specific modifier with a conceptual entity, the structure allows for the dynamic alteration of fuzzy logic values while maintaining the integrity of the original concept hierarchy. Logical operations such as negation, conjunction, and disjunction are supported through delegation to a central operator handler, enabling these modified concepts to participate in complex logical expressions. Furthermore, the design includes mechanisms for cloning the instance and recursively replacing sub-concepts, with the replacement process specifically applying a logical negation to the updated structure to ensure consistent behavior during manipulation. Hashing is implemented based on the internal attributes to facilitate the use of these objects within collections that require unique identification.
+TriangularlyModifiedConcept belongs to a fuzzy OWL 2 reasoning framework in which concepts carry degrees of satisfaction in the interval [0, 1] rather than crisp truth values, and pairing a concept with a modifier is the mechanism behind linguistic hedges such as "very" or "slightly". The subclass stays deliberately thin: storage of the wrapped concept and its modifier is delegated entirely to the ModifiedConcept superclass, so all added behaviour lives in a handful of small, focused methods. Composition follows Python's operator-overloading idiom, with unary minus, the ampersand, and the pipe building negations, conjunctions, and disjunctions by delegating to a shared OperatorConcept helper, which lets modified concepts blend seamlessly into larger logical expressions; every operation returns a fresh object rather than mutating its operands, giving the whole design an immutable flavour. Structural rewriting is handled by a recursive substitution method that swaps one sub-concept for another while preserving the modifier, and it deliberately departs from the original Java implementation, whose version apparently negated the result through a copy-paste of the complement logic — polarity is intentionally preserved here instead. Cloning follows the same philosophy, producing a shallow copy that shares the underlying concept and modifier with the original. Finally, hashing is derived from the structural identity of the components — the wrapped concept, the modifier, the name, and the type — rather than from object identity, so distinct instances representing the same logical construct behave correctly when used in sets and dictionaries.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -119,15 +123,13 @@ Module Contents
 
    .. py:method:: replace(a: fuzzy_dl_owl2.fuzzydl.concept.concept.Concept, c: fuzzy_dl_owl2.fuzzydl.concept.concept.Concept) -> fuzzy_dl_owl2.fuzzydl.concept.concept.Concept
 
-      Performs a substitution operation by replacing every instance of concept `a` with concept `c` within the underlying `curr_concept`. This method preserves the current `modifier` and constructs a new `TriangularlyModifiedConcept` instance containing the updated underlying concept. The final result is the logical negation of this newly constructed instance, ensuring that the original object remains unmodified.
+      Performs a substitution operation by replacing every instance of concept `a` with concept `c` within the underlying `curr_concept`. This method preserves the current `modifier` and constructs a new `TriangularlyModifiedConcept` instance containing the updated underlying concept, leaving the original object unmodified.
 
       :param a: The concept to be replaced within the current concept structure.
       :type a: Concept
       :param c: The concept to substitute for the target concept `a`.
       :type c: Concept
 
-      :return: A new Concept representing the result of replacing concept `a` with concept `c` within the current concept, preserving the existing modification context and applying a negation.
+      :return: A new Concept representing the result of replacing concept `a` with concept `c` within the current concept, preserving the existing modification context.
 
       :rtype: Concept
-
-

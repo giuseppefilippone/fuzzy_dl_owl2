@@ -5,16 +5,22 @@ fuzzy_dl_owl2.fuzzydl.concept.concrete.trapezoidal_concrete_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Defines a trapezoidal concrete concept that models fuzzy membership degrees using a geometric shape defined by four distinct parameters.
+A trapezoidal fuzzy concrete concept that evaluates membership degrees through a four-breakpoint trapezoidal membership function, integrating into fuzzy description-logic reasoning with parameter validation, cloning, hashing, and overloaded logical operators.
 
 
 Description
 -----------
 
 
-The implementation extends the base fuzzy concrete concept to represent a specific type of membership function characterized by a trapezoidal shape. By utilizing four distinct parameters to define the support and core intervals, the logic ensures that membership degrees transition linearly from zero to one and back to zero, creating a plateau of full certainty in the center. Initialization includes strict validation to guarantee that the geometric parameters are ordered correctly and that the definition domain fully encompasses the support interval, preventing invalid mathematical states. Beyond calculating membership for specific values, the class integrates with broader logical operations by delegating conjunctions, disjunctions, and negations to an operator handler, allowing these concepts to be combined within complex fuzzy expressions. Property accessors and a cloning mechanism are provided to manage the internal state and facilitate the creation of independent instances without side effects.
+The **TrapezoidalConcreteConcept** class represents a fuzzy set whose membership function rises linearly from zero at the lower support bound, plateaus at full membership across the core, and falls linearly back to zero. Its shape is pinned down by a universe of discourse [k1, k2] together with four breakpoints a, b, c, and d, and the constructor enforces the strict ordering a ≤ b ≤ c ≤ d as well as containment of the support within the domain, reporting any violation through the shared error-reporting utility. Because the breakpoints are stored as floats and exposed through coercing properties, the shape parameters remain numerically consistent even when loosely typed values are assigned, and a clone operation produces fully independent copies so derived concepts can be modified without side effects.
+
+Membership evaluation is stateless and piecewise: values outside the support score 0, values inside the core score 1, and values on either slope receive a linearly interpolated degree. A deliberate divergence from the original Java implementation corrects a defect in which the descending side returned the ascending interpolation (a value that could exceed 1), so the falling edge now yields the proper decreasing degree. Logical combination is enabled through operator overloading, with unary negation, conjunction, and disjunction delegating to OperatorConcept to build compound fuzzy expressions, while hashing is derived from the numeric parameters so that structurally identical trapezoids behave as interchangeable dictionary keys. A function-style textual label embedding all six parameters is generated for display, debugging, and identification purposes.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -225,4 +231,3 @@ Module Contents
 
    .. py:attribute:: name
       :type:  str
-

@@ -5,16 +5,24 @@ fuzzy_dl_owl2.fuzzydl.concept.owa_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Defines an **Ordered Weighted Averaging (OWA)** concept structure that aggregates a collection of sub-concepts using corresponding numerical weights to support fuzzy logic operations.
+An Ordered Weighted Averaging (OWA) concept for fuzzy description logics, realised through the ``OwaConcept`` class, which fuses a list of sub-concepts with a parallel list of numerical weights into a single weighted aggregation.
 
 
 Description
 -----------
 
 
-The software models an **Ordered Weighted Averaging (OWA)** operator, which functions as a composite structure designed to aggregate multiple sub-concepts by applying a specific set of numerical weights to each component. By inheriting from base classes that define conceptual behavior and weighted interfaces, the implementation ensures that the number of provided weights strictly matches the number of associated concepts, raising an error if these parallel lists are misaligned during initialization. The design supports complex logical manipulations by overloading standard operators such as negation, conjunction, and disjunction, delegating the actual computation to a central operator utility while maintaining the specific OWA structure. Furthermore, the logic includes capabilities for recursive traversal to extract atomic concepts and roles from nested structures, as well as a mechanism to generate a standardized string representation that reflects the internal weights and concept hierarchy. A custom hashing strategy is employed to establish structural identity based on the tuple of weights, the hashes of nested concepts, and the object type, ensuring that instances can be reliably compared and stored in hash-based collections.
+``OwaConcept`` brings the OWA aggregation operator from fuzzy set theory into a fuzzy description-logic concept hierarchy, enabling graded combinations of complex conceptual definitions rather than crisp conjunctions. Its design relies on multiple inheritance: the ``Concept`` base supplies the general concept behaviour and tags each instance with the OWA concept type, while ``HasWeightedConceptsInterface`` provides the weighted-concepts machinery shared with other weighted aggregation constructs. Construction demands two parallel lists — floating-point weights and ``Concept`` objects — and validation guarantees their lengths match, raising an error otherwise; a canonical name in the form ``(owa (weights) (concepts))`` is computed at initialization so every instance carries a stable, human-readable structural identity.
+
+Most behaviour is recursive delegation: gathering atomic concepts and collecting roles simply aggregates the results of the corresponding calls on each sub-concept, letting the composite participate transparently in reasoning and query processing just like any primitive concept. Cloning and substitution are deliberately non-destructive, returning fresh instances built from copies of the weights and transformed sub-concepts while leaving the original untouched. The replacement logic intentionally diverges from the original Java implementation, which — apparently through a copy-paste of the complement operation — toggled OWA concepts into their negation; here polarity is preserved so that nested substitution behaves correctly.
+
+Python operator overloading lets these concepts flow naturally through logical expressions: unary minus yields a negation, and the ``&`` and ``|`` operators build conjunctions and disjunctions, all delegated to factory methods on ``OperatorConcept`` so the resulting expression trees remain uniform regardless of which operator produced them. Hashing is structural rather than identity-based, combining the weights, the hashes of the sub-concepts, the computed name, and the concept type, which allows instances to be used in sets and dictionaries according to what they represent; commented-out alternatives based on the string form or the object id reveal the deliberate trade-off between structural equality and instance identity that shaped the final choice.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -152,15 +160,13 @@ Module Contents
 
    .. py:method:: replace(a: fuzzy_dl_owl2.fuzzydl.concept.concept.Concept, c: fuzzy_dl_owl2.fuzzydl.concept.concept.Concept) -> Optional[fuzzy_dl_owl2.fuzzydl.concept.concept.Concept]
 
-      Returns a new instance of `OwaConcept` where every sub-concept within `self.concepts` has been transformed by recursively replacing occurrences of concept `a` with concept `c`. The method preserves the original weights of the current instance while constructing the new object, but applies a logical negation to the final result before returning it. This operation does not modify the original object in place, ensuring that side effects are avoided.
+      Returns a new instance of `OwaConcept` where every sub-concept within `self.concepts` has been transformed by recursively replacing occurrences of concept `a` with concept `c`. The method preserves the original weights of the current instance while constructing the new object. This operation does not modify the original object in place, ensuring that side effects are avoided.
 
       :param a: The concept to be replaced.
       :type a: Concept
       :param c: The concept to replace `a` with.
       :type c: Concept
 
-      :return: The negation of the concept resulting from replacing all occurrences of `a` with `c`.
+      :return: The concept resulting from replacing all occurrences of `a` with `c`.
 
       :rtype: typing.Optional[Concept]
-
-

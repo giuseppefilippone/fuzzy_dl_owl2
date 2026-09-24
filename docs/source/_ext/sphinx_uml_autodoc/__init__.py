@@ -137,6 +137,9 @@ def _new_lines(conf: Config, uml_dir: Path, safe: str, short: str):
     try:
         from PIL import Image
 
+        # Same limit as _image_dimensions: the two top-level UML PNGs exceed
+        # PIL's default DecompressionBomb threshold and would abort the build.
+        Image.MAX_IMAGE_PIXELS = 1 << 30  # ~1 gigapixel, just in case
         with Image.open(png_abs).convert("RGBA") as img:
             alpha = img.getchannel("A")
             # if image is fully transparent -> skip it

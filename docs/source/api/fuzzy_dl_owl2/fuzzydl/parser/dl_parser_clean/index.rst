@@ -5,16 +5,24 @@ fuzzy_dl_owl2.fuzzydl.parser.dl_parser_clean
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A semantic action handler that transforms parsed tokens into a Fuzzy Description Logic knowledge base and associated query objects.
+A pyparsing-free semantic-action layer for a fuzzy Description Logic parser that converts raw token lists into typed domain objects — fuzzy concepts, degrees, MILP expressions, and queries — while incrementally building and validating a shared fuzzy knowledge base.
 
 
 Description
 -----------
 
 
-The software serves as a collection of semantic callbacks designed to construct a domain model from raw input tokens, effectively bridging the gap between syntactic parsing and the internal representation of a Fuzzy Description Logic knowledge base. By converting strings and numeric values into specialized objects such as concepts, individuals, degrees, and mathematical expressions, the logic ensures that the resulting structure adheres to the specific semantics of the chosen fuzzy logic, whether it be Zadeh, Lukasiewicz, or classical. Beyond simple object creation, the implementation enforces strict validation rules, such as distinguishing between abstract and concrete roles or verifying that fuzzy-specific operators are not used in incompatible reasoning contexts. Furthermore, the system manages the accumulation of query objects and Mixed-Integer Linear Programming constraints, preparing the entire model for subsequent reasoning and execution tasks.
+The ``DLParser`` class forms the semantic half of a two-part parsing pipeline: a hand-written recursive-descent driver (in ``dl_parser_fast.py``) performs the tokenization and grammar walk, and every matched production hands its tokens to one of the static callbacks that make up the class. The callbacks fall into two categories — value-returning ones that construct domain objects (a ``Concept`` of the appropriate fuzzy flavour, a ``Degree``, a MILP ``Term``, ``Expression``, or ``Inequation``) for further composition, and side-effecting ones that mutate the shared class-level ``KnowledgeBase`` in place so the ontology grows incrementally as the input is consumed. Parsed queries are never executed at parse time; they are accumulated in a class-level list and handed back for later evaluation against the completed knowledge base.
+
+Concept construction is deliberately rich and keyword-dispatched: a single family of callbacks yields weighted sums, minima and maxima, OWA and quantified-OWA aggregations, Choquet, Sugeno and quasi-Sugeno integrals, sigma counts, threshold and modified concepts, and the various concrete fuzzy concepts (crisp, shoulder, triangular, trapezoidal, linear). Where several fuzzy logics offer competing semantics for the same connective, the logic configured on the knowledge base (Zadeh, Goedel, Lukasiewicz, or classical) selects the concrete operator implementation, and using a fuzzy-specific connective under the classical reasoner is rejected outright. Validation is woven into the callbacks rather than deferred to a later pass: aggregation weights are checked for non-negativity, ordering, and normalisation, concepts are verified abstract where required, roles are checked for existence and for the abstract/concrete distinction, and referenced modifiers, fuzzy numbers, and concrete features must be defined before use.
+
+The MILP side of the reasoner is fed directly from the input as well: datatype restrictions, triangular fuzzy numbers (including arithmetic definitions composed from previously declared ones), variable type constraints, and linear inequations are all translated into solver-ready objects registered on the knowledge base's MILP model, while the various show-statements configure which roles, individuals, concepts, and variables the solver should report. Debug tracing is uniformly gated behind a configuration flag, a small helper loads runtime settings from a ``CONFIG.ini`` file, and the axiom dispatcher deliberately tests the most frequent statement forms (concept definitions) before the long tail of keywords — an ordering chosen so that large ontologies, which are dominated by concept definitions, avoid a chain of failed keyword comparisons on every statement.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -651,5 +659,3 @@ Module Contents
    .. py:attribute:: queries_list
       :type:  list[fuzzy_dl_owl2.fuzzydl.query.query.Query]
       :value: []
-
-

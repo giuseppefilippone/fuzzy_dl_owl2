@@ -5,16 +5,20 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.modified_property
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Defines a FuzzyOWL2 property subjected to a fuzzy modification or linguistic hedge.
+Defines a ``ModifiedProperty`` class that pairs a fuzzy property with a linguistic modifier, such as "very" or "somewhat", within the FuzzyOWL2 framework.
 
 
 Description
 -----------
 
 
-Extending the base ``FuzzyProperty`` class, this implementation allows for the representation of nuanced relationships where the truth value of a property is altered by a specific factor. It encapsulates two distinct string components: a linguistic hedge or modifier and the name of the underlying property being modified. By storing these values internally, the logic provides access to the specific modifier and the base property through dedicated retrieval methods. The string representation is designed to display the relationship as a parenthesized pair, ensuring that the modified nature of the property is clearly visible in textual outputs.
+The class models the situation where a fuzzy relationship is qualified by a hedge that alters the degree of truth with which the underlying property holds, a common construct in fuzzy ontologies for expressing graded knowledge. At construction time it simply stores two strings — the modifier and the name of the property being modified — and deliberately performs no validation or transformation, keeping the object a lightweight, passive data carrier that other parts of the framework, such as ontology serialization or reasoning routines, can query through its getter methods. Inheriting from ``FuzzyProperty`` allows modified properties to be treated polymorphically wherever a generic fuzzy property is expected, which is the key design decision enabling them to flow through the rest of the type hierarchy unchanged. Both the informal and official string representations render the object as a parenthesized pair, "(modifier property)", so that modified properties can be embedded naturally in human-readable renderings of a fuzzy ontology; notably, ``__repr__`` delegates to ``__str__``, meaning the two representations are identical and display-oriented rather than machine-parseable.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -112,4 +116,3 @@ Module Contents
 
    .. py:attribute:: _prop
       :type:  str
-

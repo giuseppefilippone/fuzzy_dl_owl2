@@ -778,13 +778,11 @@ class _Parser(object):
         self._expect(LPAREN)
         self._expect(T_IDENT)  # SOME keyword
         role: str = self.parse_variable()
-        # second arg is either a variable (treated as concept name) or a concept
-        nxt: Token = self.tokens[self.pos]
-        arg: typing.Any
-        if nxt[0] == LPAREN:
-            arg = self.parse_concept()
-        else:
-            arg = self.parse_variable()
+        # second arg: nested concept or bare name. parse_concept handles both and
+        # maps *top* / *bottom* to TruthConcept; parse_variable returned the raw
+        # string, which became an ordinary AtomicConcept named "*top*" and left
+        # x_{b:*top*} unconstrained in the MILP.
+        arg: typing.Any = self.parse_concept()
         self._expect(RPAREN)
         res = DLParser._parse_binary_concept([_KW.SOME, role, arg])
         return res

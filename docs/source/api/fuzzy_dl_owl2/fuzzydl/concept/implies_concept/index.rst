@@ -5,16 +5,24 @@ fuzzy_dl_owl2.fuzzydl.concept.implies_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A Python implementation of fuzzy logical implication operators that supports various semantics such as Zadeh, Gödel, Łukasiewicz, and Kleene-Dienes within a description logic framework.
+A fuzzy description-logic concept representing logical implication between an antecedent and a consequent, materialising Zadeh and Gödel semantics as explicit concept nodes while offering factory helpers for Łukasiewicz and Kleene-Dienes implications that adapt to the knowledge base's classical or fuzzy semantics.
 
 
 Description
 -----------
 
 
-The implementation revolves around defining how an antecedent concept implies a consequent concept under different fuzzy logic rules, distinguishing between direct instantiation for specific types like Zadeh and Gödel implications while providing static utility methods to compute Łukasiewicz and Kleene-Dienes implications dynamically. These computational routines include optimizations for boundary conditions, such as handling top or bottom concepts, and adapt their behavior based on whether the global knowledge base operates under classical or fuzzy semantics. Structural manipulation capabilities include recursive replacement of sub-concepts, cloning of instances, and aggregation of atomic concepts and roles from the implication's components. Furthermore, operator overloading enables the use of standard Python syntax for logical conjunctions, disjunctions, and negations, while hashing and equality checks rely on the structural identity of the concepts.
+The **ImpliesConcept** class models the "if–then" relationship between two concepts in a fuzzy ontology, storing the antecedent and consequent as an ordered pair of operands through a small mixin that provides shared handling of child concepts. Only Zadeh and Gödel implications exist as explicit nodes in the concept syntax tree — the constructor enforces this restriction — and each instance derives a printable name from its operator and operands, yielding forms such as "(g-implies c1 c2)". Because implication is a full member of the concept algebra, instances can be negated, conjoined, and disjoined via overloaded Python operators, and equality and hashing are defined structurally so that identical expressions can be deduplicated in sets and dictionaries.
+
+The remaining implication styles are produced by static factory methods that consult a global knowledge-base semantics setting: under classical logic every implication degenerates into the material form "negated antecedent or consequent", whereas fuzzy semantics select the matching operator, for example a Łukasiewicz or Gödel disjunction combining the negated antecedent with the consequent. These factories eagerly simplify boundary cases — an implication with a Top antecedent reduces to its consequent, one with a Top consequent or Bottom antecedent collapses to Top, and a Bottom consequent becomes the negation of the antecedent — and Gödel implication additionally distributes over a Gödel-disjunction antecedent, rewriting a single implication into a Gödel conjunction of simpler expressions.
+
+To support downstream reasoning, the class supplies the usual structural operations: cloning, recursive replacement of sub-concepts (specialised for replacements that are themselves Gödel implications or their negations), and extraction of the atomic concepts and roles that constitute the expression's signature. Concise module-level aliases expose the four implication styles as plain callables, a deliberately lighter design than the subclass-per-implication approach that has been superseded and left commented out.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

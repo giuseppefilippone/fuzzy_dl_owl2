@@ -1,7 +1,7 @@
 # Summary
 
-A class representing a fundamental fuzzy logic constraint that links a specific concept to a minimum membership degree threshold.
+A minimal value object representing an atomic fuzzy assertion, namely that an atomic concept must hold with a membership degree greater than or equal to a given threshold.
 
 ## Description
 
-The software models a basic logical constraint within a fuzzy logic framework by asserting that a specific atomic concept must meet or exceed a defined threshold of membership. It encapsulates a relationship between a concept and a degree, representing the condition where the concept's membership is greater than or equal to the specified value. By storing these components as instance attributes, the implementation allows for the retrieval of the concept's identifier and the specific degree value, facilitating the evaluation of logical constraints. The design supports string representation for logging or display purposes, ensuring that the assertion's state can be easily inspected and communicated within the broader system.
+The **AtomicAssertion** class is one of the elementary building blocks of a fuzzy description logic knowledge base: it pairs a `Concept` with a `Degree` and expresses the constraint that the concept's membership is at least that degree. The design is deliberately kept as a plain, declarative container — the constructor simply stores the two components, and the only behaviour offered is read-only access to the concept's name and the stored degree, with no validation, mutation, or evaluation logic of any kind. All actual reasoning about whether such a constraint is satisfied is delegated to other parts of the fuzzy DL engine, which keeps the assertion cheap to create, inspect, and print. A human-readable string rendering that wraps the concept and its degree in angle brackets makes individual assertions easy to trace when debugging or logging the contents of a knowledge base.

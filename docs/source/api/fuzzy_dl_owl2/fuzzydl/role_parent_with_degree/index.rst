@@ -5,16 +5,20 @@ fuzzy_dl_owl2.fuzzydl.role_parent_with_degree
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Encapsulates a weighted relationship between a role and its parent by storing the parent's identifier and an associated degree of inclusion.
+A lightweight value class that pairs a parent role's name with a numeric inclusion degree, representing weighted relationships in a fuzzy description-logic role hierarchy.
 
 
 Description
 -----------
 
 
-Designed to represent fuzzy inheritance or hierarchical connections where a parent role contributes to a child role with a specific weight or probability, a string identifier for the parent entity is stored alongside a floating-point value that quantifies the strength or degree of this relationship. Access to these attributes enables complex reasoning about role hierarchies where relationships are not absolute but graded, allowing the system to calculate the extent to which a parent role is included. The implementation acts as a simple container, allowing other components to query the parent name and the associated metric to determine how much influence the parent role exerts.
+Role hierarchies in fuzzy description logics are rarely all-or-nothing: a role may subsume its parent only to some extent, so the knowledge base needs a way to record both the identity of the parent and the strength of that relationship. The ``RoleParentWithDegree`` class provides exactly that pairing, holding a string identifier for the parent role alongside a floating-point degree that typically lies between 0 and 1 and expresses the probability or weight of the inclusion. The design is deliberately minimal: the constructor stores its two arguments directly as instance attributes without any validation, and a pair of simple getter methods exposes them afterwards, leaving the object as a passive data carrier with no behaviour of its own. Because it imposes no constraints on its inputs, callers are trusted to supply well-formed names and degrees, which keeps the class cheap to construct and suitable for use deep inside the engine's role-inheritance machinery, where many such weighted links may be created and inspected during reasoning.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -85,4 +89,3 @@ Module Contents
 
    .. py:attribute:: parent
       :type:  str
-

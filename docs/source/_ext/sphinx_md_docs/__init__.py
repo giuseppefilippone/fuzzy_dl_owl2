@@ -75,7 +75,7 @@ logger.debug(
 # CONSTANTS & CONFIG
 # ──────────────────────────────────────────────
 
-LLM_MODEL = "glm-4.7:cloud"
+LLM_MODEL = "glm-5.3:cloud"  # glm-4.7:cloud was retired on 2026-07-15
 
 # ──────────────────────────────────────────────
 # Markdown → RST converter

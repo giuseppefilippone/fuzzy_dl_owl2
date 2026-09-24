@@ -5,16 +5,20 @@ fuzzy_dl_owl2.fuzzydl.degree.degree_expression
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A symbolic wrapper for algebraic expressions that functions as a non-numeric degree within a fuzzy logic system, enabling dynamic satisfaction measures through mathematical manipulation.
+Provides a non-numeric degree type that wraps a symbolic linear expression, allowing fuzzy truth values to be manipulated algebraically and converted into inequations for an underlying mixed-integer linear programming solver.
 
 
 Description
 -----------
 
 
-The software implements a mechanism to handle degrees of truth or satisfaction that are not fixed numbers but are instead defined by symbolic algebraic expressions. By encapsulating an ``Expression`` object, the implementation allows these degrees to participate in complex mathematical operations such as addition, subtraction, and scalar multiplication, which are essential for formulating constraints in mixed-integer linear programming models. Unlike concrete numeric degrees, this symbolic approach treats the degree as a dynamic entity that can be compared against other expressions to generate inequalities, thereby facilitating the construction of logical constraints within the broader fuzzy logic framework. The design explicitly identifies these entities as non-numeric to ensure correct handling during type checking and evaluation, while still supporting standard object-oriented features like cloning, hashing, and equality comparison based on the underlying expression.
+DegreeExpression subclasses the abstract Degree type in order to model fuzzy degrees whose concrete values are not known in advance but are instead defined symbolically over the variables of an optimization problem. All arithmetic behaviour — adding the degree to another expression, subtracting it from one, or scaling it by a constant — is delegated to the wrapped Expression object, so symbolic degrees can flow through the same reasoning code paths as ordinary numeric degrees while remaining unresolved until the solver assigns values to their variables. Because the value is symbolic rather than constant, the numeric predicates always report False: the degree is never treated as numeric, never equal to one, and never zero, which forces the surrounding system to handle it structurally instead of attempting constant simplification. A central capability is turning the degree into a constraint, since comparing an external expression against the stored one yields an Inequation, and this is precisely how degrees of concepts and roles become linear constraints when fuzzy ontology reasoning problems are translated into optimization form. Equality and hashing are forwarded to the underlying expression so that instances behave correctly inside sets and dictionaries, and cloning produces an independent wrapper around the same expression, keeping the original object safe from later mutation while preserving its meaning.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -218,4 +222,3 @@ Module Contents
 
    .. py:attribute:: expr
       :type:  fuzzy_dl_owl2.fuzzydl.milp.expression.Expression
-

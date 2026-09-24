@@ -5,16 +5,22 @@ fuzzy_dl_owl2.fuzzydl.concept.self_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Implements a self-referential concept construct within fuzzy description logic to model individuals that satisfy a relationship with themselves through a specific role.
+A fuzzy description-logic concept expressing local reflexivity, where an individual belongs to the concept exactly when it stands in a given role relationship with itself.
 
 
 Description
 -----------
 
 
-The software provides a mechanism to model reflexivity by defining a concept that is satisfied only when an entity is linked to itself via a designated role. By inheriting from a base concept class and a role interface, the implementation ensures that instances can be treated as atomic building blocks within larger logical expressions. Logical operations such as negation, conjunction, and disjunction are supported through operator overloading, which delegates the creation of complex constructs to a dedicated operator handler. Utility methods for cloning, retrieving associated roles, and generating standardized string representations facilitate the integration of these self-referential nodes into broader description logic frameworks. The design treats the entity as an atomic concept that cannot be decomposed further, ensuring consistent behavior during structural transformations and replacements.
+``SelfConcept`` captures the OWL 2-style self-construct within a fuzzy description-logic framework, making it possible to state properties such as "someone who knows themself" by tying concept membership to a role that an individual must fulfil with itself. The class inherits from both the abstract ``Concept`` hierarchy and ``HasRoleInterface``, so it combines standard concept behaviour — a ``ConceptType.SELF`` type tag, a canonical name of the form "(self role)", and role-reporting support — with a deliberately simple construction path, since a bare role string is enough whether one uses the constructor or the static factory method. Cloning yields a fresh, independent instance carrying the same role, and because every operation returns new objects rather than mutating existing ones, instances effectively behave as immutable building blocks for larger expressions.
+
+The concept is intentionally treated as an atomic leaf node: decomposing it into atomic concepts yields only itself, and any substitution attempt returns it unchanged, since it has no internal structure to rewrite. Overloaded operators for negation, conjunction, and disjunction delegate to ``OperatorConcept``, allowing self-concepts to be woven into arbitrarily complex fuzzy expressions using natural Python syntax (``-``, ``&``, and ``|``). Hashing follows object identity rather than the string representation — the structural-hash alternative survives only as a comment — so two structurally identical self-concepts over the same role remain distinct entries in sets and dictionaries.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -181,4 +187,3 @@ Module Contents
 
 
    .. py:attribute:: name
-

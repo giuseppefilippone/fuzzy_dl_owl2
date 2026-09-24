@@ -10,6 +10,7 @@ from test_conversion_owl2_to_dl import TestConversionOwl2ToDl
 from test_conversion_roundtrip import TestConversionRoundtrip
 from test_datatype import TestDatatype
 from test_disjoint import TestDisjoint
+from test_exact_degree import TestExactDegree
 from test_functional import TestFunctional
 from test_fuzzy_concrete_domain import TestFuzzyConcreteDomain
 from test_fuzzy_number import TestFuzzyNumber
@@ -18,7 +19,9 @@ from test_implies_role import TestImpliesRole
 from test_inconsistency import TestInconsistency
 from test_instance import TestInstance
 from test_inverse import TestInverse
+from test_linear_concept import TestLinearConcept
 from test_membership import TestMembership
+from test_modified_concept import TestModifiedConcept
 from test_modifier import TestModifier
 from test_not import TestNot
 from test_or import TestOr
@@ -49,6 +52,7 @@ def suite():
     suite.addTests(loader.loadTestsFromTestCase(TestAnd))
     suite.addTests(loader.loadTestsFromTestCase(TestDatatype))
     suite.addTests(loader.loadTestsFromTestCase(TestDisjoint))
+    suite.addTests(loader.loadTestsFromTestCase(TestExactDegree))
     suite.addTests(loader.loadTestsFromTestCase(TestFunctional))
     suite.addTests(loader.loadTestsFromTestCase(TestFuzzyConcreteDomain))
     suite.addTests(loader.loadTestsFromTestCase(TestFuzzyNumber))
@@ -57,7 +61,9 @@ def suite():
     suite.addTests(loader.loadTestsFromTestCase(TestInconsistency))
     suite.addTests(loader.loadTestsFromTestCase(TestInstance))
     suite.addTests(loader.loadTestsFromTestCase(TestInverse))
+    suite.addTests(loader.loadTestsFromTestCase(TestLinearConcept))
     suite.addTests(loader.loadTestsFromTestCase(TestMembership))
+    suite.addTests(loader.loadTestsFromTestCase(TestModifiedConcept))
     suite.addTests(loader.loadTestsFromTestCase(TestModifier))
     suite.addTests(loader.loadTestsFromTestCase(TestNot))
     suite.addTests(loader.loadTestsFromTestCase(TestOr))

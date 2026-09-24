@@ -5,16 +5,20 @@ fuzzy_dl_owl2.fuzzydl.individual.representative_individual
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Defines a proxy entity that represents a group of individuals satisfying a specific fuzzy condition relative to a feature threshold.
+A lightweight value object that pairs a concrete individual with a triangular fuzzy number and a feature name, acting as a stand-in for the collection of individuals that satisfy a fuzzy condition within a fuzzy description logic reasoner.
 
 
 Description
 -----------
 
 
-The implementation encapsulates the relationship between a concrete entity and a fuzzy constraint defined by a triangular fuzzy number applied to a specific feature. By storing a classification type alongside the fuzzy value and the referenced individual, the logic enables the representation of partial truths and degrees of membership within a fuzzy description logic framework. Accessor methods are provided to retrieve the feature name, the fuzzy number quantifying the satisfaction degree, and the underlying individual, allowing other components of the system to query these properties without modifying the internal state. This structure effectively models how specific entities satisfy abstract concepts under uncertainty, serving as a foundational building block for reasoning with fuzzy data types.
+When reasoning over fuzzy description logics, concepts are frequently qualified by fuzzy conditions over concrete features — for instance, a degree of "tallness" expressed through a triangular fuzzy number over a height feature — and the reasoner needs a single tangible entity to proxy for every individual meeting such a condition relative to a threshold. **RepresentativeIndividual** fulfils that role by bundling four pieces of state: a classification of the representative type that determines how membership in the underlying set is to be interpreted (such as a greater-than or less-than comparison), an optional feature name identifying the concrete feature for which the individual acts as a filler, the triangular fuzzy number quantifying the individual's degree of satisfaction, and a reference to the concrete created individual being represented. The design is deliberately minimal: the constructor simply stores its arguments and a small set of getters exposes them, with no validation, computation, or copying, so the object behaves as a plain data carrier rather than an active participant in the reasoning process. Because the accessors return direct references to the stored fuzzy number and individual rather than copies, any mutations made by callers propagate into the object's internal state, a trade-off accepted in exchange for cheap access in performance-sensitive reasoning code. Annotations for the fuzzy number, the created individual, and the representative type are imported only during type checking, which avoids runtime import overhead and helps prevent circular dependencies among the fuzzy DL components.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -129,4 +133,3 @@ Module Contents
 
    .. py:attribute:: type
       :type:  fuzzy_dl_owl2.fuzzydl.util.constants.RepresentativeIndividualType
-

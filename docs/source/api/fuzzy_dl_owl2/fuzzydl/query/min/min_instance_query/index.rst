@@ -5,16 +5,22 @@ fuzzy_dl_owl2.fuzzydl.query.min.min_instance_query
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A query mechanism that computes the minimum membership degree of an individual for a given concept by formulating and solving a mixed-integer linear programming problem.
+A fuzzy description-logic query that computes the greatest lower bound of the degree to which a given individual is an instance of a concept, by translating the logical question into a mixed-integer linear program and minimizing a semi-continuous membership variable.
 
 
 Description
 -----------
 
 
-The implementation extends the standard instance query logic to specifically target the greatest lower bound of truth values within a fuzzy description logic framework. To achieve this, the system introduces a semi-continuous variable into the optimization model and establishes a linear constraint that links the negation of the target concept to this variable, effectively minimizing the objective to find the lower bound. The resolution process ensures data integrity by cloning the knowledge base before applying transformations, handles dynamic blocking for existential restrictions, and gracefully manages inconsistent ontology states by returning a specific solution type rather than propagating exceptions.
+``MinInstanceQuery`` specializes the generic instance query to answer the question "what is the minimum degree to which an individual belongs to a concept?" in a fuzzy ontology, where membership is a matter of degree rather than a boolean fact. Rather than evaluating the logic directly, the reasoning task is reduced to numerical optimization: a fresh semi-continuous variable is introduced to stand for the membership degree, and that variable becomes the objective of a MILP minimization performed over the knowledge base's solver. The encoding works by asserting that the individual belongs to the *negation* of the target concept with a degree of at least one minus the new variable, so that minimizing the variable drives the provable membership degree as high as the constraints permit; the resulting optimum is exactly the tightest lower bound derivable from the ontology. When the queried concept contains existential restrictions, detected through textual markers such as "(some " or "(b-some ", dynamic blocking is activated on the knowledge base to keep the reasoning procedure finite.
+
+Execution is designed to be side-effect free and robust: the knowledge base is first solved at the ABox level, then cloned before any preprocessing constraints are applied, ensuring the caller's original state remains untouched while the query runs. Inconsistency is handled gracefully — if the ontology turns out to be unsatisfiable, the raised exception is intercepted and a dedicated solution object flagging the inconsistent state is returned instead of letting the error propagate upward. Timing instrumentation records the total reasoning time, and a human-readable string representation of the query is provided for debugging and logging purposes.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -90,5 +96,3 @@ Module Contents
       :return: A Solution object representing the result of optimizing the preprocessed knowledge base. If the knowledge base is inconsistent, returns a Solution indicating an inconsistent state.
 
       :rtype: Solution
-
-

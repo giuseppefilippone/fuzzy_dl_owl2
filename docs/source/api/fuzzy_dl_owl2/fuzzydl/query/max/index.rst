@@ -25,27 +25,33 @@ fuzzy_dl_owl2.fuzzydl.query.max
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A reasoning framework that calculates maximum truth values, membership degrees, and subsumption levels within fuzzy ontologies by formulating and solving mixed-integer linear programming problems.
+A set of fuzzy description-logic query types that compute the maximum degree of truth for concept membership, role relations, concept satisfiability, concept subsumption, and arithmetic expressions by reformulating each maximization as a mixed-integer linear optimization problem over a knowledge base.
 
 
 Description
 -----------
 
 
-These components utilize a unified architecture where optimization tasks are transformed into minimization problems suitable for the underlying engine, often by negating target expressions or minimizing implication assertions. To preserve the integrity of the original data structures, the execution workflow consistently clones the knowledge base before performing any modifications, ensuring that operations such as ABox resolution and dynamic blocking strategies occur on isolated instances. The software supports a variety of fuzzy logic semantics, including Łukasiewicz and Gödel operators, and handles potential ontology inconsistencies by returning designated solution statuses instead of propagating runtime errors. By leveraging mixed-integer linear programming, the system efficiently determines upper bounds for concepts, roles, and specific individuals while managing complex logical constructs like universal quantification.
+Fuzzy ontologies treat concept membership, role participation, and subsumption as graded rather than binary facts, so answering a question about them means finding the highest truth value the knowledge base can justify. The questions answered range from how strongly an individual belongs to a concept, to what degree two individuals are related through a role, and how satisfiable a concept is — either in general or for a specific named individual — to what degree one concept subsumes another under a user-chosen fuzzy logic such as *Łukasiewicz*, *Gödel*, *Kleene-Dienes*, or *Zadeh*, each of which gives the implication a different syntactic construction and therefore a different semantics, as well as what the greatest attainable value of an arbitrary arithmetic expression is. Because the underlying mixed-integer linear programming solver only performs minimization, every query inverts its objective at formulation time, either by negating the expression outright or by attaching a negative coefficient to the degree variable, so that minimizing the negation effectively maximizes the quantity of interest.
+
+A shared defensive architecture runs throughout. Each query operates on a *clone* of the knowledge base, so the assertions, solver state, and internal bookkeeping added while setting up the problem never mutate the caller's original ontology, making queries side-effect free and safe to run repeatedly or alongside other queries against the same knowledge base. The ABox is resolved first whenever consistency is a prerequisite for a meaningful numeric answer, and if an inconsistency surfaces, the exception is caught and translated into a dedicated inconsistency-flagging solution rather than propagating upward, guaranteeing that callers always receive a uniform result object in every scenario. Preprocessing adapts each problem to its constructs — enabling dynamic blocking when universal restrictions or negated existential restrictions appear, or dropping the ABox from the clone when optimizations permit — keeping the resulting optimization problem as small as possible while preserving correctness, and wall-clock timing is recorded around every execution so reasoning effort can be reported.
 
 
 Modules
 -------
 
 
-* [``fuzzy_dl_owl2.fuzzydl.query.max.max_instance_query``] — A reasoning query that calculates the maximum degree of membership for a specific individual within a given concept by formulating and solving a mixed-integer linear programming optimization problem.
-* [``fuzzy_dl_owl2.fuzzydl.query.max.max_query``] — A query operation that calculates the maximum possible value of a specific expression within a fuzzy knowledge base by transforming the maximization problem into a minimization task.
-* [``fuzzy_dl_owl2.fuzzydl.query.max.max_related_query``] — Determines the maximum degree of truth for a specific role relationship between two individuals within a fuzzy ontology using mathematical optimization.
-* [``fuzzy_dl_owl2.fuzzydl.query.max.max_satisfiable_query``] — Determines the maximal degree to which a fuzzy concept is satisfiable within a given knowledge base using mixed-integer linear programming.
-* [``fuzzy_dl_owl2.fuzzydl.query.max.max_subsumes_query``] — A class that calculates the maximum degree to which one fuzzy concept is subsumed by another by formulating the problem as a mixed-integer linear programming optimization task.
+* [``fuzzy_dl_owl2.fuzzydl.query.max.max_instance_query``] — A fuzzy description-logic query that computes the maximum degree to which a given individual is an instance of a concept, by posing a mixed-integer linear optimization problem over the knowledge base.
+* [``fuzzy_dl_owl2.fuzzydl.query.max.max_query``] — A query type that computes the maximum attainable value of an arithmetic expression over a fuzzy description-logic knowledge base by reformulating the maximization as a minimization of the negated expression.
+* [``fuzzy_dl_owl2.fuzzydl.query.max.max_related_query``] — A query type that computes the maximum degree of truth to which two individuals are related through a given role in a fuzzy description-logic knowledge base.
+* [``fuzzy_dl_owl2.fuzzydl.query.max.max_satisfiable_query``] — A fuzzy description-logic query that computes the maximal degree to which a fuzzy concept is satisfiable, either over a knowledge base as a whole or for a specific named individual, by formulating and solving a mixed-integer linear optimization problem.
+* [``fuzzy_dl_owl2.fuzzydl.query.max.max_subsumes_query``] — A query that computes the maximum degree to which one fuzzy concept subsumes another by reducing the subsumption test to a mixed-integer linear programming optimization over a fuzzy description-logic knowledge base.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -60,4 +66,3 @@ Submodules
    /api/fuzzy_dl_owl2/fuzzydl/query/max/max_related_query/index
    /api/fuzzy_dl_owl2/fuzzydl/query/max/max_satisfiable_query/index
    /api/fuzzy_dl_owl2/fuzzydl/query/max/max_subsumes_query/index
-

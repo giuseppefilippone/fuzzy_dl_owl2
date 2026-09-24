@@ -5,16 +5,22 @@ fuzzy_dl_owl2.fuzzydl.concept.value_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Implements a specialized concept class for representing numerical value restrictions, such as "at most" or "at least," within a fuzzy description logic system.
+A value-restriction concept for fuzzy description logics that binds a role to a concrete value under an "at most", "at least", or "exactly" constraint.
 
 
 Description
 -----------
 
 
-The software provides a mechanism to encapsulate numerical constraints associated with specific roles, supporting logic such as upper bounds, lower bounds, and exact matches. By inheriting from a base concept class and a value interface, it integrates seamlessly into a broader hierarchy of logical constructs while ensuring that specific constraint types are strictly validated during initialization. Static factory methods are employed to simplify the instantiation of these constraints, allowing for readable code that clearly defines the nature of the restriction without requiring manual specification of enumeration types. As a terminal node within the concept structure, it handles operations like cloning and replacement by returning itself or shallow copies, while logical conjunctions, disjunctions, and negations are delegated to a separate operator handler to maintain separation of concerns.
+ValueConcept represents concrete value restrictions inside a fuzzy description logic reasoner, expressing constraints such as a role's value being at most, at least, or exactly some given quantity. It derives from the general Concept hierarchy while mixing in HasValueInterface to hold the role and its associated value, and the constructor guards against misuse by asserting that the chosen concept type is one of the three supported value-restriction kinds before automatically computing a readable name such as *(<= role value)*. Static factory methods exist for each constraint flavour, so call sites read naturally as "at most value" or "at least value" rather than passing raw enum constants to the constructor.
+
+The design deliberately treats these restrictions as terminal nodes within concept expressions: they never decompose into atomic concepts, they report no roles of their own, and substitution requests are treated as no-ops that simply return the instance unchanged, which allows recursive traversals and transformations over arbitrarily complex concept trees to terminate cleanly at these leaves. Logical composition is nevertheless supported through operator overloading, with negation, conjunction, and disjunction delegating to OperatorConcept so that value restrictions can be combined with any other concepts via the ``-``, ``&``, and ``|`` operators to build larger expressions. Hashing is derived from the structural content of the instance — its name, type, role, and value — rather than from object identity, so semantically equal constraints behave correctly in sets and dictionaries, while cloning produces a shallow copy that shares the underlying value payload.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -217,4 +223,3 @@ Module Contents
 
 
    .. py:attribute:: name
-

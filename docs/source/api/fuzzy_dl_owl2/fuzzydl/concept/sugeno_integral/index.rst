@@ -5,18 +5,20 @@ fuzzy_dl_owl2.fuzzydl.concept.sugeno_integral
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A fuzzy logic implementation of the Sugeno integral operator that aggregates a collection of weighted sub-concepts into a composite concept.
+A Sugeno integral concept that aggregates a collection of weighted fuzzy sub-concepts into a single composite concept, suitable for use in fuzzy description logic reasoning.
 
 
 Description
 -----------
 
 
-The software models the Sugeno integral as a specialized concept within a description logic framework, enabling the representation of complex, weighted decision structures by combining multiple sub-concepts with corresponding numerical values. It enforces strict data integrity during instantiation by validating that the count of weights exactly matches the count of provided concepts, ensuring the mathematical definition of the integral is preserved. By inheriting from a base concept class and implementing an interface for weighted components, the design integrates seamlessly with the broader system, allowing the integral to participate in logical operations and hierarchical traversals.
-
-Recursive analysis features allow the aggregation of all atomic concepts and roles contained within the composite structure, providing a flattened view of the logical dependencies. The implementation supports structural manipulation through cloning and replacement capabilities, which facilitate the modification of internal components without affecting the original instance. Logical operations such as negation, conjunction, and disjunction are delegated to a dedicated operator utility, ensuring consistent algebraic behavior across the fuzzy logic system. Furthermore, the object defines a unique hash value based on its weights, internal concepts, and type, making it suitable for use within hash-based collections.
+The **SugenoIntegral** class models the Sugeno integral, a fuzzy aggregation operator that fuses a list of sub-concepts under a corresponding list of numeric weights, making it possible to express complex, weighted decision criteria as one logical concept. It inherits from both the base Concept class and a weighted-concepts interface, registers itself under a dedicated SUGENO_INTEGRAL concept type, and supports two construction modes: a bare default instantiation and a full one that validates its arguments at runtime and raises an error whenever the number of weights does not match the number of sub-concepts. The design is deliberately non-destructive: cloning yields a fresh instance built from shallow copies of the weights and children, and substituting one sub-concept for another produces a new integral over the transformed children, which is then returned in negated form in keeping with the behaviour expected of composite concepts elsewhere in the framework. Recursive traversal helpers flatten the hierarchy by collecting the atomic concepts and role names of every child, so that reasoners can discover the full vocabulary embedded inside the integral. The standard logical connectives are exposed through operator overloading, with negation, conjunction, and disjunction all delegating to a shared operator-concept helper so that connective semantics remain uniform across the entire concept hierarchy. A canonical, S-expression-like string form embeds both the weights and the sub-concepts in the integral's name, and hashing is purely structural, combining the weights, the hashes of the child concepts, the computed name, and the concept type, which lets equivalent integrals behave correctly as dictionary keys and set members.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -179,5 +181,3 @@ Module Contents
       :return: Returns a new Concept representing the negation of the Sugeno Integral resulting from replacing concept 'a' with concept 'c' in the internal concepts.
 
       :rtype: Concept
-
-

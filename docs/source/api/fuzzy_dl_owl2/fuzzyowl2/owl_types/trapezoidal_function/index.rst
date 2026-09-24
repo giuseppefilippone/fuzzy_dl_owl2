@@ -5,16 +5,22 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.trapezoidal_function
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A Python implementation of a trapezoidal membership function that models fuzzy sets using four defining coordinates.
+A trapezoidal membership function datatype for the FuzzyOWL2 fuzzy ontology framework, defined by four x-coordinates that shape a fuzzy set with a linear rising edge, a flat plateau of full membership, and a linear falling edge.
 
 
 Description
 -----------
 
 
-The software models a trapezoidal membership function, a core concept in fuzzy logic for defining sets with a flat top region where membership is complete. It relies on four floating-point parameters to establish the geometry: the left endpoint, the left peak, the right peak, and the right endpoint, which dictate the linear rise, the plateau, and the linear fall of the function. By inheriting from a base fuzzy datatype, this implementation integrates seamlessly into the FuzzyOWL2 framework to represent specific fuzzy data types with precise geometric boundaries. Accessor methods allow the retrieval of these coordinate values, while a string representation provides a human-readable summary of the function's configuration for debugging or logging purposes.
+Trapezoidal membership functions are among the most widely used constructs in fuzzy set theory because they approximate smooth, real-world concepts with simple piecewise-linear geometry: membership climbs linearly from the left endpoint to the left peak, remains at its maximum across the plateau between the two peaks, and descends linearly back to zero at the right endpoint. Encoding such a function as a dedicated datatype, rather than as a generic mathematical expression, allows fuzzy OWL 2 ontologies to declare fuzzy concepts with concrete, comparable geometric boundaries. The four defining coordinates are accepted by the constructor and stored as private floating-point attributes, and the ordering constraint *a* ≤ *b* ≤ *c* ≤ *d* is deliberately left as the caller's responsibility, since no validation is performed at creation time.
+
+**TrapezoidalFunction** derives from *FuzzyDatatype*, so instances slot directly into the framework's broader machinery for representing fuzzy data and inherit common behaviour from the base class. Each coordinate is exposed through its own read-only accessor, which keeps the object effectively immutable after construction and positions it as a simple value holder rather than a computational engine that evaluates membership degrees. The string representation renders the object as a constructor-style call that, alongside the four trapezoid coordinates, also incorporates two additional parameters (*k1* and *k2*) originating from the parent datatype, producing a six-argument textual form that is convenient for debugging and serialisation.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -134,4 +140,3 @@ Module Contents
 
    .. py:attribute:: _d
       :type:  float
-

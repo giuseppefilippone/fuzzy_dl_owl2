@@ -5,16 +5,20 @@ fuzzy_dl_owl2.fuzzydl.concept_equivalence
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Encapsulates the logical equivalence between two distinct concepts within a fuzzy description logic framework.
+A small value class that captures a concept-equivalence axiom in a fuzzy description-logic knowledge base by storing the pair of concepts that are asserted to be interchangeable.
 
 
 Description
 -----------
 
 
-The software provides a structural representation for asserting that two specific entities are treated as interchangeable, serving as a container for a pair of concept objects. By storing references to two distinct concepts, the implementation allows users to define and manipulate relationships where the semantics of one entity are identical to another within a specific context. Design choices include the ability to generate independent copies of the equivalence statement through a cloning mechanism, which facilitates the reuse of logical axioms without altering the original definitions. Accessor methods enable the retrieval of the individual components involved in the relationship, ensuring that the internal state remains encapsulated while still allowing external inspection of the logical structure.
+ConceptEquivalence is the single class at the heart of the module, and it functions as a plain container for exactly two Concept objects supplied at construction time. The constructor deliberately performs no validation or transformation of its inputs, trusting the caller to provide well-formed concepts, which keeps the type cheap to instantiate and suitable for use as a passive data record inside larger axiom collections. The two concepts are exposed both as public attributes and through conventional getter methods, mirroring the Java-style accessor conventions of the original fuzzydl library from which the package derives, so client code written against either style works unchanged. A clone operation produces a fresh, independent axiom object, but the copy is shallow: the duplicate shares the same underlying Concept instances rather than deep-copying them, an appropriate design choice given that concepts are meant to be shared, reusable terms rather than per-axiom copies. Because the class carries no reasoning or normalisation logic of its own, it serves purely as a structural building block that other components of the fuzzy ontology toolkit can aggregate, inspect, or translate when asserting that two concepts have the same meaning.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -95,4 +99,3 @@ Module Contents
 
    .. py:attribute:: c2
       :type:  fuzzy_dl_owl2.fuzzydl.concept.concept.Concept
-

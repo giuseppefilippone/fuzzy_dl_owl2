@@ -5,16 +5,20 @@ fuzzy_dl_owl2.fuzzydl.feature_function
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A polymorphic class representing mathematical expressions over features that can be recursively traversed to extract dependencies and converted into linear programming constraints.
+A recursive, tree-like representation of arithmetic expressions over named fuzzy features that can be queried for its feature dependencies and compiled into a linear expression for a mixed-integer linear programming solver.
 
 
 Description
 -----------
 
 
-It acts as an intermediate representation for mathematical logic involving atomic features, constants, and arithmetic operations like summation, subtraction, and scalar multiplication. The design relies on a flexible initialization strategy where the specific structure of the expression—whether it is a simple variable, a constant, or a complex composite operation—is determined by the types and quantities of arguments provided at instantiation. Internally, these expressions form a tree-like structure that allows for recursive traversal to gather all unique feature names required for evaluation. Crucially, the software bridges the gap between abstract feature definitions and concrete optimization models by translating these symbolic expressions into solver-compatible linear expressions, resolving atomic features against specific individuals and their relations within a mixed-integer linear programming context.
+The ``FeatureFunction`` class implements a composite pattern in which every instance is a node of an expression tree: leaves are either named atomic features or numeric constants, while internal nodes represent sums, subtractions, or scalar products of child functions. Since Python does not support true constructor overloading, the constructor inspects the number and types of its arguments and dispatches to one of several private initializers, raising a ``ValueError`` when no valid signature matches; this allows expressions to be written naturally, so that a string denotes an atomic feature, a float a constant, a list a summation, a pair of functions a subtraction, and a number paired with a function a scalar product. The object thus acts as an intermediate representation between the fuzzy description-logic layer and the optimization layer, decoupling the declarative definition of a feature expression from the concrete solver model. Two traversal operations bridge the gap: one recursively collects the set of atomic feature names the expression depends on, and the other, ``to_expression``, compiles the tree into a solver-ready ``Expression`` in the context of a specific individual. During compilation, an atomic feature is resolved by consulting the individual's role relations to find the filler individual and then retrieving that filler's solver variable through the ``MILPHelper``, whereas constants become constant terms and composite nodes recursively combine their children's expressions with the corresponding arithmetic operations, with assertions guarding structural invariants such as the expected number of operands per node type. A human-readable string rendering mirrors standard mathematical notation, which makes the abstract structure easy to inspect during debugging and logging.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -181,5 +185,3 @@ Module Contents
       :return: Returns an Expression object representing the mathematical formulation of the feature function for the given individual, or None if the function type is unsupported.
 
       :rtype: typing.Optional[Expression]
-
-

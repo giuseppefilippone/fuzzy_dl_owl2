@@ -5,16 +5,22 @@ fuzzy_dl_owl2.fuzzydl.query.max.max_satisfiable_query
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Determines the maximal degree to which a fuzzy concept is satisfiable within a given knowledge base using mixed-integer linear programming.
+A fuzzy description-logic query that computes the maximal degree to which a fuzzy concept is satisfiable, either over a knowledge base as a whole or for a specific named individual, by formulating and solving a mixed-integer linear optimization problem.
 
 
 Description
 -----------
 
 
-Extending the base satisfiability logic, this component performs optimization to identify the highest possible truth value for a specific fuzzy concept within a knowledge base. It supports both general satisfiability, where a new individual is synthesized, and instance checking, which evaluates the concept against a specific existing entity. The reasoning process formulates a mixed-integer linear programming problem that maximizes the degree variable associated with the concept, while the preprocessing stage dynamically adjusts blocking strategies if complex logical constructs like universal quantifiers are detected. To ensure data integrity, the execution flow clones the knowledge base before resolving the ABox and running the optimization, handling potential ontology inconsistencies by returning a distinct status rather than raising an error.
+**MaxSatisfiableQuery** builds on the generic satisfiability-query machinery to answer questions of the form "to what degree can concept C be satisfied?". It supports two construction styles — a concept alone, in which case a fresh individual is generated to probe general satisfiability, or a concept paired with a named individual to test that particular entity — and the constructor uses ``typing.overload`` declarations so type checkers see both signatures while a single variadic implementation dispatches to the appropriate private initializer. When executed, the knowledge base is cloned (dropping the ABox when optimizations are enabled and no individual was supplied) so that reasoning never mutates the caller's original state, and the ABox is resolved first whenever it is actually needed.
+
+Preprocessing inspects the concept's textual form for universal quantifiers or negated bounded existential quantifiers and switches the knowledge base to dynamic blocking in those cases, since such constructs require more careful variable handling. It then retrieves the MILP variable representing the individual–concept pair, builds a negated objective term so that the solver's minimization effectively maximizes the satisfaction degree, asserts the concept with a degree variable bound to that MILP variable, and solves the accumulated assertions. The optimization returns the optimal satisfaction degree, with negative values normalized to their absolute value, and execution timing is recorded around the solve so the query can report how long reasoning took. Any ontology inconsistency encountered along the way is caught and converted into a dedicated inconsistent-knowledge-base solution rather than propagating an exception, giving callers a uniform result object in every scenario.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -111,5 +117,3 @@ Module Contents
       :return: A Solution object representing the result of the optimization process, containing the optimal value (normalized to be non-negative) or a status indicating the knowledge base is inconsistent.
 
       :rtype: Solution
-
-

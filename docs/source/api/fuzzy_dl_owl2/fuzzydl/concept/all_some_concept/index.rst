@@ -5,16 +5,24 @@ fuzzy_dl_owl2.fuzzydl.concept.all_some_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Implements a class representing universal and existential role restrictions within a fuzzy description logic framework.
+A description-logic concept representing universal (∀) and existential (∃) role restrictions, unifying both quantifiers in a single class that supports factory-based construction with logical simplification, quantifier-duality negation, and structural hashing.
 
 
 Description
 -----------
 
 
-Quantified role restrictions are modeled to handle universal and existential constraints, ensuring that individuals satisfy specific conditions regarding their relationships to other concepts. A factory pattern is employed to manage instantiation, applying logical optimizations that reduce trivial cases—such as an existential restriction on the bottom concept—to their simplest forms before construction. The design integrates with the broader logic system by inheriting from a base concept class and adhering to an interface for role handling, which allows for consistent manipulation of complex expressions. Operations such as negation are implemented by swapping the quantifier type and recursively negating the nested concept, preserving logical validity while maintaining immutability through cloning and replacement methods. Structural identity is determined by the role, quantifier type, and nested concept, which are used to generate hash values and string representations for comparison and storage.
+*AllSomeConcept* models the two quantified role restrictions of a fuzzy description logic: a universal restriction requires every individual reachable through a given role to satisfy the nested filler concept, while an existential restriction requires at least one such individual to satisfy it. Rather than maintaining separate classes for each quantifier — an idea that survives only as commented-out sketches — both variants share one implementation distinguished by a *ConceptType* tag, combining generic *Concept* behaviour with a role-holding mixin. Keeping the quantifier as data instead of as a type distinction makes it trivial for operations to flip between ALL and SOME, which is precisely what negation requires.
+
+Instances are meant to be created through the *all* and *some* factory methods, also exposed as the convenient aliases *All* and *Some*, which route construction through a single factory that applies logical simplifications whenever optimisations are enabled in the configuration: an existential restriction over the bottom concept collapses to bottom, and a universal restriction over the top concept collapses to top, returning shared truth-concept singletons instead of redundant nodes. Negation exploits the classical duality between the quantifiers, swapping ALL for SOME (and vice versa) while recursively negating the filler, so the complement of a universal restriction naturally becomes an existential one over the negated concept. Cloning and sub-concept replacement are likewise non-destructive, rebuilding through the same factory so that the simplification rules are re-applied to every freshly constructed concept.
+
+Structural queries about atomic concepts, atoms, and involved roles are answered by delegating to the nested concept and, for roles, adding the restriction's own role to whatever the filler reports; as a genuinely complex concept, it never qualifies as a complemented atomic one. Two implementation details round out the design: the printable name, formatted as (all r C) or (some r C), is computed lazily rather than eagerly at construction time, deferring string building until it is actually needed, and hashing is derived from the combination of the role, the nested concept, and the quantifier type, giving structural identity semantics so that two independently built but logically equivalent restrictions hash identically.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

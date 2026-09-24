@@ -5,16 +5,22 @@ fuzzy_dl_owl2.fuzzydl.concept.weighted_sum_zero_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Implements a fuzzy logic concept that aggregates multiple sub-concepts using specific weights while enforcing a constraint that the total weight cannot exceed 1.0.
+A fuzzy description-logic concept that aggregates multiple sub-concepts under individually assigned weights, enforcing the constraint that those weights sum to no more than 1.0.
 
 
 Description
 -----------
 
 
-The software defines a specific type of fuzzy logic construct that combines multiple conceptual definitions using numerical weights. It enforces strict validation rules during initialization, ensuring that the number of weights matches the number of concepts and that the aggregate weight remains within a logical bound of 1.0. This design allows for the creation of complex, probabilistic, or fuzzy constraints where the contribution of each sub-concept is precisely quantified. Beyond simple storage, the implementation supports standard logical operations such as negation, conjunction, and disjunction through Python operator overloading, integrating seamlessly with a broader framework of fuzzy description logic operators. It provides mechanisms for structural introspection, enabling the retrieval of atomic components and semantic roles, as well as recursive modification where specific sub-concepts can be replaced within the hierarchy. The object is immutable in terms of its logical operations, returning new instances rather than modifying existing state, and relies on a structural hashing mechanism to ensure uniqueness based on its internal composition.
+*WeightedSumZeroConcept* models the **weighted sum zero** constructor of fuzzy description logics, in which each constituent concept contributes to the overall degree of satisfaction in proportion to its weight. It is designed through multiple inheritance, combining the general concept hierarchy with a mixin interface for weighted concepts, so instances behave as first-class concepts that can be negated, conjoined, and disjoined while reusing shared logic for storing and managing weight/concept pairs. Construction is defensive: the parallel lists of weights and concepts must have matching lengths, and the total weight may never exceed 1.0, with violations reported through the central error-handling utility. The concept's human-readable name, of the form *(w-sum-zero (w1 C1) ...)*, is derived automatically from these inputs and feeds into a structure-based hash that combines the sub-concept hashes, their weights, the name, and the concept type, allowing instances to be safely stored in sets and dictionaries and compared by structure rather than identity.
+
+Logical composition is achieved by operator overloading: the unary minus, bitwise AND, and bitwise OR operators all delegate to the shared operator-concept factories, guaranteeing that weighted aggregations compose uniformly with every other kind of concept in the knowledge-representation system. Complementary behaviour supports structural introspection and manipulation, including non-destructive cloning, recursive aggregation of the underlying atomic concepts and roles into deduplicated sets, and recursive substitution of one sub-concept by another throughout the hierarchy. One noteworthy quirk is that the substitution routine returns the *negation* of the rebuilt aggregation rather than the aggregation itself, which appears to be a defect worth reviewing, since it makes concept rewriting behave unexpectedly for this particular concept type.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -167,5 +173,3 @@ Module Contents
 
    .. py:attribute:: name
       :value: '(w-sum-zero )'
-
-

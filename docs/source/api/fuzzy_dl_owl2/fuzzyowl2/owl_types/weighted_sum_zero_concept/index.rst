@@ -5,16 +5,20 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_sum_zero_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Defines a fuzzy logic constraint where a weighted sum of concepts equals zero within the FuzzyOWL2 framework.
+Defines a fuzzy ontology concept expressing a weighted sum of component concepts that must equal zero, serving as a typed container for the operand concept definitions.
 
 
 Description
 -----------
 
 
-A specialized component within the FuzzyOWL2 framework models a fuzzy logic constraint requiring that the weighted sum of specific operands equals zero. By extending the base definition for concepts, the structure aggregates a collection of subordinate concept definitions that serve as the terms involved in the calculation. During instantiation, the logic registers the entity as a weighted sum zero type and preserves the provided list of components for later retrieval. To facilitate debugging and serialization, the logic includes a string representation that formats the internal elements within a parenthesized expression labeled with the appropriate identifier.
+WeightedSumZeroConcept is a specialized concept definition within the FuzzyOWL2 framework that encodes fuzzy logic constraints of the "weighted sum equals zero" form. It extends the generic ConceptDefinition base type and registers itself with the **WEIGHTED_SUM_ZERO** concept type at construction time, allowing parsers, serializers, and reasoners elsewhere in the ontology machinery to recognise and process it uniformly alongside other concept kinds. The operands of the sum are supplied as a list of ConceptDefinition objects and held in a private attribute, with a single accessor exposing that collection; because the accessor returns the internal list directly rather than a copy, callers who mutate the returned list will inadvertently change the concept's state, a trade-off accepted in favour of simplicity. A human-readable rendering, formatted as "(w-sum-zero ...)" with each operand's own string form joined by spaces, supports debugging and textual serialisation of the ontology. The overall design is deliberately minimal — a thin, typed wrapper with no validation or arithmetic logic of its own — leaving the actual interpretation and evaluation of the weighted-sum-zero constraint to the surrounding reasoning infrastructure.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -86,4 +90,3 @@ Module Contents
 
    .. py:attribute:: _wc
       :type:  list[fuzzy_dl_owl2.fuzzyowl2.owl_types.concept_definition.ConceptDefinition]
-

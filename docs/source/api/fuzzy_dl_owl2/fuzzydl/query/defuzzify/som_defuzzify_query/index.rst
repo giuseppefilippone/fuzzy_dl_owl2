@@ -5,16 +5,20 @@ fuzzy_dl_owl2.fuzzydl.query.defuzzify.som_defuzzify_query
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Implements the Smallest of Maxima defuzzification strategy to convert fuzzy logic values into crisp numerical outputs.
+Defines a defuzzification query that converts a fuzzy membership degree into a single crisp number using the Smallest of Maxima (SOM) strategy, which selects the smallest domain value at which an individual's membership in a concept reaches its peak.
 
 
 Description
 -----------
 
 
-The software defines a specific approach to resolving fuzzy values by identifying the smallest domain value that achieves the maximum membership degree for a given individual and concept. By extending a base query structure, it integrates into a broader fuzzy logic framework that utilizes Mixed-Integer Linear Programming to solve reasoning tasks. The implementation focuses on constructing an objective expression that minimizes the query variable, effectively steering the optimization process toward the smallest valid maximum. This behavior ensures that when multiple domain values share the highest degree of membership, the system consistently selects the lowest one to produce a deterministic crisp result.
+Within the fuzzy description logic framework, defuzzification is the step that translates graded membership into a concrete numeric output, and the SOM strategy accomplishes this by locating every domain point at which an individual's degree of membership in a concept is maximal and returning the smallest of those points. The ``SomDefuzzifyQuery`` class specialises the shared ``DefuzzifyQuery`` machinery for this particular strategy: it delegates storage of the concept, individual, and feature name to the superclass and contributes only the pieces that make SOM distinct from sibling strategies such as mean or largest of maxima. The most important of these pieces is the objective expression handed to the underlying MILP solver, which is nothing more than the feature variable itself with a unit coefficient, so the optimisation directly drives that variable and, under minimisation, settles on the smallest domain point compatible with the maximal-membership constraints built by the surrounding solver pipeline. Because the objective is so simple, nearly all of the strategy-specific reasoning lives in the constraint generation elsewhere in the framework, keeping the subclass minimal and uniform with its alternatives. A human-readable string representation names the strategy, the feature, and the instance, making the query easy to trace in solver logs and debugging output.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -81,5 +85,3 @@ Module Contents
       :return: An Expression object representing the variable `q` with a coefficient of 1.0.
 
       :rtype: Expression
-
-

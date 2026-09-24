@@ -5,16 +5,22 @@ fuzzy_dl_owl2.fuzzydl.milp.expression
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A linear algebraic representation class used to construct and manipulate mathematical expressions within a Mixed-Integer Linear Programming (MILP) framework.
+A linear-expression class that models the algebraic form *c₀ + Σᵢ cᵢxᵢ* and serves as the primitive building block from which all constraints and objective components are composed in the mixed-integer linear programming layer of a fuzzy description-logic reasoner.
 
 
 Description
 -----------
 
 
-The software implements a core algebraic structure representing linear forms, serving as the foundational primitive for defining constraints and objective functions in a Mixed-Integer Linear Programming (MILP) system. By encapsulating a constant term and a collection of variable terms, the logic enables the construction of complex mathematical equations through flexible initialization patterns that accept raw numbers, existing terms, or collections of variables. Operator overloading facilitates intuitive arithmetic manipulation, allowing for the addition, subtraction, and scalar multiplication of these linear forms while automatically merging coefficients when identical variables are combined. This design ensures that intermediate quantities are consistently represented as standardized objects before being translated into the specific inequality constraints required by the underlying solver.
+The **Expression** class stores a numeric constant offset alongside a list of coefficient–variable terms, and every constraint, objective quantity, and intermediate value produced during fuzzy ontology reasoning is first shaped into this form before being converted into an inequation by the MILP helper and handed to the underlying solver. The constructor is deliberately permissive, accepting five distinct call shapes — a bare constant, a constant followed by one or more terms, terms alone, another expression to copy, or a list/set of variables summed with unit coefficients — and dispatches internally to dedicated initialisation helpers, raising a **ValueError** for any argument combination that matches none of them. This flexibility allows higher layers of the reasoner to build expressions naturally from whatever data they happen to hold, whether a single degree value, a weighted combination, or a plain sum of decision variables.
+
+Arithmetic is exposed through operator overloading — addition, subtraction, scalar multiplication and division, unary negation, plus reflected variants so that scalars may appear on either side of an operator — letting modelling code read like ordinary mathematical formulas, while a parallel family of static helpers offers the same operations in a functional style. When a term is added whose variable is already present, its coefficient is merged with the existing one rather than duplicated, keeping the representation compact and quasi-canonical. A noteworthy asymmetry is that scalar operations produce fresh objects, whereas adding a term or another expression mutates the receiver in place, so aliasing can occur and callers must clone explicitly when independence is required. Equality treats the terms as an unordered mapping from variables to coefficients and, notably, ignores the constant offset, while hashing combines the constant with a frozenset of term hashes so that expressions can safely participate in sets and dictionaries. A human-readable string rendering suppresses unit-magnitude coefficients and a zero constant, which makes the generated models easy to inspect during debugging and logging.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -442,5 +448,3 @@ Module Contents
       :return: The result of subtracting the second expression from the first.
 
       :rtype: typing.Self
-
-

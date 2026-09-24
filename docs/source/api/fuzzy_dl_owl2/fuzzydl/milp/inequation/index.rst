@@ -5,16 +5,20 @@ fuzzy_dl_owl2.fuzzydl.milp.inequation
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Encapsulates linear constraints of the form :math:`E \bowtie 0` within a mixed-integer linear programming framework, normalizing the right-hand side to zero while supporting equality, less-than, and greater-than relations.
+A linear constraint abstraction that encodes inequalities of the form *E* ⋈ 0 (with the operator being =, ≤, or ≥) for use in mixed-integer linear programming within a fuzzy description-logic reasoning system.
 
 
 Description
 -----------
 
 
-The software defines a structure for representing mathematical linear constraints where the right-hand side is always normalized to zero, simplifying the handling of inequalities within a solver or optimization engine. By encapsulating an algebraic expression alongside a relational operator, it allows for the precise definition of constraints such as less-than, greater-than, or equal-to relationships. Static factory methods are provided to streamline the instantiation of specific inequality types, acting as convenient aliases for the constructor. Furthermore, the implementation includes standard object comparison and hashing mechanisms, enabling these constraints to be used effectively within hash-based collections like sets and dictionaries while ensuring that string representations remain human-readable for debugging purposes.
+The ``Inequation`` class is the central abstraction, pairing a linear ``Expression`` with an ``InequalityType`` so that every constraint is stored in a canonical form whose right-hand side is normalised to zero; when a caller needs a non-zero bound, the surrounding MILP helper shifts the expression by a degree before the constraint is built. Construction is defensive: the supplied expression must be non-null and contain at least one term, which guarantees that only well-formed constraints ever reach the solver. Readable construction is provided through static factory methods for the three supported relations, and module-level aliases (``GreaterThan``, ``LessThan``, ``EqualTo``) expose those factories under more natural names so that constraint-building code reads almost like the mathematics it expresses. Accessors recover the underlying terms, the effective right-hand side constant (returned negated, because the stored form compares against zero), and a printable operator symbol, yielding a human-readable rendering such as "E <= 0" for display and debugging, while a triviality check detects constraints in which every coefficient and the constant vanish. Value semantics are deliberately supported: hashing and equality are defined over the (expression, type) pair, so constraints can be deduplicated in sets or used as dictionary keys, and a shallow clone allows solver machinery to copy constraints without disturbing the originals.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

@@ -5,16 +5,20 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.left_shoulder_function
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A Python class representing a left-shoulder membership function used within fuzzy logic systems to model concepts where membership decreases as values increase.
+Defines a left-shoulder membership function for fuzzy OWL 2 ontologies in which the degree of membership stays at one for low input values and linearly falls to zero as values increase.
 
 
 Description
 -----------
 
 
-The implementation models a specific type of fuzzy set where membership is full for low values and tapers off linearly as the input grows. It relies on two primary floating-point parameters to define the transition zone where the degree of membership drops from one to zero, while also utilizing inherited bounds to establish the overall domain of the fuzzy set. By extending the base fuzzy datatype, the class encapsulates the geometric properties of this shape and provides mechanisms to retrieve the defining coefficients. A string representation is included to offer a human-readable format of the current configuration, which aids in debugging and logging within the broader fuzzy logic framework.
+The ``LeftShoulderFunction`` class extends the abstract ``FuzzyDatatype`` hierarchy to capture one of the standard fuzzy set shapes, modelling concepts whose degree of truth is full up to a certain point and then gradually diminishes. It stores two floating-point endpoints that delimit the transition zone where membership decays from one to zero, while the overall domain of the fuzzy set is defined by bounds inherited from the parent datatype. The design keeps these endpoints as private attributes exposed through simple read-only accessors, which preserves encapsulation and keeps the class consistent with the accessor conventions used elsewhere in the datatype hierarchy. A human-readable string representation in the form "left-shoulder(k1, k2, a, b)" combines the inherited domain bounds with the local endpoints, making instances straightforward to inspect during logging, debugging, and serialisation of fuzzy concept definitions.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -102,4 +106,3 @@ Module Contents
 
    .. py:attribute:: _b
       :type:  float
-

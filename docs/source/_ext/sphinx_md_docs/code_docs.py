@@ -476,5 +476,5 @@ def process_library(output_dir: Path, source_dir: Path, model: str) -> None:
 if __name__ == "__main__":
     output_dir = Path("./md")
     source_dir = Path("./fuzzy_dl_owl2")
-    model = "kimi-k2.6:cloud"  # glm-4.7:cloud
+    model = "glm-5.3:cloud"  # same as sphinx_md_docs.LLM_MODEL
     process_library(output_dir, source_dir, model)

@@ -189,7 +189,7 @@ In datatype restrictions, the variable **variable** may be replaced with a value
 
 ### MILP Solver Constraints
 
-The value of $k_{\infty}$ varies depending on the MILP solver used, reflecting computational limitations and precision requirements:
+The default value of $k_{\infty}$ varies depending on the MILP solver used, reflecting computational limitations and precision requirements. Before reasoning, the knowledge base shrinks it to $10 \cdot \max(|k_1|, |k_2|)$ over the declared numeric feature ranges (floored at $10^6$, capped at the default), because rows built with a huge $k_{\infty}$ lose the numeric thresholds below the double-precision ulp of $2 k_{\infty}$. The configuration key `maxVal` forces a specific value.
 
 | MILP Solver | $k_{\infty}$ |
 | --- | --- |

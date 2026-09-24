@@ -105,18 +105,23 @@ class ModifiedConcreteConcept(FuzzyConcreteConcept):
 
     def get_membership_degree(self, x: float) -> float:
         """
-        Calculates the membership degree of a value `x` by composing the membership functions of a base concept and a modifier. If the input `x` is less than or equal to 0.0 or greater than 1.0, the method returns 0.0, treating values outside this interval as having no membership. For valid inputs, it first computes the membership degree of `x` using the `modified` object and then passes that result to the `modifier` object to determine the final, transformed membership degree.
+        Calculates the membership degree of a value `x` by composing the membership functions of a base concept and a modifier: the degree `y` of `x` in the base concept is computed first, then the modifier is applied to `y`. The input `x` lives in the domain `[k1, k2]` of the base concept (percentages, scores, kilometres, ...), which already returns 0.0 outside its own support; the modifiers map 0.0 to 0.0, so no guard on `x` is needed here.
 
-        :param x: The input value for which the membership degree is calculated. Values outside the range (0, 1] result in a degree of 0.0.
+        :param x: The input value, in the units of the base concept's feature.
         :type x: float
 
-        :return: The membership degree of the input value x, calculated by applying the modifier to the membership degree of the modified set. Returns 0.0 if x is outside the range (0, 1].
+        :return: The membership degree of `x`, i.e. the modifier applied to the base concept's degree of `x`.
 
         :rtype: float
         """
 
-        if x <= 0.0 or x > 1.0:
-            return 0.0
+        # Deliberate divergence from the Java oracle (which shares this defect):
+        # the original guard tested the FEATURE VALUE x against the unit
+        # interval, which is the range of the degree y, not of x. On any real
+        # domain (e.g. [0, 100]) every value outside (0, 1] returned 0.0 before
+        # the base concept was even consulted.
+        # if x <= 0.0 or x > 1.0:
+        #     return 0.0
         y: float = self.modified.get_membership_degree(x)
         return self.modifier.get_membership_degree(y)
 

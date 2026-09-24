@@ -5,16 +5,22 @@ fuzzy_dl_owl2.fuzzydl.query.min.min_satisfiable_query
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A query implementation that determines the minimal degree of satisfiability for a fuzzy concept within a knowledge base, optionally scoped to a specific individual.
+Defines a fuzzy description-logic query that computes the minimal degree to which a fuzzy concept is satisfiable, either in general or with respect to a specific individual, by recasting the logical question as a mixed-integer linear optimization problem.
 
 
 Description
 -----------
 
 
-The software transforms the logical problem of determining concept satisfiability into a mathematical optimization task that minimizes a specific threshold variable. By extending the base satisfiability logic, it supports evaluation against the general ontology or a specific individual, utilizing a Mixed-Integer Linear Programming solver to compute the result. During execution, the implementation clones the provided knowledge base to ensure the original state remains unaltered, while also activating dynamic blocking mechanisms if existential quantifiers are detected in the concept definition. The process involves creating a semi-continuous variable to represent the objective function, linking it to the negated conclusion of the query, and finally optimizing the constraints to return the lowest possible degree or an inconsistency status.
+MinSatisfiableQuery specializes the generic satisfiability-query machinery for the fuzzy setting, where satisfiability is not a yes/no matter but a matter of degree. Two overloaded construction forms are supported — one taking only a concept, for concept-level satisfiability, and one pairing a concept with an individual, for instance-level satisfiability — with the argument shapes and types validated through assertions before being delegated to small private helpers that forward to the superclass constructor. The central design decision is to compile the question into a MILP: preprocessing introduces a fresh semi-continuous variable into the underlying solver to serve as the satisfiability threshold, sets the objective to minimize that variable, and adds an assertion binding the negation of the queried concept to the variable's degree, so that the program's optimum is exactly the minimal satisfiability degree. Because existential restrictions in the concept can prevent the reasoning procedure from terminating, dynamic blocking is enabled on the knowledge base whenever the concept's textual form contains an existential quantifier pattern.
+
+Execution is deliberately side-effect free with respect to the caller's knowledge base: the base is cloned, with the ABox dropped when no individual is involved and optimizations are enabled, and a fresh individual is minted for concept-only queries. When the ABox is retained it is solved first, after which the optimization runs against the prepared objective expression. The optimal value is normalized to be non-negative before being returned, and an ontology-inconsistency exception raised anywhere in the pipeline is caught and converted into a solution that flags the knowledge base as inconsistent rather than propagating the error. Timing statistics are recorded around the solve so that query performance can be tracked alongside the result, and a human-readable string representation of the query is provided for reporting purposes.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -111,5 +117,3 @@ Module Contents
       :return: A Solution object representing the optimal value found for the objective expression. If the ontology is inconsistent, returns a Solution indicating an inconsistent knowledge base. The solution value is guaranteed to be non-negative.
 
       :rtype: Solution
-
-

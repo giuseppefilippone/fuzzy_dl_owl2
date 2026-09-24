@@ -37,6 +37,7 @@ milpProvider = mip
 | maxIndividuals | Define the maximal number of individuals to handle. The value $-1$ indicates that there is no maximum |
 | owlAnnotationLabel | Define the Annotation label used to build the Fuzzy OWL 2 RDF/XML ontology |
 | milpProvider | Define the MILP provider used by the reasoner. The supported providers are listed below. |
+| maxVal | Optional. Big-M constant ($k_{\infty}$) used by the datatype-restriction rows of the MILP encoding. Default: provider-dependent (see the grammar page), then adapted per knowledge base to `10 * max(|k1|, |k2|)` over the declared feature ranges (floored at $10^6$). Set a number to force it, or `auto` for the default behaviour. A Big-M far above the feature values loses precision (double ulp of $2M$) and can make an assertion at the exact membership degree inconsistent. |
 
 Supported MILP Providers:
 | Provider | milpProvider |

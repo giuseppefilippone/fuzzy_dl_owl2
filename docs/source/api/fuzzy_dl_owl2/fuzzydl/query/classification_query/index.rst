@@ -5,16 +5,20 @@ fuzzy_dl_owl2.fuzzydl.query.classification_query
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A specialized query that executes the classification process on a knowledge base to verify consistency.
+ClassificationQuery is a lightweight query type whose execution triggers classification of a fuzzy description logic knowledge base, yielding a successful solution when classification completes and an inconsistency result if it fails.
 
 
 Description
 -----------
 
 
-Extending the base ``Query`` interface, the logic focuses specifically on triggering the classification routine within a given knowledge base. During execution, the system invokes the classification method of the provided knowledge base, returning a successful solution with a maximum score if the process completes without error. Any exceptions raised during this operation are caught and interpreted as an indication that the knowledge base is inconsistent, resulting in a specific error state rather than propagating the failure. Unlike other query types that might require parameter resolution or setup, the design bypasses preprocessing steps entirely, relying solely on the internal state of the knowledge base to perform the operation.
+ClassificationQuery extends the generic Query abstraction to serve as a simple trigger: rather than asking about specific concepts, roles, or individuals, it requests that the reasoning engine classify the entire knowledge base. Its design is deliberately minimal — the preprocessing hook is left as a no-op because classification requires no parameters to be resolved or validated ahead of time, which lets the query slot into the same uniform execution pipeline shared by every other query type in the framework. The real work happens during the solve phase, where the knowledge base's classification routine is wrapped in exception handling: a clean run produces a successful Solution carrying the maximal score of 1.0, whereas any raised exception is interpreted as evidence of an inconsistent knowledge base and converted into the corresponding error solution instead of propagating upward to the caller. When debug output is enabled, the full traceback of a failed classification is logged before the inconsistency is reported, giving developers diagnostic information without disrupting normal control flow. A fixed string representation, "Classify? <= ", provides a consistent, human-readable label in the same style used by the framework's other query types.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -90,5 +94,3 @@ Module Contents
       :return: A Solution object representing the outcome of the classification attempt. It indicates success with a value of 1.0 or failure due to an inconsistent knowledge base.
 
       :rtype: Solution
-
-

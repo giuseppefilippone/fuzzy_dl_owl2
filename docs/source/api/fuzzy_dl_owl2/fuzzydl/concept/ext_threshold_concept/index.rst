@@ -5,16 +5,22 @@ fuzzy_dl_owl2.fuzzydl.concept.ext_threshold_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Implements a logical construct for fuzzy description logic that applies a variable-based threshold to the satisfaction degree of a nested concept.
+A fuzzy description-logic concept that imposes a solver-determined threshold variable — rather than a fixed constant — on the satisfaction degree of a nested concept, supporting both greater-than-or-equal and less-than-or-equal variants.
 
 
 Description
 -----------
 
 
-The software models a specific type of fuzzy logic constraint where the satisfaction degree of a base concept is compared against a dynamic threshold represented by a solver variable. Unlike fixed thresholds, this approach allows the reasoning engine to determine the optimal boundary value during the solving process, supporting both positive and negative logical conditions. By inheriting from core concept interfaces, the implementation integrates seamlessly into the broader description logic framework while maintaining the ability to nest complex conceptual structures. Functionality includes static factory methods for instantiating positive or negative threshold constraints, as well as support for standard logical operators such as negation, conjunction, and disjunction. The design ensures that structural manipulations, like cloning or replacing nested components, propagate correctly through the concept hierarchy without side effects, while delegating the extraction of atomic concepts and roles to the underlying nested concept to maintain consistent structural metadata.
+**ExtThresholdConcept** wraps an inner concept and expresses the condition that an individual belongs to it only when the inner concept's degree of satisfaction is at least (positive variant) or at most (negative variant) the value of a mixed-integer linear programming variable. The essential design distinction from an ordinary threshold concept is that the cut-off is a decision variable, so the reasoning engine can infer the appropriate threshold during query answering or subsumption checking instead of receiving a predefined number, and the variable remains readable and replaceable after construction. Instantiation is guarded so that only the two supported external-threshold concept types are accepted, and concise static factories — also exposed as the short aliases *ExtendedPosThreshold* and *ExtendedNegThreshold* — make building either variant convenient.
+
+The design leans heavily on delegation: the wrapped concept, held through the *HasConceptInterface* mixin, supplies the atomic concepts and role names, while cloning and concept substitution rebuild the wrapper around a possibly modified inner concept without mutating the original. Logical negation, conjunction, and disjunction are exposed through Python operator overloading and forwarded to *OperatorConcept*, letting threshold concepts compose naturally with the rest of the concept algebra. A readable name such as "([>= w] C)" is computed eagerly at construction, and hashing is structural — combining the inner concept, the weight variable, the type, and that name — so instances behave correctly as dictionary keys and set members throughout the reasoning workflow.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

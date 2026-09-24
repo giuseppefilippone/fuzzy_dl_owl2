@@ -25,37 +25,45 @@ fuzzy_dl_owl2.fuzzydl.concept.concrete
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A suite of concrete fuzzy logic implementations that model various membership functions and support fuzzy arithmetic operations.
+A family of concrete-domain fuzzy concepts for fuzzy description-logic reasoning, defining graded membership over numeric intervals in shapes ranging from crisp intervals and shoulder ramps to triangular, trapezoidal, and piecewise-linear curves, and extended with linguistic modifiers and triangular fuzzy numbers that carry their own fuzzy arithmetic.
 
 
 Description
 -----------
 
 
-These components provide the mathematical foundation for representing uncertainty and imprecision by defining specific geometric shapes for membership degrees, ranging from crisp binary intervals to triangular and trapezoidal sets. The architecture relies on an abstract base class that enforces structural integrity regarding numerical intervals, allowing subclasses to implement specific algorithms for calculating truth values based on linear interpolation or geometric parameters. Beyond simple shapes, the system utilizes a wrapper pattern to apply linguistic modifiers to existing concepts, transforming membership degrees to model intensifiers or hedges within a description logic framework. Logical operations such as conjunction, disjunction, and negation are handled through delegation to a central operator framework, while a dedicated sub-package extends these capabilities to support fuzzy arithmetic and defuzzification for triangular fuzzy numbers.
+Concrete-domain reasoning concerns graded truth over real-valued features — quantities such as temperature, height, or price — rather than symbolic relationships, and the vocabulary for expressing linguistic terms over such features is organised around a single abstract base concept that owns the numeric domain interval, validates bound ordering, and answers the structural queries the reasoner asks, while leaving the actual membership-degree curve to each subclass. That template-method split lets the reasoning engine treat every shape uniformly for naming, hashing, and decomposition while remaining agnostic about the underlying mathematics, and it is what allows crisp, shoulder, triangular, trapezoidal, and knee-pointed linear membership functions to coexist as interchangeable building blocks: the crisp variant collapses membership to a binary decision inside a closed satisfaction interval, the shoulder ramps model terms that are fully true at one end of a range, and the triangular and trapezoidal curves capture "approximately x" or plateau-shaped terms.
+
+Above the primitive shapes sit two composites. A decorator-style wrapper applies linguistic modifiers such as *very* or *somewhat* by transforming the degrees produced by any wrapped concept, and a companion fuzzy-number type embeds triangular fuzzy numbers directly into knowledge bases as concepts while also providing pure, side-effect-free fuzzy arithmetic — addition, subtraction, multiplication, and division via the extension principle — plus defuzzification through the Best Non-Fuzzy Performance value. Composition follows one consistent pattern across every type: negation, conjunction, and disjunction are exposed through Python's operator syntax and delegated to a shared operator helper, so primitive, modified, and numeric concepts alike combine into larger expressions with uniform semantics, always yielding fresh objects and leaving the operands untouched.
+
+Instances behave as value-like types throughout: constructors validate interval ordering fail-fast so malformed shapes never reach the reasoning engine, hashes derive from numeric parameters rather than object identity so structurally identical concepts deduplicate in sets and dictionaries, cloning yields independent copies, and canonical parameter-embedding names support display and serialisation. Several membership evaluations also document deliberate divergences from the original Java implementation, correcting latent defects such as a wrongly guarded modifier evaluation, an inverted descending trapezoid edge, and a normalisation assumption that produced wrong degrees on any domain other than [0, 1].
 
 
 Modules
 -------
 
 
-* [``fuzzy_dl_owl2.fuzzydl.concept.concrete.crisp_concrete_concept``] — A crisp concrete concept implementation that applies binary membership logic to determine if a value lies within a specified satisfaction interval.
-* [``fuzzy_dl_owl2.fuzzydl.concept.concrete.fuzzy_concrete_concept``] — An abstract base class defines the structure and behavior for fuzzy concepts operating within specific numerical intervals.
-* [``fuzzy_dl_owl2.fuzzydl.concept.concrete.left_concrete_concept``] — Implements a left shoulder fuzzy set concept where membership degrees are maximized at lower values and decrease linearly towards zero based on defined interval parameters.
-* [``fuzzy_dl_owl2.fuzzydl.concept.concrete.linear_concrete_concept``] — A concrete implementation of a fuzzy concept that utilizes a piecewise linear membership function defined over a normalized domain.
-* [``fuzzy_dl_owl2.fuzzydl.concept.concrete.modified_concrete_concept``] — A fuzzy concrete concept wrapper that applies a specific modifier to an underlying concept to transform membership degrees.
-* [``fuzzy_dl_owl2.fuzzydl.concept.concrete.right_concrete_concept``] — A Python implementation of a fuzzy logic concept that utilizes a right-shoulder membership function to model values where truth increases linearly over a specific interval.
-* [``fuzzy_dl_owl2.fuzzydl.concept.concrete.trapezoidal_concrete_concept``] — Defines a trapezoidal concrete concept that models fuzzy membership degrees using a geometric shape defined by four distinct parameters.
-* [``fuzzy_dl_owl2.fuzzydl.concept.concrete.triangular_concrete_concept``] — Implements a fuzzy logic concept using a triangular membership function to determine the degree of membership for numeric values within a defined domain.
+* [``fuzzy_dl_owl2.fuzzydl.concept.concrete.crisp_concrete_concept``] — A crisp concrete concept for fuzzy description logics that behaves as a binary membership function, granting full membership to values inside a closed satisfaction interval nested within a bounded numeric domain and zero membership to everything else.
+* [``fuzzy_dl_owl2.fuzzydl.concept.concrete.fuzzy_concrete_concept``] — An abstract base class for fuzzy concepts defined over a numeric interval, which manages and validates its lower and upper bounds while delegating membership-degree computation to subclasses.
+* [``fuzzy_dl_owl2.fuzzydl.concept.concrete.left_concrete_concept``] — A left-shoulder fuzzy concrete concept that grants full membership to concrete values up to a first breakpoint and tapers linearly to zero at a second one, serving as a building block for fuzzy description-logic knowledge bases.
+* [``fuzzy_dl_owl2.fuzzydl.concept.concrete.linear_concrete_concept``] — A fuzzy concrete concept whose membership function is a two-segment linear ramp over a feature domain, rising from degree zero at the lower bound to degree one at the upper bound through a configurable knee point.
+* [``fuzzy_dl_owl2.fuzzydl.concept.concrete.modified_concrete_concept``] — A fuzzy concrete concept that wraps an existing fuzzy concrete concept and applies a linguistic modifier such as "very" or "somewhat" to its membership degrees, producing composite concepts like "very tall."
+* [``fuzzy_dl_owl2.fuzzydl.concept.concrete.right_concrete_concept``] — A right-shoulder fuzzy concrete concept whose membership degree ramps linearly from zero to one across a transition interval, modelling linguistic terms that become fully true once a quantity grows sufficiently large.
+* [``fuzzy_dl_owl2.fuzzydl.concept.concrete.trapezoidal_concrete_concept``] — A trapezoidal fuzzy concrete concept that evaluates membership degrees through a four-breakpoint trapezoidal membership function, integrating into fuzzy description-logic reasoning with parameter validation, cloning, hashing, and overloaded logical operators.
+* [``fuzzy_dl_owl2.fuzzydl.concept.concrete.triangular_concrete_concept``] — Defines a fuzzy concrete concept whose membership degree follows a triangular function, rising linearly from zero at ``a`` to a peak of one at ``b`` and falling back to zero at ``c``, all contained within an outer domain interval ``[k1, k2]``.
 
 
 Sub-packages
 ------------
 
 
-* [``fuzzy_dl_owl2.fuzzydl.concept.concrete.fuzzy_number``] — A concrete implementation of triangular fuzzy numbers that supports fuzzy arithmetic, logical operations, and defuzzification.
+* [``fuzzy_dl_owl2.fuzzydl.concept.concrete.fuzzy_number``] — A concrete-domain component that models triangular fuzzy numbers—uncertain quantities whose membership degree rises linearly from a lower bound to a peak and falls linearly back to an upper bound—for fuzzy description-logic reasoning, complete with fuzzy arithmetic, logical combinators, and defuzzification.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -74,4 +82,3 @@ Submodules
    /api/fuzzy_dl_owl2/fuzzydl/concept/concrete/right_concrete_concept/index
    /api/fuzzy_dl_owl2/fuzzydl/concept/concrete/trapezoidal_concrete_concept/index
    /api/fuzzy_dl_owl2/fuzzydl/concept/concrete/triangular_concrete_concept/index
-

@@ -5398,8 +5398,39 @@ class KnowledgeBase:
                 del self.exist_assertions[0]
                 return
 
+    def adapt_big_m(self) -> None:
+        """
+        Shrinks the Big-M constant used by the datatype-restriction rows to the magnitude of the values this knowledge base can actually take. The provider default (up to ``1000 * (2^31 - 1)`` for Gurobi) is far above any real feature value, and rows such as ``2M - n + x_b - M x_f - (M + n) x_is_c >= 0`` then lose the threshold ``n`` below the double-precision ulp of ``2M`` (about 1e-3 at 4e12): a feature pinned to 4.4 is solved as 4.3999 and an assertion at the exact membership degree becomes infeasible. M only has to dominate the feature values, so it is set to ``10 * max(|k1|, |k2|)`` over the declared numeric feature ranges (and the fuzzy-number range, if defined), floored at 1e6 and capped at the provider default. Nothing is changed when the user forces ``maxVal`` in the configuration, or when some numeric feature has no declared range (its values are unbounded, so only the provider default is safe).
+        """
+
+        if ConfigReader.MAXVAL is not None:
+            return
+        bounds: list[float] = []
+        for feature in self.concrete_features.values():
+            if feature.type not in (
+                ConcreteFeatureType.INTEGER,
+                ConcreteFeatureType.REAL,
+            ):
+                continue
+            k1 = getattr(feature, "k1", None)
+            k2 = getattr(feature, "k2", None)
+            if k1 is None or k2 is None or not (math.isfinite(k1) and math.isfinite(k2)):
+                return
+            bounds.append(max(abs(k1), abs(k2)))
+        if TriangularFuzzyNumber.has_defined_range():
+            bounds.append(
+                max(abs(TriangularFuzzyNumber.K1), abs(TriangularFuzzyNumber.K2))
+            )
+        if not bounds:
+            return
+        big_m: float = min(max(1e6, 10.0 * max(bounds)), constants.MAXVAL_DEFAULT)
+        constants.MAXVAL = big_m
+        constants.MAXVAL2 = 2.0 * big_m
+
     def solve_kb(self) -> None:
         """Prepares the fuzzy knowledge base for reasoning by performing a series of necessary preprocessing and compilation steps. If no specific logic semantics have been defined, it defaults to Lukasiewicz fuzzy logic. The method computes the language, converts symbolic strings into integer representations for efficiency, and resolves various role axioms including inverse, inclusion, reflexive, and functional properties. Additionally, it preprocesses the Terminological Box (TBox), prints its current state, and determines the appropriate blocking type for the reasoning algorithm. Upon completion, it sets an internal flag indicating that the knowledge base is fully loaded and ready for queries."""
+
+        self.adapt_big_m()
 
         if constants.KNOWLEDGE_BASE_SEMANTICS is None:
             self.set_logic(FuzzyLogic.LUKASIEWICZ)

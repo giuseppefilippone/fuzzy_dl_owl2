@@ -5,16 +5,20 @@ fuzzy_dl_owl2.fuzzydl.query.max.max_related_query
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Determines the maximum degree of truth for a specific role relationship between two individuals within a fuzzy ontology using mathematical optimization.
+A query type that computes the maximum degree of truth to which two individuals are related through a given role in a fuzzy description-logic knowledge base.
 
 
 Description
 -----------
 
 
-Designed to calculate the highest possible membership degree for a relationship assertion, the logic translates the semantic query into a Mixed-Integer Linear Programming (MILP) formulation. It achieves this by constructing a specific concept restriction that represents the role value, which is then used to define an objective expression aimed at maximizing the corresponding variable. The execution process ensures data integrity by cloning the knowledge base before performing any modifications, allowing the optimization to run on an isolated instance while the original remains untouched. Robustness is built into the workflow through exception handling that detects ontology inconsistencies, returning a designated solution status instead of propagating errors when the knowledge base cannot be satisfied.
+``MaxRelatedQuery`` extends the shared ``RelatedQuery`` interface to answer questions of the form "is individual A related to individual B through role R, and to what maximal degree?" against a fuzzy ontology. Rather than evaluating the assertion directly, it compiles the question into a mixed-integer linear programming problem: during preprocessing, the role assertion is recast as a has-value concept attached to the first individual, the MILP variable representing that assertion's degree is retrieved and asserted into the knowledge base, and the objective expression is built from that variable with a negative coefficient so that the solver's minimisation effectively maximises the relationship's degree of truth. The solving routine deliberately clones the knowledge base before injecting these query-specific constraints, which keeps the original ontology untouched and makes the query safe to run repeatedly or alongside other queries; it also records execution time and, if resolving the ABox reveals an inconsistency, catches the exception and returns a dedicated inconsistent-knowledge-base solution instead of propagating the failure. The overall design keeps the query logic thin, delegating the heavy lifting — assertion solving, MILP optimisation, and consistency checking — to the knowledge base and its solver, while the query itself contributes only the problem formulation, the non-destructive cloning strategy, and graceful handling of inconsistent input. For presentation purposes, the query renders itself as a natural-language question about the two individuals and the role connecting them.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -110,4 +114,3 @@ Module Contents
 
    .. py:attribute:: role
       :type:  str
-

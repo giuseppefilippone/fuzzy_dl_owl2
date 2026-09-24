@@ -5,16 +5,22 @@ fuzzy_dl_owl2.fuzzydl.util.utils
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A collection of utility decorators designed to facilitate debugging through method tracing and to handle deep recursion by dynamically adjusting system limits.
+A small collection of decorators that add opt-in call tracing to classes and let deeply recursive functions transparently raise the interpreter's recursion limit until they complete.
 
 
 Description
 -----------
 
 
-The software provides a suite of high-level decorators intended to instrument code for diagnostic purposes and to overcome Python's default recursion depth constraints. A debugging mechanism allows for automatic tracing of method calls within a class, logging entry arguments and return values based on a global configuration flag, while intelligently distinguishing between static and instance methods to ensure accurate argument reporting. To support algorithms that require deep call stacks, a recursion management wrapper intercepts depth limit errors, progressively increases the interpreter's recursion limit, and guarantees that the system state is restored after execution, regardless of success or failure. These tools rely on a central configuration reader to control output verbosity and integrate seamlessly with existing logging utilities to provide visibility into complex execution flows without modifying core logic.
+Tracing support centres on a wrapper that, whenever a global debug-print configuration flag is enabled, logs the class and method name together with the arguments on entry and the return value on exit, while ``functools.wraps`` keeps the original metadata intact and the return value passes through unchanged. The wrapper inspects the owning class to detect static methods, so the implicit first argument is only omitted from the log for ordinary bound methods rather than stripped indiscriminately. A companion decorator factory builds on this by instrumenting whole classes at once: when a global boolean switch is turned on, it walks the class's attributes and replaces every plain function with its traced counterpart, whereas with the switch off the class is returned completely unmodified, so normal behaviour and performance are unaffected.
+
+A separate decorator addresses the very deep recursion that the fuzzy description-logic algorithms can naturally produce: it catches ``RecursionError``, doubles the system recursion limit, and retries the call repeatedly until it succeeds, restoring the original limit in a ``finally`` block regardless of the outcome. Because the retry loop cannot distinguish legitimately deep recursion from infinite recursion, the limit is only allowed to grow up to a hard cap of 2^20, beyond which the error is re-raised to bound memory consumption and avoid crashing the interpreter. All diagnostic output from both mechanisms is funnelled through a shared debug utility, keeping log formatting consistent and making the reasoning process observable during development without changing program semantics.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -83,4 +89,3 @@ Module Contents
 .. py:data:: RECURSION_LIMIT_CAP
    :type:  int
    :value: 1048576
-

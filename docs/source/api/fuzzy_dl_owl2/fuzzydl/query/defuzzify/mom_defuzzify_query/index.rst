@@ -5,16 +5,22 @@ fuzzy_dl_owl2.fuzzydl.query.defuzzify.mom_defuzzify_query
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Implements the Mean of Maxima defuzzification strategy to derive a crisp numerical value for a specific feature of an individual within a fuzzy ontology.
+A Mean of Maxima (MoM) defuzzification query that turns a fuzzy feature of an individual into a single crisp number by averaging the smallest and largest feature values at which the individual achieves its maximum degree of membership in a given concept.
 
 
 Description
 -----------
 
 
-The logic centers on determining the maximum degree of membership an individual has to a given concept by first solving the ABox and executing a max-satisfiability query. Once this peak membership degree is established, the system creates a modified version of the knowledge base where the individual is asserted to possess the concept at that specific degree. Within this constrained environment, the process identifies the Mixed-Integer Linear Programming variable corresponding to the target feature and performs optimization to locate both the minimum and maximum values that satisfy the constraints. The final crisp output is calculated as the arithmetic mean of these two boundary values, effectively representing the center of the plateau where the membership function is maximized. Error handling ensures that inconsistencies or missing role relations result in appropriate warnings or inconsistent solution states rather than unhandled failures.
+MomDefuzzifyQuery specialises the generic defuzzification machinery of the fuzzy description-logic reasoner by applying the *middle of maxima* principle: rather than weighting every feature value by its membership degree, it isolates the plateau of values that attain peak membership and returns the midpoint of that plateau. The computation unfolds in two stages. First, a max-satisfiability query run against a cloned knowledge base establishes the highest degree to which the individual belongs to the target concept, and an inconsistent knowledge base at this point short-circuits the whole calculation. A second clone is then constructed in which the individual is explicitly asserted to belong to the concept at exactly that maximal degree, and the mixed-integer linear program underlying the reasoning is optimised twice over the variable tied to the feature's role relation — once to minimise it and once to maximise it — thereby bracketing the lower and upper edges of the membership plateau. The final answer is the arithmetic mean of these two extremes, which is also written back to the knowledge base as a labelled instance value for the feature.
+
+Several design decisions shape the behaviour. Cloning the knowledge base for every manipulation means that, apart from the ABox solving performed on the input up front, the caller's original ontology is otherwise left untouched, and reusing the existing max-satisfiability machinery avoids duplicating any reasoning logic. Robustness is handled defensively: a missing role relation or an unbound optimisation variable triggers a warning and a null answer instead of a crash, while inconsistent-ontology and fuzzy-ontology exceptions are caught and translated into an explicit inconsistent-knowledge-base solution, with stack traces printed to aid diagnosis. No preparation of the knowledge base is required, so the inherited preprocessing hook is deliberately left empty, and a placeholder objective-expression builder exists purely to satisfy the abstract query interface without taking part in the calculation. A human-readable string representation completes the picture, allowing the query and its result to be reported in an intelligible form.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -103,5 +109,3 @@ Module Contents
       :return: A Solution object containing the calculated numeric value (Mean of Maximums) derived from fuzzy logic optimization, or None if defuzzification fails. The Solution may also indicate an inconsistent knowledge base.
 
       :rtype: Solution
-
-

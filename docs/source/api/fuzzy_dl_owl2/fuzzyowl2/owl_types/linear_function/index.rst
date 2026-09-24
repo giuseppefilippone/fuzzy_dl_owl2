@@ -5,16 +5,20 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.linear_function
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Implements a linear membership function for the FuzzyOWL2 framework by defining geometric parameters and bounds.
+A linear membership function datatype for the FuzzyOWL2 fuzzy ontology framework, characterised by two floating-point coefficients that determine the line's slope and position when assigning degrees of membership.
 
 
 Description
 -----------
 
 
-The software extends the base fuzzy datatype to model a specific type of membership function characterized by a linear progression between defined points. It relies on two primary coefficients, stored as private attributes, to determine the slope and intercept of the line, which are essential for calculating the degree of membership for a given value. In addition to these linear coefficients, the implementation integrates with inherited lower and upper bounds to fully constrain the domain of the function. Accessor methods are provided to retrieve the specific parameters, while a string representation utility outputs the complete definition including the inherited bounds for debugging or display purposes.
+``LinearFunction`` is one of the concrete membership-function shapes that the FuzzyOWL2 framework supports, and it specialises the generic ``FuzzyDatatype`` base so that linear functions can be handled polymorphically alongside other shapes such as triangular, trapezoidal, or Gaussian ones. Its geometry is captured by two private floating-point coefficients, ``a`` and ``b``, which the accompanying documentation reads in two complementary ways — as the left and right endpoints of the linear shape, or as the slope and intercept of the line f(x) = ax + b — and either way, these two numbers are what determine how strongly a value belongs to a fuzzy set. Encapsulation is kept deliberately minimal: the coefficients are stored as private attributes and exposed only through read-only accessors, so the rest of the framework can inspect a function's parameters during serialisation or reasoning without any risk of altering them. The human-readable rendering follows the compact ``linear(k1, k2, a, b)`` notation, in which the lower and upper domain bounds ``k1`` and ``k2`` are expected to be supplied by the superclass rather than being initialised locally, an inherited dependency that ties the display format to the broader datatype hierarchy and would fail at runtime if the base class did not provide those bounds. That notation is intended for display, debugging, and export of the fuzzy ontology, giving a concise summary of the function's full parameterisation in a form that is easy for both humans and downstream tooling to parse.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -102,4 +106,3 @@ Module Contents
 
    .. py:attribute:: _b
       :type:  float
-

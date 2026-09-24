@@ -5,16 +5,22 @@ fuzzy_dl_owl2.fuzzydl.concept.concrete.linear_concrete_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A concrete implementation of a fuzzy concept that utilizes a piecewise linear membership function defined over a normalized domain.
+A fuzzy concrete concept whose membership function is a two-segment linear ramp over a feature domain, rising from degree zero at the lower bound to degree one at the upper bound through a configurable knee point.
 
 
 Description
 -----------
 
 
-This software component models a specific type of fuzzy concept characterized by a piecewise linear membership function operating on a normalized domain ranging from zero to one. The mathematical behavior is governed by a "knee" point defined by parameters ``a`` and ``b``, which creates a linear ramp from the origin to the knee and a second ramp from the knee to full membership, effectively ignoring the interval bounds ``k1`` and ``k2`` during the actual calculation of the membership degree. Validation logic ensures that the definition interval and the knee point adhere to specific constraints, such as requiring the lower bound to be less than or equal to the knee position and the membership degree at the knee to not exceed one. Beyond calculating membership degrees through linear interpolation, the implementation supports standard fuzzy logic operations like negation, conjunction, and disjunction by delegating these tasks to a central operator handler. It also provides functionality for cloning instances and generating a canonical string representation based on its defining parameters.
+``LinearConcreteConcept`` expresses a fuzzy linguistic value over a concrete feature interval ``[k1, k2]``: membership is 0 at and below ``k1``, climbs linearly to a knee point ``(a, b)``, and then climbs linearly again to 1 at and above ``k2``. The shape is deliberately chosen to coincide exactly with the constraints that the MILP encoding of the concept enforces in the knowledge base, so evaluating a degree in Python reproduces the same value the solver's linear equations imply. Two deliberate divergences from the original Java implementation are documented inline: the constructor rejects degenerate configurations (an empty or reversed domain, a knee coinciding with a domain bound, or a knee degree outside ``[0, 1]``) because a vertical ramp has no well-defined slope, and membership evaluation is carried out in the feature's own units rather than assuming a normalised ``[0, 1]`` domain, which fixes a latent defect in the Java version that only produced correct results when the domain happened to be ``[0, 1]``.
+
+The knee coordinates are exposed through float-coercing properties so they can be inspected and adjusted, while the underlying parameters remain plain floats. The concept integrates with the wider fuzzy description-logic framework by delegating negation, conjunction, and disjunction — exposed through the unary minus, ``&``, and ``|`` operators — to ``OperatorConcept``, which builds new composite concepts and leaves the operands untouched. Structural identity is provided by a hash computed from the name, the domain bounds, the knee, and the concept type, allowing instances to participate safely in sets and dictionaries, and cloning yields an independent copy carrying the same parameters. A deterministic, human-readable label of the form "linear(k1, k2, a, b)" is generated from the current state, giving the concept a stable printable identity for logging and debugging.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -58,15 +64,15 @@ Module Contents
       :private-bases:
 
 
-   This class models a fuzzy concept characterized by a piecewise linear membership function operating on a normalized domain from 0 to 1. The function is defined by a specific "knee" point determined by parameters `a` and `b`, creating a linear ramp from (0, 0) to (a, b) and a second linear ramp from (a, b) to (1, 1). While the constructor accepts parameters `k1` and `k2` to denote the definition interval, the membership calculation logic strictly relies on the normalized input value and the `a` and `b` parameters. To use this class, instantiate it with a name and the required float parameters, ensuring that `k1` is less than or equal to `a` and `b` does not exceed 1.0 to avoid validation errors. Once instantiated, the membership degree of a specific value can be retrieved using the `get_membership_degree` method, and the object supports standard fuzzy logic operations such as negation, conjunction, and disjunction.
+   This class models a fuzzy concept characterized by a piecewise linear membership function on the feature domain `[k1, k2]`. The function is defined by a "knee" point `(a, b)`, with `a` in the units of the feature and `b` the membership degree reached at `a`: a linear ramp from `(k1, 0)` to `(a, b)` and a second linear ramp from `(a, b)` to `(k2, 1)`. This is the same shape the MILP encoding of the concept enforces. Instantiate it with a name and the four float parameters, with `k1 < a < k2` and `0 <= b <= 1`; the membership degree of a value can then be retrieved with `get_membership_degree`, and the object supports the usual fuzzy operations (negation, conjunction, disjunction).
 
-   :param k1: Lower bound of the interval for which the concept is defined.
+   :param k1: Lower bound of the feature domain; the membership degree is 0 at and below `k1`.
    :type k1: float
-   :param k2: The upper bound of the interval for which the concept is defined.
+   :param k2: Upper bound of the feature domain; the membership degree is 1 at and above `k2`.
    :type k2: float
-   :param _a: The lower bound of the interval for which the concept is satisfied, acting as a threshold in the piecewise linear membership function.
+   :param _a: Abscissa of the knee, in feature units, strictly between `k1` and `k2`.
    :type _a: float
-   :param _b: The membership degree at the threshold `a`, defining the slope of the linear membership function. Must be less than or equal to 1.0.
+   :param _b: The membership degree at the knee `a`, in `[0, 1]`.
    :type _b: float
 
 
@@ -138,9 +144,9 @@ Module Contents
 
    .. py:method:: get_membership_degree(value: float) -> float
 
-      Calculates the degree of membership for a given input value based on a piecewise linear function defined by the concept's parameters. The input is treated as a normalized value, where any input less than or equal to zero results in a membership of 0.0, and any input greater than or equal to one results in a membership of 1.0. Between zero and the internal threshold `self.a`, the membership increases linearly from 0.0 to `self.b`. For values between `self.a` and 1.0, the membership increases linearly from `self.b` to 1.0. This method does not modify the state of the object.
+      Calculates the degree of membership of a feature value: 0.0 at and below `k1`, a linear ramp from `(k1, 0)` to the knee `(a, b)`, a second linear ramp from `(a, b)` to `(k2, 1)`, and 1.0 at and above `k2`. This is exactly the function the MILP encoding of the concept enforces, expressed in the units of the feature. This method does not modify the state of the object.
 
-      :param value: The input value to evaluate against the membership function. Values less than or equal to 0 return 0, and values greater than or equal to 1 return 1.
+      :param value: The feature value to evaluate, in the units of the feature domain `[k1, k2]`.
       :type value: float
 
       :return: The calculated degree of membership for the input value, bounded between 0.0 and 1.0.
@@ -185,4 +191,3 @@ Module Contents
 
    .. py:attribute:: k2
       :type:  float
-

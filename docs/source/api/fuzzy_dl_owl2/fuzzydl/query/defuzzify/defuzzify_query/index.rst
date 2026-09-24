@@ -5,16 +5,24 @@ fuzzy_dl_owl2.fuzzydl.query.defuzzify.defuzzify_query
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-An abstract base class that implements the logic for converting fuzzy membership degrees into crisp values for a specific individual and feature using Mixed-Integer Linear Programming.
+An abstract query class that converts a fuzzy membership degree into a crisp value for a named feature of an individual, by first computing the individual's maximal degree of membership in a concept and then optimizing a MILP objective built from the feature's associated variable.
 
 
 Description
 -----------
 
 
-The software provides a framework for resolving fuzzy logic values into crisp numbers by leveraging Mixed-Integer Linear Programming (MILP) to optimize specific features within a knowledge base. During the execution process, the logic first determines the maximum degree of membership for a given individual and concept, asserts this value back into a cloned knowledge base, and then identifies the variable associated with the target feature. By separating the general optimization workflow from the specific mathematical strategy, the design allows subclasses to define custom objective expressions while the base class handles the complexities of ontology consistency, variable retrieval, and solution normalization. Error handling mechanisms ensure that inconsistent ontologies are detected and reported, while the solver manages negative results by returning absolute values to maintain mathematical validity.
+``DefuzzifyQuery`` provides the shared skeleton for defuzzification inside a fuzzy description-logic reasoner: given a concept, an individual, and a feature name, it determines the crisp value that best represents the individual's fuzzy membership. The design is deliberately split so that all heavy lifting — solving a maximum-satisfiability problem, asserting results, and running the optimization — lives in the base class, while subclasses only supply the abstract objective-expression hook that encodes a particular defuzzification strategy (for example, maximizing or minimizing the feature value). This keeps the surrounding machinery in one place and makes it trivial to add new strategies without duplicating the workflow.
+
+Execution is carefully isolated: the original knowledge base is cloned before any work begins, so assertions and intermediate results never leak into the caller's ontology. During preprocessing, a maximum-satisfiability query establishes the best degree to which the individual belongs to the target concept; that degree is asserted back into the clone, the assertions are resolved, and the individual's role relations are then traversed to locate the target individual linked through the feature, from which the corresponding Mixed-Integer Linear Programming variable is retrieved to build the objective expression. The final optimization runs against the cloned knowledge base, and any negative result is normalized to its absolute value before being returned.
+
+Robustness is handled at two levels: an inconsistent ontology is caught through a dedicated exception and reported as a solution flagged as inconsistent, and a failure to derive an objective expression produces a warning and a null answer rather than a crash. Verbose MILP logging is suppressed during setup and only re-enabled for the final optimization, keeping intermediate reasoning quiet while still exposing the details of the decisive solve.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -122,5 +130,3 @@ Module Contents
    .. py:attribute:: obj_expr
       :type:  fuzzy_dl_owl2.fuzzydl.milp.expression.Expression
       :value: None
-
-

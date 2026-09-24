@@ -5,16 +5,22 @@ fuzzy_dl_owl2.fuzzydl.classification_node
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A graph node entity that models concepts within a classification hierarchy, managing global collections of equivalent names and weighted directed edges for a fuzzy description logic reasoner.
+The ``ClassificationNode`` class models a single concept in a fuzzy description-logic classification hierarchy, holding its synonym labels and managing the weighted directed edges that connect it to related concepts.
 
 
 Description
 -----------
 
 
-Implementation relies on class-level attributes to store all names and edge weights, creating a shared global state where modifications affect the entire graph structure regardless of the specific instance used. This design facilitates the management of complex relationships, such as inheritance or association, by updating central registries for input and output edges, while also supporting the removal of connections based on specific weight thresholds. Special logic identifies universal and empty concepts through sentinel naming conventions, and the system ensures consistent identity management by deriving hash values and string representations directly from the global set of synonyms.
+Each instance represents one concept in the taxonomy that a fuzzy reasoner constructs and refines. Because the reasoner is fuzzy, relationships such as subsumption or association are not all-or-nothing: connections to other concepts are directed edges carrying floating-point weights, so a link can hold to a degree rather than crisply. A concept may be known under several equivalent names (synonyms or labels), and two sentinel names, ``*top*`` and ``*bottom*``, allow the reasoner to recognise the universal concept anchoring the top of the hierarchy and the empty, unsatisfiable concept at its bottom, in line with standard description-logic conventions. Edge maintenance follows an add-and-attenuate pattern: a weight is registered for an incoming or outgoing connection, and an edge is discarded only once its weight has fallen to or below a caller-supplied threshold, which supports the incremental weakening and pruning of links during reasoning. Convenience queries expose a node's immediate successors and predecessors, and the node's full name renders either as a single label or as a brace-wrapped, space-separated list when several synonyms are registered.
+
+The most consequential design decision — almost certainly an unintended one — is that the name set and both edge dictionaries are declared as **class-level** attributes rather than instance attributes, so every node shares one global name collection and one global pair of edge maps. The constructor accepts a name but stores nothing on the instance, registering it only in the shared set; consequently a label added through any node becomes visible to all of them, and the sentinel checks for the top and bottom concepts return True for every instance once those names have been seen anywhere. Hashing and string conversion are likewise derived from the shared collection: all instances hash to the same value (computed from the tuple of every registered name) while equality remains identity-based, and the printed name is drawn from an unordered set, so it can vary between runs. Two further quirks deserve caution: several of the graph-query helpers are declared without a ``self`` parameter and therefore behave as class-level functions that raise a TypeError when invoked through an instance, and a couple of the edge mutators are misspelled ("ouput" rather than "output"), which callers must match exactly.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -227,4 +233,3 @@ Module Contents
 
    .. py:attribute:: OUTPUT_EDGES
       :type:  dict[Self, float]
-

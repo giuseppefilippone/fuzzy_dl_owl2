@@ -37,25 +37,31 @@ fuzzy_dl_owl2.fuzzydl.individual
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A framework for modeling individual entities, dynamic node generation, and fuzzy constraint representation within tableau-based fuzzy description logic reasoning.
+Node-level abstractions for tableau-based fuzzy description-logic reasoning, modelling the individuals of a completion graph through a foundational named-entity type that accumulates concepts, role relations, and datatype restrictions during inference, a dynamically generated node variant that tracks lineage and blocking status, and a lightweight proxy that pairs concrete individuals with triangular fuzzy numbers.
 
 
 Description
 -----------
 
 
-The software provides the foundational data structures required to represent and manipulate entities within a fuzzy description logic knowledge base, specifically targeting tableau-based reasoning algorithms. A base entity class manages concept assertions and role relations while supporting state cloning and pruning to handle non-deterministic branching, whereas a specialized extension handles dynamically generated nodes within a completion forest by tracking hierarchical lineage, depth, and complex blocking states to ensure termination. To address uncertainty and degrees of membership, a proxy structure encapsulates the relationship between concrete entities and fuzzy constraints defined by triangular fuzzy numbers, allowing the system to model partial truths relative to specific feature thresholds. Together, these elements enable efficient inference by combining strict identity management with flexible state preservation, optimizing memory usage through blocking strategies while accurately representing the nuances of fuzzy logic.
+Tableau algorithms for fuzzy description logics check the consistency of a knowledge base by expanding a completion forest whose nodes are individuals, and the node layer of that machinery follows a three-part architecture. A foundational abstraction models a single named individual as a self-contained snapshot of everything the reasoner derives about one domain element: the concepts asserted of it, the role relations linking it to successor individuals, the abstract role restrictions governing its fillers, and the concrete restrictions placed on its features, all keyed by role or feature name. A specialised node type extends this foundation for the individuals the algorithm generates on the fly while expanding existential restrictions; each such node remembers the parent and role it was created from, derives its tree depth from that lineage, and carries tri-state direct- and indirect-blocking flags that implement the standard **blocking** optimisation, without which reasoning over cyclic or unbounded role expansions would never terminate. Alongside the node types sits a deliberately minimal value object that bundles a comparison type, a feature name, a triangular fuzzy number, and a reference to a concrete individual, acting as a shared stand-in for every entity satisfying a fuzzy condition so that fuzzy concrete-domain values are reused rather than duplicated.
+
+Several design decisions are shared by all three abstractions. Identity is purely name-based, upholding the unique name assumption and turning any attempt to relabel an individual into an inconsistency error rather than a silent merge, while ordering and hashing derive from names and structural state so that nodes behave correctly inside sorted containers and under the set and dictionary operations that tableau bookkeeping depends on. Because tableau reasoning explores branches non-deterministically and must backtrack, deep cloning is a first-class operation — mutable collections are rebuilt rather than shared, so a node and its clone never alias — and a complementary pruning step recursively severs role relations from blockable successors when a branch is abandoned. Blockability is reserved for generated nodes, since the base type defaults to non-blockable and nodes carrying nominals are excluded, ensuring the optimisation never interferes with entities named in the knowledge base; blocking propagation itself uses a breadth-first traversal that deliberately skips edges leading back to the parent, so inverse roles cannot carry the blocked marking up the tree. Finally, annotations for fuzzy numbers and related components are imported only during type checking, which avoids circular dependencies among the fuzzy DL components and keeps runtime import overhead low.
 
 
 Modules
 -------
 
 
-* [``fuzzy_dl_owl2.fuzzydl.individual.created_individual``] — A dynamically generated node within a completion forest for tableau-based fuzzy description logic reasoning that manages hierarchical context, blocking states, and representative constraints.
-* [``fuzzy_dl_owl2.fuzzydl.individual.individual``] — A class representing an individual entity within a fuzzy description logic knowledge base that manages concept assertions, role relations, and restrictions during reasoning processes.
-* [``fuzzy_dl_owl2.fuzzydl.individual.representative_individual``] — Defines a proxy entity that represents a group of individuals satisfying a specific fuzzy condition relative to a feature threshold.
+* [``fuzzy_dl_owl2.fuzzydl.individual.created_individual``] — A node type representing dynamically generated individuals in a completion forest, used by tableau-based fuzzy description-logic reasoning to track each node's lineage, depth, blocking status, and associated fuzzy representative data.
+* [``fuzzy_dl_owl2.fuzzydl.individual.individual``] — A core building block of fuzzy description-logic reasoning that models a single named individual in an ontology, together with all the concepts, role relations, and restrictions that a tableau-based reasoner attaches to it during inference.
+* [``fuzzy_dl_owl2.fuzzydl.individual.representative_individual``] — A lightweight value object that pairs a concrete individual with a triangular fuzzy number and a feature name, acting as a stand-in for the collection of individuals that satisfy a fuzzy condition within a fuzzy description logic reasoner.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -68,4 +74,3 @@ Submodules
    /api/fuzzy_dl_owl2/fuzzydl/individual/created_individual/index
    /api/fuzzy_dl_owl2/fuzzydl/individual/individual/index
    /api/fuzzy_dl_owl2/fuzzydl/individual/representative_individual/index
-

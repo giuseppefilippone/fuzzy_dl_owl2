@@ -5,16 +5,20 @@ fuzzy_dl_owl2.fuzzydl.milp.variable
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Defines a symbolic variable structure used to represent degrees of satisfaction within linear expressions for fuzzy description logic ontologies.
+A symbolic variable abstraction for mixed-integer linear programming in which each named variable represents a degree of satisfaction in fuzzy description logic reasoning, carrying a domain type (binary, integer, continuous, or semi-continuous) that automatically determines its numeric bounds.
 
 
 Description
 -----------
 
 
-Symbolic variables are modeled to encapsulate essential properties such as a unique identifier, a specific domain type, and numeric constraints defined by lower and upper bounds. The design automatically adjusts these numeric boundaries based on the variable type, ensuring that binary and semi-continuous variables are constrained between zero and one, while continuous and integer types default to infinite ranges. To facilitate the construction of optimization models, static factory methods provide convenient interfaces for generating specific variable types, and a class-level counter enables the automatic creation of unique sequential names. Equality comparisons rely primarily on the variable's name, while hashing incorporates the full state including type and bounds to ensure consistent behavior within hash-based collections. Additionally, the implementation supports cloning for independent copies and includes flags to identify variables acting as datatype fillers within the broader fuzzy logic framework.
+The **Variable** class is the fundamental building block of the linear expressions and constraints that a fuzzy DL reasoner hands to a MILP solver: every concept assertion, role filler, or datatype restriction ultimately contributes one or more of these variables, each typically standing for a truth degree between 0 and 1. Every instance holds a name, a domain drawn from the *VariableType* enumeration, and bounds that are derived automatically from the chosen type — binary and semi-continuous variables are confined to the unit interval, while continuous and integer variables are left unbounded — so callers never need to manage bounds by hand. Construction is streamlined through static factory methods, re-exported at module level under the shorthand aliases *BinaryVar*, *IntegerVar*, *UpVar*, and *FreeVar*, as well as through an auto-naming facility backed by a class-level counter that mints unique sequential identifiers, which is convenient whenever the reasoner must introduce auxiliary variables while translating ontology axioms into optimisation form. Equality is decided by name alone, so distinct instances sharing an identifier are treated interchangeably inside expressions and solver mappings, whereas the hash deliberately combines the name with the type, bounds, and datatype-filler flag so that variables remain well-behaved as dictionary keys. A boolean flag marks variables acting as fillers for datatype restrictions, and a clone operation yields independent copies, rounding out a deliberately minimal, value-oriented design that keeps the surrounding solver integration simple.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

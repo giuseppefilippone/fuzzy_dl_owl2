@@ -5,16 +5,22 @@ fuzzy_dl_owl2.fuzzydl.concept.weighted_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A Python class representing a fuzzy description logic concept modified by a numerical weight to denote importance or relevance.
+A weighted concept for fuzzy description logics that attaches a numerical importance factor to an underlying concept, expressing the graded form (w C) used in weighted aggregation and prioritised reasoning.
 
 
 Description
 -----------
 
 
-The software implements a wrapper for logical concepts within a fuzzy description logic framework, allowing a numerical weight to be associated with a base concept to represent its significance or priority. By inheriting from a base concept class and utilizing an interface for concept containment, the design ensures that the weighted entity behaves like a standard concept while maintaining a distinct scalar value. Structural queries, such as retrieving atomic concepts or roles, are delegated directly to the encapsulated inner concept, ensuring that the wrapper remains transparent to the underlying logical structure. The implementation also supports standard logical operations like negation, conjunction, and disjunction through operator overloading, which relies on a separate operator utility to construct new concept instances. Furthermore, the logic includes mechanisms for cloning the object and replacing internal components, while the hashing strategy ensures that the identity of the object is determined by a combination of its weight, the hash of its inner concept, and its type.
+WeightedConcept occupies a specific niche in the concept hierarchy of a fuzzy description-logic reasoner: it allows the degree to which a concept contributes to an expression to be scaled by a weight, which is the essential building block for constructs such as weighted sums and importance-qualified axioms. It is built through multiple inheritance, combining the base **Concept** class — which supplies the shared expression machinery and tags every instance with the WEIGHTED type — with the HasConceptInterface mixin that stores a reference to the wrapped concept. The design is deliberately thin and delegating: structural queries such as collecting atomic concepts or roles are simply forwarded to the inner concept, so the wrapper contributes weighting semantics without duplicating any of the underlying logic. Standard logical connectives are exposed through operator overloading (unary minus for negation, & for conjunction, | for disjunction), each delegating to the shared OperatorConcept factory so that weighted concepts compose uniformly with every other kind of concept in the ontology.
+
+Two further behaviours keep the abstraction coherent under transformation and under use in collections. Substitution is weight-preserving: when a concept is replaced inside the structure, the original weight is retained and only the inner concept is rebuilt, and the rewrite only proceeds when the replacement is itself a weighted concept. A readable name of the form "(weight concept)" is generated at construction time, and hashing combines the weight, the inner concept, the name, and the type, so that different weightings of the same concept remain distinct in sets and mappings. Cloning is shallow — the copy shares the same weight and the same inner-concept reference — which suits the generally immutable, expression-oriented style of the surrounding concept hierarchy.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -183,4 +189,3 @@ Module Contents
       :return: The weight applied to the wrapped concept.
 
       :rtype: float
-

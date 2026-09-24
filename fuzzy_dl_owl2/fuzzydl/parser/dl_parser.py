@@ -699,8 +699,9 @@ class DLParser(object):
         f: FuzzyConcreteConcept = DLParser.kb.concrete_concepts.get(list_tokens[0])
         if f is None:
             Util.error(f"Error: Fuzzy concept {f} has to be defined before being used.")
-        if not isinstance(f, (RightConcreteConcept, LeftConcreteConcept)):
-            Util.error(f"Error: Fuzzy concept {f} has to be a right or left functions.")
+        # As in the Java oracle (Parser.java) and grammar.md: right-shoulder or linear.
+        if not isinstance(f, (RightConcreteConcept, LinearConcreteConcept)):
+            Util.error(f"Error: Fuzzy concept {f} has to be a right or a linear function.")
         concepts: list[Concept] = [
             DLParser._to_concept(concept) for concept in list_tokens[1:]
         ]

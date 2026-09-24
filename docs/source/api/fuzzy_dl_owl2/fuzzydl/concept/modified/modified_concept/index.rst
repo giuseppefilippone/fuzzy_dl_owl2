@@ -5,16 +5,20 @@ fuzzy_dl_owl2.fuzzydl.concept.modified.modified_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A fuzzy description logic construct that applies a semantic modifier to an underlying concept to alter its degree of satisfaction.
+An abstract base class for fuzzy description-logic concepts in which a linguistic modifier such as "very" or "slightly" reshapes how strongly individuals satisfy an underlying concept.
 
 
 Description
 -----------
 
 
-This software component functions as a wrapper that combines a base concept with a specific modifier, such as "very" or "slightly," to adjust the semantic interpretation of the original entity. It preserves the structural integrity of the underlying concept by delegating queries regarding roles, atomicity, and concreteness directly to the wrapped object, while independently managing the state of the applied modifier. The implementation facilitates the construction of complex logical expressions by overloading standard operators to handle negation, conjunction, and disjunction, effectively treating the modified concept as a first-class citizen within the logic system. Additionally, dynamic string generation ensures that the visual representation accurately reflects the combination of the modifier and the base concept, aiding in readability and debugging during logical evaluation.
+ModifiedConcept combines the core concept hierarchy with a concept-holding interface, acting as a decorator that pairs an arbitrary concept with a Modifier and tags the result as a distinct MODIFIED concept type. The design keeps the wrapper intentionally thin: questions about the wrapped concept's structure — its atomic components, the roles it mentions, and whether it is concrete — are delegated unchanged to the inner concept, so the modification is treated purely as a semantic transformation of membership degrees rather than a syntactic restructuring. Its textual representation is produced by placing the modifier and the wrapped concept side by side within parentheses, yielding readable expressions that mirror how modified concepts are written in fuzzy description logics. Substitution behaviour is deliberately left abstract, mirroring the original Java implementation, so every concrete kind of modified concept must supply its own replacement logic and a missing override fails fast instead of silently ignoring the operation. Operator overloading for negation, conjunction, and disjunction allows these wrapped concepts to participate naturally in compound fuzzy expressions by delegating composition to the shared operator-concept machinery, while the abstract nature of the definition ensures that only subclasses providing concrete modifier semantics can ever be instantiated.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -155,15 +159,17 @@ Module Contents
 
 
    .. py:method:: replace(concept1: fuzzy_dl_owl2.fuzzydl.concept.concept.Concept, concept2: fuzzy_dl_owl2.fuzzydl.concept.concept.Concept) -> fuzzy_dl_owl2.fuzzydl.concept.concept.Concept
+      :abstractmethod:
 
-      This method serves as a no-operation implementation for the replacement logic, returning the current instance unchanged regardless of the input concepts. Although the signature suggests substituting `concept1` with `concept2`, this specific implementation indicates that the `ModifiedConcept` does not support or require internal modifications of this nature. Consequently, invoking this method has no side effects on the object's state or the provided arguments.
+
+      Returns a new concept in which every occurrence of `concept1` is replaced by `concept2`. Abstract, mirroring the Java oracle (``ModifiedConcept.replace`` is abstract there): each concrete modified concept must implement its own substitution logic, so a missing override fails fast instead of silently ignoring the substitution.
 
       :param concept1: The concept to be replaced.
       :type concept1: Concept
       :param concept2: The concept to replace the first argument with.
       :type concept2: Concept
 
-      :return: Returns the instance itself after replacing `concept1` with `concept2`.
+      :return: A new Concept with `concept1` replaced by `concept2`.
 
       :rtype: Concept
 
@@ -182,4 +188,3 @@ Module Contents
       :return: The modifier applied to the wrapped concept.
 
       :rtype: Modifier
-

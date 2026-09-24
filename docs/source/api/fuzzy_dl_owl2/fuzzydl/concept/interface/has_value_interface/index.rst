@@ -5,16 +5,20 @@ fuzzy_dl_owl2.fuzzydl.concept.interface.has_value_interface
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-An abstract interface is provided for managing concepts that require both a specific role and an associated generic value.
+An abstract base class that augments role-based fuzzy description-logic concepts with the ability to carry and expose an arbitrary filler value.
 
 
 Description
 -----------
 
 
-Building upon the foundation of role management, this abstract class introduces the capability to associate an arbitrary value with a specific role. It encapsulates this data through a private attribute that is accessible and modifiable via public properties, ensuring that subclasses can represent or manipulate specific data within a defined context. The initialization process delegates role handling to the parent class while simultaneously storing the provided value, thereby combining role and value attributes into a cohesive interface. Although the documentation suggests isolation of state, the current implementation of the value setter assigns the object by reference rather than creating a deep copy, meaning that modifications to mutable objects will affect the internal state directly.
+HasValueInterface builds on HasRoleInterface, delegating all role handling to the superclass constructor and layering a single additional piece of state on top: a value of any type, held in a private attribute and exposed through a read/write property. Because the value is typed as ``typing.Any``, the abstraction stays deliberately agnostic about whether the filler is an individual, a data value, or something else entirely, which makes it reusable across the different kinds of value-carrying concepts in the fuzzy DL framework, such as value restrictions and datatype fillers. Since it is an ``abc.ABC``, it cannot be instantiated directly and instead acts as a mixin-style contract that concrete concept classes inherit from. One notable design point is that the setter stores the value **by reference** — the deep-copy safeguard that would isolate the internal state from external mutation survives only as a commented-out line — so mutable values assigned through the property remain shared with the caller, and the getter likewise returns the stored object without copying, meaning outside modifications to a mutable value will be visible through the interface.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -76,4 +80,3 @@ Module Contents
 
       :return: The value currently stored in the instance.
       :rtype: typing.Any
-

@@ -5,16 +5,20 @@ fuzzy_dl_owl2.fuzzydl.concept.approximation_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A class that models logical constructs constraining individuals based on related entity properties through specific roles within a fuzzy description logic framework.
+A fuzzy description-logic concept that expresses lower and upper approximations of a concept along a role—including tight and loose variants—and translates them into standard universal and existential quantifier forms.
 
 
 Description
 -----------
 
 
-The software implements a mechanism for defining logical constraints that quantify over related entities using specific roles, supporting various approximation strategies such as lower, upper, tight, and loose variants. By employing static factory methods for instantiation, it ensures that specific approximation types are created correctly without exposing the underlying constructor logic directly. This design allows for the representation of complex description logic constructs where individuals must satisfy conditions based on the properties of their neighbors, effectively bridging the gap between high-level approximation logic and standard quantifier representations. Internally, the logic handles the transformation of these specialized approximations into standard universal and existential quantifiers, facilitating seamless integration with other components of the system. It supports logical operations such as negation by inverting the approximation type and recursively applying negation to the underlying concept, while conjunction and disjunction are delegated to a dedicated operator handler. Furthermore, the implementation includes capabilities for structural manipulation, such as replacing sub-concepts and generating unique string identifiers, which are essential for maintaining consistency across the concept hierarchy and enabling efficient hashing and comparison.
+``ApproximationConcept`` captures role-based quantification constructs in a fuzzy DL knowledge base: a lower approximation states that every individual related through the role must satisfy the wrapped concept (universal quantification), an upper approximation states that at least one related individual does (existential quantification), and the tight and loose variants nest these quantifiers to express stronger or weaker readings of the same idea. Construction is deliberately funnelled through static factory methods such as ``lower_approx`` and ``upper_approx``, which fix the correct concept-type enum on the caller's behalf, while the constructor asserts that only valid approximation types are accepted so that no malformed variant can slip through. A central design decision is keeping approximations as a distinct abstract representation that can be lowered into ordinary quantifier concepts on demand: ``to_all_some_concept`` maps each approximation type to the corresponding, possibly nested, all/some structure over the same role, allowing the reasoner to work with standard concept forms whenever needed. Negation exploits the natural duality of the construct through a class-level mapping that pairs each approximation type with its inverse—lower becomes upper and vice versa, preserving tightness or looseness—so the unary minus operator simply produces the dual approximation wrapping the negated inner concept. The class integrates with the wider concept algebra by delegating conjunction and disjunction to a shared operator concept, by hashing structurally on the inner concept, type, and role so that logically equivalent approximations behave identically in sets and dictionaries, and by supporting recursive concept replacement that preserves the role while adopting the replacement's approximation type. Human-readable names such as "(la r C)" are computed deterministically from the type, role, and inner concept, and module-level aliases like ``LowerApprox`` and ``UpperApprox`` provide concise shorthand for the factory methods at the bottom of the module.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 

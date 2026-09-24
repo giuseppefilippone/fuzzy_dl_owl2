@@ -5,9 +5,24 @@ fuzzy_dl_owl2.fuzzydl.knowledge_base
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-The ``KnowledgeBase`` class acts as the central engine for a fuzzy description logic knowledge base, managing the TBox, ABox, and RBox components. It implements a tableau-based reasoning algorithm that translates fuzzy axioms into constraints for a Mixed-Integer Linear Programming (MILP) solver. The class handles the preprocessing of the Terminological Box (TBox), including normalization and absorption of axioms based on the configured fuzzy logic semantics (Lukasiewicz, Zadeh, Gödel, Kleene-Dienes). It manages the Assertional Box (ABox) by iteratively applying inference rules to assertions, creating and merging individuals to satisfy existential and universal restrictions, and enforcing blocking strategies to ensure algorithm termination. The system supports multiple fuzzy logic types and optimizations such as lazy unfolding and absorption to improve reasoning efficiency. It also provides functionality to serialize the knowledge base to and from files, compute the Description Logic expressivity of the ontology, and interface with an MILP solver to determine truth degrees and optimize expressions.
+A fuzzy description-logic knowledge base and reasoning engine, centred on a **KnowledgeBase** class that stores a fuzzy ontology's TBox, ABox, and RBox and performs reasoning by expanding a completion forest (tableau) while compiling every fuzzy constraint into a Mixed-Integer Linear Programming (MILP) problem whose solution yields the requested truth degrees.
+
+
+Description
+-----------
+
+
+Reasoning proceeds in two stages. The TBox is first preprocessed through a pipeline of optimizations — synonym, definition, concept, and role absorption together with general concept inclusion (GCI) transformations — that rewrite axioms into forms (definitions, inclusions, domain and range restrictions) amenable to *lazy unfolding*, so most axioms fire only when an individual actually mentions the relevant concept; axioms that resist absorption are kept as explicit GCIs and enforced directly on every individual. The ABox is then expanded by a fixpoint loop that dispatches each assertion to a rule according to its concept type, generating new individuals, relations, and MILP variables and constraints until no pending assertions remain. Termination is guaranteed by blocking strategies (subset, set, pairwise/double, and "anywhere" variants, selected automatically from the ontology's expressivity), which detect when a created individual's concept labels repeat those of an earlier node and suspend expansion, with dynamic unblocking when the blocking condition is later invalidated.
+
+The encoding supports several fuzzy semantics — Łukasiewicz, Zadeh/Gödel, Kleene-Dienes, and classical — each backed by a dedicated solver class that reifies t-norms, t-conorms, and implications via Big-M linearisations with auxiliary binary variables. Concrete domains are handled by translating datatype restrictions (at-most, at-least, exact value) and fuzzy membership functions (crisp, linear, left/right shoulder, triangular, trapezoidal) into piecewise-linear constraints over mutually exclusive binary region indicators, while a rich family of aggregation operators — OWA and quantified OWA, Choquet and (quasi-)Sugeno integrals, weighted sums, weighted min/max, and sigma-counts — is linearised through sorting networks or, when the weights are equally spaced, algebraic identities that avoid sorting altogether. A deliberate numerical safeguard shrinks the Big-M constant to the magnitude of the declared feature ranges, preventing thresholds from vanishing below the floating-point resolution of an overly large default constant.
+
+Supporting classes divide the remaining responsibilities: a datatype reasoner bridges concrete feature values (numbers, booleans, strings mapped to integers, triangular fuzzy numbers, and arithmetic feature functions) into solver constraints; individual handlers manage role relations, universal and has-value restrictions, inverse roles, and functional-role filler merging; and a created-individual handler implements the blocking bookkeeping. Once expansion completes, an arbitrary expression can be optimized over the resulting MILP to answer queries. The knowledge base can also be cloned with or without the ABox for tasks such as concept satisfiability, serialized back to a Lisp-like source format or pickled to disk — deserialization going through a restricted unpickler that resolves only classes from trusted modules to guard against arbitrary code execution — and it tracks extensive statistics (rule applications, forest depth, and variable counts) that allow comparison against an older, more variable-hungry calculus.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -1714,6 +1729,19 @@ Module Contents
 
 
 
+   .. py:method:: __linear_weights(weights: list[float]) -> bool
+      :staticmethod:
+
+
+      True if the OWA weights are equally spaced (w_i - w_{i+1} constant).
+
+      Yager's identity  OWA_w(x) = (1/n - (w_n - w_1)/2) * sum_i x_i + (w_n - w_1)/(n-1) * sum_{i<j} min(x_i, x_j)
+      (the OPTIMIZATIONS != 0 path of solve_owa_assertion) is exact only for such weights;
+      any other vector needs the sorting network (get_ordered_permutation).
+      With fewer than 3 weights every vector is trivially linear.
+
+
+
    .. py:method:: __remove_A_is_a_X_1(key: str, pcd: fuzzy_dl_owl2.fuzzydl.primitive_concept_definition.PrimitiveConceptDefinition, pcd_dict: dict[str, set[fuzzy_dl_owl2.fuzzydl.primitive_concept_definition.PrimitiveConceptDefinition]]) -> None
 
       This helper method removes a specific `PrimitiveConceptDefinition` from the set associated with the given key within the provided dictionary. It modifies the dictionary in place by extracting the set corresponding to the key and discarding the specified definition. As a cleanup step, if the removal results in an empty set for that key, the method deletes the key from the dictionary entirely to prevent cluttering the data structure with empty entries.
@@ -1935,6 +1963,12 @@ Module Contents
       :type ind: Individual
       :param r: The fuzzy relation instance being processed to infer new relations. It provides the role name to identify parent roles, the degree for calculating truth values, and the object individual for the inferred assertions.
       :type r: Relation
+
+
+
+   .. py:method:: adapt_big_m() -> None
+
+      Shrinks the Big-M constant used by the datatype-restriction rows to the magnitude of the values this knowledge base can actually take. The provider default (up to ``1000 * (2^31 - 1)`` for Gurobi) is far above any real feature value, and rows such as ``2M - n + x_b - M x_f - (M + n) x_is_c >= 0`` then lose the threshold ``n`` below the double-precision ulp of ``2M`` (about 1e-3 at 4e12): a feature pinned to 4.4 is solved as 4.3999 and an assertion at the exact membership degree becomes infeasible. M only has to dominate the feature values, so it is set to ``10 * max(|k1|, |k2|)`` over the declared numeric feature ranges (and the fuzzy-number range, if defined), floored at 1e6 and capped at the provider default. Nothing is changed when the user forces ``maxVal`` in the configuration, or when some numeric feature has no declared range (its values are unbounded, so only the provider default is safe).
 
 
 
@@ -4767,7 +4801,7 @@ Module Contents
 
    .. py:method:: solve_modifier_complemented_assertion(ind: fuzzy_dl_owl2.fuzzydl.individual.individual.Individual, concept: fuzzy_dl_owl2.fuzzydl.concept.operator_concept.OperatorConcept, degree: fuzzy_dl_owl2.fuzzydl.degree.degree.Degree) -> None
 
-      Processes a complemented assertion involving a modified concept for a specific individual within the knowledge base. This method validates that the provided concept is an `OperatorConcept` wrapping a `ModifiedConcept` or `ModifiedConcreteConcept`, raising an error if the structure is invalid. It constructs an `Assertion` object from the individual, concept, and degree, and subsequently delegates the resolution logic to the `rule_complemented_complex_assertion` method to update the knowledge base state.
+      Processes a complemented assertion involving a modified concept for a specific individual within the knowledge base. This method validates that the provided concept is an `OperatorConcept` wrapping a `ModifiedConcept` or `ModifiedConcreteConcept`, raising an error if the structure is invalid. It constructs an `Assertion` object from the individual, concept, and degree, and delegates the resolution logic to the `rule_complemented_complex_assertion` method to update the knowledge base state. As a post-step (a deliberate divergence from the Java oracle, see the inline comment), it additionally re-asserts the complement of the modifier's child concept whenever that child is complex or TBox-defined, so that the child's complement rule fires and its degree variable receives a proper lower bound.
 
       :param ind: The individual entity serving as the subject of the complemented modifier assertion.
       :type ind: Individual
@@ -5467,6 +5501,12 @@ Module Contents
    .. py:attribute:: t_G
       :type:  list[fuzzy_dl_owl2.fuzzydl.general_concept_inclusion.GeneralConceptInclusion]
       :value: []
+
+
+
+   .. py:attribute:: t_box_information
+      :type:  Optional[str]
+      :value: None
 
 
 
@@ -6332,4 +6372,3 @@ Module Contents
 .. py:data:: _PICKLE_ALLOWED_MODULE_PREFIXES
    :type:  tuple[str, Ellipsis]
    :value: ('fuzzy_dl_owl2.', 'collections', 'sortedcontainers', 'builtins', 'networkx')
-

@@ -11,39 +11,47 @@ from fuzzy_dl_owl2.fuzzydl.util.util import Util
 
 class LinearConcreteConcept(FuzzyConcreteConcept):
     """
-    This class models a fuzzy concept characterized by a piecewise linear membership function operating on a normalized domain from 0 to 1. The function is defined by a specific "knee" point determined by parameters `a` and `b`, creating a linear ramp from (0, 0) to (a, b) and a second linear ramp from (a, b) to (1, 1). While the constructor accepts parameters `k1` and `k2` to denote the definition interval, the membership calculation logic strictly relies on the normalized input value and the `a` and `b` parameters. To use this class, instantiate it with a name and the required float parameters, ensuring that `k1` is less than or equal to `a` and `b` does not exceed 1.0 to avoid validation errors. Once instantiated, the membership degree of a specific value can be retrieved using the `get_membership_degree` method, and the object supports standard fuzzy logic operations such as negation, conjunction, and disjunction.
+    This class models a fuzzy concept characterized by a piecewise linear membership function on the feature domain `[k1, k2]`. The function is defined by a "knee" point `(a, b)`, with `a` in the units of the feature and `b` the membership degree reached at `a`: a linear ramp from `(k1, 0)` to `(a, b)` and a second linear ramp from `(a, b)` to `(k2, 1)`. This is the same shape the MILP encoding of the concept enforces. Instantiate it with a name and the four float parameters, with `k1 < a < k2` and `0 <= b <= 1`; the membership degree of a value can then be retrieved with `get_membership_degree`, and the object supports the usual fuzzy operations (negation, conjunction, disjunction).
 
-    :param k1: Lower bound of the interval for which the concept is defined.
+    :param k1: Lower bound of the feature domain; the membership degree is 0 at and below `k1`.
     :type k1: float
-    :param k2: The upper bound of the interval for which the concept is defined.
+    :param k2: Upper bound of the feature domain; the membership degree is 1 at and above `k2`.
     :type k2: float
-    :param _a: The lower bound of the interval for which the concept is satisfied, acting as a threshold in the piecewise linear membership function.
+    :param _a: Abscissa of the knee, in feature units, strictly between `k1` and `k2`.
     :type _a: float
-    :param _b: The membership degree at the threshold `a`, defining the slope of the linear membership function. Must be less than or equal to 1.0.
+    :param _b: The membership degree at the knee `a`, in `[0, 1]`.
     :type _b: float
     """
 
     def __init__(self, name: str, k1: float, k2: float, a: float, b: float) -> None:
         """
-        Initializes the instance by setting up the defining parameters for a linear concrete concept. This constructor accepts a string identifier and four numerical coefficients (k1, k2, a, b) that govern the linear behavior. It enforces specific constraints to ensure mathematical validity: the value of k1 must not exceed a, and the value of b must be less than or equal to 1.0. If these constraints are violated, the method triggers an error via the utility module. Upon successful validation, the parameters are converted to floats and stored as instance attributes, and the parent class is initialized with the provided name.
+        Initializes the instance with the feature domain `[k1, k2]` and the knee `(a, b)` of the piecewise linear membership function. The parameters are validated so that the two ramps are well defined: `k1 < k2`, `k1 < a < k2` (the degenerate knees `a == k1` and `a == k2` would make one ramp vertical and its slope undefined) and `0 <= b <= 1`. Violations are reported through the utility module. The values are stored as floats and the parent class is initialized with the provided name.
 
         :param name: Identifier for the instance.
         :type name: str
-        :param k1: The first coefficient or constant value for the linear function, which must be less than or equal to 'a'.
+        :param k1: Lower bound of the feature domain, strictly less than `a`.
         :type k1: float
-        :param k2: The second coefficient or slope parameter for the linear function.
+        :param k2: Upper bound of the feature domain, strictly greater than `a`.
         :type k2: float
-        :param a: Upper bound for the parameter k1.
+        :param a: Abscissa of the knee, in feature units.
         :type a: float
-        :param b: A coefficient used in the linear function definition, constrained to be less than or equal to 1.0.
+        :param b: Membership degree at the knee, in `[0, 1]`.
         :type b: float
         """
 
         super().__init__(name)
-        if k1 > a:
-            Util.error(f"Error: Linear functions require {k1} <= {a}")
-        if b > 1.0:
-            Util.error(f"Error: Linear functions require {b} <= 1.0")
+        # Deliberate divergence from the Java oracle, which only checks k1 <= a and
+        # b <= 1 and accepts the degenerate knees a == k1 / a == k2 (vertical ramp).
+        # if k1 > a:
+        #     Util.error(f"Error: Linear functions require {k1} <= {a}")
+        # if b > 1.0:
+        #     Util.error(f"Error: Linear functions require {b} <= 1.0")
+        if k1 >= k2:
+            Util.error(f"Error: Linear functions require {k1} < {k2}")
+        if not (k1 < a < k2):
+            Util.error(f"Error: Linear functions require {k1} < {a} < {k2}")
+        if not (0.0 <= b <= 1.0):
+            Util.error(f"Error: Linear functions require 0 <= {b} <= 1")
 
         self.k1: float = float(k1)
         self.k2: float = float(k2)
@@ -109,9 +117,9 @@ class LinearConcreteConcept(FuzzyConcreteConcept):
 
     def get_membership_degree(self, value: float) -> float:
         """
-        Calculates the degree of membership for a given input value based on a piecewise linear function defined by the concept's parameters. The input is treated as a normalized value, where any input less than or equal to zero results in a membership of 0.0, and any input greater than or equal to one results in a membership of 1.0. Between zero and the internal threshold `self.a`, the membership increases linearly from 0.0 to `self.b`. For values between `self.a` and 1.0, the membership increases linearly from `self.b` to 1.0. This method does not modify the state of the object.
+        Calculates the degree of membership of a feature value: 0.0 at and below `k1`, a linear ramp from `(k1, 0)` to the knee `(a, b)`, a second linear ramp from `(a, b)` to `(k2, 1)`, and 1.0 at and above `k2`. This is exactly the function the MILP encoding of the concept enforces, expressed in the units of the feature. This method does not modify the state of the object.
 
-        :param value: The input value to evaluate against the membership function. Values less than or equal to 0 return 0, and values greater than or equal to 1 return 1.
+        :param value: The feature value to evaluate, in the units of the feature domain `[k1, k2]`.
         :type value: float
 
         :return: The calculated degree of membership for the input value, bounded between 0.0 and 1.0.
@@ -119,13 +127,26 @@ class LinearConcreteConcept(FuzzyConcreteConcept):
         :rtype: float
         """
 
-        if value <= 0:
+        # Deliberate divergence from the Java oracle (which shares this defect):
+        # the original compared the value with 0 and 1, i.e. treated it as already
+        # normalised, while using `a` in feature units. The result was right only
+        # for k1 = 0, k2 = 1. The MILP rows (see KnowledgeBase, linear concrete
+        # concept equations) work in feature units: y=0 -> x_ass = b (x - k1)/(a - k1),
+        # y=1 -> x_ass = b + (1 - b)(x - a)/(k2 - a); this is the same function.
+        # if value <= 0:
+        #     return 0.0
+        # if value >= 1.0:
+        #     return 1.0
+        # if value <= self.a:
+        #     return self.b / self.a * value
+        # return (value * (1.0 - self.b) + (self.b - self.a)) / (1.0 - self.a)
+        if value <= self.k1:
             return 0.0
-        if value >= 1.0:
+        if value >= self.k2:
             return 1.0
         if value <= self.a:
-            return self.b / self.a * value
-        return (value * (1.0 - self.b) + (self.b - self.a)) / (1.0 - self.a)
+            return self.b * (value - self.k1) / (self.a - self.k1)
+        return self.b + (1.0 - self.b) * (value - self.a) / (self.k2 - self.a)
 
     def compute_name(self) -> str:
         """

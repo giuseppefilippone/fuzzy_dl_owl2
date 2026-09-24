@@ -5,16 +5,22 @@ fuzzy_dl_owl2.fuzzydl.concept.atomic_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Defines the fundamental building block for a fuzzy description logic system, representing indivisible concepts that support logical operations.
+Defines ``AtomicConcept``, the named and indivisible leaf node of the fuzzy description-logic concept hierarchy, serving as the fundamental building block from which all compound concept expressions are assembled.
 
 
 Description
 -----------
 
 
-The software implements a leaf node within a conceptual hierarchy, serving as the most basic, indivisible unit of representation in a fuzzy description logic framework. Instances are identified by a string name and can be instantiated directly or generated via a factory method that ensures unique identifiers through a global counter. While the class represents a base element that cannot be decomposed further, it enables the construction of complex expressions by overloading standard logical operators such as conjunction, disjunction, and negation, which delegate the creation of composite structures to a separate operator handler. Traversal and decomposition methods consistently return the instance itself or a singleton set containing it, reflecting the nature of an atomic entity, while equality and hashing mechanisms rely strictly on the assigned name and type to maintain identity consistency across the system.
+An ``AtomicConcept`` carries nothing but a string name and registers itself with the base ``Concept`` hierarchy under the ``ATOMIC`` type, making it the simplest possible concept expression in the fuzzy description-logic framework. Instances arise either explicitly, when a caller supplies a meaningful name, or anonymously through a static factory that draws on a global creation counter to mint guaranteed-unique internal identifiers, which is convenient when reasoning algorithms need fresh placeholder concepts. Identity is defined strictly by name: equality and hashing compare the name together with the concept type, so two atomic concepts sharing a name are treated as interchangeable, allowing them to be used safely and predictably as members of sets or as dictionary keys during reasoning.
+
+Because an atomic concept is a leaf, every structural operation bottoms out trivially: collecting atoms, atomic concepts, or clauses simply yields the concept itself, role extraction returns nothing, idempotency reduction is a no-op, and cloning produces a new instance bearing the same name. The operator overloads form a compact expression language in which conjunction, disjunction, and negation all delegate to ``OperatorConcept``, so combining atomic concepts transparently constructs the corresponding compound expressions while leaving the operands untouched. Negation consequently never yields another atomic concept but a complex operator concept, which is why the class reports itself as atomic yet not complemented-atomic, and as abstract rather than concrete. A substitution operation allows one atomic concept to be replaced by another and signals an error if the replacement is not itself atomic, while the implication operator exists only as an unimplemented placeholder whose Gödel-implication logic has been commented out. These deliberately trivial base cases keep the recursive traversal, simplification, and rewriting machinery elsewhere in the library simple, since any recursive descent over a concept expression is guaranteed to terminate here.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -306,5 +312,3 @@ Module Contents
       :return: The concept resulting from the replacement operation. Returns `c` if `self` matches `a` and `c` is atomic; otherwise, returns `self`. Returns `None` if `c` is not atomic.
 
       :rtype: typing.Optional[typing.Self]
-
-

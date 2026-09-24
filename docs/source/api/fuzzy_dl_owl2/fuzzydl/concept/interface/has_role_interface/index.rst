@@ -5,16 +5,20 @@ fuzzy_dl_owl2.fuzzydl.concept.interface.has_role_interface
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-An abstract base class that defines a standard interface for managing a role attribute associated with a concept.
+An abstract base class equips description-logic concepts with a uniform way to store, read, and update the role (binary relation) they are associated with.
 
 
 Description
 -----------
 
 
-The component is designed to be inherited by classes that require a consistent way to track and modify a specific context or function, represented as a string. By encapsulating the role within a private attribute and exposing it through getter and setter properties, the design ensures that the state can be accessed or updated dynamically while maintaining a uniform interface across different implementations. This abstraction eliminates the need for repetitive logic in subclasses, allowing them to focus on their specific behaviors while relying on this base to handle the storage and retrieval of the role data. The implementation is particularly relevant for concepts involving binary relations, such as those quantified by existential or universal restrictions, providing a foundational building block for the broader system architecture.
+In the fuzzydl framework, concepts such as existential or universal restrictions quantify over a role, so many concept implementations need a shared, reusable mechanism for holding that role name. **HasRoleInterface** supplies exactly that: its constructor accepts a role string and stores it in a private attribute, while a property pair exposes read and write access so the role can be inspected or replaced at any point during the object's lifetime. The design is intentionally minimal — no runtime type checking or validation is performed, and the constructor's type hint is advisory only — which keeps the mixin lightweight and imposes no behavioural constraints on the classes that inherit it beyond the storage contract itself. By centralising this small piece of state management, the interface eliminates duplicated boilerplate across every role-bearing concept and guarantees that all such concepts interact with their role through one consistent API.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -77,4 +81,3 @@ Module Contents
       :return: The associated role name.
 
       :rtype: str
-

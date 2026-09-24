@@ -53,6 +53,9 @@ class ConfigReader:
     RULE_ACYCLIC_TBOXES: bool = True
     # XML OWL 2 annotation label used to create and parse Fuzzy OWL 2 ontologies
     OWL_ANNOTATION_LABEL: str = "fuzzyLabel"
+    # Explicit Big-M override (CONFIG.ini ``maxVal`` / .env ``MAX_VAL``).
+    # None = provider default, then adapted per knowledge base (KnowledgeBase.adapt_big_m).
+    MAXVAL: float | None = None
     # MILP Solver provider used by the reasoner
     MILP_PROVIDER: constants.MILPProvider = constants.MILPProvider.GUROBI
 
@@ -177,6 +180,19 @@ class ConfigReader:
             constants.MILPProvider.PULP_HIGHS,
         ):
             constants.MAXVAL = (1 << 28) - 1
+        else:  # GUROBI
+            constants.MAXVAL = ((1 << 31) - 1) * 1000
+        # The provider default is remembered so that KnowledgeBase.adapt_big_m can
+        # cap its per-KB value; an explicit ``maxVal`` wins over both.
+        constants.MAXVAL_DEFAULT = constants.MAXVAL
+        maxval = settings.get("maxval", None)
+        ConfigReader.MAXVAL = (
+            None
+            if maxval is None or str(maxval).strip().lower() in ("", "auto")
+            else float(maxval)
+        )
+        if ConfigReader.MAXVAL is not None:
+            constants.MAXVAL = ConfigReader.MAXVAL
         constants.MAXVAL2 = constants.MAXVAL * 2
 
         if ConfigReader.DEBUG_PRINT:

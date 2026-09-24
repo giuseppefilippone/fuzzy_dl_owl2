@@ -5,16 +5,20 @@ fuzzy_dl_owl2.fuzzydl.concept.interface.has_weighted_concepts_interface
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-An abstract interface extending the basic concept management contract to include support for numerical weights associated with each concept.
+An abstract interface that augments basic concept management with an optional collection of numerical weights, enabling objects to represent weighted aggregations of concepts in a fuzzy description-logic setting.
 
 
 Description
 -----------
 
 
-Building upon the foundation of managing generic concepts, this abstract class introduces the capability to associate specific numerical values or magnitudes with those concepts. It enforces a structural pattern where objects must handle a mutable list of floating-point weights, allowing for dynamic updates or the complete removal of weighting information. The design utilizes property decorators to encapsulate the internal storage of these weights, ensuring that any provided iterable is converted into a list or explicitly set to null to represent an unweighted state. By integrating this functionality directly into the inheritance hierarchy, the class facilitates the creation of complex fuzzy logic constructs where concepts contribute to a result with varying degrees of importance.
+``HasWeightedConceptsInterface`` builds on the simpler concept-holding contract because several fuzzy-DL constructs — such as weighted sums or other weighted aggregations — need not only a set of concepts but also a magnitude expressing each concept's relative significance. The constructor delegates the concepts themselves to the parent class and then materialises whatever weight iterable it receives into a plain list, a deliberate choice that protects against one-shot iterators such as generators being consumed prematurely; passing ``None`` leaves the object in an explicitly unweighted state rather than defaulting to an empty list, so callers can distinguish "no weighting applied" from "all weights are zero". A property pair exposes the weights: the getter returns the stored list (or ``None`` when unset), while the setter replaces any existing values wholesale, again accepting either an iterable or ``None`` to clear them. Because the class is declared abstract and introduces no new abstract methods of its own, it functions purely as a reusable contract: concrete subclasses — typically fuzzy concept aggregations — inherit both concept storage and weight handling, guaranteeing a uniform API across everything that carries weighted concepts.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -89,4 +93,3 @@ Module Contents
       :return: The list of weights, or ``None`` if unset.
 
       :rtype: typing.Optional[list[float]]
-

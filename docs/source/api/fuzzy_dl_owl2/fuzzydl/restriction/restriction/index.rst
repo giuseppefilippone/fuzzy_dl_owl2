@@ -5,16 +5,20 @@ fuzzy_dl_owl2.fuzzydl.restriction.restriction
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Defines a data structure for modeling universal restrictions within a fuzzy description logic framework by combining a role, a target concept, and a specific degree threshold.
+A lightweight value object that models a universal role restriction in a fuzzy description logic, storing a role name, a target concept, and the minimum membership degree that the restriction imposes.
 
 
 Description
 -----------
 
 
-Models a constraint where entities connected by a specific role must belong to a defined concept with a certainty level that meets or exceeds a given lower bound. The design encapsulates three core components: the identifier of the role, the target concept object, and the degree object representing the threshold. Functionality includes the ability to create independent copies of the instance to preserve state during manipulations, ensuring that modifications do not affect the original object. String representations are provided to visualize the logical syntax, offering formats that either display the full constraint including the threshold or a simplified version focusing solely on the role and concept relationship.
+The ``Restriction`` class encodes the fuzzy analogue of the classical ∀R.C construct: every individual connected through the given role must belong to the specified concept with a degree of at least the stored threshold. Its three components — the role name, the ``Concept`` being restricted to, and the lower-bound ``Degree`` — are held as plain attributes and exposed through trivial getters, so the type serves purely as a carrier of data rather than as an active participant in reasoning. A cloning operation yields a fresh instance that shares the same concept and degree references, a deliberate shallow-copy choice that keeps duplication cheap while relying on those collaborators being treated as immutable. Human-readable rendering comes in two flavours: a degree-free form, ``(all role concept)``, matching the concrete syntax used by the fuzzydl reasoner when the threshold is irrelevant, and a full form that appends ``>= degree`` to make the minimum-membership condition explicit; the official representation simply delegates to the informal string form so that debug output and user-facing output remain consistent.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -141,4 +145,3 @@ Module Contents
 
    .. py:attribute:: role_name
       :type:  str
-

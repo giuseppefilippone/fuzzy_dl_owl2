@@ -5,20 +5,24 @@ fuzzy_dl_owl2.fuzzydl.individual.created_individual
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A dynamically generated node within a completion forest for tableau-based fuzzy description logic reasoning that manages hierarchical context, blocking states, and representative constraints.
+A node type representing dynamically generated individuals in a completion forest, used by tableau-based fuzzy description-logic reasoning to track each node's lineage, depth, blocking status, and associated fuzzy representative data.
 
 
 Description
 -----------
 
 
-Dynamically generated nodes within a completion forest are modeled here to support tableau-based fuzzy description logic reasoning, extending the base individual structure with hierarchical context. Unlike static individuals, these nodes are created dynamically to satisfy existential restrictions, maintaining a lineage through references to a parent node and the specific role relation that necessitated their creation. The design incorporates a depth calculation mechanism that determines the hierarchical level of the node based on the parent's status, which is crucial for optimization strategies like pairwise blocking.
+CreatedIndividual extends the base Individual abstraction to model nodes that the reasoning algorithm creates on the fly while expanding a completion forest, as opposed to individuals that already exist in the knowledge base. Each node remembers the parent it was generated from and the role that links them, which lets the tree depth be derived automatically (a blockable parent yields a child one level deeper, while other cases reset to a fixed base depth) and enables ancestor-aware reasoning. Construction supports two shapes — a bare name, or a name together with a parent and role name — and any other arity is rejected outright, keeping the two initialisation paths explicit. Nodes start out *abstract* but can be flagged as concrete once they represent a fully realised entity, and they are only eligible for blocking when they carry no nominals.
 
-To ensure reasoning efficiency and termination, the implementation manages complex blocking states that prevent infinite expansion by tracking both direct and indirect block conditions. A breadth-first traversal algorithm is employed to propagate indirect blocking status to descendant nodes, effectively pruning large sections of the search space when a node is deemed equivalent to an ancestor. Furthermore, the entity supports deep cloning capabilities, allowing the reasoning engine to preserve and restore the complete state of a node—including its concept labels, representatives, and role relations—during non-deterministic branching.
+The central design concern is **blocking**, the standard tableau optimisation that prevents infinite expansion of existential and universal role restrictions. Every node holds tri-state flags for direct and indirect blocking (starting as *unchecked* rather than simply unblocked) along with the names of blocking ancestors, and a breadth-first traversal propagates the indirectly-blocked state through an entire subtree while deliberately skipping edges that lead back to the parent, so inverse roles cannot cause the marking to backtrack up the tree. Alongside this, each node maintains a set of concept labels and a collection of representative individuals, which pair an inequality type and feature name with a triangular fuzzy number; a lookup routine reuses an existing representative matching a given constraint instead of creating a duplicate, which keeps the fuzzy concrete-domain reasoning compact.
 
-The internal state distinguishes between abstract placeholders and concrete instances, utilizing collections to manage representative individuals and concept labels required for fuzzy constraint satisfaction. Equality and ordering comparisons are implemented based on unique identifiers and names, enabling the use of these nodes within sorted containers and hash-based data structures. By encapsulating attributes such as blocking ancestors and role names, the class provides a comprehensive representation of the inference context required for complex fuzzy description logic operations.
+Because tableau provers frequently need to snapshot and restore search states, deep cloning is a first-class operation: cloning copies the node's scalar state and shallow-copies the mutable collections (and recursively clones the parent) so that a node and its clone never share references. Equality is defined purely by name, ordering is defined by the numeric identifier embedded in generated names (making instances safe to store in sorted containers), and hashing is computed from the node's full structural state — name, depth, role, parent, labels, representatives, and blocking flags — so that cloned states remain consistent under set and dictionary operations. Optional debug logging, gated behind a global configuration flag, traces node creation and blocking decisions for troubleshooting the reasoning process.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -318,5 +322,3 @@ Module Contents
    .. py:method:: set_concrete_individual() -> None
 
       Marks the individual as concrete, indicating that it represents a specific, fully realized entity rather than an abstract or placeholder concept. This method updates the internal `_is_concrete` flag to `True`, effectively changing the state of the object. The operation is idempotent; calling it multiple times has the same effect as calling it once, and it does not return any value.
-
-

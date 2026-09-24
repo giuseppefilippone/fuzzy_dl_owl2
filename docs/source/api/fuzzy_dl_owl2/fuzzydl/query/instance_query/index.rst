@@ -5,16 +5,20 @@ fuzzy_dl_owl2.fuzzydl.query.instance_query
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-An abstract base class provides a framework for querying the membership degree of a specific individual within a given concept.
+An abstract base class for fuzzy description-logic queries that determine the degree to which a specific individual is an instance of a given concept, typically to find minimum or maximum membership degrees.
 
 
 Description
 -----------
 
 
-Extending the generic ``Query`` interface, this abstract class establishes a structural foundation for evaluating how strongly a specific individual belongs to a particular concept. It enforces a strict design constraint by validating that the provided concept is abstract, raising an error if a concrete concept is supplied, which ensures that only appropriate data types are processed during instance retrieval. During initialization, the component stores the target concept and individual as attributes while initializing an expression placeholder intended to represent the degree of membership. This architecture allows subclasses to focus on populating the expression with specific logic for identifying instances with minimum or maximum membership degrees without needing to re-implement the validation or storage mechanisms.
+InstanceQuery anchors a family of graded-membership queries in a fuzzy description-logic reasoner, where an individual's belonging to a concept is a matter of degree rather than a simple yes-or-no fact. It extends a generic query abstraction and enforces a key modelling constraint at construction time: the supplied concept must be abstract, and passing a concrete (datatype-style) concept raises an error, since graded membership is only meaningful for abstract concepts. The concept and individual are kept as state, while a placeholder for a linear expression is deliberately left empty for subclasses to populate; once the query has been compiled into a mixed-integer linear program, that expression encodes the individual's degree of membership in the concept. By deferring both the expression construction and the solving logic to concrete subclasses, the design allows variants such as minimum- and maximum-degree queries to share validation and state management while specialising only the reasoning machinery.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -79,5 +83,3 @@ Module Contents
    .. py:attribute:: obj_expr
       :type:  fuzzy_dl_owl2.fuzzydl.milp.expression.Expression
       :value: None
-
-

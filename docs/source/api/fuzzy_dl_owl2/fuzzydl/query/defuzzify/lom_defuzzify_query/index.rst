@@ -5,16 +5,20 @@ fuzzy_dl_owl2.fuzzydl.query.defuzzify.lom_defuzzify_query
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Implements the Largest of Maxima defuzzification strategy to convert fuzzy membership values into crisp numbers by maximizing the target variable within an optimization framework.
+A defuzzification query that applies the Largest of Maxima (LOM) method, converting a fuzzy membership value into a crisp number by selecting the largest value at which the degree of membership is maximized.
 
 
 Description
 -----------
 
 
-Software designed to execute the Largest of Maxima (LOM) defuzzification method operates by identifying the highest numerical value within the plateau of maximum membership for a specific feature. Extending a base defuzzification handler, the logic accepts a fuzzy concept, an individual entity, and a target feature name to configure the specific parameters required for this crisp value selection. The design ensures that the resulting crisp value represents the rightmost point of the fuzzy set's maximum membership area, which is crucial for applications requiring optimistic or upper-bound estimates. Within the broader fuzzy logic and optimization framework, the component generates an objective expression that mathematically represents the negative of the target variable. This formulation allows a standard minimization solver to effectively maximize the variable, thereby locating the largest value that satisfies the maximum membership constraints. By providing a string representation that explicitly identifies the operation, the logic facilitates logging and debugging while seamlessly integrating with the underlying mixed-integer linear programming solvers to compute the final result.
+The central class, **LomDefuzzifyQuery**, specializes the shared defuzzification machinery for the Largest of Maxima strategy: when a fuzzy concept's membership function plateaus at its maximum degree over a range of values, LOM resolves the ambiguity by picking the highest value in that plateau rather than an arbitrary or central one. An instance is created from a fuzzy Concept providing the context, an Individual representing the entity under analysis, and the name of the feature to be defuzzified, with all common setup delegated to the parent DefuzzifyQuery so that behaviour remains consistent with the other defuzzification variants offered by the framework. The essential design decision lies in the objective expression handed to the underlying MILP solver: by negating the decision variable, the solver is driven to maximise the feature's value while the constraints generated elsewhere in the framework pin the membership degree to its maximum, which is precisely the condition that produces the largest of the maxima. A human-readable string representation is also provided, labelling the operation with the feature and instance names and ending in an equals sign, so that the computed crisp value can be appended directly for logging or display. In this way the class plugs into the broader fuzzy description-logic reasoning framework as one interchangeable strategy for answering queries of the form "what is the largest value at which a given individual maximally satisfies a concept on a given feature?"
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -81,5 +85,3 @@ Module Contents
       :return: An Expression representing the negative of the specified variable.
 
       :rtype: Expression
-
-

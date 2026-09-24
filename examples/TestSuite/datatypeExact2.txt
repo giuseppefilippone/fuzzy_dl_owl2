@@ -1,0 +1,8 @@
+(define-fuzzy-logic lukasiewicz)
+(functional f)
+(range f *real* -40.0 40.0)
+(define-fuzzy-concept T right-shoulder(-40.0, 40.0, 2.0, 5.0))
+(define-concept D (some f T))
+(instance a (= f 2.9) 1.0)
+(instance a D 0.3)
+(min-instance? a D)

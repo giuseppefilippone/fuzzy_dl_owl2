@@ -5,16 +5,22 @@ fuzzy_dl_owl2.fuzzydl.query.all_instances_query
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A class that retrieves all individuals belonging to a specific concept within a fuzzy knowledge base and calculates their respective degrees of membership.
+A fuzzy description-logic query that finds every individual in a knowledge base belonging to a given abstract concept and reports the minimum degree to which each one satisfies it.
 
 
 Description
 -----------
 
 
-The implementation focuses on identifying all entities within a knowledge base that satisfy a given abstract concept, quantifying the relationship through fuzzy membership values rather than binary classification. By leveraging the underlying fuzzy logic framework, the logic evaluates the extent to which each individual satisfies the concept criteria, ensuring that concrete concepts are rejected during initialization. Two distinct algorithms are provided for determining these degrees: an iterative approach that solves a minimum instance query for each entity sequentially, and an optimized method that utilizes Mixed-Integer Linear Programming (MILP) to calculate all degrees in a single optimization pass by introducing semi-continuous variables. Throughout the process, the logic maintains consistency checks on the ABox and filters out dynamically created individuals, ultimately aggregating the results into accessible lists of entities and their corresponding membership scores.
+``AllInstancesQuery`` extends the reasoner's generic query abstraction to answer questions of the form *which individuals are instances of concept C, and to what degree*. Because the underlying logic is fuzzy, membership is not binary: a degree of satisfaction is computed for every individual, and both the matching individuals and their degrees are stored on the query object and exposed through simple accessors so callers can inspect the results after solving. The constructor guards against misuse by rejecting concrete (data-range) concepts, since degrees of membership are only meaningful for abstract concepts, and it prepares a human-readable name that is progressively filled with the answers and later doubles as the query's string representation.
+
+Two alternative solving strategies are offered. The straightforward one iterates over the knowledge base's individuals — skipping those that were dynamically created during reasoning — and delegates to a ``MinInstanceQuery`` for each, accumulating the resulting degree whenever the answer is consistent and aborting the loop as soon as an inconsistency surfaces. The second, more sophisticated strategy encodes the entire problem as a single mixed-integer linear program: it clones the knowledge base so the original remains untouched, introduces one semi-continuous variable per individual, adds assertions that tie each variable to the individual's membership in the concept, and maximises the sum of those variables in a single optimisation pass, afterwards mapping the variable values back to degrees. Both strategies first verify ABox consistency and return a dedicated inconsistent-knowledge-base solution rather than raising an exception, keeping error signalling uniform with the rest of the reasoning framework; during the optimisation step, MILP output flags are temporarily silenced and restored afterwards so solver logs stay clean without permanently altering global helper state.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -152,5 +158,3 @@ Module Contents
 
    .. py:attribute:: name
       :value: 'Instances of Uninferable?'
-
-

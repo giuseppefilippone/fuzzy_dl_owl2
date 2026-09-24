@@ -5,16 +5,22 @@ fuzzy_dl_owl2.fuzzydl.concept.weighted_min_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Implements a weighted minimum concept for fuzzy description logic that aggregates a collection of sub-concepts using associated numerical weights.
+A weighted-minimum aggregation concept for fuzzy description logics that combines a list of sub-concepts with floating-point weights into a single composite expression.
 
 
 Description
 -----------
 
 
-The software models a composite logical construct where the resulting truth value is derived from the minimum of weighted sub-concepts, a common operation in fuzzy systems. It enforces strict validation during initialization, requiring that the number of weights matches the number of concepts and that at least one weight is equal to 1.0 to ensure semantic correctness. By inheriting from specific base interfaces, the construct supports standard logical manipulations such as negation, conjunction, and disjunction, allowing it to function seamlessly within a larger description logic framework. Additionally, the implementation provides capabilities for structural analysis, including the extraction of atomic concepts and roles, recursive replacement of nested elements, and a robust hashing mechanism that relies on the internal configuration of weights and concepts to guarantee object uniqueness.
+Fuzzy description logics frequently need to aggregate several concepts with differing degrees of importance, and ``WeightedMinConcept`` provides exactly that construct by pairing each sub-concept with a weight, inheriting core concept behaviour from the ``Concept`` base class and the shared weighted-collection machinery from ``HasWeightedConceptsInterface``. Construction is deliberately defensive: the number of weights must exactly match the number of sub-concepts, and at least one weight must equal 1.0, a constraint that keeps the weighted minimum semantically well-formed rather than degenerate. A canonical display name of the form ``(w-min (concept weight) ...)`` is computed eagerly at initialisation, so the object always carries a stable string representation of its configuration. Because the concept is a composite, queries for atomic concepts and roles are answered by recursing into the children and merging the results into sets, and cloning yields a new instance whose weight and concept lists are independent copies of the originals.
+
+Structural manipulation follows the same recursive pattern: substituting one concept for another rebuilds the weighted minimum over the transformed children, and the result is returned wrapped in a negation, a design choice consistent with the usual duality between weighted minima and weighted maxima in fuzzy logic. The operator overloads for conjunction, disjunction, and negation are thin wrappers that delegate to ``OperatorConcept`` factory methods, which keeps the rules for combining concepts in one place and ensures the operands themselves are never mutated. Hashing is structural rather than identity-based, mixing the hash of each weighted child with the computed name and the concept type, so structurally equivalent expressions behave consistently when used as dictionary keys or set members.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -167,5 +173,3 @@ Module Contents
 
    .. py:attribute:: name
       :value: '(w-min )'
-
-

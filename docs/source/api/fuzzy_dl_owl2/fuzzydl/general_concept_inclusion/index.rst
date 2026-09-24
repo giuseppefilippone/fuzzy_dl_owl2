@@ -5,16 +5,20 @@ fuzzy_dl_owl2.fuzzydl.general_concept_inclusion
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A Python class representing a fuzzy logic axiom that defines the graded inclusion of one concept within another.
+A mutable representation of a fuzzy General Concept Inclusion (GCI) axiom, asserting that one concept is subsumed by another to at least a given degree of truth under a chosen fuzzy implication operator.
 
 
 Description
 -----------
 
 
-The software models a graded subsumption relationship between two concepts, where a sub-concept is included within a super-concept to a specific degree of truth. It encapsulates the logic operator type, such as Łukasiewicz or Gödel, which dictates the semantic implication used to evaluate the inclusion. Instances are mutable, allowing the underlying concepts or the degree of inclusion to be updated after creation, which supports dynamic reasoning scenarios. To facilitate use in data structures like sets and dictionaries, the implementation provides structural equality checks and hash generation based on the internal components. A human-readable string representation is generated to display the logical structure, indicating the subsumed concept, the implication operator, the subsumer, and the lower bound degree.
+The **GeneralConceptInclusion** class is the core building block for expressing graded subsumption in a fuzzy description logic knowledge base: it pairs a subsumed (more specific) concept with a subsumer (more general) concept, a lower-bound degree, and a logic operator type such as Łukasiewicz, Gödel, or Product, which determines the semantics of the fuzzy implication. Instances are deliberately mutable, exposing both direct attribute access and conventional getter/setter methods so that reasoning algorithms can rewrite or refine axioms in place, while a clone operation provides a shallow copy for cases where the original axiom must be preserved before modification. Equality is structural, requiring all four components to match, whereas ordering is defined over hash values, yielding a consistent but essentially arbitrary total order that is nonetheless sufficient for sorting and de-duplicating collections of axioms. The hash is derived from the hashes of the two concepts, the degree, and the operator type, so axioms can live in sets or serve as dictionary keys, although mutating an instance after inserting it into a hash-based container would violate the usual hash invariants. The human-readable rendering follows the notation "subsumed =>_X subsumer >= degree", where *X* abbreviates the implication operator's name; this string is computed lazily and cached for efficiency, and the repr delegates to the same output so axioms display consistently in logs, debuggers, and printed knowledge bases.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -268,4 +272,3 @@ Module Contents
 
    .. py:attribute:: type
       :type:  fuzzy_dl_owl2.fuzzydl.util.constants.LogicOperatorType
-

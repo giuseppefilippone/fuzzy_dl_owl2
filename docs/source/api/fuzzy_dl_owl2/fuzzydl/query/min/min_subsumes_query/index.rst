@@ -5,16 +5,20 @@ fuzzy_dl_owl2.fuzzydl.query.min.min_subsumes_query
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A query mechanism that determines the minimum degree of subsumption between two fuzzy concepts within a knowledge base by solving a mixed-integer linear programming problem.
+A query that computes the minimum degree to which one fuzzy concept subsumes another in a fuzzy description logic knowledge base, casting the question as a mixed-integer linear programming problem.
 
 
 Description
 -----------
 
 
-Software designed to compute the infimum truth value of a subsumption relationship between two concepts in a fuzzy description logic setting. It supports multiple fuzzy logic operators, including Łukasiewicz, Gödel, Kleene-Dienes, and Zadeh, translating the subsumption assertion into a corresponding logical implication for the selected logic. The reasoning process leverages mixed-integer linear programming to minimize the degree of implication, introducing specific variables and constraints to model the fuzzy logic rules within the knowledge base. Performance optimizations are integrated to bypass complex calculations when the knowledge base is pre-classified and the concepts are atomic, allowing for direct retrieval of results from the classification hierarchy. If the ontology is inconsistent or requires full computation, the system clones the knowledge base, applies preprocessing to formulate the optimization problem, and returns the calculated solution or an inconsistency flag.
+MinSubsumesQuery specialises the generic subsumption query to answer "to what degree is one concept subsumed by another?" under a user-chosen fuzzy logic — Łukasiewicz, Gödel, Kleene-Dienes, or Zadeh — with the selected operator dictating how the subsumption relationship is rewritten into its corresponding fuzzy implication. The central design decision is the reduction of subsumption testing to optimisation: preprocessing constructs the appropriate implication concept, introduces a fresh semi-continuous variable to represent the subsumption degree, and injects an assertion into the knowledge base so that minimising that variable yields the infimum truth value of the implication. Solving follows a two-tier strategy for efficiency: when the knowledge base has already been classified and both concepts are atomic, the answer is read directly from the precomputed classification hierarchy (with special handling when a concept is the top concept), bypassing the solver entirely; otherwise the knowledge base is cloned — retaining or discarding the ABox depending on the configured optimisation level and the presence of nominals in the TBox — preprocessed, and optimised over the objective expression built earlier. Robustness is handled by catching ontology-inconsistency exceptions and returning a solution that flags the inconsistent knowledge base rather than propagating the error, while timing metrics are recorded around the solve step to support performance instrumentation. A human-readable string rendering of the query rounds out the class, formatting the two concepts into a "subsumes" question suitable for logging and debugging.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -90,5 +94,3 @@ Module Contents
       :return: A Solution object containing the result of the reasoning task, which may be a subsumption flag, an optimization score, or an inconsistency indicator.
 
       :rtype: Solution
-
-

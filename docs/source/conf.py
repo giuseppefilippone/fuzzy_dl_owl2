@@ -15,10 +15,10 @@ project = "Fuzzy DL OWL 2"
 copyright = "2025, Giuseppe Filippone"
 author = "Giuseppe Filippone"
 # The short X.Y version
-version = "1.0.32"
+version = "1.0.33"
 
 # The full version, including alpha/beta/rc tags
-release = "1.0.32"
+release = "1.0.33"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -150,6 +150,26 @@ latex_elements = {
 
         \hypersetup{unicode=true}
         \DeclareUnicodeCharacter{2212}{\ensuremath{-}}
+        % Math symbols that appear in the LLM-generated docstrings (pdfLaTeX
+        % with utf8 inputenc has no mapping for these and would stop dead).
+        \DeclareUnicodeCharacter{2200}{\ensuremath{\forall}}
+        \DeclareUnicodeCharacter{2203}{\ensuremath{\exists}}
+        \DeclareUnicodeCharacter{2264}{\ensuremath{\leq}}
+        \DeclareUnicodeCharacter{2265}{\ensuremath{\geq}}
+        \DeclareUnicodeCharacter{03A3}{\ensuremath{\Sigma}}
+        \DeclareUnicodeCharacter{22C8}{\ensuremath{\bowtie}}
+        \DeclareUnicodeCharacter{22A4}{\ensuremath{\top}}
+        \DeclareUnicodeCharacter{22A5}{\ensuremath{\bot}}
+        \DeclareUnicodeCharacter{2227}{\ensuremath{\wedge}}
+        \DeclareUnicodeCharacter{2291}{\ensuremath{\sqsubseteq}}
+        \DeclareUnicodeCharacter{2013}{\textendash}
+        % Box-drawing characters in ASCII-art fallbacks.
+        \DeclareUnicodeCharacter{2500}{\rule[-0.1em]{0.8em}{0.4pt}}
+        \DeclareUnicodeCharacter{2502}{\rule[-0.5em]{0.4pt}{1em}}
+        \DeclareUnicodeCharacter{251C}{\rule[-0.5em]{0.4pt}{1em}\rule[-0.1em]{0.6em}{0.4pt}}
+        \DeclareUnicodeCharacter{2514}{\rule{0.4pt}{0.5em}\rule[-0.1em]{0.6em}{0.4pt}}
+        % Subscript i (U+1D62).
+        \DeclareUnicodeCharacter{1D62}{\ensuremath{_{\imath}}}
 
         % Redefine sphinxtheindex environment to use one column and smaller font
         \usepackage{etoolbox}

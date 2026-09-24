@@ -5,16 +5,22 @@ fuzzy_dl_owl2.fuzzydl.concept.concrete.modified_concrete_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A fuzzy concrete concept wrapper that applies a specific modifier to an underlying concept to transform membership degrees.
+A fuzzy concrete concept that wraps an existing fuzzy concrete concept and applies a linguistic modifier such as "very" or "somewhat" to its membership degrees, producing composite concepts like "very tall."
 
 
 Description
 -----------
 
 
-Designed to model linguistic hedges or intensifiers within a fuzzy description logic framework, the software wraps an existing fuzzy concrete concept and applies a transformation function to its membership values. By combining a base concept, such as "tall," with a modifier like "very," the system creates composite expressions that mathematically adjust the truth values of simpler definitions. The architecture relies on a composition strategy where the membership degree of an input is first determined by the underlying concept and then passed through the modifier's function to produce the final result. During evaluation, strict domain constraints are enforced to ensure that inputs outside the valid range result in a zero membership degree, maintaining logical consistency. The core logic delegates the calculation of the base degree to the wrapped concept before applying the modifier, allowing for dynamic and flexible construction of complex fuzzy sets. Furthermore, the implementation supports standard logical operations such as negation, conjunction, and disjunction by delegating these tasks to a central operator utility, ensuring consistent behavior across different concept types. To facilitate identification and storage, the software generates a structured string representation and computes hash values based on the internal state, including the modifier and the modified concept. This approach allows the modified concept to function seamlessly within larger knowledge bases or reasoning engines where unique identification and efficient comparison are required.
+ModifiedConcreteConcept is the central abstraction, acting as a decorator within a fuzzy description-logic framework: it holds an inner fuzzy concrete concept together with a Modifier, and when the membership degree of a value is requested it first evaluates the inner concept on that value and then passes the resulting degree through the modifier's own membership function. The composition therefore operates purely on degrees in the unit interval, letting the modifier act as a truth-value transformer that intensifies or dilates degrees, while the inner concept remains responsible for mapping raw feature values such as percentages, scores, or distances into that interval. Default support-interval bounds are established at construction time and, together with the wrapped modifier and concept, form the structural identity used for hashing, so structurally identical composites behave consistently as dictionary keys or set members.
+
+A deliberate divergence from the Java reference implementation is documented at the evaluation site: the original guarded the raw feature value against the unit interval, which wrongly returned zero for any realistic domain such as a percentage range before the inner concept was even consulted; the guard is dropped because the inner concept already yields zero outside its own support and modifiers map zero to zero. Integration with the broader concept algebra is achieved by overloading the negation, conjunction, and disjunction operators, each delegating to OperatorConcept so that modified concepts can be combined into larger expressions exactly like primitive ones. Readable output is produced by rendering the concept in the pattern "modified(<modifier> <concept>)", a clone operation yields a shallow copy sharing the wrapped components, and property accessors allow both the modifier and the underlying concept to be inspected or replaced after construction.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -138,12 +144,12 @@ Module Contents
 
    .. py:method:: get_membership_degree(x: float) -> float
 
-      Calculates the membership degree of a value `x` by composing the membership functions of a base concept and a modifier. If the input `x` is less than or equal to 0.0 or greater than 1.0, the method returns 0.0, treating values outside this interval as having no membership. For valid inputs, it first computes the membership degree of `x` using the `modified` object and then passes that result to the `modifier` object to determine the final, transformed membership degree.
+      Calculates the membership degree of a value `x` by composing the membership functions of a base concept and a modifier: the degree `y` of `x` in the base concept is computed first, then the modifier is applied to `y`. The input `x` lives in the domain `[k1, k2]` of the base concept (percentages, scores, kilometres, ...), which already returns 0.0 outside its own support; the modifiers map 0.0 to 0.0, so no guard on `x` is needed here.
 
-      :param x: The input value for which the membership degree is calculated. Values outside the range (0, 1] result in a degree of 0.0.
+      :param x: The input value, in the units of the base concept's feature.
       :type x: float
 
-      :return: The membership degree of the input value x, calculated by applying the modifier to the membership degree of the modified set. Returns 0.0 if x is outside the range (0, 1].
+      :return: The membership degree of `x`, i.e. the modifier applied to the base concept's degree of `x`.
 
       :rtype: float
 
@@ -189,4 +195,3 @@ Module Contents
       :return: The modifier applied to the wrapped concept.
 
       :rtype: Modifier
-

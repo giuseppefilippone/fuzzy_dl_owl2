@@ -5,16 +5,22 @@ fuzzy_dl_owl2.fuzzydl.concept.concrete.right_concrete_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A Python implementation of a fuzzy logic concept that utilizes a right-shoulder membership function to model values where truth increases linearly over a specific interval.
+A right-shoulder fuzzy concrete concept whose membership degree ramps linearly from zero to one across a transition interval, modelling linguistic terms that become fully true once a quantity grows sufficiently large.
 
 
 Description
 -----------
 
 
-The software models a specific type of fuzzy set where the degree of membership transitions from zero to one as an input value increases, effectively representing concepts that become truer as a variable grows larger. The implementation relies on geometric parameters to define the domain and the transition interval, ensuring that the domain boundaries fully encapsulate the specific range where the membership ramps up. During initialization, strict validation logic enforces ordering constraints between these boundaries to guarantee structural integrity and mathematical consistency. Beyond calculating membership degrees through linear interpolation, the implementation supports standard fuzzy logic operations such as negation, conjunction, and disjunction by delegating these tasks to a central operator handler. Functionality for cloning instances and generating hash values based on the defining parameters is also included to support object identity and comparison within the broader system.
+RightConcreteConcept specialises the generic FuzzyConcreteConcept to express ideas such as "high temperature" or "large size", where the degree of truth increases as the underlying value grows. Construction is defensive: the domain interval [k1, k2] must completely contain the transition interval [a, b], and any violation of the ordering constraints is rejected through the shared error utility, guaranteeing that an ill-formed membership function can never silently exist. Evaluation is stateless and deliberately simple — values at or below the left breakpoint score zero, values at or beyond the right breakpoint score one, and intermediate values are interpolated proportionally — producing the characteristic rising ramp. The breakpoints are exposed as float-coercing properties, and a clone operation yields independent copies, which matters because fuzzy concepts are routinely shared and recombined during reasoning.
+
+Integration with the wider fuzzy description-logic machinery is achieved through operator overloading: negation, conjunction, and disjunction all delegate to OperatorConcept, so concepts compose naturally with Python's ``-``, ``&``, and ``|`` syntax while the operands themselves remain unmodified. Hashing is derived from the numeric parameters rather than object identity, allowing structurally identical concepts to be deduplicated in sets and dictionaries, and a canonical "right-shoulder(k1, k2, a, b)" string is generated for naming and display purposes.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -185,4 +191,3 @@ Module Contents
 
    .. py:attribute:: k2
       :type:  float
-

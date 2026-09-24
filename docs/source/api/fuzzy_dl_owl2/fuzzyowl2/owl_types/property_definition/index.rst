@@ -5,16 +5,20 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.property_definition
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Encapsulates a property name and its associated fuzzy modifier to support the definition of fuzzy logic constraints within the FuzzyOWL2 ontology framework.
+A minimal value object that binds a property name to its associated fuzzy modifier so the pair can travel together when expressing fuzzy axioms in the FuzzyOWL2 ontology framework.
 
 
 Description
 -----------
 
 
-It acts as a container that links a specific property to a fuzzy modifier, allowing the application of linguistic hedges or truth values to object or data properties. By storing these two distinct elements together, the design enables the precise construction of complex fuzzy axioms where the strictness or leniency of comparisons can be controlled. The implementation relies on simple internal storage of string values, providing read-only access through dedicated methods to ensure that the underlying data remains immutable after initialization. This structure serves as a foundational component for the broader system, facilitating the representation of nuanced relationships that go beyond standard binary logic.
+PropertyDefinition acts as a fundamental building block for fuzzy logic constraints by capturing the two pieces of information needed to attach a linguistic hedge to an object or data property: the modifier itself and the name of the property it applies to. Bundling these values into a single unit simplifies downstream code, since any component that constructs fuzzy axioms can retrieve both elements through dedicated getter methods rather than juggling loose strings. The design is deliberately minimal and defensive: the constructor performs no validation and simply stores the two strings in private attributes, while the absence of setter methods means instances effectively behave as immutable records once created. This immutability makes objects safe to pass around and reuse, and the getter-only interface preserves encapsulation by keeping the underlying attribute names hidden from callers. In practice, consumers instantiate the class with a modifier such as a linguistic hedge and a property name, then read both values back when translating fuzzy restrictions into concrete ontology axioms.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -85,4 +89,3 @@ Module Contents
 
    .. py:attribute:: _prop
       :type:  str
-

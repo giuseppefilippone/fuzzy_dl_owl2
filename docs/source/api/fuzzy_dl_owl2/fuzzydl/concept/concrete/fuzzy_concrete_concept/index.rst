@@ -5,16 +5,20 @@ fuzzy_dl_owl2.fuzzydl.concept.concrete.fuzzy_concrete_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-An abstract base class defines the structure and behavior for fuzzy concepts operating within specific numerical intervals.
+An abstract base class for fuzzy concepts defined over a numeric interval, which manages and validates its lower and upper bounds while delegating membership-degree computation to subclasses.
 
 
 Description
 -----------
 
 
-Fuzzy logic concepts often rely on numerical ranges to determine partial truth values, and this class provides the foundational framework for such interval-based definitions. By enforcing a specific structure where a lower bound cannot exceed an upper bound, the implementation ensures that the mathematical domain remains valid for subsequent calculations. Subclasses are expected to provide the specific algorithm for determining membership degrees, allowing for various shapes of fuzzy sets, such as triangular or trapezoidal functions, to be built upon this consistent interval management. The class also integrates with the broader ontology system by identifying itself as a concrete type and handling standard operations like name retrieval and role management, although it does not support complex concept replacement or decomposition into atomic parts.
+FuzzyConcreteConcept specialises the generic Concept hierarchy of a fuzzy description-logic framework for the *concrete domain*, where truth is graded over real numbers rather than asserted symbolically over abstract relationships. Every instance is characterised by an interval bounded by the values k1 and k2, exposed through properties whose setters cast inputs to floats and preserve structural integrity by raising a ValueError whenever the upper bound would fall below the lower bound, so an invalid range can never be stored. The class also identifies itself unambiguously to the rest of the reasoning system: it always reports being concrete, contributes no atomic concepts and no roles when the concept is decomposed, and its concept-replacement operation is a deliberate stub that logs an error and yields nothing, signalling that substitution is not meaningful for concrete-domain concepts. The essential behaviour is intentionally left abstract, requiring each subclass to implement the membership-degree function that maps an input value to a degree between 0.0 and 1.0, which is where the actual fuzzy shape — triangular, trapezoidal, Gaussian, and so on — is realised. Separating interval handling and bookkeeping from the membership curve allows the reasoner to treat all concrete fuzzy concepts uniformly for naming and structural queries while remaining agnostic about their specific mathematics.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -176,4 +180,3 @@ Module Contents
 
    .. py:attribute:: name
       :type:  str
-

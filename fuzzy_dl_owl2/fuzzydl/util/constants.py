@@ -1440,3 +1440,6 @@ class FuzzyLogic(enum.StrEnum):
 KNOWLEDGE_BASE_SEMANTICS: FuzzyLogic = FuzzyLogic.CLASSICAL
 MAXVAL: float = ((1 << 31) - 1) * 1000  # 2.147483647e12
 MAXVAL2: float = MAXVAL * 2
+# Provider default, kept by ConfigReader so KnowledgeBase.adapt_big_m can cap
+# the per-knowledge-base Big-M it derives from the declared feature ranges.
+MAXVAL_DEFAULT: float = MAXVAL

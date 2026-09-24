@@ -5,16 +5,20 @@ fuzzy_dl_owl2.fuzzydl.query.related_query
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-An abstract base class defines a foundational interface for evaluating role assertions and determining degrees of membership between individuals in a fuzzy logic system.
+An abstract query type that captures the shared structure needed to evaluate how strongly a role assertion holds between two individuals in a fuzzy description-logic knowledge base.
 
 
 Description
 -----------
 
 
-It serves as a shared structure for specific query implementations that assess the strength or validity of connections within a logical framework, particularly focusing on operations that determine minimum or maximum degrees of membership. By encapsulating parameters such as the specific role type, the subject and object individuals involved, and an expression representing the desired degree of membership, the design standardizes how these queries are constructed and processed. The initialization process prepares the internal state by defining placeholders for the abstract role, the related individuals, and the objective expression, ensuring that subclasses inherit a consistent mechanism for handling relationship evaluations.
+Sitting beneath the generic ``Query`` abstraction, ``RelatedQuery`` provides the common foundation for concrete query implementations that compute the minimum or maximum degree of membership of a relation between individuals. Rather than performing any evaluation itself, it declares and stores the four ingredients such queries require: the abstract role (the relation type being examined), the subject individual, the object individual, and an objective expression representing the degree of membership to be optimised. The constructor deliberately initialises every one of these attributes to ``None``, keeping the class purely structural and signalling that subclasses must populate the state before the query can be meaningfully processed. By standardising these parameters up front, the design guarantees that all role-entailment queries share a uniform shape, allowing the reasoning engine to route them through a single code path once the underlying mixed-integer linear programming machinery resolves the objective expression.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -91,5 +95,3 @@ Module Contents
    .. py:attribute:: role
       :type:  str
       :value: None
-
-

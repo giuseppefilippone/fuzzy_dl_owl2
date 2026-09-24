@@ -5,16 +5,22 @@ fuzzy_dl_owl2.fuzzydl.concept.has_value_concept
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Defines a fuzzy logic concept representing an existential restriction where an entity must have a specific value for a given role.
+Defines a fuzzy description-logic concept expressing a "has-value" existential restriction — the form *(b-some r v)* — satisfied by any individual connected to one specific value through a given role.
 
 
 Description
 -----------
 
 
-Models a specific type of existential restriction, often termed a "has-value" concept, which asserts that an individual must be related to a specific value through a defined role. Structurally, it represents the logical form ``(b-some r v)``, meaning an entity satisfies this concept if it participates in the relationship ``r`` with a target entity that corresponds to ``v``. Instantiation requires a string representing the role and a target value of arbitrary type, after which the object automatically derives a canonical name for identification. Composition with other logical constructs is supported through operator overloading for conjunction, disjunction, and negation, while the architecture explicitly prevents the replacement of internal components to maintain atomic integrity. Identity comparisons rely on a hashing mechanism that combines the concept type, role, and value to ensure consistency within the broader system.
+HasValueConcept is the concrete realisation of one of the simplest forms of existential quantification supported by the fuzzy DL framework: rather than requiring a role filler drawn from an entire class expression, it pins the filler down to a single concrete value, which may be a string, a number, or any other object. It is assembled through multiple inheritance, combining the generic Concept machinery (which tags instances with the HAS_VALUE concept type) with the HasValueInterface mixin that supplies the role and value attributes, keeping the role/value pairing logic in one place so it can be shared with other value-based constructs. At construction time a canonical name of the form *(b-some role value)* is derived automatically, giving every instance a stable, printable identity; hashing is likewise computed from the concept type, role, and value together, so two restrictions with identical role and value behave as equal inside sets and dictionaries.
+
+Because a has-value restriction is semantically atomic — it contains no nested sub-concepts to traverse or rewrite — the implementation deliberately treats it as a leaf node: it reports no atomic concepts and no roles, and it refuses to perform concept substitution, logging an error instead of attempting a replacement. Composition with other class expressions is still fully supported through operator overloading, with unary minus, ``&``, and ``|`` delegating to OperatorConcept to build negations, conjunctions, and disjunctions, so has-value restrictions can participate freely in larger logical formulas. A factory-style static constructor and a clone method round out the API; cloning currently produces a fresh instance that shares the original value rather than deep-copying it, a trade-off that keeps duplication cheap at the cost of aliasing the underlying value object.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -184,4 +190,3 @@ Module Contents
 
    .. py:attribute:: name
       :type:  str
-

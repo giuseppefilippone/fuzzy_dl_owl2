@@ -1,0 +1,8 @@
+(define-fuzzy-logic lukasiewicz)
+(functional f)
+(range f *real* 0.0 100.0)
+(define-fuzzy-concept T triangular(0.0, 100.0, 10.0, 20.0, 40.0))
+(define-concept D (some f T))
+(instance a (= f 22.2) 1.0)
+(instance a D 0.89)
+(min-instance? a D)

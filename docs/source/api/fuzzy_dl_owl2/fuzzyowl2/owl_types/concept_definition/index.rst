@@ -5,16 +5,20 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.concept_definition
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-An abstract base class that establishes a common interface and type categorization for fuzzy concept definitions within the FuzzyOWL2 framework.
+An abstract base class that anchors the hierarchy of fuzzy concept definitions in the FuzzyOWL2 framework by tagging each definition with a ``ConceptType`` and exposing that tag through a common interface.
 
 
 Description
 -----------
 
 
-Designed to serve as the root for a hierarchy of fuzzy logic constructs, this class ensures that all derived implementations share a uniform mechanism for type identification. By mandating the inclusion of a specific ``ConceptType`` during instantiation, it enforces a strict categorization system that distinguishes between various kinds of fuzzy concepts. The architecture relies on inheritance, allowing concrete subclasses to define specific behaviors while inheriting the core responsibility of exposing their classification through a standardized accessor. This abstraction facilitates polymorphism, enabling the broader system to interact with diverse concept definitions generically without needing to know their specific internal details.
+``ConceptDefinition`` is the root abstraction for all fuzzy concept definitions, and it is declared abstract so that it can never be instantiated on its own — every usable definition must come from a concrete subclass modelling a particular kind of fuzzy concept. Its design rests on a simple type-tag pattern: at construction time each definition receives a ``ConceptType`` value recording its category, that value is stored privately and never changed afterwards, and a single accessor exposes it to the rest of the system. This lets other components, such as the ontology serialiser or the fuzzy reasoner, handle arbitrary concept definitions uniformly, querying what kind of concept they are looking at without needing to know its concrete class and dispatching accordingly. The only additional behaviour is a deliberate convenience in which the formal, debugging-oriented string representation simply delegates to the informal one, guaranteeing that both forms of output always agree. The minimalism is intentional — the abstraction exists to impose a shared contract on the hierarchy while leaving every aspect of concept-specific semantics to the subclasses.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -86,4 +90,3 @@ Module Contents
 
    .. py:attribute:: _type
       :type:  fuzzy_dl_owl2.fuzzyowl2.util.constants.ConceptType
-

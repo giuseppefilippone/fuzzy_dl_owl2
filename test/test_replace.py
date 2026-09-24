@@ -67,7 +67,9 @@ class TestReplace(unittest.TestCase):
         e = AtomicConcept("E")
         conj = OperatorConcept.goedel_and(self.c, self.d)
         result = conj.replace(self.c, e)
-        self.assertEqual(str(result), str(OperatorConcept.goedel_and(e, self.d)))
+        # operand order inside the CNF is not deterministic across runs
+        self.assertEqual(ConceptType.GOEDEL_AND, result.type)
+        self.assertEqual(["D", "E"], sorted(map(str, result.concepts)))
 
     def test_operator_complement_replaces_child(self):
         neg = OperatorConcept.not_(self.c)

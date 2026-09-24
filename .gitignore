@@ -102,3 +102,5 @@ code_stats.py
 compare_parsers.py
 docstrings.json
 *.sh
+# Local release notes, kept out of the repository
+CHANGELOG.md

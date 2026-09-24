@@ -5,16 +5,24 @@ fuzzy_dl_owl2.fuzzydl.util.constants
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A collection of enumerations, type aliases, and utility functions that define the core vocabulary, operational strategies, and configuration parameters for a fuzzy description logic reasoning engine.
+A central registry of the shared vocabulary — enumerations, parser keywords, and numeric constants — that a fuzzy description-logic reasoner relies on to configure parsing, classify logical expressions, guide tableau-style reasoning, and drive mixed-integer optimization.
 
 
 Description
 -----------
 
 
-The software establishes a comprehensive taxonomy for the reasoning engine by defining a wide array of enumerations that categorize logical constructs, data types, and operational strategies. These type definitions cover the spectrum of fuzzy logic operations, including specific t-norms and t-conorms, aggregation methods like Choquet and Sugeno integrals, and various blocking mechanisms used to optimize reasoning performance. To facilitate parsing and configuration, the code maps specific language keywords to parsing objects and defines supported Mixed-Integer Linear Programming solver backends, allowing the system to interface with various optimization libraries. Global constants and utility functions are provided to manage file system operations for results and to enforce numerical limits, ensuring the reasoning environment is correctly initialized and bounded before execution.
+The shared vocabulary is organized into a family of enumerations that give the reasoner a typed, self-documenting way to represent every kind of entity it manipulates. These cover the structural forms a concept can take (conjunctions and disjunctions under different t-norms, existential and universal restrictions, datatype restrictions, fuzzy rough set approximations, and aggregation operators such as OWA, Choquet, and Sugeno integrals), the inference rules a knowledge base can invoke, the dynamic blocking strategies that guarantee termination as individuals are created during reasoning, the datatypes of concrete features, and the comparison operators and variable domains used when problems are encoded as optimization models. A deliberate, repeated design decision is that nearly every enumeration renders itself as its member name in both ``str`` and ``repr``, keeping logs and debugging output human-readable, and a few go further by stripping internal prefixes for cleaner display. Where configuration values must interoperate with plain strings — solver selection, fuzzy logic families, inequality symbols — string-based enums are used so members compare and serialize directly as text.
+
+The largest and most consequential component is **FuzzyDLKeyword**, which maps the entire reserved-word vocabulary of the FuzzyDL language onto pyparsing tokens. Because each member stores a ``CaselessKeyword`` or ``Literal``, the enum simultaneously documents the surface syntax and supplies the actual building blocks of the parser grammar. Equality is overloaded to accept raw strings, pyparsing elements, or other members, always comparing case-insensitively against a normalized name; since the parser performs these comparisons on every token it processes, the normalized name is computed once and cached on the singleton member, and an import-time loop pre-populates that cache for every keyword so the first comparison is exactly as cheap as every subsequent one.
+
+The remaining pieces tie the vocabulary to concrete solver and runtime behaviour. A string-based provider enum selects among Gurobi, Python-MIP, and PuLP-backed MILP engines (GLPK, HiGHS, CPLEX) through a case-insensitive parser that helpfully reports the valid options on failure, while the fuzzy logic enum fixes the t-norm semantics — classical, Zadeh, or Łukasiewicz — with the knowledge base defaulting to classical. Very large finite constants serve as "Big-M" bounds for the linear encodings the reasoner generates, with a preserved default allowing the knowledge base to cap the per-knowledge-base Big-M it derives from declared feature ranges. Finally, a small helper guarantees that a ``./results`` directory exists relative to the working directory before any reasoner output is written, creating it silently if it is already absent.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -26,6 +34,7 @@ Attributes
    fuzzy_dl_owl2.fuzzydl.util.constants.KNOWLEDGE_BASE_SEMANTICS
    fuzzy_dl_owl2.fuzzydl.util.constants.MAXVAL
    fuzzy_dl_owl2.fuzzydl.util.constants.MAXVAL2
+   fuzzy_dl_owl2.fuzzydl.util.constants.MAXVAL_DEFAULT
    fuzzy_dl_owl2.fuzzydl.util.constants.NUMBER
    fuzzy_dl_owl2.fuzzydl.util.constants.SEPARATOR
    fuzzy_dl_owl2.fuzzydl.util.constants.STAR_SEPARATOR
@@ -2577,6 +2586,11 @@ Module Contents
    :value: 4294967294000
 
 
+.. py:data:: MAXVAL_DEFAULT
+   :type:  float
+   :value: 2147483647000
+
+
 .. py:data:: NUMBER
 
 .. py:data:: SEPARATOR
@@ -2587,4 +2601,3 @@ Module Contents
 .. py:data:: STAR_SEPARATOR
    :type:  str
    :value: '*************************'
-

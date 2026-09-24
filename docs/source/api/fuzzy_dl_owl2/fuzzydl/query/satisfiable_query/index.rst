@@ -5,16 +5,22 @@ fuzzy_dl_owl2.fuzzydl.query.satisfiable_query
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-An abstract base class that defines the structure for evaluating the satisfiability of fuzzy concepts within a fuzzy description logic system.
+An abstract base class, **SatisfiableQuery**, that prepares fuzzy satisfiability queries by validating and storing a fuzzy concept, an optional individual, and a placeholder objective expression for later minimum/maximum satisfiability evaluation.
 
 
 Description
 -----------
 
 
-Extending the base ``Query`` interface, the software provides a foundational mechanism for determining the degree to which a fuzzy concept is satisfied. It supports two distinct operational modes: evaluating the general satisfiability of a concept or assessing how well a specific individual fulfills that concept. To maintain logical integrity, the implementation enforces a strict constraint that the input concept must be non-concrete, preventing the application of satisfiability checks on specific instances. By utilizing overloaded initialization methods, the design flexibly handles the presence or absence of an individual argument while storing the necessary components—such as the concept, individual, and objective expression—required for subsequent mixed-integer linear programming evaluations.
+SatisfiableQuery extends the generic Query abstraction to provide the shared foundation for minimum and maximum satisfiability checks in a fuzzy description-logic setting. Its role is to capture the common inputs of such queries — a fuzzy concept and an optional individual — while deferring the actual solving logic to concrete subclasses, which determine the bounds or the extent to which the concept is fulfilled. Because satisfiability is only meaningful for abstract concepts, initialization rejects concrete concepts with an error message, guaranteeing that only valid fuzzy concepts proceed to the reasoning stage.
+
+The constructor emulates Java-style constructor overloading: ``typing.overload`` declarations advertise two accepted signatures (a concept alone, or a concept paired with an individual), while the variadic implementation checks the argument count and types through assertions before delegating to a private initializer. The single-argument path deliberately invokes that private two-argument initializer with ``None`` rather than re-entering ``__init__``, mirroring Java's ``this(c, null)`` idiom and preventing virtual dispatch into subclass constructors whose two-argument branch might reject ``None``. Once initialized, the query holds the concept, the optional individual, and a ``None``-valued objective expression drawn from the MILP layer, which concrete subclasses are expected to populate when the query is compiled into an optimization problem.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -75,9 +81,7 @@ Module Contents
 
    .. py:method:: __satisfiable_query_init_2(c: fuzzy_dl_owl2.fuzzydl.concept.concept.Concept) -> None
 
-      Initializes the query object to test the general satisfiability of a given fuzzy concept. This method serves as an alternative constructor that delegates to the primary initialization routine, passing `None` as the secondary argument to indicate that the check is not bound to a specific individual or context. By invoking the main initialization logic with these parameters, it configures the internal state necessary to determine if the concept is logically consistent within the current knowledge base.
+      Initializes the query object to test the general satisfiability of a given fuzzy concept. This method serves as an alternative constructor that delegates to the primary initialization routine, passing `None` as the secondary argument to indicate that the check is not bound to a specific individual or context. The private (name-mangled) initializer is called directly — mirroring Java's `this(c, null)` — instead of `self.__init__`, which would dispatch virtually into a subclass constructor whose two-argument branch may reject `None`.
 
       :param c: The fuzzy concept to be checked for satisfiability.
       :type c: Concept
-
-

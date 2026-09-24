@@ -5,16 +5,22 @@ fuzzy_dl_owl2.fuzzydl.milp.term
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A class representing a linear term defined by a coefficient and a variable, designed to construct mathematical expressions within fuzzy description logic ontologies.
+An immutable algebraic term that pairs a numeric coefficient with a variable, providing the atomic building block for the linear expressions used to encode fuzzy description logic reasoning as mixed-integer linear programming problems.
 
 
 Description
 -----------
 
 
-The software implements a fundamental algebraic component used to build linear expressions, specifically tailored for representing concept satisfaction degrees in fuzzy description logic ontologies. By encapsulating a numerical coefficient and a variable, the design allows for the construction of complex mathematical models where terms can be manipulated through standard arithmetic operations such as negation, addition, subtraction, and scalar multiplication. Strict type checking and validation are enforced during initialization to ensure that terms are constructed correctly, either with an explicit coefficient or with a default value of 1.0. To maintain mathematical integrity, operations like addition and subtraction are restricted to terms sharing the same variable, while scalar operations return new instances to preserve the immutability of the original objects. The implementation also includes hashing and equality comparisons, enabling these objects to be used effectively within sets and dictionaries as part of larger optimization algorithms.
+Each term couples a floating-point coefficient with a *Variable*, forming the unit from which linear expressions and constraints are assembled when a fuzzy ontology is compiled into a MILP model, where variables typically stand for the satisfaction degrees of concepts. Construction is overloaded: a term can be created from an explicit coefficient and variable, or from a variable alone, in which case the coefficient defaults to 1.0, and argument counts and types are validated eagerly so that malformed terms fail fast with a *TypeError* rather than propagating silently. Every arithmetic operation is non-destructive and returns a brand-new instance, giving these objects value-object semantics that make them safe to share, combine, and reuse across expressions.
+
+Addition and subtraction are deliberately restricted to terms that share the same variable and raise a *ValueError* otherwise, which keeps the abstraction honest about representing a single monomial and pushes the composition of multi-variable expressions up to higher-level structures. Subtraction is realised as addition of a negated term and division as multiplication by a reciprocal, so the core scaling logic lives in one place, while reflected multiplication allows a scalar to appear on either side of the operator. Equality compares both the variable and the coefficient — returning *False* rather than raising when compared against a non-term — and hashing is derived from the variable's hash and the coefficient so that terms can serve as set members and dictionary keys; the string form, reused for the official representation, renders the term plainly as *coeff \* var* with no algebraic simplification. One small blemish is that the copy helper is defined twice, with the later definition silently shadowing the earlier one, and both share the underlying variable reference rather than deep-copying it, so copies are independent only with respect to their coefficient.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -237,5 +243,3 @@ Module Contents
       :return: Returns the `Variable` instance stored in the `var` attribute.
 
       :rtype: Variable
-
-

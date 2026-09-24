@@ -5,16 +5,22 @@ fuzzy_dl_owl2.fuzzydl.query.kb_satisfiable_query
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A query implementation that determines the logical consistency and satisfiability of a fuzzy knowledge base by verifying if at least one valid interpretation exists for all defined axioms.
+A query that checks whether a fuzzy description-logic knowledge base is logically satisfiable, returning a solution scored at 1.0 when the base admits at least one satisfying interpretation and an inconsistency-marked solution otherwise.
 
 
 Description
 -----------
 
 
-It extends the generic query framework to provide a mechanism for validating that a knowledge base does not contain any contradictions. The core logic executes a consistency check by first solving the assertional box and then performing an optimization on a cloned instance of the knowledge base to prevent side effects on the original data. To ensure the optimization can proceed even when the base lacks specific individuals, the logic automatically generates a temporary individual if necessary. The final result is returned as a ``Solution`` object, indicating a perfect score of 1.0 for a consistent base or a specific inconsistency status if contradictions or ontology exceptions are encountered.
+**KbSatisfiableQuery** is a specialised query type within the fuzzydl reasoning framework whose sole responsibility is global consistency checking: rather than asking about a particular concept or individual, it asks whether the knowledge base as a whole can be satisfied by any interpretation at all. It derives from the generic Query abstraction, which lets it plug into the same solve-and-report pipeline as every other kind of query, and it deliberately provides an empty preprocessing step because satisfiability checking requires no query-specific transformation of the input. A human-readable label is also supplied so that results can be presented to users as a direct answer to the question of whether the knowledge base is satisfiable.
+
+The reasoning itself proceeds defensively and in two layers. The public ``solve`` method acts as a safe entry point: it delegates to an internal consistency test and converts the boolean outcome into a **Solution** object, wrapping the computation in exception handling so that an **InconsistentOntologyException** raised deep inside the reasoner surfaces as the same inconsistency result rather than as a crash. The internal test first solves the ABox of the given knowledge base and then continues its work on a clone, a deliberate design decision that shields the caller's original object from the mutations performed during reasoning; if that clone contains no individuals, a temporary one is injected so the underlying mixed-integer optimisation has something concrete to reason about. The final verdict comes from running the optimisation over the cloned knowledge base and inspecting whether the resulting solution reports consistency, which is then exposed to the caller either as a positive solution or as one flagged as inconsistent.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -103,5 +109,3 @@ Module Contents
       :return: A Solution object representing the outcome of the operation. It returns a solution initialized with 1.0 if the knowledge base is consistent, or a solution marked as inconsistent if the knowledge base is invalid or an ontology exception occurs.
 
       :rtype: Solution
-
-

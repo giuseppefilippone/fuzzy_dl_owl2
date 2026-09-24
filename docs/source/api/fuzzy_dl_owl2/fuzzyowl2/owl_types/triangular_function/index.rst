@@ -5,16 +5,20 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.triangular_function
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Implements a triangular membership function to model vague concepts within the FuzzyOWL2 framework.
+A triangular membership function for fuzzy OWL 2 ontologies, defining a vague or imprecise concept through three points: a left endpoint where membership begins rising, a peak where membership reaches its maximum, and a right endpoint where it falls back to zero.
 
 
 Description
 -----------
 
 
-Inheriting from the base fuzzy datatype, this concrete implementation defines a geometric shape characterized by a left endpoint, a peak, and a right endpoint. These three floating-point parameters determine the support and core of the fuzzy set, allowing the system to calculate membership degrees for imprecise values. Accessor methods expose the internal state to ensure the defining geometric properties remain immutable after initialization, facilitating their use in reasoning tasks. The integration into the broader ontology framework provides a standardized way to represent triangular constraints, enabling the translation of linguistic variables into computational logic.
+**TriangularFunction** is a concrete shape offered by the FuzzyOWL2 framework, subclassing *FuzzyDatatype* so that it can be attached to ontology axioms and datatype restrictions and interpreted by fuzzy reasoners as degrees of truth rather than crisp Boolean values. It is one of the standard building blocks for encoding linguistic terms such as "approximately" or "around", where membership rises linearly from zero at the first parameter to full membership at the peak and then declines linearly back to zero. The three geometric parameters are stored as private floating-point attributes and exposed only through read-only accessors, making instances effectively immutable value objects that can be shared safely across reasoning components. No validation of the ordering of the parameters is performed, so callers are trusted to supply a well-formed triple, which keeps the object lightweight and focused purely on data representation. The string representation renders the function in a constructor-like form and, notably, also includes two additional parameters inherited from the parent datatype, indicating that the base class contributes further scaling information that participates in serialising or displaying the function.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -118,4 +122,3 @@ Module Contents
 
    .. py:attribute:: _c
       :type:  float
-

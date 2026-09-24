@@ -25,26 +25,36 @@ fuzzy_dl_owl2.fuzzydl.util
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-Foundational infrastructure supporting a fuzzy description logic reasoning engine by centralizing configuration management, defining core operational constants, and providing cross-cutting utilities for logging, mathematics, and runtime instrumentation.
+A support layer for a fuzzy description-logic reasoner that centralizes runtime configuration, defines the shared vocabulary behind ontology parsing and mixed-integer optimization, and supplies the logging, numeric, and debugging utilities the reasoning engine depends on.
 
 
 Description
 -----------
 
 
-The software establishes a robust environment for fuzzy logic processing by first loading and normalizing system parameters from external files or environment variables, which subsequently drives global numerical limits and solver capabilities. A comprehensive taxonomy of enumerations and type aliases defines the logical vocabulary, including specific t-norms, aggregation methods, and Mixed-Integer Linear Programming solver backends, ensuring that parsing and execution strategies remain consistent across the application. Cross-cutting concerns are managed through a static utility class that handles precise mathematical operations and timestamped logging, while high-level decorators facilitate deep recursion and method tracing for debugging purposes. By integrating these components, the system ensures that numerical precision, optimization levels, and diagnostic visibility are uniformly applied throughout the reasoning process.
+A fuzzy description-logic reasoner needs more than algorithms: it needs a single source of truth for its operational settings, a typed vocabulary for parsing and classifying logical expressions, dependable logging and numeric helpers, and a way to observe deeply recursive reasoning in action. Operational settings are owned by **ConfigReader**, a class-level configuration manager that loads parameters from an INI file or a *.env* fallback discovered from the working directory, normalizes keys so that camelCase and SCREAMING_SNAKE variants resolve identically, coerces raw strings to their proper types, and validates the MILP backend against a provider enum so invalid solvers fail immediately. Configuration is not merely stored but actively wired into the engine: the epsilon precision threshold automatically determines the decimal precision used throughout, and the Big-M bounds anchoring the generated linear encodings are matched to the numeric limits of the selected solver — GUROBI tolerating a much larger range than the PuLP-backed, GLPK, CPLEX, and HiGHS alternatives — with the provider default preserved so each knowledge base can later cap its own derived bound.
+
+The shared vocabulary takes the form of a family of enumerations covering concept forms under different t-norms, inference rules, dynamic blocking strategies, datatypes, comparison operators, and fuzzy logic families (classical, Zadeh, and Łukasiewicz), nearly all rendering as human-readable member names so logs stay legible. The largest and most consequential piece, **FuzzydlKeyword**, maps the entire reserved-word vocabulary of the FuzzyDL language onto pyparsing tokens, so a single enum both documents the surface syntax and supplies the actual building blocks of the parser grammar; its case-insensitive equality comparisons are normalized once and cached at import time, keeping per-token checks cheap during parsing.
+
+Cross-cutting concerns funnel through a stateless static utility class that acts as the single gateway to a lazily self-configuring file logger — the first emitted message attaches a timestamped handler writing into a dated directory tree — with debug output gated behind a configuration flag and error reporting deliberately fused with control flow, since reporting a failure both records the message and raises an exception to abort. The numeric helpers are tailored to the reasoner's needs, most notably a Decimal-based rounding routine with ROUND_HALF_UP semantics chosen to sidestep binary floating-point artefacts and banker's rounding, alongside power-of-two sizing and deterministic sorting of heterogeneous collections keyed on string representations.
+
+Observability during development comes from opt-in decorators: a tracing wrapper logs the class, method, arguments, and return value of instrumented calls when debug flags are enabled — and can walk an entire class, replacing every plain function with its traced counterpart while leaving the class untouched when the switch is off — while a recursion guard catches RecursionError, doubles the interpreter's recursion limit, and retries until the call succeeds, bounded by a hard cap of 2^20 to prevent unbounded memory growth. Because the fuzzy reasoning algorithms can naturally recurse very deeply, that guard lets legitimate depth succeed where it would otherwise crash, restoring the original limit in all cases. Together these pieces form a coherent foundation in which configuration feeds constants, constants feed the parser and optimizer, and logging and tracing make the whole pipeline observable without changing program semantics.
 
 
 Modules
 -------
 
 
-* [``fuzzy_dl_owl2.fuzzydl.util.config_reader``] — A centralized configuration manager that loads and applies settings for a fuzzy reasoning engine from INI or environment files.
-* [``fuzzy_dl_owl2.fuzzydl.util.constants``] — A collection of enumerations, type aliases, and utility functions that define the core vocabulary, operational strategies, and configuration parameters for a fuzzy description logic reasoning engine.
-* [``fuzzy_dl_owl2.fuzzydl.util.util``] — Centralizes logging infrastructure and provides static helper methods for mathematical operations and data manipulation within the fuzzy description logic reasoner.
-* [``fuzzy_dl_owl2.fuzzydl.util.utils``] — A collection of utility decorators designed to facilitate debugging through method tracing and to handle deep recursion by dynamically adjusting system limits.
+* [``fuzzy_dl_owl2.fuzzydl.util.config_reader``] — A centralized configuration manager for a fuzzy description-logic reasoner that loads runtime parameters from an INI file or a *.env* fallback, applies caller-supplied overrides, and keeps global solver constants aligned with the capabilities of the selected MILP backend.
+* [``fuzzy_dl_owl2.fuzzydl.util.constants``] — A central registry of the shared vocabulary — enumerations, parser keywords, and numeric constants — that a fuzzy description-logic reasoner relies on to configure parsing, classify logical expressions, guide tableau-style reasoning, and drive mixed-integer optimization.
+* [``fuzzy_dl_owl2.fuzzydl.util.util``] — A centralized utility namespace for a fuzzy description-logic reasoner that pairs lazily self-configuring file logging with a small set of numeric and list-manipulation helpers.
+* [``fuzzy_dl_owl2.fuzzydl.util.utils``] — A small collection of decorators that add opt-in call tracing to classes and let deeply recursive functions transparently raise the interpreter's recursion limit until they complete.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -58,4 +68,3 @@ Submodules
    /api/fuzzy_dl_owl2/fuzzydl/util/constants/index
    /api/fuzzy_dl_owl2/fuzzydl/util/util/index
    /api/fuzzy_dl_owl2/fuzzydl/util/utils/index
-

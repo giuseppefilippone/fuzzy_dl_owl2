@@ -5,16 +5,20 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.linear_modifier
 
 
 
+
+
+
+
 .. ── LLM-GENERATED DESCRIPTION START ──
 
-A fuzzy logic modifier class that applies a linear transformation to membership degrees using a specific coefficient.
+A concrete fuzzy modifier that applies a linear transformation, parameterised by a single floating-point coefficient, to membership degrees within the FuzzyOWL2 framework.
 
 
 Description
 -----------
 
 
-The implementation extends the base fuzzy modifier functionality to support linear scaling operations within the FuzzyOWL2 framework. By storing a floating-point coefficient, the logic allows for the adjustment of membership degrees through multiplication or scaling, which is a fundamental requirement for defining custom fuzzy sets. Encapsulation is handled by keeping the coefficient private and exposing it via a dedicated accessor, ensuring that the internal state remains controlled while allowing external retrieval of the transformation factor. Additionally, the object provides a human-readable string representation that clearly indicates the modifier type and its associated coefficient, facilitating debugging and logging.
+**LinearModifier** specialises the generic *FuzzyModifier* type for the simplest and most common kind of modifier: one whose effect on a fuzzy membership degree is fully determined by a single numeric constant. The coefficient is supplied at construction time, held as a private attribute, and exposed only through a read-only accessor, a design that makes instances effectively immutable and safe to share throughout the ontology model. Deliberately, no input validation or transformation logic lives inside the object itself; it acts purely as a carrier for the parameter, leaving the actual application of the linear function to the reasoning and serialisation machinery elsewhere in the framework. The string representation, rendered in the form "linear-modifier(c)", follows the textual conventions of FuzzyOWL2 so that the modifier can be written directly into ontology serialisations and human-readable debugging output. Because it derives from the shared base modifier class, instances can be handled polymorphically alongside other modifier families wherever modified fuzzy concepts are created, queried, or rendered.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
 
@@ -86,4 +90,3 @@ Module Contents
 
    .. py:attribute:: _c
       :type:  float
-
