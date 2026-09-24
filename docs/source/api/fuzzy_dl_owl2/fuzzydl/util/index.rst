@@ -27,8 +27,6 @@ fuzzy_dl_owl2.fuzzydl.util
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A support layer for a fuzzy description-logic reasoner that centralizes runtime configuration, defines the shared vocabulary behind ontology parsing and mixed-integer optimization, and supplies the logging, numeric, and debugging utilities the reasoning engine depends on.

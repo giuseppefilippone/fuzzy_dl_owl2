@@ -39,8 +39,6 @@ fuzzy_dl_owl2.fuzzydl.individual
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Node-level abstractions for tableau-based fuzzy description-logic reasoning, modelling the individuals of a completion graph through a foundational named-entity type that accumulates concepts, role relations, and datatype restrictions during inference, a dynamically generated node variant that tracks lineage and blocking status, and a lightweight proxy that pairs concrete individuals with triangular fuzzy numbers.

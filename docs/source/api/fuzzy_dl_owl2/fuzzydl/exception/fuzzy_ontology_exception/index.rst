@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.exception.fuzzy_ontology_exception
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A domain-specific exception for reporting errors that arise during fuzzy ontology and fuzzy description logic operations, such as invalid concept definitions or the incorrect application of fuzzy modifiers.

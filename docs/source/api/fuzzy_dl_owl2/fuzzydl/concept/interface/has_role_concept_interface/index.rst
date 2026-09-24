@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.concept.interface.has_role_concept_interface
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 An abstract base class that combines role and concept ownership into a single contract, requiring concrete subclasses to manage both a string-based role and an associated ``Concept`` object.

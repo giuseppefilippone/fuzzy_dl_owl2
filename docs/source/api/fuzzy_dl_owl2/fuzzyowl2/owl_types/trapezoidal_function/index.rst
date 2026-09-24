@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.trapezoidal_function
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A trapezoidal membership function datatype for the FuzzyOWL2 fuzzy ontology framework, defined by four x-coordinates that shape a fuzzy set with a linear rising edge, a flat plateau of full membership, and a linear falling edge.

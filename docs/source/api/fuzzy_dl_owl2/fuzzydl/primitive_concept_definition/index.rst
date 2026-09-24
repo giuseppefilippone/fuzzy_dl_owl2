@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.primitive_concept_definition
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A primitive concept definition axiom for fuzzy description logics, binding a named concept to a complex fuzzy concept expression through a chosen fuzzy implication operator and a lower-bound truth degree.

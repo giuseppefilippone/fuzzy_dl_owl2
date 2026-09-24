@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_sum_concept
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Defines a weighted sum concept for the FuzzyOWL2 framework, aggregating a list of fuzzy concept definitions into a single composite concept.

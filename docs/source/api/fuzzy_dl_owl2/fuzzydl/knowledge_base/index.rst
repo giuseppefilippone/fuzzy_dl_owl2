@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.knowledge_base
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A fuzzy description-logic knowledge base and reasoning engine, centred on a **KnowledgeBase** class that stores a fuzzy ontology's TBox, ABox, and RBox and performs reasoning by expanding a completion forest (tableau) while compiling every fuzzy constraint into a Mixed-Integer Linear Programming (MILP) problem whose solution yields the requested truth degrees.
@@ -1968,7 +1966,9 @@ Module Contents
 
    .. py:method:: adapt_big_m() -> None
 
-      Shrinks the Big-M constant used by the datatype-restriction rows to the magnitude of the values this knowledge base can actually take. The provider default (up to ``1000 * (2^31 - 1)`` for Gurobi) is far above any real feature value, and rows such as ``2M - n + x_b - M x_f - (M + n) x_is_c >= 0`` then lose the threshold ``n`` below the double-precision ulp of ``2M`` (about 1e-3 at 4e12): a feature pinned to 4.4 is solved as 4.3999 and an assertion at the exact membership degree becomes infeasible. M only has to dominate the feature values, so it is set to ``10 * max(|k1|, |k2|)`` over the declared numeric feature ranges (and the fuzzy-number range, if defined), floored at 1e6 and capped at the provider default. Nothing is changed when the user forces ``maxVal`` in the configuration, or when some numeric feature has no declared range (its values are unbounded, so only the provider default is safe).
+      Shrinks the Big-M constant used by the datatype-restriction rows to the magnitude of the values this knowledge base can actually take. The provider default (up to ``1000 * (2^31 - 1)`` for Gurobi) is far above any real feature value, and rows such as ``2M - n + x_b - M x_f - (M + n) x_is_c >= 0`` then lose the threshold ``n`` below the double-precision ulp of ``2M`` (about 1e-3 at 4e12): a feature pinned to 4.4 is solved as 4.3999 and an assertion at the exact membership degree becomes infeasible. M only has to dominate the feature values, so it is set to ``BIG_M_SCALE * max(|k1|, |k2|)`` over the declared numeric feature ranges (and the fuzzy-number range, if defined), floored at ``BIG_M_FLOOR`` and capped at the provider default. Nothing is changed when the user forces ``maxVal`` in the configuration, or when some numeric feature has no declared range (its values are unbounded, so only the provider default is safe).
+
+      Declared ranges that are vacuous sentinels — both endpoints at or beyond the ``INTEGER_MAX_VALUE`` / ``DOUBLE_MAX_VALUE`` placeholders ``fuzzyowl2.util.constants`` defines and the OWL 2 converter writes for undeclared integer / real features — are ignored instead of forcing the provider default: M still has to dominate only the values the knowledge base actually constrains, and a real range that wide would defeat the adaptation entirely. A legitimate threshold or datum of that magnitude still requires the manual ``maxVal`` override (it is above every auto-derived bound).
 
 
 

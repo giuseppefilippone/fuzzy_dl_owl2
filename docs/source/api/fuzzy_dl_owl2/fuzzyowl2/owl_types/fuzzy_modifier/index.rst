@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.fuzzy_modifier
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 An abstract base class, ``FuzzyModifier``, that establishes the contract for linguistic hedges which mathematically transform the membership degrees of fuzzy concepts within the FuzzyOWL2 framework.

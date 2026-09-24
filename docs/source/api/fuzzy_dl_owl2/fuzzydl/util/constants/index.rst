@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.util.constants
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A central registry of the shared vocabulary — enumerations, parser keywords, and numeric constants — that a fuzzy description-logic reasoner relies on to configure parsing, classify logical expressions, guide tableau-style reasoning, and drive mixed-integer optimization.
@@ -31,6 +29,8 @@ Attributes
 
 .. autoapisummary::
 
+   fuzzy_dl_owl2.fuzzydl.util.constants.BIG_M_FLOOR
+   fuzzy_dl_owl2.fuzzydl.util.constants.BIG_M_SCALE
    fuzzy_dl_owl2.fuzzydl.util.constants.KNOWLEDGE_BASE_SEMANTICS
    fuzzy_dl_owl2.fuzzydl.util.constants.MAXVAL
    fuzzy_dl_owl2.fuzzydl.util.constants.MAXVAL2
@@ -2571,6 +2571,16 @@ Module Contents
    :return: The path to the ensured ``./results`` directory.
 
    :rtype: str
+
+
+.. py:data:: BIG_M_FLOOR
+   :type:  float
+   :value: 1000000.0
+
+
+.. py:data:: BIG_M_SCALE
+   :type:  float
+   :value: 10.0
 
 
 .. py:data:: KNOWLEDGE_BASE_SEMANTICS

@@ -27,8 +27,6 @@ fuzzy_dl_owl2.fuzzydl.parser
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A parsing front end for the fuzzy description-logic (FDL) language that reads textual knowledge base files and produces a fully populated knowledge base together with the list of queries to be answered against it, using interchangeable parser and tokenizer implementations that range from a pure-Python pyparsing grammar to compiled C scanners.

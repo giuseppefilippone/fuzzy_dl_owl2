@@ -39,8 +39,6 @@ fuzzy_dl_owl2.fuzzydl.concept.modified
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A family of fuzzy description-logic concepts that pair an arbitrary concept with a linguistic modifier such as "very" or "slightly", reshaping the degree to which individuals satisfy the wrapped concept.

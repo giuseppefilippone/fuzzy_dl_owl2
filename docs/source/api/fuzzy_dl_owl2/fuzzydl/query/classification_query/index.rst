@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.query.classification_query
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 ClassificationQuery is a lightweight query type whose execution triggers classification of a fuzzy description logic knowledge base, yielding a successful solution when classification completes and an inconsistency result if it fails.
@@ -94,3 +92,4 @@ Module Contents
       :return: A Solution object representing the outcome of the classification attempt. It indicates success with a value of 1.0 or failure due to an inconsistent knowledge base.
 
       :rtype: Solution
+

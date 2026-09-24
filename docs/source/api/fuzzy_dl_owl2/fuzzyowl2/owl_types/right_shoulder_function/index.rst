@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.right_shoulder_function
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A right-shoulder fuzzy membership function that assigns zero membership below a lower threshold, a linearly increasing degree between two parameters, and full membership at or above the upper threshold, for use in fuzzy OWL 2 ontologies.

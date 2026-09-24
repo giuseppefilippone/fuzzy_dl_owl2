@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.concept.concept
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Defines the core concept representation for a fuzzy description logic reasoner, pairing an abstract base class for logical expressions with the central **Concept** class to support normal-form conversion, expression simplification, and operator-overloaded logical composition.
@@ -728,3 +726,4 @@ Module Contents
       :return: The instance resulting from replacing `a` with `c`, or `None` if the operation cannot be performed.
 
       :rtype: typing.Optional[typing.Self]
+

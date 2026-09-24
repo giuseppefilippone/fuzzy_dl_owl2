@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_min_concept
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Defines a weighted minimum aggregation operator that combines several fuzzy concept definitions into a single composite fuzzy concept within the FuzzyOWL2 framework.

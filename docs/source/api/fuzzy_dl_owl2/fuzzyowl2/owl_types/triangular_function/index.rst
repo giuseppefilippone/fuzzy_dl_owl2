@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.triangular_function
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A triangular membership function for fuzzy OWL 2 ontologies, defining a vague or imprecise concept through three points: a left endpoint where membership begins rising, a peak where membership reaches its maximum, and a right endpoint where it falls back to zero.

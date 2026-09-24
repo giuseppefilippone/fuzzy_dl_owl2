@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.individual.individual
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A core building block of fuzzy description-logic reasoning that models a single named individual in an ontology, together with all the concepts, role relations, and restrictions that a tableau-based reasoner attaches to it during inference.

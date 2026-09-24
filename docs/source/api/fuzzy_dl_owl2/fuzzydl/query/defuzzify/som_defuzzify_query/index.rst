@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.query.defuzzify.som_defuzzify_query
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Defines a defuzzification query that converts a fuzzy membership degree into a single crisp number using the Smallest of Maxima (SOM) strategy, which selects the smallest domain value at which an individual's membership in a concept reaches its peak.
@@ -85,3 +83,4 @@ Module Contents
       :return: An Expression object representing the variable `q` with a coefficient of 1.0.
 
       :rtype: Expression
+

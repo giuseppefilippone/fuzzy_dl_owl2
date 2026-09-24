@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.concept.qowa_concept
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A quantified ordered weighted averaging (QOWA) concept that aggregates a collection of fuzzy concepts under a linguistic quantifier, deriving the aggregation weights automatically from the quantifier's membership function rather than requiring them to be supplied explicitly.

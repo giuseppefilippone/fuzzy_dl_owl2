@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.query.defuzzify.lom_defuzzify_query
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A defuzzification query that applies the Largest of Maxima (LOM) method, converting a fuzzy membership value into a crisp number by selecting the largest value at which the degree of membership is maximized.
@@ -85,3 +83,4 @@ Module Contents
       :return: An Expression representing the negative of the specified variable.
 
       :rtype: Expression
+

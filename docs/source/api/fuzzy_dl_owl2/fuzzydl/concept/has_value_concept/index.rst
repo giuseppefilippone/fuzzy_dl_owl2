@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.concept.has_value_concept
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Defines a fuzzy description-logic concept expressing a "has-value" existential restriction — the form *(b-some r v)* — satisfied by any individual connected to one specific value through a given role.

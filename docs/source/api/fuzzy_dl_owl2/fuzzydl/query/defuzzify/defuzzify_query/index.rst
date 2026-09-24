@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.query.defuzzify.defuzzify_query
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 An abstract query class that converts a fuzzy membership degree into a crisp value for a named feature of an individual, by first computing the individual's maximal degree of membership in a concept and then optimizing a MILP objective built from the feature's associated variable.
@@ -130,3 +128,4 @@ Module Contents
    .. py:attribute:: obj_expr
       :type:  fuzzy_dl_owl2.fuzzydl.milp.expression.Expression
       :value: None
+

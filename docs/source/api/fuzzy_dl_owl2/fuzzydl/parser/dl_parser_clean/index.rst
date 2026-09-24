@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.parser.dl_parser_clean
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A pyparsing-free semantic-action layer for a fuzzy Description Logic parser that converts raw token lists into typed domain objects — fuzzy concepts, degrees, MILP expressions, and queries — while incrementally building and validating a shared fuzzy knowledge base.
@@ -659,3 +657,4 @@ Module Contents
    .. py:attribute:: queries_list
       :type:  list[fuzzy_dl_owl2.fuzzydl.query.query.Query]
       :value: []
+

@@ -39,8 +39,6 @@ fuzzy_dl_owl2.fuzzydl.query.defuzzify
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Defuzzification queries for a fuzzy description-logic reasoner that convert an individual's graded membership in a concept into a single crisp feature value, offering the Smallest of Maxima, Mean of Maxima, and Largest of Maxima strategies on top of a shared mixed-integer linear programming pipeline.

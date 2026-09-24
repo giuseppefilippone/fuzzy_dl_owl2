@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.label
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A lightweight value class that pairs a fuzzy concept with a degree of satisfaction, allowing individuals in a fuzzy description-logic knowledge base to be annotated with weighted concept memberships.

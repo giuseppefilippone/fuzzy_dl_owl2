@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.exception.inconsistent_ontology_exception
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A custom exception that signals logical inconsistencies detected in fuzzy ontologies, such as contradictory concept definitions or unsatisfiable concepts.

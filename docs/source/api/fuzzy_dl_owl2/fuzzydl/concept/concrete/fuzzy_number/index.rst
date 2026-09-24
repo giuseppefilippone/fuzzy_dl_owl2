@@ -39,8 +39,6 @@ fuzzy_dl_owl2.fuzzydl.concept.concrete.fuzzy_number
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A concrete-domain component that models triangular fuzzy numbers—uncertain quantities whose membership degree rises linearly from a lower bound to a peak and falls linearly back to an upper bound—for fuzzy description-logic reasoning, complete with fuzzy arithmetic, logical combinators, and defuzzification.

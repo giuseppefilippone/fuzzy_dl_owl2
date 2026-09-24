@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.concept.sigma_count
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A structural container for sigma-count expressions in fuzzy description logic, bundling the counting variable, target individual, reference individuals, role, and concept that together define a condition on how many role fillers satisfy a given concept.

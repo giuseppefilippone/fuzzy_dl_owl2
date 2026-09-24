@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.milp.solution
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A value object that captures the outcome of a query over a fuzzy knowledge base, pairing a numerical degree of satisfaction with the knowledge base's consistency status and any variable bindings produced during solving.
@@ -164,3 +162,4 @@ Module Contents
    .. py:attribute:: INCONSISTENT_KB
       :type:  bool
       :value: False
+

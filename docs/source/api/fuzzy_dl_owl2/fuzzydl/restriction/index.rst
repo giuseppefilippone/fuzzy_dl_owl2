@@ -39,8 +39,6 @@ fuzzy_dl_owl2.fuzzydl.restriction
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A small set of value objects that model role restrictions in a fuzzy description logic, binding a role to either a target concept or a specific named individual together with a minimum degree of truth.

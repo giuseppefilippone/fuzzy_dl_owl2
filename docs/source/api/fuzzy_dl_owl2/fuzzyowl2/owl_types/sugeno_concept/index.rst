@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.sugeno_concept
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Defines a Sugeno fuzzy integral concept for the FuzzyOWL2 framework by pairing a list of numeric weights with the fuzzy concepts they aggregate.

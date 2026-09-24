@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.fuzzydl_to_owl2
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A converter that transforms FuzzyDL fuzzy description-logic knowledge bases into standard OWL 2 ontologies, preserving the fuzzy semantics by embedding them as structured annotations.

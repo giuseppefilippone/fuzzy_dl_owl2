@@ -39,8 +39,6 @@ fuzzy_dl_owl2.fuzzyowl2.parser
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A parsing layer that translates FuzzyOWL2 XML annotations into the Python object model of a fuzzy description-logic ontology, covering fuzzy concepts, membership-function datatypes, modifiers, modified roles, axiom degrees, and ontology-level fuzzy logic declarations.

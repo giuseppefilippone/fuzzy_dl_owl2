@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzyowl2.util.constants
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A pair of enumerations that give the FuzzyOWL2 framework its canonical vocabulary: a string-based taxonomy of fuzzy concept types, and a keyword registry that binds every token of the FuzzyOWL2 language to a ready-made pyparsing grammar element.
@@ -23,6 +21,17 @@ Description
 ``FuzzyOWL2Keyword`` centralizes the entire FuzzyOWL2 vocabulary — XML-like delimiters, ontology and axiom keywords, fuzzy logic names such as Łukasiewicz, Gödel, Zadeh, and product, membership-function shapes, and comparison operators — by storing a pyparsing ``Keyword`` or ``Word`` parser object as each member's value. Storing the parser objects directly inside the enum turns it into a single source of truth from which grammars can be assembled and syntax validated, rather than scattering literal tokens throughout the parsing code. A set of helper methods normalizes the stored tokens for practical use: names are lowercased and stripped of quote characters, string values are sanitized the same way, and capitalized tag names can be derived on demand. Equality comparison is deliberately loosened so that a member matches case-insensitively against a plain string, a raw pyparsing keyword, or another enum member, raising ``NotImplementedError`` for anything else, which greatly simplifies token matching during parsing. A commented-out predecessor based on ``CaselessKeyword`` remains in the source as a trace of the migration toward case-sensitive ``pp.Keyword`` matching, reflecting a design choice to enforce exact casing in the recognized grammar.
 
 .. ── LLM-GENERATED DESCRIPTION END ──
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   fuzzy_dl_owl2.fuzzyowl2.util.constants.DOUBLE_MAX_VALUE
+   fuzzy_dl_owl2.fuzzyowl2.util.constants.DOUBLE_MIN_VALUE
+   fuzzy_dl_owl2.fuzzyowl2.util.constants.INTEGER_MAX_VALUE
+   fuzzy_dl_owl2.fuzzyowl2.util.constants.INTEGER_MIN_VALUE
+
 
 Classes
 -------
@@ -537,3 +546,19 @@ Module Contents
 
 
    .. py:attribute:: ZADEH
+
+
+.. py:data:: DOUBLE_MAX_VALUE
+   :type:  float
+
+.. py:data:: DOUBLE_MIN_VALUE
+   :type:  float
+
+.. py:data:: INTEGER_MAX_VALUE
+   :type:  int
+   :value: 100000000
+
+
+.. py:data:: INTEGER_MIN_VALUE
+   :type:  int
+   :value: -100000000

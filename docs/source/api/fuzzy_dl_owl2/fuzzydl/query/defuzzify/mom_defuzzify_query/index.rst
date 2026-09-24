@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.query.defuzzify.mom_defuzzify_query
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A Mean of Maxima (MoM) defuzzification query that turns a fuzzy feature of an individual into a single crisp number by averaging the smallest and largest feature values at which the individual achieves its maximum degree of membership in a given concept.
@@ -109,3 +107,4 @@ Module Contents
       :return: A Solution object containing the calculated numeric value (Mean of Maximums) derived from fuzzy logic optimization, or None if defuzzification fails. The Solution may also indicate an inconsistent knowledge base.
 
       :rtype: Solution
+

@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.degree.degree_expression
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Provides a non-numeric degree type that wraps a symbolic linear expression, allowing fuzzy truth values to be manipulated algebraically and converted into inequations for an underlying mixed-integer linear programming solver.

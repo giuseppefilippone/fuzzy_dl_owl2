@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.concept.implies_concept
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A fuzzy description-logic concept representing logical implication between an antecedent and a consequent, materialising Zadeh and Gödel semantics as explicit concept nodes while offering factory helpers for Łukasiewicz and Kleene-Dienes implications that adapt to the knowledge base's classical or fuzzy semantics.

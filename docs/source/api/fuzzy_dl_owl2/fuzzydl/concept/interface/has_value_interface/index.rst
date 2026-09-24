@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.concept.interface.has_value_interface
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 An abstract base class that augments role-based fuzzy description-logic concepts with the ability to carry and expose an arbitrary filler value.

@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.query.kb_satisfiable_query
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A query that checks whether a fuzzy description-logic knowledge base is logically satisfiable, returning a solution scored at 1.0 when the base admits at least one satisfying interpretation and an inconsistency-marked solution otherwise.
@@ -109,3 +107,4 @@ Module Contents
       :return: A Solution object representing the outcome of the operation. It returns a solution initialized with 1.0 if the knowledge base is consistent, or a solution marked as inconsistent if the knowledge base is invalid or an ontology exception occurs.
 
       :rtype: Solution
+

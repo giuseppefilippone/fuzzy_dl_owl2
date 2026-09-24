@@ -423,3 +423,13 @@ class FuzzyOWL2Keyword(enum.Enum):
         """
 
         return self.name
+
+
+# Vacuous range sentinels written by FuzzyOwl2ToFuzzyDL for undeclared
+# numeric features: `(range <dp> *integer* ±INTEGER_MAX_VALUE)` and
+# `(range <dp> *real* ±DOUBLE_MAX_VALUE)`. KnowledgeBase.adapt_big_m ignores
+# declared ranges at these magnitudes so they do not pin the Big-M.
+INTEGER_MAX_VALUE: int = 100000000  # 0x5f5e100
+INTEGER_MIN_VALUE: int = -INTEGER_MAX_VALUE
+DOUBLE_MAX_VALUE: float = 1000.0 * float(INTEGER_MAX_VALUE)
+DOUBLE_MIN_VALUE: float = -DOUBLE_MAX_VALUE

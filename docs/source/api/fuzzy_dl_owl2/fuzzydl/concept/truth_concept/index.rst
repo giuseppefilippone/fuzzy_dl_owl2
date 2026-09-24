@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.concept.truth_concept
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Provides the top and bottom truth constants of a fuzzy description-logic concept lattice as lazily cached singletons that behave correctly under conjunction, disjunction, implication, and negation.

@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzyowl2.util.sort_dl_lines
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A utility for reordering fuzzyDL knowledge-base statements so that they follow the page-by-page order in which the commands are documented in the fuzzyDL PDF manual.

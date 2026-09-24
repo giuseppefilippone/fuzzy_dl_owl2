@@ -53,8 +53,6 @@ fuzzy_dl_owl2.fuzzydl.parser.tokenizer
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 The tokenization stage of the fuzzy description-logic (FDL) parser, turning source files and in-memory text into flat token streams through interchangeable pure-Python and compiled C scanning backends whose shared vocabulary is kept in sync by a build-time code generator.

@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.concept.value_concept
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A value-restriction concept for fuzzy description logics that binds a role to a concrete value under an "at most", "at least", or "exactly" constraint.

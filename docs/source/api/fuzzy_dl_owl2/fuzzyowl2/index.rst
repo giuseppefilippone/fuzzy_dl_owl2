@@ -27,8 +27,6 @@ fuzzy_dl_owl2.fuzzyowl2
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A translation framework that converts fuzzy-logic-annotated OWL 2 ontologies into the S-expression knowledge-base format consumed by the FuzzyDL fuzzy description-logic reasoner.

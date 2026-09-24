@@ -3,6 +3,12 @@ import re
 import string
 import typing
 
+from fuzzy_dl_owl2.fuzzyowl2.util.constants import (
+    DOUBLE_MAX_VALUE,
+    DOUBLE_MIN_VALUE,
+    INTEGER_MAX_VALUE,
+    INTEGER_MIN_VALUE,
+)
 from fuzzy_dl_owl2.fuzzydl.util.config_reader import ConfigReader
 from fuzzy_dl_owl2.fuzzydl.util.constants import FuzzyDLKeyword
 from fuzzy_dl_owl2.fuzzydl.util.util import Util
@@ -57,16 +63,6 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
     """
     This class serves as a converter that transforms ontologies defined in the FuzzyOWL2 format into the specific syntax required by the FuzzyDL reasoner. Extending the base `FuzzyOwl2` class, it traverses the ontology structure and translates OWL entities—such as classes, object properties, data properties, and individuals—into their corresponding FuzzyDL constructs like concepts, roles, and instances. The converter handles a wide range of semantic elements, including class expressions (intersections, unions, complements), property characteristics (transitivity, symmetry, functionality), and complex fuzzy logic operators such as weighted sums, OWA, and Choquet integrals. It also manages the definition of datatypes, automatically setting appropriate ranges for numerical values and handling string or boolean types. During the conversion process, the class writes the resulting syntax to a specified output file while maintaining internal sets to track declared entities and prevent redundancy. Additionally, it includes error handling to identify and report unsupported constructs, such as cardinality restrictions or specific property axioms, ensuring the user is aware of translation limitations.
 
-    :param EPSILON: A small constant used to adjust boundary values for exclusive data range restrictions, specifically for non-integer datatypes.
-    :type EPSILON: float
-    :param INTEGER_MAX_VALUE: The maximum value used to define the range of integer datatypes in the FuzzyDL representation.
-    :type INTEGER_MAX_VALUE: int
-    :param INTEGER_MIN_VALUE: The minimum value for integer datatypes, used as the lower bound for defining ranges and facets in the FuzzyDL representation.
-    :type INTEGER_MIN_VALUE: int
-    :param DOUBLE_MAX_VALUE: The upper bound for real number ranges used when defining data properties in the FuzzyDL output, specifically for double and float datatypes.
-    :type DOUBLE_MAX_VALUE: float
-    :param DOUBLE_MIN_VALUE: The minimum value for double (real) datatypes, used to define the lower bound of ranges for data properties in the FuzzyDL representation.
-    :type DOUBLE_MIN_VALUE: float
     :param boolean_datatypes: Tracks data properties identified as having a boolean datatype to prevent duplicate range definitions in the FuzzyDL output.
     :type boolean_datatypes: set[str]
     :param numerical_datatypes: Tracks data properties identified as having numerical types (integer or real) to ensure their range definitions are written to the FuzzyDL output.
@@ -83,12 +79,6 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
     :type processed_functional_object_properties: set[str]
     """
 
-    EPSILON: float = 0.001
-
-    INTEGER_MAX_VALUE: int = 100000000  # 0x7FFFFFFF
-    INTEGER_MIN_VALUE: int = -INTEGER_MAX_VALUE
-    DOUBLE_MAX_VALUE: float = 1000 * float(INTEGER_MAX_VALUE)
-    DOUBLE_MIN_VALUE: float = -DOUBLE_MAX_VALUE
 
     def __init__(
         self,
@@ -222,8 +212,8 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
         """
 
         facets: list[float] = [
-            FuzzyOwl2ToFuzzyDL.INTEGER_MIN_VALUE,
-            FuzzyOwl2ToFuzzyDL.INTEGER_MAX_VALUE,
+            INTEGER_MIN_VALUE,
+            INTEGER_MAX_VALUE,
         ]
         if name == "xsd:nonPositiveInteger":
             facets[1] = 0
@@ -414,7 +404,7 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
                         self.numerical_datatypes.add(dp_name)
                         if self.__is_real_datatype(d):
                             self.__write(
-                                f"(range {dp_name} *real* {FuzzyOwl2ToFuzzyDL.DOUBLE_MIN_VALUE} {FuzzyOwl2ToFuzzyDL.DOUBLE_MAX_VALUE})"
+                                f"(range {dp_name} *real* {DOUBLE_MIN_VALUE} {DOUBLE_MAX_VALUE})"
                             )
                         else:
                             facets: list[float] = self.__get_facets(str(d))
@@ -422,9 +412,9 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
                                 f"(range {dp_name} *integer* {facets[0]} {facets[1]})"
                             )
                     if self.__is_real_datatype(d):
-                        return f"(>= {dp_name} {FuzzyOwl2ToFuzzyDL.DOUBLE_MIN_VALUE})"
+                        return f"(>= {dp_name} {DOUBLE_MIN_VALUE})"
                     else:
-                        return f"(>= {dp_name} {FuzzyOwl2ToFuzzyDL.INTEGER_MIN_VALUE})"
+                        return f"(>= {dp_name} {INTEGER_MIN_VALUE})"
                 elif d.is_boolean():
                     return f"(= {self.get_data_property_name(p)} {d})"
         elif isinstance(range, OWLDataOneOf):
@@ -588,7 +578,7 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
                 self.write_functional_data_property_axiom(p)
                 if self.__is_real_datatype(literal):
                     self.__write(
-                        f"(range {dp_name} *real* {FuzzyOwl2ToFuzzyDL.DOUBLE_MIN_VALUE} {FuzzyOwl2ToFuzzyDL.DOUBLE_MAX_VALUE})"
+                        f"(range {dp_name} *real* {DOUBLE_MIN_VALUE} {DOUBLE_MAX_VALUE})"
                     )
                 else:
                     facets: list[float] = self.__get_facets(str(literal))
@@ -1029,11 +1019,11 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
                         self.write_functional_data_property_axiom(p)
                         if self.__is_integer_datatype(lit):
                             self.__write(
-                                f"(range {dp_name} *integer* {FuzzyOwl2ToFuzzyDL.INTEGER_MIN_VALUE} {FuzzyOwl2ToFuzzyDL.INTEGER_MAX_VALUE})"
+                                f"(range {dp_name} *integer* {INTEGER_MIN_VALUE} {INTEGER_MAX_VALUE})"
                             )
                         else:
                             self.__write(
-                                f"(range {dp_name} *real* {FuzzyOwl2ToFuzzyDL.DOUBLE_MIN_VALUE} {FuzzyOwl2ToFuzzyDL.DOUBLE_MAX_VALUE})"
+                                f"(range {dp_name} *real* {DOUBLE_MIN_VALUE} {DOUBLE_MAX_VALUE})"
                             )
                     value: typing.Optional[float | int] = 0.0
                     if self.__is_real_datatype(lit):
@@ -1557,7 +1547,7 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
                             if is_integer != 0:
                                 min_value = k + 1
                             else:
-                                min_value = k + FuzzyOwl2ToFuzzyDL.EPSILON
+                                min_value = k + ConfigReader.EPSILON
                             correctness += 1
                         elif facet.constraint_to_uriref() == OWLFacet.MAX_INCLUSIVE:
                             max_value = k
@@ -1566,7 +1556,7 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
                             if is_integer != 0:
                                 max_value = k - 1
                             else:
-                                max_value = k - FuzzyOwl2ToFuzzyDL.EPSILON
+                                max_value = k - ConfigReader.EPSILON
                             correctness += 1
             if correctness == 2:
                 if is_integer == 2:
@@ -1591,7 +1581,7 @@ class FuzzyOwl2ToFuzzyDL(FuzzyOwl2):
                 if self.__is_real_datatype(range_type):
                     self.write_functional_data_property_axiom(p)
                     self.__write(
-                        f"(range {dp_name} *real* {FuzzyOwl2ToFuzzyDL.DOUBLE_MIN_VALUE} {FuzzyOwl2ToFuzzyDL.DOUBLE_MAX_VALUE})"
+                        f"(range {dp_name} *real* {DOUBLE_MIN_VALUE} {DOUBLE_MAX_VALUE})"
                     )
                     self.numerical_datatypes.add(dp_name)
                 elif self.__is_integer_datatype(range_type):

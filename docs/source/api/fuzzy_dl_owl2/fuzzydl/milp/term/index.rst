@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.milp.term
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 An immutable algebraic term that pairs a numeric coefficient with a variable, providing the atomic building block for the linear expressions used to encode fuzzy description logic reasoning as mixed-integer linear programming problems.
@@ -243,3 +241,4 @@ Module Contents
       :return: Returns the `Variable` instance stored in the `var` attribute.
 
       :rtype: Variable
+

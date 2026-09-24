@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.query.bnp_query
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A specialised query that defuzzifies a triangular fuzzy number by computing its **best non-fuzzy performance (BNP)**, i.e. the crisp value holding the highest degree of membership in the fuzzy set.

@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzyowl2.fuzzyowl2_to_fuzzydl
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A converter that translates fuzzy OWL 2 ontologies into the S-expression syntax required by the FuzzyDL reasoner, covering concepts, roles, individuals, fuzzy membership functions, and aggregation operators.
@@ -68,16 +66,6 @@ Module Contents
 
    This class serves as a converter that transforms ontologies defined in the FuzzyOWL2 format into the specific syntax required by the FuzzyDL reasoner. Extending the base `FuzzyOwl2` class, it traverses the ontology structure and translates OWL entities—such as classes, object properties, data properties, and individuals—into their corresponding FuzzyDL constructs like concepts, roles, and instances. The converter handles a wide range of semantic elements, including class expressions (intersections, unions, complements), property characteristics (transitivity, symmetry, functionality), and complex fuzzy logic operators such as weighted sums, OWA, and Choquet integrals. It also manages the definition of datatypes, automatically setting appropriate ranges for numerical values and handling string or boolean types. During the conversion process, the class writes the resulting syntax to a specified output file while maintaining internal sets to track declared entities and prevent redundancy. Additionally, it includes error handling to identify and report unsupported constructs, such as cardinality restrictions or specific property axioms, ensuring the user is aware of translation limitations.
 
-   :param EPSILON: A small constant used to adjust boundary values for exclusive data range restrictions, specifically for non-integer datatypes.
-   :type EPSILON: float
-   :param INTEGER_MAX_VALUE: The maximum value used to define the range of integer datatypes in the FuzzyDL representation.
-   :type INTEGER_MAX_VALUE: int
-   :param INTEGER_MIN_VALUE: The minimum value for integer datatypes, used as the lower bound for defining ranges and facets in the FuzzyDL representation.
-   :type INTEGER_MIN_VALUE: int
-   :param DOUBLE_MAX_VALUE: The upper bound for real number ranges used when defining data properties in the FuzzyDL output, specifically for double and float datatypes.
-   :type DOUBLE_MAX_VALUE: float
-   :param DOUBLE_MIN_VALUE: The minimum value for double (real) datatypes, used to define the lower bound of ranges for data properties in the FuzzyDL representation.
-   :type DOUBLE_MIN_VALUE: float
    :param boolean_datatypes: Tracks data properties identified as having a boolean datatype to prevent duplicate range definitions in the FuzzyDL output.
    :type boolean_datatypes: set[str]
    :param numerical_datatypes: Tracks data properties identified as having numerical types (integer or real) to ensure their range definitions are written to the FuzzyDL output.
@@ -1160,32 +1148,6 @@ Module Contents
       :type name: str
       :param c: The object containing the definition logic and weights to be written.
       :type c: fuzzy_dl_owl2.fuzzydl.concept.weighted_sum_zero_concept.WeightedSumZeroConcept
-
-
-
-   .. py:attribute:: DOUBLE_MAX_VALUE
-      :type:  float
-
-
-   .. py:attribute:: DOUBLE_MIN_VALUE
-      :type:  float
-
-
-   .. py:attribute:: EPSILON
-      :type:  float
-      :value: 0.001
-
-
-
-   .. py:attribute:: INTEGER_MAX_VALUE
-      :type:  int
-      :value: 100000000
-
-
-
-   .. py:attribute:: INTEGER_MIN_VALUE
-      :type:  int
-      :value: -100000000
 
 
 

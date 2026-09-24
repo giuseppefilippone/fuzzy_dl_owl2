@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.concept.interface.has_concept_interface
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 An abstract interface that lets implementing classes wrap, inspect, and replace a single fuzzy ``Concept`` object through a managed property.

@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.query.query
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 An abstract base class that defines the interface every query must follow when evaluated against a fuzzy knowledge base, complete with built-in execution-time measurement.
@@ -141,3 +139,4 @@ Module Contents
    .. py:attribute:: total_time
       :type:  int
       :value: 0
+

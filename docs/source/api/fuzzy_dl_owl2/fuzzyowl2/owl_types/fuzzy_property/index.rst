@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.fuzzy_property
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 An abstract base class that establishes the common contract for fuzzy properties — ontology relationships that hold with a degree of truth rather than binary certainty — within the FuzzyOWL2 framework.

@@ -18,8 +18,6 @@ fuzzy_dl_owl2.fuzzydl.parser.tokenizer.generate
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A build-time code generator that regenerates the parser's token tables and lexer sources — ``tokens.h``, ``tokens.py``, and either the re2c or flex scanner — from one master keyword list so the Python, C, and scanner definitions can never drift out of sync.

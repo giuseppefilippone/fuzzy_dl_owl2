@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.query.max.max_instance_query
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A fuzzy description-logic query that computes the maximum degree to which a given individual is an instance of a concept, by posing a mixed-integer linear optimization problem over the knowledge base.
@@ -98,3 +96,4 @@ Module Contents
       :return: The Solution object resulting from the optimization of the preprocessed knowledge base, or a solution indicating an inconsistent ontology.
 
       :rtype: Solution
+

@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.query.subsumption_query
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 An abstract base class for fuzzy subsumption queries, capturing the pair of concepts whose containment relationship is to be evaluated along with the fuzzy implication operator used to grade it.

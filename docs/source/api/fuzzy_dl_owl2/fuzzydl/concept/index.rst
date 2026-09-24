@@ -27,8 +27,6 @@ fuzzy_dl_owl2.fuzzydl.concept
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A comprehensive vocabulary of fuzzy description-logic concept expressions — spanning atomic concepts, quantified role restrictions, weighted aggregations and fuzzy integrals, linguistic modifiers, and concrete-domain membership functions — through which knowledge bases express graded membership over both symbolic and numeric features.

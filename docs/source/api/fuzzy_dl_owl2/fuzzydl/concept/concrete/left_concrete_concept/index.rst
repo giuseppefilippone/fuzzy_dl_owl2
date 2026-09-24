@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.concept.concrete.left_concrete_concept
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A left-shoulder fuzzy concrete concept that grants full membership to concrete values up to a first breakpoint and tapers linearly to zero at a second one, serving as a building block for fuzzy description-logic knowledge bases.

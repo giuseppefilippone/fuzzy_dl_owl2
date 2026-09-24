@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.quasi_sugeno_concept
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Defines a quasi-Sugeno integral concept for FuzzyOWL2 ontologies, holding the numeric weights and fuzzy concept names that together specify a weighted fuzzy aggregation.

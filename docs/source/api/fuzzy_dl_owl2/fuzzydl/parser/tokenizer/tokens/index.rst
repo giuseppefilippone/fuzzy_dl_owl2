@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.parser.tokenizer.tokens
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A tokenizer for the fuzzy description-logic (FDL) input language that drives a compiled C scanner through CFFI and returns flat, NumPy-backed token streams built from either memory-mapped files or in-memory byte strings.

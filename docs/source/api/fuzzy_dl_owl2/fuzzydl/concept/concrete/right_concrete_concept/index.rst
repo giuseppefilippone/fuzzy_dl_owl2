@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.concept.concrete.right_concrete_concept
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A right-shoulder fuzzy concrete concept whose membership degree ramps linearly from zero to one across a transition interval, modelling linguistic terms that become fully true once a quantity grows sufficiently large.

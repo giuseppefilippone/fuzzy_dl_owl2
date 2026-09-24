@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.linear_function
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A linear membership function datatype for the FuzzyOWL2 fuzzy ontology framework, characterised by two floating-point coefficients that determine the line's slope and position when assigning degrees of membership.

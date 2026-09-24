@@ -27,8 +27,6 @@ fuzzy_dl_owl2.fuzzydl.query.max
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A set of fuzzy description-logic query types that compute the maximum degree of truth for concept membership, role relations, concept satisfiability, concept subsumption, and arithmetic expressions by reformulating each maximization as a mixed-integer linear optimization problem over a knowledge base.

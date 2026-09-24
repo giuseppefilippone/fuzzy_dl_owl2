@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.util.config_reader
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A centralized configuration manager for a fuzzy description-logic reasoner that loads runtime parameters from an INI file or a *.env* fallback, applies caller-supplied overrides, and keeps global solver constants aligned with the capabilities of the selected MILP backend.
@@ -206,3 +204,4 @@ Module Contents
    .. py:attribute:: RULE_ACYCLIC_TBOXES
       :type:  bool
       :value: True
+

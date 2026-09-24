@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.query.min.min_instance_query
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A fuzzy description-logic query that computes the greatest lower bound of the degree to which a given individual is an instance of a concept, by translating the logical question into a mixed-integer linear program and minimizing a semi-continuous membership variable.
@@ -96,3 +94,4 @@ Module Contents
       :return: A Solution object representing the result of optimizing the preprocessed knowledge base. If the knowledge base is inconsistent, returns a Solution indicating an inconsistent state.
 
       :rtype: Solution
+

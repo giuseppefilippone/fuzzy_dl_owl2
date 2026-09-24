@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzyowl2.fuzzyowl2
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A translator that converts fuzzy-logic-annotated OWL 2 ontologies into a fuzzy description logic representation, extracting fuzzy datatypes, concepts, modifiers, and graded axioms and writing the translated knowledge base to an output file.

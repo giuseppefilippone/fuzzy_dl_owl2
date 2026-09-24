@@ -1438,6 +1438,13 @@ class FuzzyLogic(enum.StrEnum):
 
 
 KNOWLEDGE_BASE_SEMANTICS: FuzzyLogic = FuzzyLogic.CLASSICAL
+
+# Big-M adaptation heuristics (KnowledgeBase.adapt_big_m): M must dominate
+# every feature value, so it is set to BIG_M_SCALE times the widest declared
+# range, never below BIG_M_FLOOR and never above MAXVAL_DEFAULT.
+BIG_M_FLOOR: float = 1e6
+BIG_M_SCALE: float = 10.0
+
 MAXVAL: float = ((1 << 31) - 1) * 1000  # 2.147483647e12
 MAXVAL2: float = MAXVAL * 2
 # Provider default, kept by ConfigReader so KnowledgeBase.adapt_big_m can cap

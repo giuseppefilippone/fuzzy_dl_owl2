@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.parser.dl_parser
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A pyparsing-based parser for the fuzzy Description Logic language that reads textual knowledge base files and constructs a fully populated **KnowledgeBase** together with the list of queries to be answered against it.

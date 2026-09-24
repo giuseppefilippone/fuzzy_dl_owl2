@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.modifier.linear_modifier
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A fuzzy-logic modifier that reshapes the membership degrees of concepts through a piecewise linear transformation governed by a single coefficient.

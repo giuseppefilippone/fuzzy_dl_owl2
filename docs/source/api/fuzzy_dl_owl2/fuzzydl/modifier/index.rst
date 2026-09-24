@@ -39,8 +39,6 @@ fuzzy_dl_owl2.fuzzydl.modifier
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Fuzzy-logic modifiers that serve as linguistic hedges — intensifiers and dilators such as *very* or *somewhat* — transforming fuzzy concepts by remapping their membership degrees across the normalized [0, 1] interval within a fuzzy description-logic knowledge base.

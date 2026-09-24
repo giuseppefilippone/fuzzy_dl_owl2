@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.query.min.min_query
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A minimization query that computes the smallest value attainable by a given objective expression over a fuzzy description-logic knowledge base.

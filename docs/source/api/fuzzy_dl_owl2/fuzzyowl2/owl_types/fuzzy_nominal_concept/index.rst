@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.fuzzy_nominal_concept
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Defines a fuzzy nominal concept that binds a named ontology individual to a graded degree of membership, extending the FuzzyOWL2 concept-definition hierarchy.

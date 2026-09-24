@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.classification_node
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 The ``ClassificationNode`` class models a single concept in a fuzzy description-logic classification hierarchy, holding its synonym labels and managing the weighted directed edges that connect it to related concepts.

@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_sum_zero_concept
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Defines a fuzzy ontology concept expressing a weighted sum of component concepts that must equal zero, serving as a typed container for the operand concept definitions.

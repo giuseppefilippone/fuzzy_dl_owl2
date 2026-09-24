@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.concept.concrete.trapezoidal_concrete_concept
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A trapezoidal fuzzy concrete concept that evaluates membership degrees through a four-breakpoint trapezoidal membership function, integrating into fuzzy description-logic reasoning with parameter validation, cloning, hashing, and overloaded logical operators.

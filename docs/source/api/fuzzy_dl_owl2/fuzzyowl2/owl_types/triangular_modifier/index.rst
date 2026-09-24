@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.triangular_modifier
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A fuzzy modifier that models a triangular membership function for the FuzzyOWL2 framework, defined by a left endpoint, a peak point of maximum membership, and a right endpoint.

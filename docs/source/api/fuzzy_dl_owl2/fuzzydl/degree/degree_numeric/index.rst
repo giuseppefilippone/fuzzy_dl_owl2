@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.degree.degree_numeric
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A concrete, float-backed implementation of a fuzzy degree that stores a single numeric satisfaction value and integrates it into the linear expressions and inequality constraints used by the fuzzy description-logic reasoner.

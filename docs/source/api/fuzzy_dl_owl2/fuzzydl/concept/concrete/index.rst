@@ -27,8 +27,6 @@ fuzzy_dl_owl2.fuzzydl.concept.concrete
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A family of concrete-domain fuzzy concepts for fuzzy description-logic reasoning, defining graded membership over numeric intervals in shapes ranging from crisp intervals and shoulder ramps to triangular, trapezoidal, and piecewise-linear curves, and extended with linguistic modifiers and triangular fuzzy numbers that carry their own fuzzy arithmetic.

@@ -27,8 +27,6 @@ fuzzy_dl_owl2.fuzzydl.concept.interface
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A family of abstract mixin interfaces that standardise how fuzzy description-logic concept expressions store, inspect, and replace the operands they carry, whether a single concept, a collection of concepts, a role, a filler value, or a weighted set of concepts.

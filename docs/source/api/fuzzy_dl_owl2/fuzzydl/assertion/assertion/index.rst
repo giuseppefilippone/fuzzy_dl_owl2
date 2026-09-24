@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.assertion.assertion
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A fuzzy description-logic assertion stating that an individual belongs to a concept with at least a given membership degree, rendered in the conventional form *individual:concept >= degree*.

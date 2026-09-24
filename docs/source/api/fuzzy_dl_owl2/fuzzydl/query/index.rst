@@ -27,8 +27,6 @@ fuzzy_dl_owl2.fuzzydl.query
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A query framework for a fuzzy description-logic reasoner that answers graded reasoning questions — how strongly an individual belongs to a concept, how strongly two individuals are related through a role, to what degree a concept is satisfiable or subsumes another, and which crisp value best represents a fuzzy feature — by reducing each question to a mixed-integer linear optimisation over a knowledge base.

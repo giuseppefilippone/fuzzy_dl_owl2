@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.query.min.min_subsumes_query
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A query that computes the minimum degree to which one fuzzy concept subsumes another in a fuzzy description logic knowledge base, casting the question as a mixed-integer linear programming problem.
@@ -94,3 +92,4 @@ Module Contents
       :return: A Solution object containing the result of the reasoning task, which may be a subsumption flag, an optimization score, or an inconsistency indicator.
 
       :rtype: Solution
+

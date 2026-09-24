@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.concept.interface.has_concepts_interface
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 An abstract base class that provides its subclasses with shared, mutable storage for a collection of fuzzy concepts, along with a property for reading and replacing them.

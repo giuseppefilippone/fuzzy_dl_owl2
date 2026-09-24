@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.property_definition
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A minimal value object that binds a property name to its associated fuzzy modifier so the pair can travel together when expressing fuzzy axioms in the FuzzyOWL2 ontology framework.

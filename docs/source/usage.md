@@ -5,7 +5,9 @@ In this section, we will see how to use the FuzzyDL reasoner to query a knowledg
 
 ## Setting up the CONFIG.ini file
 
-Before running the examples, make sure to set up the `CONFIG.ini` file in the root directory of the project. This file contains configuration settings for the FuzzyDL reasoner, such as the debug print option, the epsilon value for numerical comparisons, the maximum number of individuals to consider in reasoning, and the label used for OWL annotations. You can adjust these settings according to your needs. For example, you can set `debugPrint` to `True` to enable debug output, or set `maxIndividuals` to a specific number to limit the number of individuals considered in reasoning.
+Before running the examples, make sure to set up the `CONFIG.ini` file in the root directory of the project. This file contains configuration settings for the FuzzyDL reasoner, such as the debug print option, the epsilon value for numerical comparisons, the maximum number of individuals to consider in reasoning, the label used for OWL annotations, and the Big-M constant used by the MILP encoding. You can adjust these settings according to your needs. For example, you can set `debugPrint` to `True` to enable debug output, or set `maxIndividuals` to a specific number to limit the number of individuals considered in reasoning.
+
+The optional `maxVal` setting controls the Big-M constant used in the datatype-restriction rows of the MILP program. By default (omitted, empty, or set to `auto`), the reasoner derives a suitable Big-M automatically from the numeric feature ranges declared in the knowledge base. Setting an explicit value (for example `maxVal = 1000000`) forces that Big-M, which is only needed when the knowledge base legitimately declares thresholds or data values of a magnitude comparable to the automatic one.
 
 Sample `CONFIG.ini` file:
 ```
@@ -15,11 +17,12 @@ epsilon = 0.001
 maxIndividuals = -1
 owlAnnotationLabel = fuzzyLabel
 milpProvider = mip
+maxVal = auto
 ```
 
 ## Setting up with .env file
 
-In place of the `CONFIG.ini` file, you can set up a `.env` file in the root directory of the project to specify the configuration settings for the FuzzyDL reasoner. The `.env` file allows you to set environment variables that will be read by the reasoner at runtime. This can be a convenient way to manage configuration settings without modifying the `CONFIG.ini` file directly. You can specify the same settings as in the `CONFIG.ini` file, such as `DEBUG_PRINT`, `EPSILON`, `MAX_INDIVIDUALS`, `OWL_ANNOTATION_LABEL`, and `MILP_PROVIDER`. Variables are case-insensitive, so you can use uppercase or lowercase letters for the variable names.
+In place of the `CONFIG.ini` file, you can set up a `.env` file in the root directory of the project to specify the configuration settings for the FuzzyDL reasoner. The `.env` file allows you to set environment variables that will be read by the reasoner at runtime. This can be a convenient way to manage configuration settings without modifying the `CONFIG.ini` file directly. You can specify the same settings as in the `CONFIG.ini` file, such as `DEBUG_PRINT`, `EPSILON`, `MAX_INDIVIDUALS`, `OWL_ANNOTATION_LABEL`, `MILP_PROVIDER`, and `MAX_VAL`. Variables are case-insensitive, so you can use uppercase or lowercase letters for the variable names. As in the `CONFIG.ini` file, `MAX_VAL` accepts an explicit Big-M value, or `auto` (or omission) to let the reasoner derive it from the declared feature ranges.
 
 Sample `.env` file:
 ```
@@ -28,6 +31,7 @@ EPSILON=0.001
 MAX_INDIVIDUALS=-1
 OWL_ANNOTATION_LABEL=fuzzyLabel
 MILP_PROVIDER=mip
+MAX_VAL=auto
 ```
 
 ## Reasoning

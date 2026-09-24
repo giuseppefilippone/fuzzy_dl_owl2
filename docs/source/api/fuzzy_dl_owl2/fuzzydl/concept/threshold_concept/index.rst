@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.concept.threshold_concept
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 ThresholdConcept wraps an arbitrary fuzzy-logic concept with a numeric cut-off, asserting that the degree to which an individual satisfies the inner concept must be at least (positive threshold) or at most (negative threshold) a given weight.

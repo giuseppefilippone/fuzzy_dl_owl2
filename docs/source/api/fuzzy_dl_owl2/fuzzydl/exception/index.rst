@@ -27,8 +27,6 @@ fuzzy_dl_owl2.fuzzydl.exception
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A pair of lightweight, domain-specific exceptions that give the fuzzy description logic framework dedicated error channels for distinguishing ontology-related failures — both general operating errors and logical inconsistencies — from generic runtime problems.

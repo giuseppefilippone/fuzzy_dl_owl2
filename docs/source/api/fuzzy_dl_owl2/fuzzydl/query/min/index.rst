@@ -27,8 +27,6 @@ fuzzy_dl_owl2.fuzzydl.query.min
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A family of fuzzy description-logic queries that compute the greatest lower bound of membership degrees — for concept instances, role relations, satisfiability, subsumption, and arbitrary objective expressions — by reducing each logical question to a mixed-integer linear programming minimization.

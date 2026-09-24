@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzydl.individual.representative_individual
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A lightweight value object that pairs a concrete individual with a triangular fuzzy number and a feature name, acting as a stand-in for the collection of individuals that satisfy a fuzzy condition within a fuzzy description logic reasoner.

@@ -27,8 +27,6 @@ fuzzy_dl_owl2.fuzzyowl2.util
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A utilities layer for the FuzzyOWL2 fuzzy-ontology framework that centralizes the language's canonical vocabulary, generates the XML markup required by the fuzzy ontology specification, and reorders fuzzyDL knowledge-base statements to mirror the reference manual's documentation sequence.

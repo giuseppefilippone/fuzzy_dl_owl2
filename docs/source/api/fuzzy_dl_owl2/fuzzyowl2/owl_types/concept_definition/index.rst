@@ -7,8 +7,6 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.concept_definition
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 An abstract base class that anchors the hierarchy of fuzzy concept definitions in the FuzzyOWL2 framework by tagging each definition with a ``ConceptType`` and exposing that tag through a common interface.
