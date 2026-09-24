@@ -6604,12 +6604,12 @@ class KnowledgeBase:
             InequalityType.GREATER_THAN,
         )
         # xAinNotWS \geq  1 - (w_1 x_{v:C_1} + \dots + w_n x_{v:C_n}) - y
-        exp1: Expression = Expression(*terms)
+        exp1: Expression = Expression(1.0, *terms)
         exp1.add_term(Term(-1.0, y))
         self.milp.add_new_constraint(exp1, InequalityType.LESS_THAN)
 
         # xAinNotWS \leq  1 - (w_1 x_{v:C_1} + \dots + w_n x_{v:C_n}) + y
-        exp2: Expression = Expression(*terms)
+        exp2: Expression = Expression(1.0, *terms)
         exp2.add_term(Term(1.0, y))
         self.milp.add_new_constraint(exp2, InequalityType.GREATER_THAN)
 
