@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.parser.dl_parser_clean
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A pyparsing-free semantic-action layer for a fuzzy Description Logic parser that converts raw token lists into typed domain objects — fuzzy concepts, degrees, MILP expressions, and queries — while incrementally building and validating a shared fuzzy knowledge base.
@@ -83,7 +81,7 @@ Module Contents
       :staticmethod:
 
 
-      This static method processes parse tokens to construct a `TriangularFuzzyNumber` instance, supporting multiple input formats. If a single numeric value is provided, it generates a crisp fuzzy number where the lower, middle, and upper bounds are equal. When a string identifier is encountered, the method retrieves the corresponding fuzzy number from the knowledge base; if the identifier is undefined, an error is triggered. If three numeric values are present, they are interpreted as the lower, middle, and upper bounds of the triangular distribution. The method also outputs debug information if the global debug flag is enabled.
+      This static method processes parse tokens to construct a `TriangularFuzzyNumber` instance, supporting multiple input formats. If a single numeric value is provided, it generates a crisp fuzzy number where the lower, middle, and upper bounds are equal. When a string identifier is encountered, the method retrieves the corresponding fuzzy number from the knowledge base; if the identifier is undefined, an error is triggered. If three numeric values are present, they are interpreted as the lower, middle, and upper bounds of the triangular distribution. The parameters of the constructed fuzzy number are recorded for the Big-M adaptation, and the method also outputs debug information if the global debug flag is enabled.
 
       :param tokens: The parsed elements representing a fuzzy number, which can be a single numeric value, a string identifier referencing a predefined number, or a list of three numeric values.
       :type tokens: list
@@ -186,7 +184,7 @@ Module Contents
       :staticmethod:
 
 
-      This static method processes a datatype restriction from the provided tokens, determining the restriction type (such as exact, at most, or at least) based on the operator token and identifying the associated concrete feature role. It validates that the role has been previously defined in the knowledge base and ensures that any triangular fuzzy numbers used have a defined range before proceeding. Depending on the value token's type, the method resolves strings to either existing fuzzy number concepts or new continuous variables, and handles triangular fuzzy numbers by extracting their crisp or fuzzy representations. The constructed restriction is then added to the global knowledge base.
+      This static method processes a datatype restriction from the provided tokens, determining the restriction type (such as exact, at most, or at least) based on the operator token and identifying the associated concrete feature role. It validates that the role has been previously defined in the knowledge base and ensures that any triangular fuzzy numbers used have a defined range before proceeding. Depending on the value token's type, the method resolves strings to either existing fuzzy number concepts or new continuous variables, and handles triangular fuzzy numbers by extracting their crisp or fuzzy representations. The constructed restriction is then added to the global knowledge base, and the magnitude of the value token is recorded for the Big-M adaptation.
 
       :param tokens: The parsed components of the datatype restriction, containing the operator, the feature role, and the value or concept.
       :type tokens: list
@@ -242,7 +240,7 @@ Module Contents
       :staticmethod:
 
 
-      Parses a fuzzy concept definition from the provided tokens and registers the corresponding concrete concept object in the global knowledge base. The method validates that the concept name is not already defined and ensures that non-crisp concept types are not used with a classical reasoner. Depending on the keyword found in the tokens, it instantiates a specific concept class—such as `CrispConcreteConcept`, `TriangularConcreteConcept`, or `ModifiedConcreteConcept`—using the extracted parameters. For modified concepts, it verifies that the base concept exists prior to creation. As a side effect, adding a non-crisp concept sets a flag in the knowledge base indicating the presence of concrete fuzzy concepts.
+      Parses a fuzzy concept definition from the provided tokens and registers the corresponding concrete concept object in the global knowledge base. The method validates that the concept name is not already defined and ensures that non-crisp concept types are not used with a classical reasoner. Depending on the keyword found in the tokens, it instantiates a specific concept class—such as `CrispConcreteConcept`, `TriangularConcreteConcept`, or `ModifiedConcreteConcept`—using the extracted parameters. For modified concepts, it verifies that the base concept exists prior to creation. As a side effect, adding a non-crisp concept sets a flag in the knowledge base indicating the presence of concrete fuzzy concepts, and the numeric parameters of the definition are recorded for the Big-M adaptation.
 
       :param tokens: Tokens containing the fuzzy concept definition, including the concept name, type keyword, and associated parameters or references.
       :type tokens: list
@@ -478,11 +476,24 @@ Module Contents
 
 
 
+   .. py:method:: _record_big_m_value(value: Any, role: Optional[str] = None) -> None
+      :staticmethod:
+
+
+      Records a numeric magnitude encountered while parsing, so that ``KnowledgeBase.adapt_big_m`` can derive the Big-M from the values the knowledge base actually constrains instead of rescanning the parsed tree. The magnitude is appended to the knowledge base as its absolute value together with the name of the concrete feature it constrains, or None when it is not tied to a single feature (breakpoints of fuzzy concrete concepts and fuzzy numbers). Recognized shapes are plain numbers, ``TriangularFuzzyNumber`` instances (whose ``a``, ``b`` and ``c`` parameters are recorded) and ``FeatureFunction`` instances (numeric constants are recorded, composite functions are recursed into); every other value, including booleans, strings and continuous variables, is silently ignored, as are non-finite numbers.
+
+      :param value: The numeric value, fuzzy number or feature function whose magnitude has to be recorded.
+      :type value: typing.Any
+      :param role: The name of the concrete feature the magnitude constrains, if any.
+      :type role: typing.Optional[str]
+
+
+
    .. py:method:: _set_fuzzy_number(tokens: list) -> fuzzy_dl_owl2.fuzzydl.concept.concrete.fuzzy_number.triangular_fuzzy_number.TriangularFuzzyNumber
       :staticmethod:
 
 
-      Processes a parsed fuzzy number definition to construct a TriangularFuzzyNumber instance and register it within the global knowledge base. The method supports direct assignment and arithmetic operations—specifically addition, subtraction, multiplication, and division—by resolving string identifiers in the input tokens to existing fuzzy number objects. It validates that the target name is unique, reporting an error if a fuzzy number with that name already exists. As a side effect, the method updates the knowledge base with the new definition and sets a flag indicating the presence of concrete fuzzy concepts.
+      Processes a parsed fuzzy number definition to construct a TriangularFuzzyNumber instance and register it within the global knowledge base. The method supports direct assignment and arithmetic operations—specifically addition, subtraction, multiplication, and division—by resolving string identifiers in the input tokens to existing fuzzy number objects. It validates that the target name is unique, reporting an error if a fuzzy number with that name already exists. As a side effect, the method updates the knowledge base with the new definition and sets a flag indicating the presence of concrete fuzzy concepts, and the parameters of the resulting fuzzy number are recorded for the Big-M adaptation.
 
       :param tokens: Parsed components of a fuzzy number definition, including the identifier, the defining expression (value or operator), and associated operands.
       :type tokens: list
@@ -657,4 +668,5 @@ Module Contents
    .. py:attribute:: queries_list
       :type:  list[fuzzy_dl_owl2.fuzzydl.query.query.Query]
       :value: []
+
 

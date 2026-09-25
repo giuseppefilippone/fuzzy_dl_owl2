@@ -25,8 +25,6 @@ fuzzy_dl_owl2.fuzzydl
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A fuzzy description-logic reasoning engine that parses textual knowledge bases, represents graded concepts, roles, and individuals under multiple fuzzy semantics, and reduces every reasoning question to a mixed-integer linear optimization problem dispatched to pluggable solver backends.
@@ -112,3 +110,4 @@ Submodules
    /api/fuzzy_dl_owl2/fuzzydl/restriction/index
    /api/fuzzy_dl_owl2/fuzzydl/role_parent_with_degree/index
    /api/fuzzy_dl_owl2/fuzzydl/util/index
+

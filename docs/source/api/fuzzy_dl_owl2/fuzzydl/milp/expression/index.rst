@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.milp.expression
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A linear-expression class that models the algebraic form *c₀ + Σᵢ cᵢxᵢ* and serves as the primitive building block from which all constraints and objective components are composed in the mixed-integer linear programming layer of a fuzzy description-logic reasoner.
@@ -446,4 +444,5 @@ Module Contents
       :return: The result of subtracting the second expression from the first.
 
       :rtype: typing.Self
+
 

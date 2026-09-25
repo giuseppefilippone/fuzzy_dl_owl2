@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.concept.interface.has_role_concept_interface
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 An abstract base class that combines role and concept ownership into a single contract, requiring concrete subclasses to manage both a string-based role and an associated ``Concept`` object.
@@ -61,3 +59,4 @@ Module Contents
 
 
    This abstract base class defines a contract for objects that must manage both a functional role and a specific concept. It combines the behaviors of role and concept handling, requiring implementations to provide properties for getting and setting a string-based role and a `Concept` object. This design allows for dynamic modification of the operational context and the associated domain entity, ensuring that the class can flexibly adapt to changes in the role it performs or the concept it represents.
+

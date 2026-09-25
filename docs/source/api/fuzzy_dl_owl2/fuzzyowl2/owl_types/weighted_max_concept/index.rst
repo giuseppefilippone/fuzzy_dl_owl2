@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.weighted_max_concept
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Defines a weighted-maximum fuzzy concept that aggregates a list of concept definitions under the weighted max operator for use in the FuzzyOWL2 ontology framework.
@@ -88,3 +86,4 @@ Module Contents
 
    .. py:attribute:: _wc
       :type:  list[fuzzy_dl_owl2.fuzzyowl2.owl_types.concept_definition.ConceptDefinition]
+

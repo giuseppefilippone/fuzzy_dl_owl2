@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.concept.modified.triangularly_modified_concept
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A fuzzy description-logic concept that wraps a base concept with a triangular modifier, non-linearly reshaping its degree of membership while remaining fully composable with other concepts through standard logical operators.
@@ -131,4 +129,5 @@ Module Contents
       :return: A new Concept representing the result of replacing concept `a` with concept `c` within the current concept, preserving the existing modification context.
 
       :rtype: Concept
+
 

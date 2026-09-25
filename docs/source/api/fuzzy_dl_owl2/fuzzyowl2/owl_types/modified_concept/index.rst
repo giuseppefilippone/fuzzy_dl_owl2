@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.modified_concept
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A specialised fuzzy concept definition that pairs a base concept with a linguistic hedge (fuzzy modifier) to express graded notions such as "very Hot" within the FuzzyOWL2 framework.
@@ -104,3 +102,4 @@ Module Contents
 
    .. py:attribute:: _mod
       :type:  str
+

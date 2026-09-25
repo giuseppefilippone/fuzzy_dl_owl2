@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.modifier.modifier
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 An abstract base class that establishes the shared contract for fuzzy modifiers — linguistic hedges such as *very* or *somewhat* — which transform fuzzy concepts and remap membership degrees within a fuzzy description-logic knowledge base.
@@ -163,3 +161,4 @@ Module Contents
 
    .. py:attribute:: name
       :type:  str
+

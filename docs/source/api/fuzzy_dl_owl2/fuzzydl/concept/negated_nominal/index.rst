@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.concept.negated_nominal
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A fuzzy description-logic concept representing the complement of a single named individual — written ``(not { a })`` — used to exclude that individual from a domain, typically when expressing range restrictions.
@@ -156,4 +154,5 @@ Module Contents
    .. py:attribute:: name
       :type:  str
       :value: '(not { Uninferable } )'
+
 

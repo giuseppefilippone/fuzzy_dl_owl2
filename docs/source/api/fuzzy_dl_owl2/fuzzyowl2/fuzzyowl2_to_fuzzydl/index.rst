@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzyowl2.fuzzyowl2_to_fuzzydl
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A converter that translates fuzzy OWL 2 ontologies into the S-expression syntax required by the FuzzyDL reasoner, covering concepts, roles, individuals, fuzzy membership functions, and aggregation operators.
@@ -1183,3 +1181,4 @@ Module Contents
 
    .. py:attribute:: string_datatypes
       :type:  set[str]
+

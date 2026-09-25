@@ -21,8 +21,6 @@ fuzzy_dl_owl2.fuzzydl.parser.dl_parser_fast
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A faster drop-in replacement for the legacy fuzzy-DL parser that pairs a hand-rolled tokenizer with a deterministic recursive-descent parser to load fuzzy description-logic knowledge bases and answer queries, reusing the original parser's semantic actions so the resulting knowledge base and queries are populated exactly the same way.

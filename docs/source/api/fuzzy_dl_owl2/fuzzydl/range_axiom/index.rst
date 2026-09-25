@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.range_axiom
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Defines a role range axiom for a fuzzy description-logic knowledge base, pairing a role name with the concept that restricts which individuals may appear as its values.
@@ -67,3 +65,4 @@ Module Contents
 
    .. py:attribute:: role
       :type:  str
+

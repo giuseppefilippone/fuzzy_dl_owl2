@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.query.max.max_subsumes_query
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A query that computes the maximum degree to which one fuzzy concept subsumes another by reducing the subsumption test to a mixed-integer linear programming optimization over a fuzzy description-logic knowledge base.
@@ -92,4 +90,5 @@ Module Contents
       :return: The Solution object resulting from optimizing the knowledge base, or a solution indicating inconsistency if the ontology is invalid.
 
       :rtype: Solution
+
 

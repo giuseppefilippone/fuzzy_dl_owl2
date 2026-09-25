@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.qowa_concept
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Defines a Quantified Ordered Weighted Averaging (OWA) concept for the FuzzyOWL2 ontology language, binding a linguistic quantifier to the collection of fuzzy concepts it aggregates.
@@ -104,3 +102,4 @@ Module Contents
 
    .. py:attribute:: _q
       :type:  str
+

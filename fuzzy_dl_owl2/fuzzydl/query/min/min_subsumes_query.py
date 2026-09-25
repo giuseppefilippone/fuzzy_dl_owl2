@@ -111,7 +111,7 @@ class MinSubsumesQuery(SubsumptionQuery):
                 )
                 if n1 is not None and n1.is_thing():
                     sol: Solution = Solution(1.0)
-                elif n2 is not None and n1.is_thing():
+                elif n2 is not None and n2.is_thing():
                     sol: Solution = Solution(1.0)
                 else:
                     sol: Solution = Solution(kb.get_subsumption_flags(n1, n2))

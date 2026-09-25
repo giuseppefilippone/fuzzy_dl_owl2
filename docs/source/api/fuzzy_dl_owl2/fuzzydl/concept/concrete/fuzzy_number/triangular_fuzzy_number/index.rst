@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.concept.concrete.fuzzy_number.triangular_fuzzy_number
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A class that models triangular fuzzy numbers—uncertain quantities whose membership degree rises linearly from a lower bound to a peak and falls linearly back to an upper bound—providing fuzzy arithmetic, logical combinators, and defuzzification for fuzzy description-logic reasoning.
@@ -374,3 +372,4 @@ Module Contents
 
    .. py:attribute:: K2
       :type:  float
+

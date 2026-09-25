@@ -25,8 +25,6 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A type vocabulary for the FuzzyOWL2 fuzzy ontology framework, providing fuzzy concept definitions, membership-function datatypes, linguistic modifiers, and graded properties that let OWL 2 ontologies express degrees of truth instead of all-or-nothing membership.
@@ -108,3 +106,4 @@ Submodules
    /api/fuzzy_dl_owl2/fuzzyowl2/owl_types/weighted_min_concept/index
    /api/fuzzy_dl_owl2/fuzzyowl2/owl_types/weighted_sum_concept/index
    /api/fuzzy_dl_owl2/fuzzyowl2/owl_types/weighted_sum_zero_concept/index
+

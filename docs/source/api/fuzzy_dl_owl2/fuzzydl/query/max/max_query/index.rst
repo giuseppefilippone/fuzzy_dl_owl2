@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.query.max.max_query
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A query type that computes the maximum attainable value of an arithmetic expression over a fuzzy description-logic knowledge base by reformulating the maximization as a minimization of the negated expression.
@@ -100,3 +98,4 @@ Module Contents
 
    .. py:attribute:: obj_expr
       :type:  fuzzy_dl_owl2.fuzzydl.milp.expression.Expression
+

@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.concept.operator_concept
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A fuzzy description-logic concept representing conjunctions, disjunctions, and negations, together with the simplification machinery needed to normalise compound expressions under classical, Łukasiewicz, and Gödel (Zadeh) semantics.

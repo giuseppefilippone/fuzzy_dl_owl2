@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.relation
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A fuzzy role assertion that connects a subject individual to an object individual through a named role, subject to a lower-bound degree of truth.
@@ -177,3 +175,4 @@ Module Contents
 
    .. py:attribute:: role_name
       :type:  str
+

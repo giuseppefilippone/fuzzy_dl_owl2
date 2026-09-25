@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.concept.weighted_concept
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A weighted concept for fuzzy description logics that attaches a numerical importance factor to an underlying concept, expressing the graded form (w C) used in weighted aggregation and prioritised reasoning.
@@ -187,3 +185,4 @@ Module Contents
       :return: The weight applied to the wrapped concept.
 
       :rtype: float
+

@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.linear_modifier
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A concrete fuzzy modifier that applies a linear transformation, parameterised by a single floating-point coefficient, to membership degrees within the FuzzyOWL2 framework.
@@ -88,3 +86,4 @@ Module Contents
 
    .. py:attribute:: _c
       :type:  float
+

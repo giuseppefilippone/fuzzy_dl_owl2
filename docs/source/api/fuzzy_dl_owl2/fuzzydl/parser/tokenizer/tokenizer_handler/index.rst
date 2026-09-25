@@ -20,8 +20,6 @@ fuzzy_dl_owl2.fuzzydl.parser.tokenizer.tokenizer_handler
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A pluggable tokenization layer for the fuzzy-DL parser that wraps interchangeable scanning backends — an always-available pure-Python regex tokenizer plus optional compiled re2c/flex string and file scanners — behind a registry that automatically selects the fastest usable one.

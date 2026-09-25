@@ -250,6 +250,8 @@ class KnowledgeBase:
     :type concrete_concepts: dict[str, FuzzyConcreteConcept]
     :param concrete_features: A dictionary mapping the names of concrete features to their corresponding ConcreteFeature objects in the knowledge base.
     :type concrete_features: dict[str, ConcreteFeature]
+    :param big_m_values: Numeric magnitudes the knowledge base actually constrains, recorded by the parser semantic callbacks (``_record_big_m_value`` in ``dl_parser_clean``) as (absolute value, feature name or None) pairs, consumed by ``adapt_big_m`` to derive the Big-M without rescanning the parsed tree.
+    :type big_m_values: list[tuple[float, typing.Optional[str]]]
     :param disjoint_variables: Registry of variables marked as disjoint for specific concepts during reasoning to avoid redundant processing. Maps concept names to sets of variable identifiers.
     :type disjoint_variables: dict[str, set[str]]
     :param fuzzy_numbers: A dictionary mapping the names of fuzzy numbers to their corresponding TriangularFuzzyNumber objects defined in the TBox.
@@ -435,6 +437,11 @@ class KnowledgeBase:
         self.concrete_concepts: dict[str, FuzzyConcreteConcept] = dict()
         # Concrete features
         self.concrete_features: dict[str, ConcreteFeature] = dict()
+        # Numeric magnitudes this knowledge base actually constrains,
+        # recorded by the parser semantic callbacks (_record_big_m_value in
+        # dl_parser_clean) as (|value|, feature-name-or-None) pairs, so
+        # KnowledgeBase.adapt_big_m never has to rescan the parsed tree.
+        self.big_m_values: list[tuple[float, typing.Optional[str]]] = []
         # Disjoint variables
         self.disjoint_variables: dict[str, set[str]] = dict()
         # Fuzzy numbers
@@ -644,6 +651,8 @@ class KnowledgeBase:
         #     for k, gcis in self.axioms_C_is_a_D.items()
         # }
         kb.axioms_C_is_a_D = {k: set(gcis) for k, gcis in self.axioms_C_is_a_D.items()}
+
+        kb.big_m_values = list(self.big_m_values)
 
         kb.blocking_dynamic = self.blocking_dynamic
         kb.blocking_type = self.blocking_type
@@ -5402,16 +5411,16 @@ class KnowledgeBase:
 
     def adapt_big_m(self) -> None:
         """
-        Shrinks the Big-M constant used by the datatype-restriction rows to the magnitude of the values this knowledge base can actually take. The provider default (up to ``1000 * (2^31 - 1)`` for Gurobi) is far above any real feature value, and rows such as ``2M - n + x_b - M x_f - (M + n) x_is_c >= 0`` then lose the threshold ``n`` below the double-precision ulp of ``2M`` (about 1e-3 at 4e12): a feature pinned to 4.4 is solved as 4.3999 and an assertion at the exact membership degree becomes infeasible. M only has to dominate the feature values, so it is set to ``BIG_M_SCALE * max(|k1|, |k2|)`` over the declared numeric feature ranges (and the fuzzy-number range, if defined), floored at ``BIG_M_FLOOR`` and capped at the provider default. Nothing is changed when the user forces ``maxVal`` in the configuration, or when some numeric feature has no declared range (its values are unbounded, so only the provider default is safe).
+        Shrinks the Big-M constant used by the datatype-restriction rows to the magnitude of the values this knowledge base can actually take. The provider default (up to ``1000 * (2^31 - 1)`` for Gurobi) is far above any real feature value, and rows such as ``2M - n + x_b - M x_f - (M + n) x_is_c >= 0`` then lose the threshold ``n`` below the double-precision ulp of ``2M`` (about 1e-3 at 4e12): a feature pinned to 4.4 is solved as 4.3999 and an assertion such as `(instance a (= f 4.4) 1.0)` becomes infeasible. M only has to dominate the values the knowledge base actually constrains, so it is set to ``BIG_M_SCALE * max(bounds)``, floored at ``BIG_M_FLOOR`` and capped at the provider default. Nothing is changed when the user forces ``maxVal`` in the configuration.
 
-        Declared ranges that are vacuous sentinels — both endpoints at or beyond the ``INTEGER_MAX_VALUE`` / ``DOUBLE_MAX_VALUE`` placeholders ``fuzzyowl2.util.constants`` defines and the OWL 2 converter writes for undeclared integer / real features — are ignored instead of forcing the provider default: M still has to dominate only the values the knowledge base actually constrains, and a real range that wide would defeat the adaptation entirely. A legitimate threshold or datum of that magnitude still requires the manual ``maxVal`` override (it is above every auto-derived bound).
+        Declared ranges that are vacuous sentinels — both endpoints at or beyond the ``INTEGER_MAX_VALUE`` / ``DOUBLE_MAX_VALUE`` placeholders ``fuzzyowl2.util.constants`` defines and the OWL 2 converter writes for undeclared integer / real features — are ignored instead of forcing the provider default: a knowledge base whose numeric features all carry the placeholder (the normal output of the OWL 2 converter, where the real magnitudes live in the value restrictions and in the breakpoints of the fuzzy concrete concepts) would otherwise leave the adaptation inert. The real magnitudes reach the adaptation through ``big_m_values``, which the parser semantic callbacks (``_parse_datatype_restriction`` for the value-restriction thresholds, ``_parse_fuzzy_concept`` and ``_set_fuzzy_number`` for the parameters of the fuzzy concrete concepts and fuzzy numbers) record while parsing through ``_record_big_m_value``, so no second pass over the parsed tree is needed; programmatically built knowledge bases that bypass the parser should declare real ranges or set ``maxVal``. A legitimate threshold or datum of sentinel magnitude still requires the manual ``maxVal`` override (it is above every auto-derived bound). Query thresholds are not visible at this stage and are not scanned.
         """
 
         if ConfigReader.MAXVAL is not None:
             return
         # The sentinels the OWL 2 converter writes as vacuous range rows:
-        # `(range <dp> *integer* ±INTEGER_MAX_VALUE)` and
-        # `(range <dp> *real* ±DOUBLE_MAX_VALUE)`.
+        # `(range <dp> *integer* +-INTEGER_MAX_VALUE)` and
+        # `(range <dp> *real* +-DOUBLE_MAX_VALUE)`.
         integer_vacuous: float = float(INTEGER_MAX_VALUE)
         real_vacuous: float = float(DOUBLE_MAX_VALUE)
         bounds: list[float] = []
@@ -5424,7 +5433,7 @@ class KnowledgeBase:
             k1 = getattr(feature, "k1", None)
             k2 = getattr(feature, "k2", None)
             if k1 is None or k2 is None or not (math.isfinite(k1) and math.isfinite(k2)):
-                return
+                continue
             vacuous: float = (
                 integer_vacuous
                 if feature.type == ConcreteFeatureType.INTEGER
@@ -5439,6 +5448,27 @@ class KnowledgeBase:
             bounds.append(
                 max(abs(TriangularFuzzyNumber.K1), abs(TriangularFuzzyNumber.K2))
             )
+        # The parser semantic callbacks record the magnitudes this
+        # knowledge base actually constrains (_parse_datatype_restriction:
+        # the thresholds of the value restrictions, with the feature name;
+        # _parse_fuzzy_concept / _create_fuzzy_number / _set_fuzzy_number:
+        # the parameters of the fuzzy concrete concepts and fuzzy numbers,
+        # breakpoints and inlined domains). Declared ranges that carry only
+        # the converter's vacuous sentinels (or are missing) would otherwise
+        # leave the adaptation inert while the KB still constrains real
+        # values.
+        for magnitude, role in self.big_m_values:
+            feature = (
+                self.concrete_features.get(role) if role is not None else None
+            )
+            vacuous = (
+                integer_vacuous
+                if feature is not None
+                and feature.type == ConcreteFeatureType.INTEGER
+                else real_vacuous
+            )
+            if magnitude < vacuous:
+                bounds.append(magnitude)
         if not bounds:
             return
         big_m: float = min(

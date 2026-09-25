@@ -25,8 +25,6 @@ fuzzy_dl_owl2.fuzzydl.milp
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A mixed-integer linear programming layer for a fuzzy description-logic reasoner that translates fuzzy concepts, roles, and assertions into decision variables and linear constraints, dispatches the resulting optimization problem to pluggable solver backends such as Gurobi, Python-MIP, and PuLP, and packages the outcome as degrees of satisfaction paired with consistency verdicts.
@@ -70,3 +68,4 @@ Submodules
    /api/fuzzy_dl_owl2/fuzzydl/milp/solution/index
    /api/fuzzy_dl_owl2/fuzzydl/milp/term/index
    /api/fuzzy_dl_owl2/fuzzydl/milp/variable/index
+

@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.left_shoulder_function
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Defines a left-shoulder membership function for fuzzy OWL 2 ontologies in which the degree of membership stays at one for low input values and linearly falls to zero as values increase.
@@ -104,3 +102,4 @@ Module Contents
 
    .. py:attribute:: _b
       :type:  float
+

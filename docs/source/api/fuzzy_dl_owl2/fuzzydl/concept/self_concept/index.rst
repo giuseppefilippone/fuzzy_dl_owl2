@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.concept.self_concept
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A fuzzy description-logic concept expressing local reflexivity, where an individual belongs to the concept exactly when it stands in a given role relationship with itself.
@@ -185,3 +183,4 @@ Module Contents
 
 
    .. py:attribute:: name
+

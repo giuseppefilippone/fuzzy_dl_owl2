@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.concept.concrete.linear_concrete_concept
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A fuzzy concrete concept whose membership function is a two-segment linear ramp over a feature domain, rising from degree zero at the lower bound to degree one at the upper bound through a configurable knee point.
@@ -189,3 +187,4 @@ Module Contents
 
    .. py:attribute:: k2
       :type:  float
+

@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.util.util
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A centralized utility namespace for a fuzzy description-logic reasoner that pairs lazily self-configuring file logging with a small set of numeric and list-manipulation helpers.

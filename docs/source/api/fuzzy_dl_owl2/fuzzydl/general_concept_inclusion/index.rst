@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.general_concept_inclusion
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A mutable representation of a fuzzy General Concept Inclusion (GCI) axiom, asserting that one concept is subsumed by another to at least a given degree of truth under a chosen fuzzy implication operator.
@@ -270,3 +268,4 @@ Module Contents
 
    .. py:attribute:: type
       :type:  fuzzy_dl_owl2.fuzzydl.util.constants.LogicOperatorType
+

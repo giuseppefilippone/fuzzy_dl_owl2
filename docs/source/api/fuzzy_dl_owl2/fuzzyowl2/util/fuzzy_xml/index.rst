@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzyowl2.util.fuzzy_xml
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A stateless builder utility that constructs the XML elements required by the FuzzyOWL2 fuzzy ontology specification and renders them as human-readable strings.
@@ -201,4 +199,5 @@ Module Contents
       :return: A pretty-printed string representation of the XML element, excluding the XML declaration header.
 
       :rtype: str
+
 

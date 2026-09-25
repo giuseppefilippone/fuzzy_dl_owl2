@@ -16,8 +16,6 @@ fuzzy_dl_owl2.fuzzydl.graph.digraph
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A minimal directed graph, **DiGraph**, that stores its edges in a plain adjacency dictionary and answers cycle queries with an iterative depth-first search, acting as a fast drop-in replacement for the small slice of ``networkx.DiGraph`` that the fuzzy description-logic engine needs when checking whether a TBox is acyclic.
@@ -153,3 +151,4 @@ Module Contents
       :return: The adjacency mapping.
 
       :rtype: dict[int, typing.Optional[list[int]]]
+

@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.degree.degree_variable
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A symbolic degree of satisfaction that wraps a linear-programming variable, allowing unknown fuzzy truth values to be embedded in algebraic expressions and inequality constraints that a solver can later resolve.
@@ -224,3 +222,4 @@ Module Contents
 
    .. py:attribute:: variable
       :type:  fuzzy_dl_owl2.fuzzydl.milp.variable.Variable
+

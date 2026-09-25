@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.fuzzy_datatype
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 An abstract base class that models a fuzzy datatype as a bounded interval, storing a lower and upper value that concrete subclasses in the FuzzyOWL2 framework interpret to shape their membership functions.
@@ -125,4 +123,5 @@ Module Contents
    .. py:attribute:: _k2
       :type:  float
       :value: 0.0
+
 

@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.query.min.min_related_query
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Defines a query that computes the minimum degree to which two individuals are related through a given role in a fuzzy description-logic knowledge base, reducing the question to a mixed-integer linear programming optimisation.
@@ -112,3 +110,4 @@ Module Contents
 
    .. py:attribute:: role
       :type:  str
+

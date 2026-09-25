@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.concept.sugeno_integral
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A Sugeno integral concept that aggregates a collection of weighted fuzzy sub-concepts into a single composite concept, suitable for use in fuzzy description logic reasoning.
@@ -179,4 +177,5 @@ Module Contents
       :return: Returns a new Concept representing the negation of the Sugeno Integral resulting from replacing concept 'a' with concept 'c' in the internal concepts.
 
       :rtype: Concept
+
 

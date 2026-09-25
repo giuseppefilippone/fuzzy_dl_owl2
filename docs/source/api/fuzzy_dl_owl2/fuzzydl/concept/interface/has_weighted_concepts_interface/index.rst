@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.concept.interface.has_weighted_concepts_interface
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 An abstract interface that augments basic concept management with an optional collection of numerical weights, enabling objects to represent weighted aggregations of concepts in a fuzzy description-logic setting.
@@ -91,3 +89,4 @@ Module Contents
       :return: The list of weights, or ``None`` if unset.
 
       :rtype: typing.Optional[list[float]]
+

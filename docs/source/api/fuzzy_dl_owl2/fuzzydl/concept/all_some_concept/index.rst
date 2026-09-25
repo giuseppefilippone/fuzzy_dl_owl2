@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.concept.all_some_concept
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A description-logic concept representing universal (∀) and existential (∃) role restrictions, unifying both quantifiers in a single class that supports factory-based construction with logical simplification, quantifier-duality negation, and structural hashing.

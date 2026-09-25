@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzyowl2.util.constants
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A pair of enumerations that give the FuzzyOWL2 framework its canonical vocabulary: a string-based taxonomy of fuzzy concept types, and a keyword registry that binds every token of the FuzzyOWL2 language to a ready-made pyparsing grammar element.
@@ -562,3 +560,4 @@ Module Contents
 .. py:data:: INTEGER_MIN_VALUE
    :type:  int
    :value: -100000000
+

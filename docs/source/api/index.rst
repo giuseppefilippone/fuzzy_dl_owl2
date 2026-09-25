@@ -4,8 +4,6 @@ API Reference
 This page contains auto-generated API reference documentation [#f1]_.
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A fuzzy description-logic toolkit that answers graded ontology questions — how strongly an individual belongs to a concept, how strongly two individuals are related through a role, and to what degree one concept subsumes another — by reducing fuzzy reasoning to mixed-integer linear optimization over pluggable solver backends, and that translates fuzzy OWL 2 ontologies into the textual knowledge-base format the reasoning engine consumes.

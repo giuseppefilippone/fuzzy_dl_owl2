@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.modified_property
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Defines a ``ModifiedProperty`` class that pairs a fuzzy property with a linguistic modifier, such as "very" or "somewhat", within the FuzzyOWL2 framework.
@@ -114,3 +112,4 @@ Module Contents
 
    .. py:attribute:: _prop
       :type:  str
+

@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.concept.interface.has_role_interface
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 An abstract base class equips description-logic concepts with a uniform way to store, read, and update the role (binary relation) they are associated with.
@@ -79,3 +77,4 @@ Module Contents
       :return: The associated role name.
 
       :rtype: str
+

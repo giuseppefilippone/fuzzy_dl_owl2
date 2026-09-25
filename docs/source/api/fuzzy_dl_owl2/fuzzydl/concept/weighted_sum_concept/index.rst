@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.concept.weighted_sum_concept
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A fuzzy description-logic concept that aggregates several sub-concepts into a single weighted sum, blending their membership degrees according to user-supplied floating-point weights.
@@ -171,4 +169,5 @@ Module Contents
 
    .. py:attribute:: name
       :value: '(w-sum )'
+
 

@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.restriction.restriction
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A lightweight value object that models a universal role restriction in a fuzzy description logic, storing a role name, a target concept, and the minimum membership degree that the restriction imposes.
@@ -143,3 +141,4 @@ Module Contents
 
    .. py:attribute:: role_name
       :type:  str
+

@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.concept.quasi_sugeno_integral
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A Quasi-Sugeno integral aggregation operator that fuses a weighted collection of fuzzy concepts into a single fuzzy description-logic concept.
@@ -150,3 +148,4 @@ Module Contents
 
 
    .. py:attribute:: type
+

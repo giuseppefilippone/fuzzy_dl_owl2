@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.feature_function
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A recursive, tree-like representation of arithmetic expressions over named fuzzy features that can be queried for its feature dependencies and compiled into a linear expression for a mixed-integer linear programming solver.
@@ -183,4 +181,5 @@ Module Contents
       :return: Returns an Expression object representing the mathematical formulation of the feature function for the given individual, or None if the function type is unsupported.
 
       :rtype: typing.Optional[Expression]
+
 

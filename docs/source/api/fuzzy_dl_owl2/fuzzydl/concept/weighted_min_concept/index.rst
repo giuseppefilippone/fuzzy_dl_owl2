@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.concept.weighted_min_concept
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A weighted-minimum aggregation concept for fuzzy description logics that combines a list of sub-concepts with floating-point weights into a single composite expression.
@@ -171,4 +169,5 @@ Module Contents
 
    .. py:attribute:: name
       :value: '(w-min )'
+
 

@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.concept.weighted_max_concept
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A fuzzy description-logic concept that models the **weighted maximum** of several sub-concepts, each paired with its own numerical weight.
@@ -171,4 +169,5 @@ Module Contents
 
    .. py:attribute:: name
       :value: '(w-max )'
+
 

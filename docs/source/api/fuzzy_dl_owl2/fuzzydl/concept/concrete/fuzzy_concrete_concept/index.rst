@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.concept.concrete.fuzzy_concrete_concept
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 An abstract base class for fuzzy concepts defined over a numeric interval, which manages and validates its lower and upper bounds while delegating membership-degree computation to subclasses.
@@ -178,3 +176,4 @@ Module Contents
 
    .. py:attribute:: name
       :type:  str
+

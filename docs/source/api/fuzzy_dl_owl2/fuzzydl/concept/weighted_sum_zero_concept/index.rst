@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.concept.weighted_sum_zero_concept
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A fuzzy description-logic concept that aggregates multiple sub-concepts under individually assigned weights, enforcing the constraint that those weights sum to no more than 1.0.
@@ -171,4 +169,5 @@ Module Contents
 
    .. py:attribute:: name
       :value: '(w-sum-zero )'
+
 

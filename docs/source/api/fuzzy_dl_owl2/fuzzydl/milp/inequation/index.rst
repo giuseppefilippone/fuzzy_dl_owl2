@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.milp.inequation
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A linear constraint abstraction that encodes inequalities of the form *E* ⋈ 0 (with the operator being =, ≤, or ≥) for use in mixed-integer linear programming within a fuzzy description-logic reasoning system.

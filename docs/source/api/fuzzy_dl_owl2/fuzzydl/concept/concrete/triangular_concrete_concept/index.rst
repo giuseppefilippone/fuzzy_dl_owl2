@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.concept.concrete.triangular_concrete_concept
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Defines a fuzzy concrete concept whose membership degree follows a triangular function, rising linearly from zero at ``a`` to a peak of one at ``b`` and falling back to zero at ``c``, all contained within an outer domain interval ``[k1, k2]``.
@@ -208,3 +206,4 @@ Module Contents
 
    .. py:attribute:: k2
       :type:  float
+

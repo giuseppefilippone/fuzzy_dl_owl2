@@ -25,8 +25,6 @@ fuzzy_dl_owl2.fuzzydl.assertion
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Fuzzy description-logic assertions that express graded concept membership, serving as the fundamental knowledge primitives of a fuzzy ontology reasoner.
@@ -58,3 +56,4 @@ Submodules
 
    /api/fuzzy_dl_owl2/fuzzydl/assertion/assertion/index
    /api/fuzzy_dl_owl2/fuzzydl/assertion/atomic_assertion/index
+

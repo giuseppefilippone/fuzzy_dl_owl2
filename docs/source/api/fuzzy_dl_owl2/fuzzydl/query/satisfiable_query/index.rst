@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.query.satisfiable_query
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 An abstract base class, **SatisfiableQuery**, that prepares fuzzy satisfiability queries by validating and storing a fuzzy concept, an optional individual, and a placeholder objective expression for later minimum/maximum satisfiability evaluation.
@@ -83,4 +81,5 @@ Module Contents
 
       :param c: The fuzzy concept to be checked for satisfiability.
       :type c: Concept
+
 

@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.restriction.has_value_restriction
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Defines a fuzzy description-logic restriction that ties a role to one specific named individual, requiring the association to hold with at least a given degree of truth.
@@ -88,3 +86,4 @@ Module Contents
 
    .. py:attribute:: ind_name
       :type:  str
+

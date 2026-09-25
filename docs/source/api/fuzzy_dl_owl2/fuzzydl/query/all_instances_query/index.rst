@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.query.all_instances_query
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A fuzzy description-logic query that finds every individual in a knowledge base belonging to a given abstract concept and reports the minimum degree to which each one satisfies it.
@@ -156,4 +154,5 @@ Module Contents
 
    .. py:attribute:: name
       :value: 'Instances of Uninferable?'
+
 

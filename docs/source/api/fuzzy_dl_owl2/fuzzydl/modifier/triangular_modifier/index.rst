@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.modifier.triangular_modifier
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A fuzzy-logic modifier that applies a triangular membership function — rising linearly from zero at a left boundary to full membership at a peak, then falling linearly back to zero — to concepts in a fuzzy description-logic knowledge base.
@@ -204,3 +202,4 @@ Module Contents
       :return: The right endpoint ``c`` of the triangle.
 
       :rtype: float
+

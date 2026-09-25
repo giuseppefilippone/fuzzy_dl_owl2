@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.degree.degree
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 An abstract base class defining the polymorphic interface for *degrees of truth*—values that quantify how strongly a fuzzy concept is satisfied by an individual in a fuzzy description logic reasoner.
@@ -253,4 +251,5 @@ Module Contents
       :return: An Expression representing the result of subtracting the current instance from the provided expression.
 
       :rtype: Expression
+
 

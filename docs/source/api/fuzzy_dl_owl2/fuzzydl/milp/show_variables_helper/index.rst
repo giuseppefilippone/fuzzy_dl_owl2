@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.milp.show_variables_helper
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A display-configuration manager for a fuzzy description logic reasoner that records which atomic concepts, individuals, abstract role fillers, and concrete feature fillers should be shown, resolves solver variables to human-readable names, and attaches fuzzy linguistic labels to concrete features.
@@ -321,3 +319,4 @@ Module Contents
 
    .. py:attribute:: variables
       :type:  dict[fuzzy_dl_owl2.fuzzydl.milp.variable.Variable, str]
+

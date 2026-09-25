@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.util.constants
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A central registry of the shared vocabulary — enumerations, parser keywords, and numeric constants — that a fuzzy description-logic reasoner relies on to configure parsing, classify logical expressions, guide tableau-style reasoning, and drive mixed-integer optimization.
@@ -2611,3 +2609,4 @@ Module Contents
 .. py:data:: STAR_SEPARATOR
    :type:  str
    :value: '*************************'
+

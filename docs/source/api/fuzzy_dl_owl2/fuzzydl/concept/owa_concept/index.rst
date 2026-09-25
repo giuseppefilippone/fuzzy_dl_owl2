@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.concept.owa_concept
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 An Ordered Weighted Averaging (OWA) concept for fuzzy description logics, realised through the ``OwaConcept`` class, which fuses a list of sub-concepts with a parallel list of numerical weights into a single weighted aggregation.
@@ -168,4 +166,5 @@ Module Contents
       :return: The concept resulting from replacing all occurrences of `a` with `c`.
 
       :rtype: typing.Optional[Concept]
+
 

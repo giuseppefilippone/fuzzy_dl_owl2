@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.query.related_query
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 An abstract query type that captures the shared structure needed to evaluate how strongly a role assertion holds between two individuals in a fuzzy description-logic knowledge base.
@@ -93,4 +91,5 @@ Module Contents
    .. py:attribute:: role
       :type:  str
       :value: None
+
 

@@ -37,8 +37,6 @@ fuzzy_dl_owl2.fuzzydl.degree
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A polymorphic hierarchy of *degrees of truth* for a fuzzy description-logic reasoner, allowing graded concept-satisfaction values to be represented and manipulated uniformly whether they materialise as resolved numbers, solver variables, or symbolic linear expressions.
@@ -74,3 +72,4 @@ Submodules
    /api/fuzzy_dl_owl2/fuzzydl/degree/degree_expression/index
    /api/fuzzy_dl_owl2/fuzzydl/degree/degree_numeric/index
    /api/fuzzy_dl_owl2/fuzzydl/degree/degree_variable/index
+

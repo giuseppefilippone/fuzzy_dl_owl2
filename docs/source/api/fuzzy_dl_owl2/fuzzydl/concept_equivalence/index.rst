@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.concept_equivalence
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A small value class that captures a concept-equivalence axiom in a fuzzy description-logic knowledge base by storing the pair of concepts that are asserted to be interchangeable.
@@ -97,3 +95,4 @@ Module Contents
 
    .. py:attribute:: c2
       :type:  fuzzy_dl_owl2.fuzzydl.concept.concept.Concept
+

@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.exception.fuzzy_ontology_exception
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A domain-specific exception for reporting errors that arise during fuzzy ontology and fuzzy description logic operations, such as invalid concept definitions or the incorrect application of fuzzy modifiers.
@@ -41,3 +39,4 @@ Module Contents
 
 
    This custom exception class is designed to handle errors specific to the fuzzy description logic framework. It is raised when issues arise during the manipulation of concepts, such as invalid concept definitions or the incorrect application of modifiers. By extending the standard Exception class, it allows developers to catch and manage domain-specific errors distinctly from general Python exceptions. To use it, instantiate the class with a descriptive string message that details the specific error encountered.
+

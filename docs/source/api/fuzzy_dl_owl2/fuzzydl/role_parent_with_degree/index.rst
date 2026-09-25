@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.role_parent_with_degree
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A lightweight value class that pairs a parent role's name with a numeric inclusion degree, representing weighted relationships in a fuzzy description-logic role hierarchy.
@@ -87,3 +85,4 @@ Module Contents
 
    .. py:attribute:: parent
       :type:  str
+

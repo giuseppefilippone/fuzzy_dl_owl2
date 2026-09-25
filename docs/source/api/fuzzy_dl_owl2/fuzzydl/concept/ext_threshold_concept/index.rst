@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.concept.ext_threshold_concept
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A fuzzy description-logic concept that imposes a solver-determined threshold variable — rather than a fixed constant — on the satisfaction degree of a nested concept, supporting both greater-than-or-equal and less-than-or-equal variants.

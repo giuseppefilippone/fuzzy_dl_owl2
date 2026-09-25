@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.concept.modified.modified_concept
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 An abstract base class for fuzzy description-logic concepts in which a linguistic modifier such as "very" or "slightly" reshapes how strongly individuals satisfy an underlying concept.
@@ -186,3 +184,4 @@ Module Contents
       :return: The modifier applied to the wrapped concept.
 
       :rtype: Modifier
+

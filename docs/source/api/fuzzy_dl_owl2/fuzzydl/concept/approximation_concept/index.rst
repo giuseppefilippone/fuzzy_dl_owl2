@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.concept.approximation_concept
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A fuzzy description-logic concept that expresses lower and upper approximations of a concept along a role—including tight and loose variants—and translates them into standard universal and existential quantifier forms.

@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.query.instance_query
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 An abstract base class for fuzzy description-logic queries that determine the degree to which a specific individual is an instance of a given concept, typically to find minimum or maximum membership degrees.
@@ -81,4 +79,5 @@ Module Contents
    .. py:attribute:: obj_expr
       :type:  fuzzy_dl_owl2.fuzzydl.milp.expression.Expression
       :value: None
+
 

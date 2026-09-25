@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.domain_axiom
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A minimal value object expressing a fuzzy description-logic domain axiom, binding a role name to a Concept that constrains which individuals may act as subjects of that role.
@@ -67,3 +65,4 @@ Module Contents
 
    .. py:attribute:: role
       :type:  str
+

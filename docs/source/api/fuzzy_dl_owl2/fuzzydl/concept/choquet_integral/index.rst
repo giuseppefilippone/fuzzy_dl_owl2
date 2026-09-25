@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.concept.choquet_integral
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A fuzzy description-logic concept that aggregates a list of weighted sub-concepts through a Choquet integral, allowing the blended result to be negated, conjoined, and disjoined like any other concept in the knowledge base.
@@ -170,4 +168,5 @@ Module Contents
       :return: A new Concept representing the negation of a Choquet Integral constructed by replacing every occurrence of concept `a` with concept `c` in the original integral's sub-concepts.
 
       :rtype: Concept
+
 

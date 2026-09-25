@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.query.max.max_related_query
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A query type that computes the maximum degree of truth to which two individuals are related through a given role in a fuzzy description-logic knowledge base.
@@ -112,3 +110,4 @@ Module Contents
 
    .. py:attribute:: role
       :type:  str
+

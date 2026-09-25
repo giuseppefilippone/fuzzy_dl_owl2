@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.milp.variable
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A symbolic variable abstraction for mixed-integer linear programming in which each named variable represents a degree of satisfaction in fuzzy description logic reasoning, carrying a domain type (binary, integer, continuous, or semi-continuous) that automatically determines its numeric bounds.

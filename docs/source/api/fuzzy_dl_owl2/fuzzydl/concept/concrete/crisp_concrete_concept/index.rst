@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.concept.concrete.crisp_concrete_concept
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A crisp concrete concept for fuzzy description logics that behaves as a binary membership function, granting full membership to values inside a closed satisfaction interval nested within a bounded numeric domain and zero membership to everything else.
@@ -193,3 +191,4 @@ Module Contents
 
    .. py:attribute:: k2
       :type:  float
+

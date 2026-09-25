@@ -25,8 +25,6 @@ fuzzy_dl_owl2.fuzzydl.graph
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A minimal directed-graph component that provides the fuzzy description-logic engine with fast cycle detection for TBox acyclicity checks, serving as a **drop-in replacement** for the small slice of networkx the reasoner previously relied on.
@@ -54,3 +52,4 @@ Submodules
    :maxdepth: 1
 
    /api/fuzzy_dl_owl2/fuzzydl/graph/digraph/index
+

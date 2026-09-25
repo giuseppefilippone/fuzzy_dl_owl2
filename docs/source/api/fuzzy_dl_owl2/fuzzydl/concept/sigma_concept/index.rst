@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.concept.sigma_concept
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A fuzzy description logic concept that models sigma-count quantification, defining membership in terms of how many individuals reachable through a given role also belong to a target concept, evaluated against a fuzzy concrete domain.
@@ -239,3 +237,4 @@ Module Contents
 
    .. py:attribute:: role
       :type:  str
+

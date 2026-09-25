@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.concept.concrete.modified_concrete_concept
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A fuzzy concrete concept that wraps an existing fuzzy concrete concept and applies a linguistic modifier such as "very" or "somewhat" to its membership degrees, producing composite concepts like "very tall."
@@ -193,3 +191,4 @@ Module Contents
       :return: The modifier applied to the wrapped concept.
 
       :rtype: Modifier
+

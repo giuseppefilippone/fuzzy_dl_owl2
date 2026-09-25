@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.assertion.atomic_assertion
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A minimal value object representing an atomic fuzzy assertion, namely that an atomic concept must hold with a membership degree greater than or equal to a given threshold.
@@ -97,3 +95,4 @@ Module Contents
 
    .. py:attribute:: degree
       :type:  fuzzy_dl_owl2.fuzzydl.degree.degree.Degree
+

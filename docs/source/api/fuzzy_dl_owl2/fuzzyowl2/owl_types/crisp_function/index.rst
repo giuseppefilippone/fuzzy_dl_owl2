@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.crisp_function
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A crisp function datatype for the FuzzyOWL2 framework that stores two numeric coefficients and renders itself as a ``crisp(...)`` expression bounded by inherited interval limits.
@@ -104,3 +102,4 @@ Module Contents
 
    .. py:attribute:: _b
       :type:  float
+

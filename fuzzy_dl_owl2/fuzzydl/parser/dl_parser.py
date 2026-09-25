@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import datetime
+import math
 import os
 import time
 import traceback
@@ -855,7 +856,7 @@ class DLParser(object):
     # @pp.trace_parse_action
     def _parse_fuzzy_concept(tokens: pp.ParseResults) -> pp.ParseResults:
         """
-        Parses a fuzzy concept definition from the provided tokens and registers the corresponding concrete concept object in the global knowledge base. The method validates that the concept name is not already defined and ensures that non-crisp concept types are not used with a classical reasoner. Depending on the keyword found in the tokens, it instantiates a specific concept class—such as `CrispConcreteConcept`, `TriangularConcreteConcept`, or `ModifiedConcreteConcept`—using the extracted parameters. For modified concepts, it verifies that the base concept exists prior to creation. As a side effect, adding a non-crisp concept sets a flag in the knowledge base indicating the presence of concrete fuzzy concepts. The original tokens are returned to allow parsing to continue.
+        Parses a fuzzy concept definition from the provided tokens and registers the corresponding concrete concept object in the global knowledge base. The method validates that the concept name is not already defined and ensures that non-crisp concept types are not used with a classical reasoner. Depending on the keyword found in the tokens, it instantiates a specific concept class—such as `CrispConcreteConcept`, `TriangularConcreteConcept`, or `ModifiedConcreteConcept`—using the extracted parameters. For modified concepts, it verifies that the base concept exists prior to creation. As a side effect, adding a non-crisp concept sets a flag in the knowledge base indicating the presence of concrete fuzzy concepts, and the numeric parameters of the definition are recorded for the Big-M adaptation. The original tokens are returned to allow parsing to continue.
 
         :param tokens: Parsed results containing the fuzzy concept definition, including the concept name, type keyword, and associated parameters or references.
         :type tokens: pp.ParseResults
@@ -868,6 +869,9 @@ class DLParser(object):
         if ConfigReader.DEBUG_PRINT:
             Util.debug(f"\t\t_parse_fuzzy_concept -> {tokens}")
         list_tokens: list = tokens.as_list()
+
+        for token in list_tokens[2:]:
+            DLParser._record_big_m_value(token, None)
 
         if DLParser.kb.concrete_concepts.get(list_tokens[0]) is not None:
             Util.error(
@@ -972,6 +976,31 @@ class DLParser(object):
         return tokens
 
     @staticmethod
+    def _record_big_m_value(value: typing.Any, role: typing.Optional[str] = None) -> None:
+        """
+        Records a numeric magnitude encountered while parsing, so that ``KnowledgeBase.adapt_big_m`` can derive the Big-M from the values the knowledge base actually constrains instead of rescanning the parsed tree. The magnitude is appended to the knowledge base as its absolute value together with the name of the concrete feature it constrains, or None when it is not tied to a single feature (breakpoints of fuzzy concrete concepts and fuzzy numbers). Recognized shapes are plain numbers, ``TriangularFuzzyNumber`` instances (whose ``a``, ``b`` and ``c`` parameters are recorded) and ``FeatureFunction`` instances (numeric constants are recorded, composite functions are recursed into); every other value, including booleans, strings and continuous variables, is silently ignored, as are non-finite numbers.
+
+        :param value: The numeric value, fuzzy number or feature function whose magnitude has to be recorded.
+        :type value: typing.Any
+        :param role: The name of the concrete feature the magnitude constrains, if any.
+        :type role: typing.Optional[str]
+        """
+
+        if isinstance(value, TriangularFuzzyNumber):
+            for param in (value.a, value.b, value.c):
+                DLParser._record_big_m_value(param, None)
+            return
+        if isinstance(value, FeatureFunction):
+            DLParser._record_big_m_value(value.get_number(), role)
+            if value.get_type() != constants.FeatureFunctionType.NUMBER:
+                for child in value.f:
+                    DLParser._record_big_m_value(child, role)
+            return
+        if isinstance(value, (int, float)) and not isinstance(value, bool):
+            if math.isfinite(value):
+                DLParser.kb.big_m_values.append((abs(value), role))
+
+    @staticmethod
     # @pp.trace_parse_action
     def _parse_fuzzy_number_range(tokens: pp.ParseResults) -> pp.ParseResults:
         """
@@ -995,7 +1024,7 @@ class DLParser(object):
     # @pp.trace_parse_action
     def _create_fuzzy_number(tokens: pp.ParseResults) -> pp.ParseResults:
         """
-        This static method processes parse tokens to construct a `TriangularFuzzyNumber` instance, supporting multiple input formats. If a single numeric value is provided, it generates a crisp fuzzy number where the lower, middle, and upper bounds are equal. When a string identifier is encountered, the method retrieves the corresponding fuzzy number from the knowledge base; if the identifier is undefined, an error is triggered. If three numeric values are present, they are interpreted as the lower, middle, and upper bounds of the triangular distribution. Should the input not conform to these patterns, the original tokens are returned unchanged. The method also outputs debug information if the global debug flag is enabled.
+        This static method processes parse tokens to construct a `TriangularFuzzyNumber` instance, supporting multiple input formats. If a single numeric value is provided, it generates a crisp fuzzy number where the lower, middle, and upper bounds are equal. When a string identifier is encountered, the method retrieves the corresponding fuzzy number from the knowledge base; if the identifier is undefined, an error is triggered. If three numeric values are present, they are interpreted as the lower, middle, and upper bounds of the triangular distribution. Should the input not conform to these patterns, the original tokens are returned unchanged. The parameters of the constructed fuzzy number are recorded for the Big-M adaptation, and the method also outputs debug information if the global debug flag is enabled.
 
         :param tokens: The parsed elements representing a fuzzy number, which can be a single numeric value, a string identifier referencing a predefined number, or a list of three numeric values.
         :type tokens: pp.ParseResults
@@ -1010,9 +1039,11 @@ class DLParser(object):
         tokens = tokens.as_list()
         if len(tokens) == 1:
             if isinstance(tokens[0], (int, float)):
-                return pp.ParseResults(
-                    [TriangularFuzzyNumber(tokens[0], tokens[0], tokens[0])]
+                result: TriangularFuzzyNumber = TriangularFuzzyNumber(
+                    tokens[0], tokens[0], tokens[0]
                 )
+                DLParser._record_big_m_value(result, None)
+                return pp.ParseResults([result])
             elif isinstance(tokens[0], str):
                 if tokens[0] not in DLParser.kb.fuzzy_numbers:
                     Util.error(
@@ -1020,16 +1051,18 @@ class DLParser(object):
                     )
                 return pp.ParseResults([DLParser.kb.fuzzy_numbers.get(tokens[0])])
         elif all(isinstance(t, (int, float)) for t in tokens):
-            return pp.ParseResults(
-                [TriangularFuzzyNumber(tokens[0], tokens[1], tokens[2])]
+            result: TriangularFuzzyNumber = TriangularFuzzyNumber(
+                tokens[0], tokens[1], tokens[2]
             )
+            DLParser._record_big_m_value(result, None)
+            return pp.ParseResults([result])
         return pp.ParseResults(tokens)
 
     @staticmethod
     # @pp.trace_parse_action
     def _set_fuzzy_number(tokens: pp.ParseResults) -> pp.ParseResults:
         """
-        Processes a parsed fuzzy number definition to construct a TriangularFuzzyNumber instance and register it within the global knowledge base. The method supports direct assignment and arithmetic operations—specifically addition, subtraction, multiplication, and division—by resolving string identifiers in the input tokens to existing fuzzy number objects. It validates that the target name is unique, reporting an error if a fuzzy number with that name already exists. As a side effect, the method updates the knowledge base with the new definition and sets a flag indicating the presence of concrete fuzzy concepts. The resulting TriangularFuzzyNumber is returned wrapped in a ParseResults object.
+        Processes a parsed fuzzy number definition to construct a TriangularFuzzyNumber instance and register it within the global knowledge base. The method supports direct assignment and arithmetic operations—specifically addition, subtraction, multiplication, and division—by resolving string identifiers in the input tokens to existing fuzzy number objects. It validates that the target name is unique, reporting an error if a fuzzy number with that name already exists. As a side effect, the method updates the knowledge base with the new definition and sets a flag indicating the presence of concrete fuzzy concepts, and the parameters of the resulting fuzzy number are recorded for the Big-M adaptation. The resulting TriangularFuzzyNumber is returned wrapped in a ParseResults object.
 
         :param tokens: Parsed components of a fuzzy number definition, including the identifier, the defining expression (value or operator), and associated operands.
         :type tokens: pp.ParseResults
@@ -1049,6 +1082,7 @@ class DLParser(object):
                 tokens[i] = DLParser.kb.fuzzy_numbers.get(tokens[i])
         if isinstance(tokens[1], TriangularFuzzyNumber):
             DLParser.kb.add_fuzzy_number(tokens[0], tokens[1])
+            DLParser._record_big_m_value(tokens[1], None)
             DLParser.kb.concrete_fuzzy_concepts = True
             return pp.ParseResults([tokens[1]])
         elif tokens[1] in (FuzzyDLKeyword.FEATURE_SUM, FuzzyDLKeyword.FEATURE_MUL):
@@ -1067,6 +1101,7 @@ class DLParser(object):
                 tokens[0],
                 result,
             )
+            DLParser._record_big_m_value(result, None)
             DLParser.kb.concrete_fuzzy_concepts = True
             return pp.ParseResults([result])
         elif tokens[1] in (FuzzyDLKeyword.FEATURE_SUB, FuzzyDLKeyword.FEATURE_DIV):
@@ -1079,6 +1114,7 @@ class DLParser(object):
                 tokens[0],
                 result,
             )
+            DLParser._record_big_m_value(result, None)
             DLParser.kb.concrete_fuzzy_concepts = True
             return pp.ParseResults([result])
         return pp.ParseResults(tokens)
@@ -1162,7 +1198,7 @@ class DLParser(object):
     # @pp.trace_parse_action
     def _parse_datatype_restriction(tokens: pp.ParseResults) -> pp.ParseResults:
         """
-        This static method processes a datatype restriction from the provided parse results, determining the restriction type (such as exact, at most, or at least) based on the operator token and identifying the associated concrete feature role. It validates that the role has been previously defined in the knowledge base and ensures that any triangular fuzzy numbers used have a defined range before proceeding. Depending on the value token's type, the method resolves strings to either existing fuzzy number concepts or new continuous variables, and handles triangular fuzzy numbers by extracting their crisp or fuzzy representations. The constructed restriction is then added to the global knowledge base, and the method returns a ParseResults object containing the added entity.
+        This static method processes a datatype restriction from the provided parse results, determining the restriction type (such as exact, at most, or at least) based on the operator token and identifying the associated concrete feature role. It validates that the role has been previously defined in the knowledge base and ensures that any triangular fuzzy numbers used have a defined range before proceeding. Depending on the value token's type, the method resolves strings to either existing fuzzy number concepts or new continuous variables, and handles triangular fuzzy numbers by extracting their crisp or fuzzy representations. The constructed restriction is then added to the global knowledge base, the magnitude of the value token is recorded for the Big-M adaptation, and the method returns a ParseResults object containing the added entity.
 
         :param tokens: The parsed components of the datatype restriction, containing the operator, the feature role, and the value or concept.
         :type tokens: pp.ParseResults
@@ -1178,6 +1214,7 @@ class DLParser(object):
         role: str = list_tokens[1]
         if role not in DLParser.kb.concrete_features:
             Util.error(f"Error: Feature {role} has not been defined.")
+        DLParser._record_big_m_value(list_tokens[2], role)
         restriction_type: RestrictionType = RestrictionType.EXACT_VALUE
         if list_tokens[0] == FuzzyDLKeyword.LESS_THAN_OR_EQUAL_TO:
             restriction_type = RestrictionType.AT_MOST_VALUE

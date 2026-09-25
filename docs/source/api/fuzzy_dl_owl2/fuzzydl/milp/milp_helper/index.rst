@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzydl.milp.milp_helper
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 A Mixed-Integer Linear Programming (MILP) manager for a fuzzy description-logic reasoner that translates fuzzy concepts, roles, and assertions into decision variables and linear constraints, then dispatches the resulting optimization problem to pluggable solver backends such as Gurobi, Python-MIP, and PuLP.
@@ -1078,3 +1076,4 @@ Module Contents
        binary is found.
 
    :rtype: typing.Optional[str]
+

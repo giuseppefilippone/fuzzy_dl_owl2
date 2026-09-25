@@ -5,8 +5,6 @@ fuzzy_dl_owl2.fuzzyowl2.owl_types.modified_function
 
 
 
-
-
 .. ── LLM-GENERATED DESCRIPTION START ──
 
 Defines a ``ModifiedFunction`` fuzzy datatype that pairs a linguistic modifier with a base datatype to express hedged fuzzy concepts such as "very tall" within the FuzzyOWL2 framework.
@@ -104,3 +102,4 @@ Module Contents
 
    .. py:attribute:: _mod
       :type:  str
+
